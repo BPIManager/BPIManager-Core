@@ -1,0 +1,33 @@
+const ja = {
+  "Top.Title": "Unko",
+  "GlobalNav.Home": "Home",
+  "GlobalNav.Data": "Data",
+  "GlobalNav.SongList": "Songs",
+  "GlobalNav.Statistics": "Statistics",
+  "GlobalNav.Settings": "Settings",
+  "Index.heroText": "Easily manage your scores of beatmania IIDX and visualize as BPI, in Web.",
+  "Index.importButton" : "Try it out!",
+  "Index.notes1" : "beatmania is the trademark registered by Konami Degital Entertainment Co., Ltd.",
+  "Index.notes2" : "This tool was affected and made by both of BPI which was invented by norimiso and BPICL which was released by ZUBU.",
+  "Data.add" : "Import score data",
+  "Data.infoBulk" : "If you've been subscribed to e-AMUSEMENT Premium Course, you can import all your scores in bulk by importing CSV from official IIDX website.",
+  "Data.howToBulk1" : "Just access ",
+  "Data.CSVURL" : "HERE",
+  "Data.howToBulk2" : ", copy displayed text and then paste it to form shown below.",
+  "Data.Execute": "Import",
+  "Data.notPremium1": "If you cannot use the way above, so please fill each songs in individually.",
+  "Data.Success":"Successfully imported.",
+  "Data.Failed":"Failed to import scores.",
+  "Data.edit" : "Edit scores on your own",
+  "Data.howToEdit" : "You can edit the score of each songs by detailed song information screen.",
+  "Data.howToEdit1" : "Access to songs page and search by the song name you want to edit.",
+  "Data.howToEdit2" : "Search results will be shown, then click the name of the song.",
+  "Data.howToEdit3" : "You can see detailed song information screen. Type your score and press save button.",
+  "Data.howToEdit4" : "That's all!",
+  "Songs.title":"Songs",
+  "Songs.filterByLevel":"Level",
+  "Songs.filterByDifficulty":"Difficulty",
+  "Songs.detailedFilter":"Configure"
+};
+
+export default ja;
