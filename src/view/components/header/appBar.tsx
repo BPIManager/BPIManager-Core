@@ -18,7 +18,7 @@ import LibraryMusicIcon from "@material-ui/icons/LibraryMusic";
 import TrendingUpIcon from "@material-ui/icons/TrendingUp";
 import SettingsIcon from "@material-ui/icons/Settings";
 import StorageIcon from "@material-ui/icons/Storage";
-
+import BorderColorIcon from '@material-ui/icons/BorderColor';
 import { FormattedMessage,injectIntl } from "react-intl";
 
 import Slide from "@material-ui/core/Slide";
@@ -70,6 +70,12 @@ class GlobalHeader extends React.Component<{intl:any},{isOpen:boolean}>{
               <ListItem button>
                 <ListItemIcon><LibraryMusicIcon /></ListItemIcon>
                 <ListItemText primary={formatMessage({id:"GlobalNav.SongList"})} />
+              </ListItem>
+            </Link>
+            <Link to="/unregisteredSongs" className="forceTextColorBlack" onClick={this.toggleNav}>
+              <ListItem button>
+                <ListItemIcon><BorderColorIcon /></ListItemIcon>
+                <ListItemText primary={formatMessage({id:"GlobalNav.unregisteredSongs"})} />
               </ListItem>
             </Link>
             <Link to="/stats" className="forceTextColorBlack" onClick={this.toggleNav}>

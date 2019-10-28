@@ -13,15 +13,28 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
 import SongsTable from "../components/songs/table";
+import TextField from '@material-ui/core/TextField';
+import PermDataSettingIcon from '@material-ui/icons/PermDataSetting';
 
-export default class Index extends React.Component<{},{isLoading:boolean,full:any[],scoreData:any[],options:{ [s:string]:string[]}}> {
+interface stateInt {
+  isLoading:boolean,
+  filterByName:string,
+  full:any[],
+  scoreData:any[],
+  options:{ [s:string]:string[]},
+  unregisteredSongs: any[]
+}
+
+export default class Index extends React.Component<{},stateInt> {
 
   constructor(props:Object){
     super(props);
     this.state = {
       isLoading:true,
+      filterByName:"",
       full:[],
       scoreData:[],
+      unregisteredSongs:[],
       options:{
         level:["11","12"],
         difficulty:["hyper","another","leggendaria"],
@@ -53,20 +66,30 @@ export default class Index extends React.Component<{},{isLoading:boolean,full:an
     }else{
       newOptions[target] = newOptions[target].filter((t:number|string)=> t !== name);
     }
-    return this.setState({scoreData:this.state.full.filter((data)=>{
-      console.log(newOptions["level"].some(item=>item === data.difficultyLevel),newOptions["difficulty"].some(item=>item === data.difficulty))
-      return newOptions["level"].some(item=>item === data.difficultyLevel) && newOptions["difficulty"].some(item=>item === data.difficulty)
-    }),options:newOptions});
+    return this.setState({scoreData:this.songFilter(newOptions),options:newOptions});
   }
 
+  handleInputChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+    return this.setState({scoreData:this.songFilter(this.state.options,e.target.value),filterByName:e.target.value});
+  }
+
+  songFilter = (newOptions:{[s:string]:string[]} = this.state.options,newName:string = this.state.filterByName) => this.state.full.filter((data)=>{
+    return (
+      newOptions["level"].some(item=>item === data.difficultyLevel) &&
+      newOptions["difficulty"].some(item=>item === data.difficulty) &&
+      data.title.indexOf(newName) === 0
+    )
+  })
+
   render(){
-    const {scoreData,options} = this.state;
+    const {filterByName,scoreData,options} = this.state;
     return (
       <Container className="commonLayout" fixed>
         <Typography component="h4" variant="h4" color="textPrimary" gutterBottom
           style={{display:"flex",justifyContent:"space-between"}}>
           <FormattedMessage id="Songs.title"/>
           <Button variant="outlined" color="primary">
+            <PermDataSettingIcon/>
             <FormattedMessage id="Songs.detailedFilter"/>
           </Button>
         </Typography>
@@ -106,6 +129,17 @@ export default class Index extends React.Component<{},{isLoading:boolean,full:an
             </FormControl>
           </Grid>
         </Grid>
+        <form noValidate autoComplete="off">
+          <TextField
+            style={{width:"100%"}}
+            id="standard-name"
+            label={<FormattedMessage id="Songs.filterByName"/>}
+            value={filterByName}
+            onChange={this.handleInputChange}
+            margin="normal"
+          />
+        </form>
+
         <SongsTable data={scoreData.sort((a,b)=> b.currentBPI - a.currentBPI)}/>
       </Container>
     );

@@ -3,6 +3,7 @@ const ja = {
   "GlobalNav.Home": "Home",
   "GlobalNav.Data": "Data",
   "GlobalNav.SongList": "Songs",
+  "GlobalNav.unregisteredSongs": "Songs not done yet",
   "GlobalNav.Statistics": "Statistics",
   "GlobalNav.Settings": "Settings",
   "Index.heroText": "Easily manage your scores of beatmania IIDX and visualize as BPI, in Web.",
@@ -20,14 +21,15 @@ const ja = {
   "Data.Failed":"Failed to import scores.",
   "Data.edit" : "Edit scores on your own",
   "Data.howToEdit" : "You can edit the score of each songs by detailed song information screen.",
-  "Data.howToEdit1" : "Access to songs page and search by the song name you want to edit.",
+  "Data.howToEdit1" : "Access to \"songs not done yet\" page and search by the song name you want to edit.",
   "Data.howToEdit2" : "Search results will be shown, then click the name of the song.",
   "Data.howToEdit3" : "You can see detailed song information screen. Type your score and press save button.",
   "Data.howToEdit4" : "That's all!",
   "Songs.title":"Songs",
   "Songs.filterByLevel":"Level",
   "Songs.filterByDifficulty":"Difficulty",
-  "Songs.detailedFilter":"Configure"
+  "Songs.detailedFilter":"Configure",
+  "Songs.filterByName":"Filter by song title..."
 };
 
 export default ja;
