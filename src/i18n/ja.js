@@ -43,7 +43,10 @@ const ja = {
   "Songs.mode7":"FULLCOMBO狙い",
   "Songs.legend":"凡例および使用方法を確認する場合は、ここをクリックしてヘルプを表示してください",
   "Details.typeNewScore":"あなたの自己ベスト",
-  "Details.FavButton":"お気に入り"
+  "Details.FavButton":"お気に入り",
+  "Details.Graph":"グラフ",
+  "Details.Details":"詳細",
+  "Common.Tweet":"ツイート"
 };
 
 export default ja;

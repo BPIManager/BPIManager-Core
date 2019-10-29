@@ -5,6 +5,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 import { scoreData, songData } from "../../../types/data";
 import { _prefixFromNum } from "../../../components/songs/filter";
@@ -18,7 +19,9 @@ import {BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Refer
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import StarIcon from '@material-ui/icons/Star';
-import InputLabel from "@material-ui/core/InputLabel";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
 interface P{
   isOpen:boolean,
@@ -34,13 +37,14 @@ interface S{
   showCharts:boolean,
   chartData:any[],
   currentTab:number,
+  anchorEl:null | HTMLElement,
 }
 
-export default class DetailedSongInformation extends React.Component<P,S> {
+class DetailedSongInformation extends React.Component<P & RouteComponentProps,S> {
 
   private calc?:bpiCalcuator = undefined;
 
-  constructor(props:P){
+  constructor(props:P & RouteComponentProps){
     super(props);
     let showCharts = false,data:any[] = [],lastExScore = 0;
     if(props.score && props.song && props.song.notes && props.song.avg && props.song.wr && props.score.exScore){
@@ -73,6 +77,7 @@ export default class DetailedSongInformation extends React.Component<P,S> {
       showCharts : showCharts,
       chartData:data.reverse(),
       currentTab:0,
+      anchorEl:null,
     }
   }
   handleScoreInput = (e: React.ChangeEvent<HTMLInputElement>):void=>{
@@ -83,18 +88,35 @@ export default class DetailedSongInformation extends React.Component<P,S> {
     console.log(e.target.value);
   }
 
-  handleTabChange = (e:React.ChangeEvent<{}>, newValue:number)=> this.setState({currentTab:newValue})
+  handleTabChange = (e:React.ChangeEvent<{}>, newValue:number)=> this.setState({currentTab:newValue});
+
+  toggleMenu = (e?: React.MouseEvent<HTMLButtonElement>)=> this.setState({anchorEl: e ? e.currentTarget : null });
+
+  jumpWeb = (type:number):void =>{
+    if(!this.props.song){return;}
+    switch(type){
+      case 0:
+        window.open("http://textage.cc/score/" + this.props.song.textage);
+      break;
+      case 1:
+        window.open("https://www.youtube.com/results?search_query=" + this.props.song.title + "+IIDX");
+      break;
+      case 2:
+        window.open("https://twitter.com/intent/tweet?&text=");
+      break;
+    }
+    return this.toggleMenu();
+  }
 
   render(){
     const {isOpen,handleOpen,song,score} = this.props;
-    const {newScore,showCharts,chartData,currentTab} = this.state;
+    const {newScore,showCharts,chartData,currentTab,anchorEl} = this.state;
     if(!song || !score){
       return (null);
     }
     const max = song.notes ? song.notes * 2 : 0;
-    const scoreLines:string[] = [`AAA(${Math.ceil(max * (8/9))})`,`AA(${Math.ceil(max * (7/9))})`,`A(${Math.ceil(max * (2/3))})`];
     return (
-      <Dialog fullScreen open={isOpen} onClose={handleOpen} style={{overflowX:"hidden",width:"100%"}}>
+      <Dialog id="detailedScreen" fullScreen open={isOpen} onClose={handleOpen} style={{overflowX:"hidden",width:"100%"}}>
         <AppBar>
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={()=>handleOpen(true)} aria-label="close">
@@ -119,7 +141,7 @@ export default class DetailedSongInformation extends React.Component<P,S> {
           </Grid>
           <Divider/>
           <Grid container>
-            <Grid item xs={9}>
+            <Grid item xs={8}>
               <form noValidate autoComplete="off" style={{margin:"10px 6px 0"}}>
                 <TextField
                   type="number"
@@ -131,13 +153,27 @@ export default class DetailedSongInformation extends React.Component<P,S> {
                 />
               </form>
             </Grid>
-            <Grid item xs={3} style={{display:"flex",alignItems:"center",justifyContent:"flex-end"}}>
+            <Grid item xs={1} style={{display:"flex",alignItems:"center",justifyContent:"flex-end"}}>
               <div style={{margin:"10px 6px 0"}}>
-                <InputLabel className="MuiInputLabel-shrink be-ellipsis">
-                  <FormattedMessage id="Details.FavButton"/>
-                </InputLabel>
-                <StarIcon style={{fontSize:"35px",color:"#c3c3c3"}}/>
+                <StarIcon style={{fontSize:"35px",color:"#c3c3c3",position:"relative",top:"3px"}}/>
               </div>
+            </Grid>
+            <Grid item xs={1} style={{display:"flex",alignItems:"center",justifyContent:"flex-end"}}>
+              <IconButton style={{margin:"10px 6px 0"}}
+                aria-haspopup="true"
+                onClick={this.toggleMenu}>
+                  <MoreVertIcon />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={()=>this.toggleMenu()}
+                >
+                  <MenuItem onClick={()=>this.jumpWeb(0)}>TexTage</MenuItem>
+                  <MenuItem onClick={()=>this.jumpWeb(1)}>YouTube</MenuItem>
+                  <MenuItem onClick={()=>this.jumpWeb(2)}><FormattedMessage id="Common.Tweet"/></MenuItem>
+                </Menu>
             </Grid>
           </Grid>
         </Paper>
@@ -147,8 +183,8 @@ export default class DetailedSongInformation extends React.Component<P,S> {
           indicatorColor="primary"
           textColor="primary"
           onChange={this.handleTabChange}>
-          <Tab label="グラフ" />
-          <Tab label="詳細" />
+          <Tab label={<FormattedMessage id="Details.Graph"/>} />
+          <Tab label={<FormattedMessage id="Details.Details"/>} />
         </Tabs>
         <TabPanel value={currentTab} index={0}>
           {showCharts &&
@@ -157,6 +193,8 @@ export default class DetailedSongInformation extends React.Component<P,S> {
                 <BarChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
+                  <YAxis domain={[0,max]} ticks={[Math.ceil(max * (6/9)),Math.ceil(max * (7/9)),Math.ceil(max * (8/9)),max]} width={40}>
+                  </YAxis>
                   <Tooltip />
                   <Bar dataKey="EX SCORE">
                     {
@@ -166,9 +204,9 @@ export default class DetailedSongInformation extends React.Component<P,S> {
                       })
                     }
                   </Bar>
-                  <ReferenceLine y={max * (8/9)} label={<Label position="insideTopRight">{scoreLines[0]}</Label>} stroke="#004018" isFront={true} />
-                  <ReferenceLine y={max * (7/9)} label={<Label position="insideTopRight">{scoreLines[1]}</Label>} stroke="#004018" isFront />
-                  <ReferenceLine y={max * (2/3)} label={<Label position="insideTopRight">{scoreLines[2]}</Label>} stroke="#004018" isFront />
+                  <ReferenceLine y={max * (8/9)} label={<Label position="insideTopRight">AAA</Label>} stroke="#004018" isFront={true} />
+                  <ReferenceLine y={max * (7/9)} label={<Label position="insideTopRight">AA</Label>} stroke="#004018" isFront />
+                  <ReferenceLine y={max * (2/3)} label={<Label position="insideTopRight">A</Label>} stroke="#004018" isFront />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -191,3 +229,5 @@ class TabPanel extends React.Component<{value:number,index:number},{}>{
     return this.props.children
   }
 }
+
+export default withRouter(DetailedSongInformation);

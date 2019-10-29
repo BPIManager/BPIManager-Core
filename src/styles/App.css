@@ -98,3 +98,7 @@ a.link:hover{
   overflow:hidden;
   white-space:nowrap;
 }
+
+#detailedScreen .MuiGrid-root.MuiGrid-container{
+  justify-content: space-between;
+}

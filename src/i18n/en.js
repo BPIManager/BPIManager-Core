@@ -43,7 +43,10 @@ const ja = {
   "Songs.mode7":"new FULLCOMBO",
   "Songs.legend":"To see legends and usage, click here and go to help",
   "Details.typeNewScore":"My Record",
-  "Details.FavButton":"Favorite"
+  "Details.FavButton":"Favorite",
+  "Details.Graph":"Graph",
+  "Details.Details":"Details",
+  "Common.Tweet":"Tweet"
 };
 
 export default ja;
