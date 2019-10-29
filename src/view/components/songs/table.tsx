@@ -1,5 +1,4 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -7,6 +6,10 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
+
+import {scoreData, songData} from "../../../types/data";
+import { _prefix } from "../../../components/songs/filter";
+import DetailedSongInformation from "./details";
 
 const columns = [
   { id: "difficultyLevel", label: "☆"},
@@ -18,14 +21,44 @@ const columns = [
   },
 ];
 
-export default class SongsTable extends React.Component<{data:any},{page:number,rowsPerPage:number}>{
+interface P{
+  data:scoreData[],
+  sort:number,
+  isDesc:boolean,
+  changeSort:(newNum:number)=>void,
+  mode:number,
+  allSongsData:{[key:string]:any}
+  updateScoreData:()=>void,
+}
 
-  constructor(props:{ data: any }){
+interface S{
+  page:number,
+  rowsPerPage:number,
+  isOpen:boolean,
+  currentSongData:songData | null,
+  currentScoreData:scoreData | null
+}
+
+export default class SongsTable extends React.Component<Readonly<P>,S>{
+
+  constructor(props:Readonly<P>){
     super(props);
     this.state = {
       page : 0,
-      rowsPerPage : 10
+      rowsPerPage : 10,
+      isOpen:false,
+      currentSongData:null,
+      currentScoreData:null
     }
+  }
+
+  handleOpen = async(updateFlag:boolean,row?:any):Promise<void>=> {
+    if(updateFlag){await this.props.updateScoreData();}
+    return this.setState({
+      isOpen:!this.state.isOpen,
+      currentSongData:row ? this.props.allSongsData[row.title + _prefix(row.difficulty)] : null,
+      currentScoreData:row ? row : null
+    });
   }
 
   handleChangePage = (event:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number):void => this.setState({page:newPage});
@@ -34,41 +67,80 @@ export default class SongsTable extends React.Component<{data:any},{page:number,
 
   difficultColor = (i:number,row: any)=>{
     if(i !== 0){return void(0);}
-    switch (row.difficulty){
-      default:
-      case "hyper" : return "#ffdb00";
-      case "another" : return "#f50057";
-      case "leggendaria" : return "#ff00f4";
+    switch (row.clearState){
+      case 0 : return "#e0dede";
+      case 1 : return "#ea63ff";
+      case 2 : return "#acffab";
+      case 3 : return "#ff707a";
+      case 4 : return "#ff4545";
+      case 5 : return "#fff373";
+      case 6 : return "#ff793b";
+      default: return "#ffffff";
     }
   }
 
+  behindScore = (row:any)=>{
+    try{
+      const ghost = [1,2/3,7/9,8/9,1];
+      const {allSongsData,mode} = this.props;
+      const max = allSongsData[row.title + _prefix(row.difficulty)]["notes"] * 2;
+      return Math.ceil(max * ghost[mode] - row.exScore)
+    }catch(e){
+      return;
+    }
+  }
+
+  bp = (bp:number):string=>{
+    if(Number.isNaN(bp)){
+      return "-";
+    }
+    return String(bp);
+  }
+
   render(){
-    const {page,rowsPerPage} = this.state;
+    const {page,rowsPerPage,isOpen,currentSongData,currentScoreData} = this.state;
+    const {data,changeSort,sort,isDesc,mode} = this.props;
     return (
       <Paper style={{width:"100%",overflowX:"auto"}}>
         <div>
           <Table>
             <TableHead>
               <TableRow>
-                {columns.map(column => (
+                {columns.map((column,i) => (
                   <TableCell
                     key={column.id}
+                    onClick={()=>changeSort(i)}
                   >
-                    {column.label}
+                    {(mode < 5 || i !== 2 ) && column.label}
+                    {(mode > 4 && i === 2) && "BP"}
+                    {i === sort &&
+                      <span>
+                        { isDesc && <span>▼</span> }
+                        { !isDesc && <span>▲</span> }
+                      </span>
+                    }
+                    {i !== sort && <span>△</span>}
                   </TableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {this.props.data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:any,i:number) => {
-                console.log(row);
+              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:any,i:number) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.title} style ={ i % 2? { background : "#f7f7f7" }:{ background : "white" }}>
+                  <TableRow
+                    onClick={()=>this.handleOpen(false,row)}
+                    hover role="checkbox" tabIndex={-1} key={row.title} style ={ i % 2? { background : "#f7f7f7" }:{ background : "white" }}>
                     {columns.map((column,j) => {
-                      const value = row[column.id];
+                      const prefix = row.difficulty === "hyper" ? row[column.id] + "(H)" : row.difficulty === "leggendaria" ? "(†)" : "";
                       return (
                         <TableCell key={column.id} style={{backgroundColor : this.difficultColor(j,row)}}>
-                          {value}
+                          {(mode < 5 || column.id !== "currentBPI") && row[column.id]}
+
+                          {column.id === "title" && prefix}
+                          {(mode > 0 && mode < 5 && column.id === "exScore") &&
+                            <span>(-{this.behindScore(row)})</span>
+                          }
+                          {(mode > 4 && column.id === "currentBPI") && this.bp(row.missCount)}
                         </TableCell>
                       );
                     })}
@@ -94,6 +166,9 @@ export default class SongsTable extends React.Component<{data:any},{page:number,
           onChangePage={this.handleChangePage}
           onChangeRowsPerPage={this.handleChangeRowsPerPage}
         />
+        {isOpen &&
+          <DetailedSongInformation isOpen={isOpen} song={currentSongData} score={currentScoreData} handleOpen={this.handleOpen}/>
+        }
       </Paper>
     );
   }

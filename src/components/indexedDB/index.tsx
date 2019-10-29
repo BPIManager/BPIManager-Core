@@ -1,4 +1,5 @@
 import Dexie from "dexie";
+import {scoreData,songData} from "../../types/data";
 
 const storageWrapper = class extends Dexie{
   target: string = "scores";
@@ -29,8 +30,7 @@ export const scoresDB = class extends storageWrapper{
     this.scores = this.table("scores");
   }
 
-  // Load all pinned-items
-  async getAll():Promise<string[]>{
+  async getAll():Promise<scoreData[]>{
     const currentData = await this.scores.toArray();
     return currentData;
   }
@@ -85,10 +85,10 @@ export const songsDB = class extends storageWrapper{
     this.songs = this.table("songs");
   }
 
-  // Load all pinned-items
-  async getAll():Promise<string[]>{
-    const currentData = await this.songs.toArray();
-    return currentData;
+  async getAll(isSingle:boolean = true):Promise<any[]>{
+    return isSingle ?
+      await this.songs.where("dpLevel").equals("0").toArray() :
+      await this.songs.where("dpLevel").notEqual("0").toArray();
   }
 
   async deleteAll():Promise<void>{
@@ -99,7 +99,7 @@ export const songsDB = class extends storageWrapper{
     return this.songs.where({title:title}).toArray();
   }
 
-  getOneItemIsSingle(title:string,difficulty:string):Promise<string[]>{
+  async getOneItemIsSingle(title:string,difficulty:string):Promise<songData[]>{
     const diffs = ():string=>{
       switch(difficulty){
         case "hyper":return "3";
@@ -108,7 +108,7 @@ export const songsDB = class extends storageWrapper{
         case "leggendaria":return "10";
       }
     };
-    return this.songs.where("[title+difficulty]").equals([title,diffs()]).toArray();
+    return await this.songs.where("[title+difficulty]").equals([title,diffs()]).toArray();
   }
 
   async resetItems(storedAt:string):Promise<number>{

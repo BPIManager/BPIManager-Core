@@ -283,7 +283,7 @@ export const csv = [
     "bpm": "135",
     "textage": "26/50th_bgn.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "50th Memorial Songs -The BEMANI History-",
@@ -305,7 +305,7 @@ export const csv = [
     "bpm": "136",
     "textage": "26/50th_bmn.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "532nm",
@@ -382,7 +382,7 @@ export const csv = [
     "bpm": "216",
     "textage": "26/atalehdn.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "AA",
@@ -3715,7 +3715,7 @@ export const csv = [
     "bpm": "145",
     "textage": "26/drkmonky.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "DUE TOMORROW",
@@ -3990,7 +3990,7 @@ export const csv = [
     "bpm": "148",
     "textage": "26/emberlts.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "EMERALDAS",
@@ -4595,7 +4595,7 @@ export const csv = [
     "bpm": "191",
     "textage": "25/fervidex.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "fffff",
@@ -4782,7 +4782,7 @@ export const csv = [
     "bpm": "140",
     "textage": "25/fromtime.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "Funny shuffle",
@@ -4826,7 +4826,7 @@ export const csv = [
     "bpm": "110-220",
     "textage": "25/futuredd.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "FUZIN RIZIN",
@@ -5013,7 +5013,7 @@ export const csv = [
     "bpm": "160",
     "textage": "26/garuda.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "GENOCIDE",
@@ -5629,7 +5629,7 @@ export const csv = [
     "bpm": "152",
     "textage": "26/heisei.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "HELL SCAPER -Last Escape Remix-",
@@ -5981,7 +5981,7 @@ export const csv = [
     "bpm": "140",
     "textage": "26/idc.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "Idola",
@@ -6839,7 +6839,7 @@ export const csv = [
     "bpm": "230",
     "textage": "26/ladybird.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "LASER CRUSTER",
@@ -7510,7 +7510,7 @@ export const csv = [
     "bpm": "154",
     "textage": "25/maxivcrd.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "memories",
@@ -8082,7 +8082,7 @@ export const csv = [
     "bpm": "180",
     "textage": "26/nexttale.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "Night sky",
@@ -8852,7 +8852,7 @@ export const csv = [
     "bpm": "160",
     "textage": "26/playfire.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "PLEASE DON'T GO",
@@ -9226,7 +9226,7 @@ export const csv = [
     "bpm": "150",
     "textage": "26/rootage.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "R5",
@@ -9963,7 +9963,7 @@ export const csv = [
     "bpm": "150",
     "textage": "26/rockonna.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "rottel-the-Mercury",
@@ -10062,7 +10062,7 @@ export const csv = [
     "bpm": "191",
     "textage": "26/rozaanda.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "RUGGED ASH",
@@ -10689,7 +10689,7 @@ export const csv = [
     "bpm": "150",
     "textage": "26/serious.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "Session 1 -Genesis-",
@@ -10887,7 +10887,7 @@ export const csv = [
     "bpm": "140",
     "textage": "26/sidchain.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "SIGMA",
@@ -11767,7 +11767,7 @@ export const csv = [
     "bpm": "170",
     "textage": "25/sunlight.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "Super Rush",
@@ -12658,7 +12658,7 @@ export const csv = [
     "bpm": "137-180",
     "textage": "26/toycube.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "TRANOID",
@@ -12823,7 +12823,7 @@ export const csv = [
     "bpm": "177",
     "textage": "26/usa.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "Ubertreffen",
@@ -12944,7 +12944,7 @@ export const csv = [
     "bpm": "187",
     "textage": "26/undrholo.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "Unicorn tail",
@@ -12988,7 +12988,7 @@ export const csv = [
     "bpm": "167",
     "textage": "26/urbancon.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "Usual Days-remix",
@@ -13571,7 +13571,7 @@ export const csv = [
     "bpm": "187",
     "textage": "26/wing_hts.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "with you…",
@@ -13604,7 +13604,7 @@ export const csv = [
     "bpm": "173",
     "textage": "26/wolf1061.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "Wonder Bullfighter",
@@ -13670,7 +13670,7 @@ export const csv = [
     "bpm": "180",
     "textage": "26/wndrland.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "Wuv U",
@@ -14055,7 +14055,7 @@ export const csv = [
     "bpm": "180",
     "textage": "26/yumjelly.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "ZED",
@@ -14099,7 +14099,7 @@ export const csv = [
     "bpm": "160",
     "textage": "26/zendegi.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "Zenius -I- vanisher",
@@ -14627,7 +14627,7 @@ export const csv = [
     "bpm": "175",
     "textage": "25/_babibu.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "パ→ピ→プ→Yeah!",
@@ -14671,7 +14671,7 @@ export const csv = [
     "bpm": "158",
     "textage": "26/_hbfesta.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "ハイ*ビスカス ft. Kanae Asaba",
@@ -15177,7 +15177,7 @@ export const csv = [
     "bpm": "83-180",
     "textage": "26/_hanakan.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "華蝶風雪",
@@ -16343,7 +16343,7 @@ export const csv = [
     "bpm": "195",
     "textage": "26/_bakzeni.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "卑弥呼",
@@ -16640,7 +16640,7 @@ export const csv = [
     "bpm": "144",
     "textage": "26/_mausole.html?DAB00",
     "difficultyLevel": "11",
-    "dpLevel": "0"
+    "dpLevel": "11"
   },
   {
     "title": "旅人リラン",

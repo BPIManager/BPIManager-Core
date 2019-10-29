@@ -9,6 +9,9 @@ export default class bpiCalcuator{
     this.songsDB = new songsDB();
   }
 
+  private m:number = 1;
+  private pgf = (j:number):number=> 1 + ( j / this.m - 0.5 ) / ( 1 - j / this.m );
+
   async calc(songTitle:string,difficulty:string,exScore:number):Promise<{error:boolean,bpi:number,reason?:any,difficultyLevel?:number}>{
     try{
       const songData = this.isSingle ?
@@ -22,16 +25,14 @@ export default class bpiCalcuator{
       const s:number = exScore;
       const k:number = songData[0]["avg"];
       const z:number = songData[0]["wr"];
-      const m:number = songData[0]["notes"] * 2;
+      this.m = songData[0]["notes"] * 2;
 
-      if( s > m ){
+      if( s > this.m ){
         throw new Error("理論値を超えています");
       }
-
-      const pgf = (j:number)=> 1 + ( j / m - 0.5 ) / ( 1 - j / m );
-      const _s = pgf(s);
-      const _k = pgf(k);
-      const _z = pgf(z);
+      const _s = this.pgf(s);
+      const _k = this.pgf(k);
+      const _z = this.pgf(z);
 
       const _s_ = _s / _k;
       const _z_ = _z / _k;
@@ -51,7 +52,26 @@ export default class bpiCalcuator{
     }
   }
 
+  //使いまわし可能データ
+  private avg:number = 0;
+  private wr:number = 0;
 
+  setData(max:number,avg:number,wr:number):void{
+    this.m = max;
+    this.avg = avg;
+    this.wr = wr;
+  }
+
+  calcFromBPI(bpi:number):number{
+    const z = this.pgf(this.wr);
+    const k = this.pgf(this.avg);
+    
+    const i = Math.pow(Math.pow(Math.log(z / k),1.5)  * bpi / 100, 1 / 1.5);
+
+    const N = Math.pow(Math.E,i) * k;
+
+    return this.m * ( ( N - 0.5 ) / N );
+  }
 
 
 }

@@ -38,6 +38,7 @@ export default class Initialize extends React.Component<{},{show:boolean}>{
         }));
         this.wait(3);
       }
+      localStorage.setItem("isSingle","true");
       return this.setState({show:false});
     }catch(e){
       console.log(e);

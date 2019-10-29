@@ -20,7 +20,7 @@ export default class Router extends React.Component<{},{}> {
   }
 
   render(){
-    const lc = "en";
+    const lc = "ja";
     return (
       <IntlProvider
         locale={lc}

@@ -13,14 +13,15 @@ import importCSV from "../../components/csv/import";
 import bpiCalculator from "../../components/bpi";
 import timeFormatter from "../../components/common/timeFormatter";
 
-export default class Index extends React.Component<{},{raw:string,isSnackbarOpen:boolean,stateText:string}> {
+export default class Index extends React.Component<{},{raw:string,isSnackbarOpen:boolean,stateText:string,errors:string[]}> {
 
   constructor(props:Object){
     super(props);
     this.state = {
       raw: "",
       isSnackbarOpen:false,
-      stateText:"Data.Success"
+      stateText:"Data.Success",
+      errors:[]
     }
     this.execute = this.execute.bind(this);
   }
@@ -32,7 +33,7 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
       const calc = new bpiCalculator();
       const exec = await executor.execute();
       if(!exec){
-        throw new Error("no data");
+        throw new Error("CSVデータの形式が正しくありません");
       }
       const result = executor.getResult();
       for(let i = 0;i < result.length;++i){
@@ -54,11 +55,9 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
           }
         ),true);
       }
-      console.log(errors);
-      return this.setState({raw:"",isSnackbarOpen:true,stateText:"Data.Success"});
+      return this.setState({raw:"",isSnackbarOpen:true,stateText:"Data.Success",errors:errors});
     }catch(e){
-      console.log(e);
-      return this.setState({isSnackbarOpen:true,stateText:"Data.Failed"});
+      return this.setState({isSnackbarOpen:true,stateText:"Data.Failed",errors:[e.message]});
     }
   }
 
@@ -66,7 +65,7 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
   handleClose = ()=> this.setState({isSnackbarOpen:false});
 
   render(){
-    const {raw,isSnackbarOpen,stateText} = this.state;
+    const {raw,isSnackbarOpen,stateText,errors} = this.state;
     return (
       <Container className="commonLayout" fixed>
         <Snackbar
@@ -83,7 +82,7 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
         <Typography variant="body1" gutterBottom>
           <FormattedMessage id="Data.infoBulk"/><br/>
           <FormattedMessage id="Data.howToBulk1"/>
-          <a href="https://p.eagate.573.jp/game/2dx/27/djdata/score_download.html" target="_blank">
+          <a href="https://p.eagate.573.jp/game/2dx/27/djdata/score_download.html" target="_blank" rel="noopener noreferrer">
             <FormattedMessage id="Data.CSVURL"/>
           </a>
           <FormattedMessage id="Data.howToBulk2"/>
@@ -93,7 +92,7 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
           value={raw}
           style={{width:"100%"}}
           id="outlined-dense-multiline"
-          label="Copy here"
+          label="Paste here"
           margin="dense"
           variant="outlined"
           multiline
@@ -106,6 +105,7 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
           <FormattedMessage id="Data.Execute"/>
         </Button>
         <Divider variant="middle" style={{margin:"10px 0"}}/>
+        {errors && errors.map(item=><span>{item}<br/></span>)}
         <FormattedMessage id="Data.notPremium1"/>
         <Divider variant="middle" style={{margin:"10px 0"}}/>
         <Typography component="h4" variant="h4" color="textPrimary" gutterBottom>

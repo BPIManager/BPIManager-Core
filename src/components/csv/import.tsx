@@ -1,27 +1,16 @@
-
-export interface importData{
-  difficulty:string,
-  version:string,
-  title:string,
-  exScore:number,
-  Pgreat:number,
-  great:number,
-  missCount:number,
-  clearState:string,
-  DJLevel:string,
-  lastPlayed:string,
-}
+import {scoreData} from "../../types/data";
+import { convertClearState } from "../songs/filter";
 
 export default class importCSV {
 
   rawData:string = "";
-  result:importData[] = [];
+  result:scoreData[] = [];
 
   constructor(raw:string){
     this.rawData = raw;
   }
 
-  getResult():importData[]{
+  getResult():scoreData[]{
     return this.result;
   }
 
@@ -54,15 +43,21 @@ export default class importCSV {
           if(!p[eachObjNum[1]]){
             continue;
           }
+
+          const clearState:string|number = convertClearState(p[eachObjNum[6]],0);
+          if(typeof clearState !== "number"){throw new Error();}
+
           result.push({
             title:p[eachObjNum[1]],
             version:p[eachObjNum[0]],
             difficulty:t,
+            currentBPI:0,
+            difficultyLevel:"-",
             exScore:Number(p[eachObjNum[2]]),
             Pgreat:Number(p[eachObjNum[3]]),
             great:Number(p[eachObjNum[4]]),
             missCount:Number(p[eachObjNum[5]]),
-            clearState:p[eachObjNum[6]],
+            clearState:clearState,
             DJLevel:p[eachObjNum[7]],
             lastPlayed:p[eachObjNum[8]],
           });

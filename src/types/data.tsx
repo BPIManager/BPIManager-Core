@@ -1,0 +1,31 @@
+export interface scoreData{
+  difficulty:string,
+  version?:string,
+  title:string,
+  currentBPI:number,
+  previousBPI?:number,
+  difficultyLevel:string,
+  exScore:number,
+  previousExScore?:number,
+  Pgreat?:number,
+  great?:number,
+  missCount?:number,
+  clearState:number,
+  DJLevel:string,
+  lastPlayed?:string,
+}
+
+export interface songData{
+  title:string,
+  difficulty:string,
+  wr:number,
+  avg:number,
+  notes:number,
+  bpm:string,
+  textage:string,
+  difficultyLevel:string,
+  dpLevel:string,
+  isFavorited:boolean,
+  isCreated:boolean,
+  updatedAt:string,
+}

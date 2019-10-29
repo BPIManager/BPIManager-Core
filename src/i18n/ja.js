@@ -2,6 +2,7 @@ const ja = {
   "Top.Title": "名前未定",
   "GlobalNav.Home": "ホーム",
   "GlobalNav.Data": "データ",
+  "GlobalNav.FavoriteSongs": "お気に入り楽曲",
   "GlobalNav.SongList": "楽曲一覧",
   "GlobalNav.unregisteredSongs": "未プレイ楽曲",
   "GlobalNav.Statistics": "統計",
@@ -28,8 +29,21 @@ const ja = {
   "Songs.title":"楽曲データ",
   "Songs.filterByLevel":"レベル",
   "Songs.filterByDifficulty":"難易度",
-  "Songs.detailedFilter":"条件変更",
-  "Songs.filterByName":"曲名で絞り込み..."
+  "Songs.detailedFilter":"詳細条件",
+  "Songs.filterByName":"曲名で絞り込み",
+  "Songs.filterByFavorite":"お気に入り曲",
+  "Songs.mode":"モード選択",
+  "Songs.mode0":"BPI詰め",
+  "Songs.mode1":"A狙い",
+  "Songs.mode2":"AA狙い",
+  "Songs.mode3":"AAA狙い",
+  "Songs.mode4":"MAX狙い",
+  "Songs.mode5":"HARD CLEAR狙い",
+  "Songs.mode6":"EX-HARD CLEAR狙い",
+  "Songs.mode7":"FULLCOMBO狙い",
+  "Songs.legend":"凡例および使用方法を確認する場合は、ここをクリックしてヘルプを表示してください",
+  "Details.typeNewScore":"あなたの自己ベスト",
+  "Details.FavButton":"お気に入り"
 };
 
 export default ja;
