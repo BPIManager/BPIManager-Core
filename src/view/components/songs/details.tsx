@@ -60,6 +60,7 @@ export default class DetailedSongInformation extends React.Component<P,S> {
         if(lastExScore < mybest && mybest < exScoreFromBPI){
           dataInserter(mybest,"YOU");
           lastExScore = mybest;
+          continue;
         }
         lastExScore = exScoreFromBPI;
         dataInserter(exScoreFromBPI,String(bpiBasis[i]));
