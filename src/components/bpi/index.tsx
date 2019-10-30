@@ -1,5 +1,9 @@
 import {songsDB} from "../indexedDB";
 
+export interface B{
+  error:boolean,bpi:number,reason?:any,difficultyLevel?:number
+}
+
 export default class bpiCalcuator{
   songsDB:any;
   isSingle: boolean;
@@ -12,7 +16,7 @@ export default class bpiCalcuator{
   private m:number = 1;
   private pgf = (j:number):number=> 1 + ( j / this.m - 0.5 ) / ( 1 - j / this.m );
 
-  async calc(songTitle:string,difficulty:string,exScore:number):Promise<{error:boolean,bpi:number,reason?:any,difficultyLevel?:number}>{
+  async calc(songTitle:string,difficulty:string,exScore:number):Promise<B>{
     try{
       const songData = this.isSingle ?
         await this.songsDB.getOneItemIsSingle(songTitle,difficulty) :
@@ -30,6 +34,9 @@ export default class bpiCalcuator{
       if( s > this.m ){
         throw new Error("理論値を超えています");
       }
+      if( s < 0){
+        throw new Error("スコアは自然数で入力してください");
+      }
       const _s = this.pgf(s);
       const _k = this.pgf(k);
       const _z = this.pgf(z);
@@ -45,7 +52,7 @@ export default class bpiCalcuator{
       if(res < -15){
         return {error:false,bpi:-15,difficultyLevel:songData[0]["difficultyLevel"]};
       }
-      return {error:true,bpi:Math.round(res * 100) / 100,difficultyLevel:songData[0]["difficultyLevel"]};
+      return {error:false,bpi:Math.round(res * 100) / 100,difficultyLevel:songData[0]["difficultyLevel"]};
 
     }catch(e){
       return {error:true,bpi:NaN,reason:e.message || e};
@@ -65,7 +72,7 @@ export default class bpiCalcuator{
   calcFromBPI(bpi:number):number{
     const z = this.pgf(this.wr);
     const k = this.pgf(this.avg);
-    
+
     const i = Math.pow(Math.pow(Math.log(z / k),1.5)  * bpi / 100, 1 / 1.5);
 
     const N = Math.pow(Math.E,i) * k;
@@ -73,5 +80,7 @@ export default class bpiCalcuator{
     return this.m * ( ( N - 0.5 ) / N );
   }
 
-
+  rank(bpi:number):number{
+    return Math.ceil(Math.pow(2616, (100 - bpi ) / 100 ));
+  }
 }

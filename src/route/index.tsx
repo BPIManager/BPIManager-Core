@@ -4,6 +4,7 @@ import { IntlProvider } from 'react-intl'
 import Index from "../view/pages";
 import Data from "../view/pages/data";
 import Songs from "../view/pages/songs";
+import Favorite from "../view/pages/favorites";
 import {BrowserRouter, Route} from "react-router-dom";
 
 
@@ -31,6 +32,7 @@ export default class Router extends React.Component<{},{}> {
           <Route path="/" exact component={Index}/>
           <Route path="/data" exact component={Data}/>
           <Route path="/songs" exact component={Songs}/>
+          <Route path="/favorite" exact component={Favorite}/>
         </BrowserRouter>
       </IntlProvider>
     );

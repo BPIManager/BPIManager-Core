@@ -13,6 +13,9 @@ export interface scoreData{
   clearState:number,
   DJLevel:string,
   lastPlayed?:string,
+  storedAt:string,
+  isSingle:boolean,
+  isImported?:boolean,
 }
 
 export interface songData{

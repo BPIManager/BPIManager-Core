@@ -42,11 +42,28 @@ const ja = {
   "Songs.mode6":"new EX-HARD CLEAR",
   "Songs.mode7":"new FULLCOMBO",
   "Songs.legend":"To see legends and usage, click here and go to help",
+  "Details.SaveButton":"Save",
   "Details.typeNewScore":"My Record",
   "Details.FavButton":"Favorite",
+  "Details.FavButtonRemove":"Delete favorite",
+  "Details.FavButtonRemoved":"Successfully deleted.",
+  "Details.FavButtonAdded":"Successfully added.",
   "Details.Graph":"Graph",
   "Details.Details":"Details",
-  "Common.Tweet":"Tweet"
+  "Details.ErrorIIDXInfo":"IIDXInfo is only available for level-12.",
+  "Common.Tweet":"Tweet",
+  "SongDetail.SongDetailHead":"Song",
+  "SongDetail.Notes":"Notes",
+  "SongDetail.WorldRecord":"World Record",
+  "SongDetail.Average":"Average",
+  "SongDetail.You":"You",
+  "SongDetail.Version":"Version",
+  "SongDetail.ScoreDetailHead":"Play Status",
+  "SongDetail.ClearState":"Clear State",
+  "SongDetail.MissCount":"Miss Count",
+  "SongDetail.LastPlayed":"Last Played",
+  "SongDetail.ScoreDetails":"Detail",
+  "Favorites.Title":"Favorites"
 };
 
 export default ja;

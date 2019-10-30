@@ -53,7 +53,7 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
             isImported: true,
             updatedAt : timeFormatter(0),
           }
-        ),true);
+        ));
       }
       return this.setState({raw:"",isSnackbarOpen:true,stateText:"Data.Success",errors:errors});
     }catch(e){

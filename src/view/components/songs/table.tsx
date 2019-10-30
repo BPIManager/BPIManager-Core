@@ -9,7 +9,7 @@ import TableRow from "@material-ui/core/TableRow";
 
 import {scoreData, songData} from "../../../types/data";
 import { _prefix } from "../../../components/songs/filter";
-import DetailedSongInformation from "./details";
+import DetailedSongInformation from "./detailsScreen";
 
 const columns = [
   { id: "difficultyLevel", label: "☆"},

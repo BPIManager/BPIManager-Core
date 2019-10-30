@@ -12,7 +12,7 @@ export const convertClearState = (original:string|number,direction:number):strin
     return lampCSVArray.indexOf(original);
   }else{
     if(typeof original !== "number"){return 1;}
-    return lampArray[original];
+    return lampCSVArray[original];
   }
 }
 
@@ -27,4 +27,39 @@ export const _prefixFromNum = (difficulty:string):string=>{
     prefix = "(†)";
   }
   return prefix;
+}
+
+export const difficultyDiscriminator = (difficulty:string):string=>{
+  let diff:string = "another";
+  if(difficulty === "3" || difficulty === "8"){
+    diff = "hyper";
+  }
+  if(difficulty === "10" || difficulty === "11"){
+    diff = "leggendaria";
+  }
+  return diff;
+}
+
+export const getSongSuffixForIIDXInfo = (name:string,difficulty:string):string=>{
+  if(difficulty === "3" || difficulty === "8"){
+    return "[H]";
+  }
+  if(difficulty === "4" || difficulty === "9"){
+    return "[A]";
+  }
+  if(difficulty === "10" || difficulty === "11"){
+    switch(name){
+      default:
+        return "†[A]";
+      case "Ancient Scapes":
+      case "Close the World feat.a☆ru":
+      case "Feel The Beat":
+      case "invoker":
+      case "Sigmund":
+      case "Verflucht":
+      case "疾風迅雷":
+        return "†LEGGENDARIA[A]";
+    }
+  }
+  return "";
 }

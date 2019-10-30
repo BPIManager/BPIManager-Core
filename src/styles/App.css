@@ -102,3 +102,10 @@ a.link:hover{
 #detailedScreen .MuiGrid-root.MuiGrid-container{
   justify-content: space-between;
 }
+
+.loaderCentered{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  height:30vh;
+}

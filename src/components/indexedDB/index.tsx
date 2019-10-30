@@ -11,9 +11,10 @@ const storageWrapper = class extends Dexie{
   constructor(){
     super("ScoreCoach");
     this.version(1).stores({
-      scores : "title,*difficulty,*difficultyLevel,*version,currentBPI,exScore,Pgreat,great,missCount,clearState,DJLevel,lastPlayed,storedAt,isImported,updatedAt",
+      scores : "title,*difficulty,*difficultyLevel,*version,currentBPI,exScore,Pgreat,great,missCount,clearState,DJLevel,lastPlayed,storedAt,isSingle,isImported,updatedAt",
       songs : "&++num,title,*difficulty,*difficultyLevel,wr,avg,notes,bpm,textage,dpLevel,isCreated,isFavorited,[title+difficulty]",
-      stores : "&name,updatedAt"
+      stores : "&name,updatedAt",
+      scoreHistory : "title,difficulty,storedAt,exScore,BPI,updatedAt"
     });
     this.scores = this.table("scores");
     this.songs = this.table("songs");
@@ -39,8 +40,8 @@ export const scoresDB = class extends storageWrapper{
     return await this.scores.clear();
   }
 
-  getItem(title:string):Promise<string[]>{
-    return this.scores.where({title:title}).toArray();
+  getItem(title:string,difficulty:string,storedAt:string):Promise<scoreData[]>{
+    return this.scores.where({title:title,difficulty:difficulty,storedAt:storedAt}).toArray();
   }
 
   async resetItems(storedAt:string):Promise<number>{
@@ -51,7 +52,7 @@ export const scoresDB = class extends storageWrapper{
     return await this.scores.where({isImported:"true"}).delete();
   }
 
-  async setItem(item:any,isImported = true):Promise<any>{
+  async setItem(item:any):Promise<any>{
     return await this.scores.put({
       title:item["title"],
       version:item["version"],
@@ -66,7 +67,7 @@ export const scoresDB = class extends storageWrapper{
       DJLevel:item["DJLevel"],
       lastPlayed:item["lastPlayed"],
       storedAt:item["storedAt"],
-      isImported:isImported,
+      isSingle:item["isSingle"],
       updatedAt : item["updatedAt"]
     })
   }
@@ -85,10 +86,16 @@ export const songsDB = class extends storageWrapper{
     this.songs = this.table("songs");
   }
 
-  async getAll(isSingle:boolean = true):Promise<any[]>{
-    return isSingle ?
-      await this.songs.where("dpLevel").equals("0").toArray() :
-      await this.songs.where("dpLevel").notEqual("0").toArray();
+  async getAll(isSingle:boolean = true,willCollection:boolean = false):Promise<any>{
+    const data =  isSingle ?
+      await this.songs.where("dpLevel").equals("0") :
+      await this.songs.where("dpLevel").notEqual("0");
+    return willCollection ? data : data.toArray();
+  }
+
+  async getAllFavoritedItems(isSingle:boolean = true):Promise<any[]>{
+    const data = await this.getAll(isSingle,true);
+    return data.and((item:songData)=>item.isFavorited === true).toArray();
   }
 
   async deleteAll():Promise<void>{
@@ -103,9 +110,10 @@ export const songsDB = class extends storageWrapper{
     const diffs = ():string=>{
       switch(difficulty){
         case "hyper":return "3";
-        default:
         case "another":return "4";
         case "leggendaria":return "10";
+        default:
+        return difficulty;
       }
     };
     return await this.songs.where("[title+difficulty]").equals([title,diffs()]).toArray();
@@ -133,9 +141,9 @@ export const songsDB = class extends storageWrapper{
   }
 
   async toggleFavorite(title:string,difficulty:string,newState:boolean):Promise<any>{
-    return await this.songs.update({title:title,difficulty:difficulty},{
+    return await this.songs.where({title:title,difficulty:difficulty}).modify({
       isFavorited:newState
-    })
+    });
   }
 
   async removeItem(title:string):Promise<number>{

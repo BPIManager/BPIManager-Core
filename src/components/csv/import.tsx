@@ -60,11 +60,15 @@ export default class importCSV {
             clearState:clearState,
             DJLevel:p[eachObjNum[7]],
             lastPlayed:p[eachObjNum[8]],
+            storedAt:"27",
+            isSingle:true,
+            isImported:true,
           });
         }
         self.result = result;
         return resolve(result.length);
       }catch(e){
+        console.log(e);
         return reject(e);
       }
     });

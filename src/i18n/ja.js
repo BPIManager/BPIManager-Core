@@ -42,11 +42,28 @@ const ja = {
   "Songs.mode6":"EX-HARD CLEAR狙い",
   "Songs.mode7":"FULLCOMBO狙い",
   "Songs.legend":"凡例および使用方法を確認する場合は、ここをクリックしてヘルプを表示してください",
+  "Details.SaveButton":"保存",
   "Details.typeNewScore":"あなたの自己ベスト",
   "Details.FavButton":"お気に入り",
+  "Details.FavButtonRemove":"お気に入り解除",
+  "Details.FavButtonRemoved":"お気に入りから削除しました。",
+  "Details.FavButtonAdded":"お気に入り登録しました。",
   "Details.Graph":"グラフ",
   "Details.Details":"詳細",
-  "Common.Tweet":"ツイート"
+  "Details.ErrorIIDXInfo":"IIDXInfoは☆12楽曲でのみ利用できます。",
+  "Common.Tweet":"ツイート",
+  "SongDetail.SongDetailHead":"楽曲",
+  "SongDetail.Notes":"ノート数",
+  "SongDetail.WorldRecord":"全一",
+  "SongDetail.Average":"皆伝平均",
+  "SongDetail.You":"あなた",
+  "SongDetail.Version":"バージョン",
+  "SongDetail.ScoreDetailHead":"プレイ状態",
+  "SongDetail.ClearState":"ランプ",
+  "SongDetail.MissCount":"ミスカウント",
+  "SongDetail.LastPlayed":"最終プレイ",
+  "SongDetail.ScoreDetails":"詳細",
+  "Favorites.Title":"お気に入り"
 };
 
 export default ja;
