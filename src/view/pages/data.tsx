@@ -49,7 +49,6 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
             difficultyLevel:calcData.difficultyLevel,
             currentBPI : calcData.bpi,
             storedAt : localStorage.getItem("storedAt") || "27",
-            isSingle: true,
             isImported: true,
             updatedAt : timeFormatter(0),
           }

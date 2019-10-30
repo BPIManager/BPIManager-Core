@@ -63,7 +63,8 @@ const ja = {
   "SongDetail.MissCount":"ミスカウント",
   "SongDetail.LastPlayed":"最終プレイ",
   "SongDetail.ScoreDetails":"詳細",
-  "Favorites.Title":"お気に入り"
+  "Favorites.Title":"お気に入り",
+  "NotPlayed.Title":"未プレイ楽曲"
 };
 
 export default ja;

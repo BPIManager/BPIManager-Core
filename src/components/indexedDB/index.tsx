@@ -11,7 +11,7 @@ const storageWrapper = class extends Dexie{
   constructor(){
     super("ScoreCoach");
     this.version(1).stores({
-      scores : "title,*difficulty,*difficultyLevel,*version,currentBPI,exScore,Pgreat,great,missCount,clearState,DJLevel,lastPlayed,storedAt,isSingle,isImported,updatedAt",
+      scores : "title,*difficulty,*difficultyLevel,*version,currentBPI,exScore,Pgreat,great,missCount,clearState,DJLevel,lastPlayed,storedAt,isSingle,isImported,updatedAt,[title+difficulty+storedAt+isSingle]",
       songs : "&++num,title,*difficulty,*difficultyLevel,wr,avg,notes,bpm,textage,dpLevel,isCreated,isFavorited,[title+difficulty]",
       stores : "&name,updatedAt",
       scoreHistory : "title,difficulty,storedAt,exScore,BPI,updatedAt"
@@ -40,8 +40,8 @@ export const scoresDB = class extends storageWrapper{
     return await this.scores.clear();
   }
 
-  getItem(title:string,difficulty:string,storedAt:string):Promise<scoreData[]>{
-    return this.scores.where({title:title,difficulty:difficulty,storedAt:storedAt}).toArray();
+  getItem(title:string,difficulty:string,storedAt:string,isSingle:number):Promise<scoreData[]>{
+    return this.scores.where("[title+difficulty+storedAt+isSingle]").equals([title,difficulty,storedAt,isSingle]).toArray();
   }
 
   async resetItems(storedAt:string):Promise<number>{
@@ -68,6 +68,7 @@ export const scoresDB = class extends storageWrapper{
       lastPlayed:item["lastPlayed"],
       storedAt:item["storedAt"],
       isSingle:item["isSingle"],
+      isImported:true,
       updatedAt : item["updatedAt"]
     })
   }
@@ -86,14 +87,14 @@ export const songsDB = class extends storageWrapper{
     this.songs = this.table("songs");
   }
 
-  async getAll(isSingle:boolean = true,willCollection:boolean = false):Promise<any>{
-    const data =  isSingle ?
+  async getAll(isSingle:number = 1,willCollection:boolean = false):Promise<any>{
+    const data = isSingle === 1 ?
       await this.songs.where("dpLevel").equals("0") :
       await this.songs.where("dpLevel").notEqual("0");
     return willCollection ? data : data.toArray();
   }
 
-  async getAllFavoritedItems(isSingle:boolean = true):Promise<any[]>{
+  async getAllFavoritedItems(isSingle:number = 1):Promise<any[]>{
     const data = await this.getAll(isSingle,true);
     return data.and((item:songData)=>item.isFavorited === true).toArray();
   }

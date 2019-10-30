@@ -54,23 +54,19 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
 
   constructor(props:P){
     super(props);
-    let showCharts = false;
-    if(props.score && props.song && props.song.notes && props.song.avg && props.song.wr && props.score.exScore){
-      showCharts = true;
-      this.state = {
-        isError:false,
-        newScore: NaN,
-        newBPI:NaN,
-        showCharts : showCharts,
-        chartData:this.makeGraph().reverse(),
-        favorited:props.song.isFavorited,
-        currentTab:0,
-        anchorEl:null,
-        successSnack:false,
-        errorSnack:false,
-        errorSnackMessage:"",
-        graphLastUpdated:new Date().getTime()
-      }
+    this.state = {
+      isError:false,
+      newScore: NaN,
+      newBPI:NaN,
+      showCharts : true,
+      chartData:this.makeGraph().reverse(),
+      favorited:props.song ? props.song.isFavorited : false,
+      currentTab:0,
+      anchorEl:null,
+      successSnack:false,
+      errorSnack:false,
+      errorSnackMessage:"",
+      graphLastUpdated:new Date().getTime()
     }
   }
 
@@ -223,7 +219,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       <Dialog id="detailedScreen" fullScreen open={isOpen} onClose={handleOpen} style={{overflowX:"hidden",width:"100%"}}>
         <AppBar>
           <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={()=>handleOpen(true)} aria-label="close">
+            <IconButton edge="start" color="inherit" onClick={()=>handleOpen(false)} aria-label="close">
               <CloseIcon />
             </IconButton>
             <Typography variant="h6" className="be-ellipsis" style={{flexGrow:1}}>
@@ -244,8 +240,9 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
                 BPI
               </Typography>
               <Typography component="h4" variant="h4" color="textPrimary">
-                {(score && Number.isNaN(newBPI)) && score.currentBPI}
-                {(!Number.isNaN(newBPI)) && newBPI}
+                {(score && Number.isNaN(newBPI) && !Number.isNaN(score.currentBPI)) && score.currentBPI}
+                {!Number.isNaN(newBPI) && newBPI}
+                {(Number.isNaN(score.currentBPI) && Number.isNaN(newBPI)) && <span>-</span>}
               </Typography>
             </Grid>
             <Grid item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0"}}>
@@ -261,7 +258,8 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
                 RANK
               </Typography>
               <Typography component="h4" variant="h4" color="textPrimary">
-                {score && <span>{this.calcRank()}</span>}
+                {(!Number.isNaN(score.currentBPI) || !Number.isNaN(newBPI)) && <span>{this.calcRank()}</span>}
+                {(Number.isNaN(score.currentBPI) && Number.isNaN(newBPI)) && <span>-</span>}
               </Typography>
             </Grid>
           </Grid>

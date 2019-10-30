@@ -61,7 +61,7 @@ export default class importCSV {
             DJLevel:p[eachObjNum[7]],
             lastPlayed:p[eachObjNum[8]],
             storedAt:"27",
-            isSingle:true,
+            isSingle:1,
             isImported:true,
           });
         }

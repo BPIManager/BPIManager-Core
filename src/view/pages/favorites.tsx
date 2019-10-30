@@ -1,5 +1,5 @@
 import * as React from 'react';
-import SongsList from '../components/songs/songsList';
+import SongsList from '../components/songs/played/songsList';
 import { scoresDB, songsDB } from '../../components/indexedDB';
 import { scoreData, songData } from '../../types/data';
 import { difficultyDiscriminator } from '../../components/songs/filter';
@@ -26,12 +26,30 @@ export default class Songs extends React.Component<{},S> {
     const songs:songData[] = await new songsDB().getAllFavoritedItems();
     const db = new scoresDB();
     const currentStore = "27";
-    const isSingle = true;
+    const isSingle = 1;
     let full:scoreData[] = [];
     for(let i =0;i < songs.length;++i){
       const song = songs[i];
-      const res = await db.getItem(song.title,difficultyDiscriminator(song.difficulty),currentStore);
-      if(res && (isSingle && res[0]["isSingle"] === true) ) full.push(res[0]);
+      const d = difficultyDiscriminator(song.difficulty);
+      const res = await db.getItem(song.title,d,currentStore,isSingle);
+      if((isSingle && song["dpLevel"] !== "0") || (!isSingle && song["dpLevel"] === "0")){
+        continue;
+      }
+      if(res.length === 0){
+        full.push({
+          title:song.title,
+          clearState:7,
+          currentBPI:-15,
+          difficulty:d,
+          difficultyLevel:song.difficultyLevel,
+          exScore:0,
+          isSingle:isSingle,
+          storedAt:currentStore,
+          DJLevel:"-",
+        });
+      }else{
+        full.push(res[0]);
+      }
     }
     this.setState({full:full});
   }

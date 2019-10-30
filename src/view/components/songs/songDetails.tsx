@@ -46,7 +46,7 @@ class SongDetails extends React.Component<P,{}> {
                 <TableCell><FormattedMessage id="SongDetail.Average"/></TableCell>
                 <TableCell>{song.avg}({Math.floor(song.avg / max * 10000)  / 100}%)</TableCell>
               </TableRow>
-              { score.exScore &&
+              { !Number.isNaN(score.exScore) &&
                 <TableRow>
                   <TableCell><FormattedMessage id="SongDetail.You"/></TableCell>
                   <TableCell>{score.exScore}({Math.floor(score.exScore / max * 10000) / 100}%)</TableCell>

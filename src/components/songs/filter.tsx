@@ -1,5 +1,5 @@
 export const lampArray:string[] = [
-  "FAILED","ASSIST","EASY","CLEAR","HARD","EX-HARD","FULLCOMBO"
+  "FAILED","ASSIST","EASY","CLEAR","HARD","EX-HARD","FULLCOMBO","UNKNOWN"
 ];
 export const lampCSVArray:string[] = [
   "FAILED","ASSIST CLEAR","EASY CLEAR","CLEAR","HARD CLEAR","EX HARD CLEAR","FULLCOMBO CLEAR"

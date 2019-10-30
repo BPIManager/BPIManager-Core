@@ -96,7 +96,7 @@ class GlobalHeader extends React.Component<HideOnScrollProps,{isOpen:boolean}>{
                 <ListItemText primary={<FormattedMessage id="GlobalNav.SongList"/>} />
               </ListItem>
             </Link>
-            <Link to="/unregisteredSongs" className="forceTextColorBlack" onClick={this.toggleNav}>
+            <Link to="/notPlayed" className="forceTextColorBlack" onClick={this.toggleNav}>
               <ListItem button>
                 <ListItemIcon><BorderColorIcon /></ListItemIcon>
                 <ListItemText primary={<FormattedMessage id="GlobalNav.unregisteredSongs"/>} />

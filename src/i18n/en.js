@@ -4,7 +4,7 @@ const ja = {
   "GlobalNav.Data": "Data",
   "GlobalNav.FavoriteSongs": "Favorite Songs",
   "GlobalNav.SongList": "Songs",
-  "GlobalNav.unregisteredSongs": "Songs not done yet",
+  "GlobalNav.unregisteredSongs": "Songs not played yet",
   "GlobalNav.Statistics": "Statistics",
   "GlobalNav.Settings": "Settings",
   "Index.heroText": "Easily manage your scores of beatmania IIDX and visualize as BPI, in Web.",
@@ -63,7 +63,8 @@ const ja = {
   "SongDetail.MissCount":"Miss Count",
   "SongDetail.LastPlayed":"Last Played",
   "SongDetail.ScoreDetails":"Detail",
-  "Favorites.Title":"Favorites"
+  "Favorites.Title":"Favorites",
+  "NotPlayed.Title":"Not Played yet"
 };
 
 export default ja;
