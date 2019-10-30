@@ -22,6 +22,7 @@ import StarIcon from '@material-ui/icons/Star';
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { withRouter, RouteComponentProps } from "react-router-dom";
+import {songsDB} from "../../../components/indexedDB";
 
 interface P{
   isOpen:boolean,
@@ -38,6 +39,7 @@ interface S{
   chartData:any[],
   currentTab:number,
   anchorEl:null | HTMLElement,
+  favorited:boolean,
 }
 
 class DetailedSongInformation extends React.Component<P & RouteComponentProps,S> {
@@ -69,15 +71,16 @@ class DetailedSongInformation extends React.Component<P & RouteComponentProps,S>
         lastExScore = exScoreFromBPI;
         dataInserter(exScoreFromBPI,String(bpiBasis[i]));
       }
-    }
-    this.state = {
-      isError:false,
-      newScore: NaN,
-      newBPI:NaN,
-      showCharts : showCharts,
-      chartData:data.reverse(),
-      currentTab:0,
-      anchorEl:null,
+      this.state = {
+        isError:false,
+        newScore: NaN,
+        newBPI:NaN,
+        showCharts : showCharts,
+        chartData:data.reverse(),
+        favorited:props.song.isFavorited,
+        currentTab:0,
+        anchorEl:null,
+      }
     }
   }
   handleScoreInput = (e: React.ChangeEvent<HTMLInputElement>):void=>{
@@ -108,13 +111,29 @@ class DetailedSongInformation extends React.Component<P & RouteComponentProps,S>
     return this.toggleMenu();
   }
 
+  toggleFavorited = async():Promise<void>=>{
+    try{
+      const {favorited} = this.state;
+      const {song} = this.props;
+      const db = new songsDB();
+      if(!song){
+        throw new Error();
+      }
+      await db.toggleFavorite(song.title,song.difficulty,!favorited)
+    }catch(e){
+      console.log(e);
+    }
+    return;
+  }
+
   render(){
     const {isOpen,handleOpen,song,score} = this.props;
-    const {newScore,showCharts,chartData,currentTab,anchorEl} = this.state;
+    const {newScore,showCharts,chartData,currentTab,anchorEl,favorited} = this.state;
     if(!song || !score){
       return (null);
     }
     const max = song.notes ? song.notes * 2 : 0;
+    const detectStarIconColor = favorited ? "" : "#c3c3c3";
     return (
       <Dialog id="detailedScreen" fullScreen open={isOpen} onClose={handleOpen} style={{overflowX:"hidden",width:"100%"}}>
         <AppBar>
@@ -155,7 +174,7 @@ class DetailedSongInformation extends React.Component<P & RouteComponentProps,S>
             </Grid>
             <Grid item xs={1} style={{display:"flex",alignItems:"center",justifyContent:"flex-end"}}>
               <div style={{margin:"10px 6px 0"}}>
-                <StarIcon style={{fontSize:"35px",color:"#c3c3c3",position:"relative",top:"3px"}}/>
+                <StarIcon style={{fontSize:"35px",color:detectStarIconColor,position:"relative",top:"3px"}} onClick={this.toggleFavorited}/>
               </div>
             </Grid>
             <Grid item xs={1} style={{display:"flex",alignItems:"center",justifyContent:"flex-end"}}>

@@ -132,6 +132,12 @@ export const songsDB = class extends storageWrapper{
     })
   }
 
+  async toggleFavorite(title:string,difficulty:string,newState:boolean):Promise<any>{
+    return await this.songs.update({title:title,difficulty:difficulty},{
+      isFavorited:newState
+    })
+  }
+
   async removeItem(title:string):Promise<number>{
     return await this.songs.where({title:title}).delete();
   }
