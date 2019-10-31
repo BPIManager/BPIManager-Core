@@ -23,10 +23,10 @@ export default class Songs extends React.Component<{},S> {
   }
 
   async updateScoreData(){
-    const songs:songData[] = await new songsDB().getAllFavoritedItems();
     const db = new scoresDB();
     const currentStore = "27";
     const isSingle = 1;
+    const songs:songData[] = await new songsDB().getAllFavoritedItems(isSingle);
     let full:scoreData[] = [];
     for(let i =0;i < songs.length;++i){
       const song = songs[i];
@@ -46,6 +46,7 @@ export default class Songs extends React.Component<{},S> {
           isSingle:isSingle,
           storedAt:currentStore,
           DJLevel:"-",
+          updatedAt:"-",
         });
       }else{
         full.push(res[0]);

@@ -14,8 +14,10 @@ export interface scoreData{
   DJLevel:string,
   lastPlayed?:string,
   storedAt:string,
+  updatedAt:string,
   isSingle:number,
   isImported?:boolean,
+  _isAvailable?:boolean,
 }
 
 export interface songData{

@@ -109,3 +109,13 @@ a.link:hover{
   justify-content: center;
   height:30vh;
 }
+
+@media screen and (min-width:992px){
+  .responsiveTotalBPI{
+    height:240px !important;
+  }
+}
+
+@media screen and (max-width:1399px){
+  .xsInvisible{ display:none; }
+}

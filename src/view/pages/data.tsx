@@ -3,7 +3,7 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { FormattedMessage } from "react-intl";
-import {scoresDB} from "../../components/indexedDB";
+import {scoresDB, scoreHistoryDB} from "../../components/indexedDB";
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
 
@@ -12,6 +12,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import importCSV from "../../components/csv/import";
 import bpiCalculator from "../../components/bpi";
 import timeFormatter from "../../components/common/timeFormatter";
+import { _currentStore, _isSingle } from '../../components/settings';
 
 export default class Index extends React.Component<{},{raw:string,isSnackbarOpen:boolean,stateText:string,errors:string[]}> {
 
@@ -29,30 +30,30 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
   async execute(){
     try{
       let errors = [];
-      const executor = new importCSV(this.state.raw);
+      const executor = new importCSV(this.state.raw,_isSingle(),_currentStore());
       const calc = new bpiCalculator();
       const exec = await executor.execute();
       if(!exec){
         throw new Error("CSVデータの形式が正しくありません");
       }
-      const result = executor.getResult();
+      const result = executor.getResult(),resultHistory = executor.getResultHistory();
       for(let i = 0;i < result.length;++i){
         const calcData = await calc.calc(result[i]["title"],result[i]["difficulty"],result[i]["exScore"])
         if(calcData.error && calcData.reason){
           errors.push(result[i]["title"] + " - " + calcData.reason);
           continue;
         }
-        await new scoresDB().resetImportedItems();
-        await new scoresDB().setItem(Object.assign(
+        const s = new scoresDB(), h = new scoreHistoryDB();
+        await s.resetImportedItems();
+        await s.setItem(Object.assign(
           result[i],
           {
             difficultyLevel:calcData.difficultyLevel,
             currentBPI : calcData.bpi,
-            storedAt : localStorage.getItem("storedAt") || "27",
             isImported: true,
-            updatedAt : timeFormatter(0),
           }
         ));
+        await h.add(Object.assign(resultHistory[i],{difficultyLevel:calcData.difficultyLevel}),{currentBPI:calcData.bpi,exScore:resultHistory[i].exScore},true);
       }
       return this.setState({raw:"",isSnackbarOpen:true,stateText:"Data.Success",errors:errors});
     }catch(e){

@@ -23,6 +23,7 @@ import { _prefix, _prefixFromNum } from '../../../../components/songs/filter';
 import equal from 'fast-deep-equal'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { _isSingle } from '../../../../components/settings';
+import moment from 'moment';
 
 interface stateInt {
   isLoading:boolean,
@@ -33,6 +34,7 @@ interface stateInt {
   sort:number,
   isDesc:boolean,
   mode:number,
+  range:number,
 }
 
 interface P{
@@ -56,7 +58,8 @@ export default class SongsList extends React.Component<P,stateInt> {
       options:{
         level:["11","12"],
         difficulty:["0","1","2"],
-      }
+      },
+      range:0,
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
@@ -113,11 +116,17 @@ export default class SongsList extends React.Component<P,stateInt> {
   songFilter = (newState:{[s:string]:any} = this.state) =>{
     const diffs:string[] = ["hyper","another","leggendaria"];
     if(Object.keys(this.state.allSongsData).length === 0){return [];}
-    console.log(this.props.full);
     return this.props.full.filter((data)=>{
       const m = newState.mode;
+      const r = newState.range;
       const f = this.state.allSongsData;
       const max = f[data.title + _prefix(data["difficulty"])]["notes"] * 2;
+      const evaluateRange = ():boolean=>{
+        const format = (t:string|Date)=>moment(t).format("YYYYMMDD");
+        return r === 0 ? true :
+        r === 1 ? format(data.updatedAt) === format(new Date()) :
+        moment(data.updatedAt).week() === moment(new Date()).week()
+      }
       const evaluateMode = ():boolean=>{
         return m === 0 ? true :
         m === 1 ? data.exScore / max < 2 / 3 :
@@ -129,6 +138,7 @@ export default class SongsList extends React.Component<P,stateInt> {
         m === 7 ? data.clearState <= 5 : true
       }
       return (
+        evaluateRange() &&
         evaluateMode() &&
         newState["options"]["level"].some((item:string)=>{
           return item === data.difficultyLevel }) &&
@@ -183,13 +193,20 @@ export default class SongsList extends React.Component<P,stateInt> {
     return this.setState({scoreData:this.songFilter(newState),mode:event.target.value});
   }
 
+  handleRangeCange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
+    if (typeof event.target.value !== "number") { return; }
+    let newState = this.cloneState();
+    newState.range = event.target.value;
+    return this.setState({scoreData:this.songFilter(newState),range:event.target.value});
+  }
+
   // readonly修飾子が付いているデータに一時的な書き込みをするための措置
   // (曲目フィルタのためにのみ使用し、stateには反映しない)
   // アンチパターンなのでなんとかする
   cloneState = () => JSON.parse(JSON.stringify(this.state))
 
   render(){
-    const {isLoading,filterByName,options,sort,isDesc,mode} = this.state;
+    const {isLoading,filterByName,options,sort,isDesc,mode,range} = this.state;
     if(isLoading){
       return (
         <Container className="loaderCentered">
@@ -201,6 +218,13 @@ export default class SongsList extends React.Component<P,stateInt> {
         <Typography component="h4" variant="h4" color="textPrimary" gutterBottom
           style={{display:"flex",justifyContent:"space-between"}}>
           <FormattedMessage id={this.props.title}/>
+          <FormControl>
+            <Select value={range} displayEmpty onChange={this.handleRangeCange}>
+              <MenuItem value={0}>全期間</MenuItem>
+              <MenuItem value={1}>本日更新分</MenuItem>
+              <MenuItem value={2}>今週更新分</MenuItem>
+            </Select>
+          </FormControl>
         </Typography>
         <Grid container spacing={1} style={{margin:"5px 0"}}>
           <Grid item xs={6}>
@@ -234,7 +258,7 @@ export default class SongsList extends React.Component<P,stateInt> {
           </Grid>
         </Grid>
         <Grid container spacing={1} id="mainFilters" style={{margin:"5px 0"}}>
-          <Grid item xs={6}>
+          <Grid item xs={6} lg={4}>
             <FormControl component="fieldset">
               <FormLabel component="legend"><FormattedMessage id="Songs.filterByLevel"/></FormLabel>
               <FormGroup row>
@@ -249,7 +273,7 @@ export default class SongsList extends React.Component<P,stateInt> {
               </FormGroup>
             </FormControl>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={6} lg={4}>
             <FormControl component="fieldset">
               <FormLabel component="legend"><FormattedMessage id="Songs.filterByDifficulty"/></FormLabel>
               <FormGroup row>

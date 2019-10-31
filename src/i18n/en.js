@@ -42,6 +42,7 @@ const ja = {
   "Songs.mode6":"new EX-HARD CLEAR",
   "Songs.mode7":"new FULLCOMBO",
   "Songs.legend":"To see legends and usage, click here and go to help",
+  "Songs.updatedToday":"Only displays the scores updated today",
   "Details.SaveButton":"Save",
   "Details.typeNewScore":"My Record",
   "Details.FavButton":"Favorite",
@@ -64,7 +65,11 @@ const ja = {
   "SongDetail.LastPlayed":"Last Played",
   "SongDetail.ScoreDetails":"Detail",
   "Favorites.Title":"Favorites",
-  "NotPlayed.Title":"Not Played yet"
+  "NotPlayed.Title":"Not Played yet",
+  "Stats.title":"Statistics",
+  "Stats.TotalBPI":"Total BPI",
+  "Stats.BPIOfEachDay":"BPI by the day",
+  "Stats.UpdatedSongs":"New records",
 };
 
 export default ja;

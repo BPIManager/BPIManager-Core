@@ -20,9 +20,9 @@ import Tab from "@material-ui/core/Tab";
 import StarIcon from '@material-ui/icons/Star';
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import {songsDB} from "../../../components/indexedDB";
+import {songsDB,scoresDB,scoreHistoryDB} from "../../../components/indexedDB";
 import ShowSnackBar from "../snackBar";
-import {Tooltip as TooltipMUI, Button} from '@material-ui/core';
+import {Tooltip as TooltipMUI, Button, CircularProgress} from '@material-ui/core';
 import BPIChart from "./bpiChart";
 import SongDetails from "./songDetails";
 
@@ -46,6 +46,7 @@ interface S{
   errorSnack:boolean,
   errorSnackMessage:string,
   graphLastUpdated:number,
+  isSaving:boolean,
 }
 
 class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
@@ -66,7 +67,8 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       successSnack:false,
       errorSnack:false,
       errorSnackMessage:"",
-      graphLastUpdated:new Date().getTime()
+      graphLastUpdated:new Date().getTime(),
+      isSaving:false,
     }
   }
 
@@ -100,6 +102,9 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
 
   handleScoreInput = async(e:React.FocusEvent<HTMLInputElement>):Promise<void>=>{
     const {song} = this.props;
+    if(this.state.isSaving){
+      return this.setState({errorSnack:true,errorSnackMessage:"保存中です"});
+    }
     if(!song){
       return this.setState({errorSnack:true,errorSnackMessage:"楽曲データが不正です。"});
     }
@@ -170,6 +175,21 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
 
   calcRank = ()=> this.props.score ? `${this.calc.rank(!Number.isNaN(this.state.newBPI) ? this.state.newBPI : this.props.score.currentBPI)}` : "-";
 
+  saveAndClose = async()=>{
+    try{
+      const {newBPI,newScore} = this.state;
+      const {score,song} = this.props;
+      if(!song){return;}
+      this.setState({isSaving:true});
+      const scores = new scoresDB(), scoreHist = new scoreHistoryDB();
+      await scores.updateScore(score,{currentBPI:newBPI,exScore:newScore});
+      await scoreHist.add(Object.assign(score,{difficultyLevel:song.difficultyLevel}),{currentBPI:newBPI,exScore:newScore});
+      this.props.handleOpen(true);
+    }catch(e){
+      return this.setState({errorSnack:true,errorSnackMessage:e});
+    }
+  }
+
   showRank = (isBody:boolean):string=>{
     const {song,score} = this.props;
     const {newScore} = this.state;
@@ -210,7 +230,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
   render(){
     const {formatMessage} = this.props.intl;
     const {isOpen,handleOpen,song,score} = this.props;
-    const {newScore,newBPI,showCharts,chartData,currentTab,anchorEl,favorited,successSnack,errorSnack,errorSnackMessage} = this.state;
+    const {isSaving,newScore,newBPI,showCharts,chartData,currentTab,anchorEl,favorited,successSnack,errorSnack,errorSnackMessage} = this.state;
     if(!song || !score){
       return (null);
     }
@@ -226,9 +246,12 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
               {song.title + _prefixFromNum(song.difficulty)}
             </Typography>
             {(!Number.isNaN(newBPI) || !Number.isNaN(newScore)) &&
-              <Button variant="contained" color="secondary">
-                <FormattedMessage id="Details.SaveButton"/>
-              </Button>
+              <div style={{position:"relative"}}>
+                <Button variant="contained" color="secondary" onClick={this.saveAndClose} disabled={isSaving}>
+                  <FormattedMessage id="Details.SaveButton"/>
+                </Button>
+                {isSaving && <CircularProgress size={24} style={{color:"#ccc",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
+              </div>
             }
           </Toolbar>
         </AppBar>

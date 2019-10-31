@@ -58,7 +58,8 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
       storedAt:_currentStore(),
       isSingle:_isSingle(),
       clearState:7,
-      DJLevel:"-"
+      DJLevel:"-",
+      updatedAt:"-",
     } : null;
     return this.setState({
       isOpen:!this.state.isOpen,

@@ -6,6 +6,7 @@ import Data from "../view/pages/data";
 import Songs from "../view/pages/songs";
 import Favorite from "../view/pages/favorites";
 import NotPlayed from "../view/pages/notPlayed";
+import Stats from "../view/pages/stats";
 import {BrowserRouter, Route} from "react-router-dom";
 
 
@@ -22,7 +23,7 @@ export default class Router extends React.Component<{},{}> {
   }
 
   render(){
-    const lc = "en";
+    const lc = "ja";
     return (
       <IntlProvider
         locale={lc}
@@ -35,6 +36,7 @@ export default class Router extends React.Component<{},{}> {
           <Route path="/songs" exact component={Songs}/>
           <Route path="/favorite" exact component={Favorite}/>
           <Route path="/notPlayed" exact component={NotPlayed}/>
+          <Route path="/stats" exact component={Stats}/>
         </BrowserRouter>
       </IntlProvider>
     );

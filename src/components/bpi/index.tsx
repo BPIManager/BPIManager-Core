@@ -1,4 +1,5 @@
 import {songsDB} from "../indexedDB";
+import { scoreData } from "../../types/data";
 
 export interface B{
   error:boolean,bpi:number,reason?:any,difficultyLevel?:number
@@ -6,10 +7,10 @@ export interface B{
 
 export default class bpiCalcuator{
   songsDB:any;
-  isSingle: boolean;
+  isSingle: number;
 
   constructor(){
-    this.isSingle = true;
+    this.isSingle = 1;
     this.songsDB = new songsDB();
   }
 
@@ -18,7 +19,7 @@ export default class bpiCalcuator{
 
   async calc(songTitle:string,difficulty:string,exScore:number):Promise<B>{
     try{
-      const songData = this.isSingle ?
+      const songData = this.isSingle === 1 ?
         await this.songsDB.getOneItemIsSingle(songTitle,difficulty) :
         await this.songsDB.getOneItemIsDouble(songTitle,difficulty);
 
@@ -82,5 +83,28 @@ export default class bpiCalcuator{
 
   rank(bpi:number):number{
     return Math.ceil(Math.pow(2616, (100 - bpi ) / 100 ));
+  }
+
+  _allTwelvesLength:number = 0;
+  _allTwelvesBPI:number[] = [];
+
+  set allTwelvesLength(val: number){ this._allTwelvesLength = val }
+  set allTwelvesBPI(val: number[]){ this._allTwelvesBPI = val }
+
+  totalBPI():number{
+    let sum = 0,playedSongs = this._allTwelvesBPI.length;
+    if(playedSongs === 0){return -15;}
+    const k = Math.log2(this._allTwelvesLength);
+    for (let i=0; i < this._allTwelvesLength; ++i){
+      if(i < playedSongs){
+        const bpi = this._allTwelvesBPI[i]
+        if(bpi > 0){
+          sum += Math.pow( bpi, k ) / this._allTwelvesLength
+        }else{
+          sum += -Math.pow( Math.abs(bpi), k ) / this._allTwelvesLength
+        }
+      }
+    }
+    return Math.round(Math.pow(sum, 1 / k) * 100) / 100;
   }
 }

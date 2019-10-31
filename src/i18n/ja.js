@@ -42,6 +42,7 @@ const ja = {
   "Songs.mode6":"EX-HARD CLEAR狙い",
   "Songs.mode7":"FULLCOMBO狙い",
   "Songs.legend":"凡例および使用方法を確認する場合は、ここをクリックしてヘルプを表示してください",
+  "Songs.updatedToday":"本日更新分のみ表示",
   "Details.SaveButton":"保存",
   "Details.typeNewScore":"あなたの自己ベスト",
   "Details.FavButton":"お気に入り",
@@ -64,7 +65,11 @@ const ja = {
   "SongDetail.LastPlayed":"最終プレイ",
   "SongDetail.ScoreDetails":"詳細",
   "Favorites.Title":"お気に入り",
-  "NotPlayed.Title":"未プレイ楽曲"
+  "NotPlayed.Title":"未プレイ楽曲",
+  "Stats.title":"統計データ",
+  "Stats.TotalBPI":"総合BPI",
+  "Stats.BPIOfEachDay":"日別総合BPI",
+  "Stats.UpdatedSongs":"更新した楽曲",
 };
 
 export default ja;

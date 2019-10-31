@@ -1,17 +1,28 @@
 import {scoreData} from "../../types/data";
 import { convertClearState } from "../songs/filter";
+import timeFormatter from "../common/timeFormatter";
 
 export default class importCSV {
 
   rawData:string = "";
   result:scoreData[] = [];
+  resultHistory:any[] = [];
 
-  constructor(raw:string){
+  isSingle:number = 1;
+  currentStore:string = "";
+
+  constructor(raw:string,isSingle?:number,currentStore?:string){
     this.rawData = raw;
+    if(isSingle)this.isSingle = isSingle;
+    if(currentStore)this.currentStore = currentStore;
   }
 
   getResult():scoreData[]{
     return this.result;
+  }
+
+  getResultHistory():any[]{
+    return this.resultHistory;
   }
 
   execute():Promise<number>{
@@ -20,7 +31,7 @@ export default class importCSV {
       try{
         const splittedByBreak:string[] = self.rawData.split(/\r\n|\n/);
         const lengthSum:number = splittedByBreak.length;
-        let result = [];
+        let result = [],resultHistory = [];
         for(let i = 0; i < lengthSum; ++i){
           let eachObjNum:number[] = [];
           let t:string = "";
@@ -60,12 +71,24 @@ export default class importCSV {
             clearState:clearState,
             DJLevel:p[eachObjNum[7]],
             lastPlayed:p[eachObjNum[8]],
-            storedAt:"27",
-            isSingle:1,
+            storedAt:self.currentStore,
+            isSingle:self.isSingle,
             isImported:true,
+            updatedAt:timeFormatter(0)
+          });
+          resultHistory.push({
+            title:p[eachObjNum[1]],
+            exScore:Number(p[eachObjNum[2]]),
+            difficulty:t,
+            difficultyLevel:"-",
+            storedAt:self.currentStore,
+            isSingle:self.isSingle,
+            BPI:0,
+            updatedAt:p[eachObjNum[8]],
           });
         }
         self.result = result;
+        self.resultHistory = resultHistory;
         return resolve(result.length);
       }catch(e){
         console.log(e);
