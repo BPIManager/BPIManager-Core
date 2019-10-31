@@ -3,7 +3,7 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { FormattedMessage } from "react-intl";
-import {scoresDB} from "../../components/indexedDB";
+import {scoresDB, scoreHistoryDB} from "../../components/indexedDB";
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
 
@@ -12,15 +12,17 @@ import Snackbar from '@material-ui/core/Snackbar';
 import importCSV from "../../components/csv/import";
 import bpiCalculator from "../../components/bpi";
 import timeFormatter from "../../components/common/timeFormatter";
+import { _currentStore, _isSingle } from '../../components/settings';
 
-export default class Index extends React.Component<{},{raw:string,isSnackbarOpen:boolean,stateText:string}> {
+export default class Index extends React.Component<{},{raw:string,isSnackbarOpen:boolean,stateText:string,errors:string[]}> {
 
   constructor(props:Object){
     super(props);
     this.state = {
       raw: "",
       isSnackbarOpen:false,
-      stateText:"Data.Success"
+      stateText:"Data.Success",
+      errors:[]
     }
     this.execute = this.execute.bind(this);
   }
@@ -28,37 +30,34 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
   async execute(){
     try{
       let errors = [];
-      const executor = new importCSV(this.state.raw);
+      const executor = new importCSV(this.state.raw,_isSingle(),_currentStore());
       const calc = new bpiCalculator();
       const exec = await executor.execute();
       if(!exec){
-        throw new Error("no data");
+        throw new Error("CSVデータの形式が正しくありません");
       }
-      const result = executor.getResult();
+      const result = executor.getResult(),resultHistory = executor.getResultHistory();
       for(let i = 0;i < result.length;++i){
         const calcData = await calc.calc(result[i]["title"],result[i]["difficulty"],result[i]["exScore"])
         if(calcData.error && calcData.reason){
           errors.push(result[i]["title"] + " - " + calcData.reason);
           continue;
         }
-        await new scoresDB().resetImportedItems();
-        await new scoresDB().setItem(Object.assign(
+        const s = new scoresDB(), h = new scoreHistoryDB();
+        await s.resetImportedItems();
+        await s.setItem(Object.assign(
           result[i],
           {
             difficultyLevel:calcData.difficultyLevel,
             currentBPI : calcData.bpi,
-            storedAt : localStorage.getItem("storedAt") || "27",
-            isSingle: true,
             isImported: true,
-            updatedAt : timeFormatter(0),
           }
-        ),true);
+        ));
+        await h.add(Object.assign(resultHistory[i],{difficultyLevel:calcData.difficultyLevel}),{currentBPI:calcData.bpi,exScore:resultHistory[i].exScore},true);
       }
-      console.log(errors);
-      return this.setState({raw:"",isSnackbarOpen:true,stateText:"Data.Success"});
+      return this.setState({raw:"",isSnackbarOpen:true,stateText:"Data.Success",errors:errors});
     }catch(e){
-      console.log(e);
-      return this.setState({isSnackbarOpen:true,stateText:"Data.Failed"});
+      return this.setState({isSnackbarOpen:true,stateText:"Data.Failed",errors:[e.message]});
     }
   }
 
@@ -66,7 +65,7 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
   handleClose = ()=> this.setState({isSnackbarOpen:false});
 
   render(){
-    const {raw,isSnackbarOpen,stateText} = this.state;
+    const {raw,isSnackbarOpen,stateText,errors} = this.state;
     return (
       <Container className="commonLayout" fixed>
         <Snackbar
@@ -83,7 +82,7 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
         <Typography variant="body1" gutterBottom>
           <FormattedMessage id="Data.infoBulk"/><br/>
           <FormattedMessage id="Data.howToBulk1"/>
-          <a href="https://p.eagate.573.jp/game/2dx/27/djdata/score_download.html" target="_blank">
+          <a href="https://p.eagate.573.jp/game/2dx/27/djdata/score_download.html" target="_blank" rel="noopener noreferrer">
             <FormattedMessage id="Data.CSVURL"/>
           </a>
           <FormattedMessage id="Data.howToBulk2"/>
@@ -93,7 +92,7 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
           value={raw}
           style={{width:"100%"}}
           id="outlined-dense-multiline"
-          label="Copy here"
+          label="Paste here"
           margin="dense"
           variant="outlined"
           multiline
@@ -106,6 +105,7 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
           <FormattedMessage id="Data.Execute"/>
         </Button>
         <Divider variant="middle" style={{margin:"10px 0"}}/>
+        {errors && errors.map(item=><span>{item}<br/></span>)}
         <FormattedMessage id="Data.notPremium1"/>
         <Divider variant="middle" style={{margin:"10px 0"}}/>
         <Typography component="h4" variant="h4" color="textPrimary" gutterBottom>
