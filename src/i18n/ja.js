@@ -1,5 +1,5 @@
 const ja = {
-  "Top.Title": "名前未定",
+  "Top.Title": "BPIManager",
   "GlobalNav.Home": "ホーム",
   "GlobalNav.Data": "データ",
   "GlobalNav.FavoriteSongs": "お気に入り楽曲",
@@ -68,8 +68,15 @@ const ja = {
   "NotPlayed.Title":"未プレイ楽曲",
   "Stats.title":"統計データ",
   "Stats.TotalBPI":"総合BPI",
-  "Stats.BPIOfEachDay":"日別総合BPI",
+  "Stats.EachDay":"日別更新数/平均BPI",
   "Stats.UpdatedSongs":"更新した楽曲",
+  "Stats.UpdatedSum":"更新件数",
+  "Stats.Average":"平均BPI",
+  "Stats.LethalWeapon":"武器曲",
+  "Stats.PossibleToGetBetter":"伸びそうな曲",
+  "Settings.title":"設定",
+  "Settings.language":"言語",
+  "Settings.delete":"データのリセット"
 };
 
 export default ja;

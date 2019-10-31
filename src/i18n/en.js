@@ -1,5 +1,5 @@
 const ja = {
-  "Top.Title": "Unko",
+  "Top.Title": "BPIManager",
   "GlobalNav.Home": "Home",
   "GlobalNav.Data": "Data",
   "GlobalNav.FavoriteSongs": "Favorite Songs",
@@ -68,8 +68,14 @@ const ja = {
   "NotPlayed.Title":"Not Played yet",
   "Stats.title":"Statistics",
   "Stats.TotalBPI":"Total BPI",
-  "Stats.BPIOfEachDay":"BPI by the day",
+  "Stats.EachDay":"Total and BPI per day",
   "Stats.UpdatedSongs":"New records",
+  "Stats.UpdatedSum":"The total of updated songs",
+  "Stats.Average":"Average BPI",
+  "Stats.PossibleToGetBetter":"Songs Possible to Get better",
+  "Settings.title":"Settings",
+  "Settings.language":"Language",
+  "Settings.delete":"Delete all data"
 };
 
 export default ja;

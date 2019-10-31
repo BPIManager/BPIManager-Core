@@ -4,6 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { FormattedMessage } from "react-intl";
+import { Link } from 'react-router-dom';
 
 export default class Index extends React.Component<{},{}> {
 
@@ -23,9 +24,11 @@ export default class Index extends React.Component<{},{}> {
           <div>
             <Grid container spacing={2} justify="center">
               <Grid item>
-                <Button variant="contained" color="primary">
-                  <FormattedMessage id="Index.importButton"/>
-                </Button>
+                <Link to="/data">
+                  <Button variant="contained" color="primary">
+                    <FormattedMessage id="Index.importButton"/>
+                  </Button>
+                </Link>
               </Grid>
             </Grid>
           </div>

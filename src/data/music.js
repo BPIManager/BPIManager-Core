@@ -89,7 +89,7 @@ export const csv = [
   },
   {
     "title": "†渚の小悪魔ラヴリィ～レイディオ†(IIDX EDIT)",
-    "difficulty": "10",
+    "difficulty": "4",
     "wr": "3609",
     "avg": "2882",
     "notes": "1835",
@@ -100,7 +100,7 @@ export const csv = [
   },
   {
     "title": "†渚の小悪魔ラヴリィ～レイディオ†(IIDX EDIT)",
-    "difficulty": "11",
+    "difficulty": "9",
     "wr": "3712",
     "avg": "2710",
     "notes": "2084",

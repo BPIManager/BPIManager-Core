@@ -5,3 +5,7 @@ export const _isSingle = ()=>{
 export const _currentStore = ()=>{
   return localStorage.getItem("currentStore") || "27";
 }
+
+export const _lang = ()=>{
+  return localStorage.getItem("lang") || "ja";
+}

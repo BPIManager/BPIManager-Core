@@ -15,7 +15,7 @@ const storageWrapper = class extends Dexie{
       scores : "title,*difficulty,*difficultyLevel,*version,currentBPI,exScore,Pgreat,great,missCount,clearState,DJLevel,lastPlayed,storedAt,isSingle,isImported,updatedAt,[title+difficulty+storedAt+isSingle]",
       songs : "&++num,title,*difficulty,*difficultyLevel,wr,avg,notes,bpm,textage,dpLevel,isCreated,isFavorited,[title+difficulty]",
       stores : "&name,updatedAt",
-      scoreHistory : "&[title+storedAt+difficulty+isSingle+updatedAt],title,difficulty,difficultyLevel,storedAt,exScore,BPI,isSingle,updatedAt"
+      scoreHistory : "&++num,[title+storedAt+difficulty+isSingle+updatedAt],title,difficulty,difficultyLevel,storedAt,exScore,BPI,isSingle,updatedAt"
     });
     this.scores = this.table("scores");
     this.songs = this.table("songs");

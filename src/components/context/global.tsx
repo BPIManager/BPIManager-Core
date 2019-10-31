@@ -1,14 +1,23 @@
-import { useState } from "react";
-import { createContainer } from "unstated-next";
+import { Container } from 'unstated'
+import { _lang } from '../settings'
 
-const Cont = () => {
-  const [lang, setLang] = useState("ja");
+interface S{
+  lang:string
+}
 
-  const set = (newLang:string) => {
-    setLang(newLang)
-  };
+export default class GlobalContainer extends Container<S> {
 
-  return { lang,set };
-};
+  constructor(){
+    super();
+    this.setLang = this.setLang.bind(this);
+  }
 
-export const GlobalContainer = createContainer(Cont);
+  state = {
+    lang : _lang()
+  }
+
+  setLang(newLang:string) {
+    localStorage.setItem("lang",newLang);
+    this.setState({ lang: newLang })
+  }
+}

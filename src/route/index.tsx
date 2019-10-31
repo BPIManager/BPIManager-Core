@@ -7,6 +7,7 @@ import Songs from "../view/pages/songs";
 import Favorite from "../view/pages/favorites";
 import NotPlayed from "../view/pages/notPlayed";
 import Stats from "../view/pages/stats";
+import Settings from "../view/pages/settings";
 import {BrowserRouter, Route} from "react-router-dom";
 
 
@@ -14,31 +15,35 @@ import {BrowserRouter, Route} from "react-router-dom";
 
 import ja  from "../i18n/ja";
 import en from "../i18n/en";
+import GlobalContainer from '../components/context/global';
+import { Subscribe, Provider } from 'unstated';
 
 //
 export default class Router extends React.Component<{},{}> {
 
-  chooseLocale(lang:string){
-    return lang === "ja" ? ja : en;
-  }
-
   render(){
-    const lc = "ja";
     return (
-      <IntlProvider
-        locale={lc}
-        messages={this.chooseLocale(lc)}
-      >
-        <BrowserRouter>
-          <AppBar/>
-          <Route path="/" exact component={Index}/>
-          <Route path="/data" exact component={Data}/>
-          <Route path="/songs" exact component={Songs}/>
-          <Route path="/favorite" exact component={Favorite}/>
-          <Route path="/notPlayed" exact component={NotPlayed}/>
-          <Route path="/stats" exact component={Stats}/>
-        </BrowserRouter>
-      </IntlProvider>
+      <Provider>
+        <Subscribe to={[GlobalContainer]}>
+          {global =>(
+            <IntlProvider
+              locale={global.state.lang}
+              messages={global.state.lang === "ja" ? ja : en}
+            >
+              <BrowserRouter>
+                <AppBar/>
+                <Route path="/" exact component={Index}/>
+                <Route path="/data" exact component={Data}/>
+                <Route path="/songs" exact component={Songs}/>
+                <Route path="/favorite" exact component={Favorite}/>
+                <Route path="/notPlayed" exact component={NotPlayed}/>
+                <Route path="/stats" exact component={Stats}/>
+                <Route path="/settings" exact component={Settings}/>
+              </BrowserRouter>
+            </IntlProvider>
+          )}
+        </Subscribe>
+      </Provider>
     );
   }
 

@@ -29,7 +29,7 @@
     "react-swipeable-views": "^0.13.3",
     "recharts": "^1.8.5",
     "typescript": "^3.6.4",
-    "unstated-next": "^1.1.0"
+    "unstated": "^2.1.1"
   },
   "scripts": {
     "start": "react-scripts start",
