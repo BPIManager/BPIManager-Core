@@ -8,7 +8,7 @@ import Paper from '@material-ui/core/Paper';
 import bpiCalcuator from '../../components/bpi';
 import moment from 'moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { BarChart, XAxis, CartesianGrid, YAxis, Tooltip, Legend, Bar, ResponsiveContainer, Line, ComposedChart } from 'recharts';
+import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart } from 'recharts';
 
 interface S {
   isLoading:boolean,
@@ -52,14 +52,15 @@ class Stats extends React.Component<{intl:any},S> {
     let eachDaySum:{name:string,sum:string,avg:number,}[] = [];
     Object.keys(allDiffs).map((item,i)=>{
       if(i > 10){
-        return;
+        return 0;
       }
       const avg:{BPI:number} = allDiffs[item].reduce((a:any,c:any)=>{return {BPI:a.BPI + c.BPI}});
       eachDaySum.push({
         name : item,
         sum : allDiffs[item].length,
         avg : Math.round(avg.BPI / allDiffs[item].length * 100) / 100
-      })
+      });
+      return 0;
     });
     this.setState({
       isLoading:false,

@@ -36,8 +36,7 @@ export default class Index extends React.Component<{},{}> {
             <Grid container spacing={2} justify="center">
               <Grid item>
                 <Typography align="center" color="textSecondary" paragraph>
-                  <FormattedMessage id="Index.notes1"/><br/>
-                  <FormattedMessage id="Index.notes2"/>
+                  <FormattedMessage id="Index.notes1"/>
                 </Typography>
               </Grid>
             </Grid>

@@ -53,7 +53,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
     }
   }
 
-  handleOpen = async(updateFlag:boolean,row?:any):Promise<void>=> {
+  handleOpen = async(updateFlag:boolean,row?:any,_willDeleteItems?:any):Promise<void>=> {
     if(updateFlag){await this.props.updateScoreData();}
     return this.setState({
       isOpen:!this.state.isOpen,

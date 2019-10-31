@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { scoresDB, songsDB, scoreHistoryDB } from '../../components/indexedDB';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';

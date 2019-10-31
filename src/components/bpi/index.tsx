@@ -1,5 +1,4 @@
 import {songsDB} from "../indexedDB";
-import { scoreData } from "../../types/data";
 
 export interface B{
   error:boolean,bpi:number,reason?:any,difficultyLevel?:number

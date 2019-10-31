@@ -24,6 +24,7 @@ import StarIcon from '@material-ui/icons/Star';
 import { FormattedMessage } from "react-intl";
 
 import Slide from "@material-ui/core/Slide";
+import ShowSnackBar from "../snackBar";
 
 function HideOnScroll(props:HideOnScrollProps) {
   const { children, window } = props;
@@ -41,16 +42,18 @@ interface HideOnScrollProps {
   window?: () => Window,
 };
 
-class GlobalHeader extends React.Component<HideOnScrollProps,{isOpen:boolean}>{
+class GlobalHeader extends React.Component<{global:any} & HideOnScrollProps,{isOpen:boolean,errorSnack:boolean}>{
 
-  constructor(props:HideOnScrollProps){
+  constructor(props:{global:any} & HideOnScrollProps){
     super(props);
     this.state = {
       isOpen: false,
+      errorSnack:false
     }
   }
 
   toggleNav = ()=> this.setState({isOpen:!this.state.isOpen});
+  toggleErrorSnack = ()=> this.setState({errorSnack:!this.state.errorSnack});
 
   render(){
     const {isOpen} = this.state;
@@ -60,7 +63,13 @@ class GlobalHeader extends React.Component<HideOnScrollProps,{isOpen:boolean}>{
         <HideOnScroll {...this.props}>
           <AppBar>
             <Toolbar>
-              <IconButton edge="start" color="inherit" aria-label="menu" onClick={this.toggleNav}>
+              <IconButton edge="start" color="inherit" aria-label="menu" onClick={()=>{
+                if(!this.props.global.state.cannotMove){
+                  return this.toggleNav();
+                }else{
+                  return this.toggleErrorSnack();
+                }
+              }}>
                 <MenuIcon />
               </IconButton>
               <Typography variant="h6">
@@ -117,6 +126,8 @@ class GlobalHeader extends React.Component<HideOnScrollProps,{isOpen:boolean}>{
           </List>
           <Divider />
         </Drawer>
+        <ShowSnackBar message={"実行中の処理があるため続行できません"} variant="warning"
+            handleClose={this.toggleErrorSnack} open={this.state.errorSnack} autoHideDuration={3000}/>
       </React.Fragment>
     );
   }

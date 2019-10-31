@@ -6,29 +6,31 @@ import { FormattedMessage } from "react-intl";
 import {scoresDB, scoreHistoryDB} from "../../components/indexedDB";
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
-
 import Snackbar from '@material-ui/core/Snackbar';
-
 import importCSV from "../../components/csv/import";
 import bpiCalculator from "../../components/bpi";
-import timeFormatter from "../../components/common/timeFormatter";
 import { _currentStore, _isSingle } from '../../components/settings';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
-export default class Index extends React.Component<{},{raw:string,isSnackbarOpen:boolean,stateText:string,errors:string[]}> {
+export default class Index extends React.Component<{global:any},{raw:string,isSnackbarOpen:boolean,stateText:string,errors:string[],isSaving:boolean}> {
 
-  constructor(props:Object){
+  constructor(props:{global:any}){
     super(props);
     this.state = {
       raw: "",
       isSnackbarOpen:false,
       stateText:"Data.Success",
-      errors:[]
+      errors:[],
+      isSaving:false,
     }
     this.execute = this.execute.bind(this);
   }
 
   async execute(){
     try{
+      this.props.global.setMove(true);
+      this.setState({isSaving:true});
+      await new scoreHistoryDB().reset(_isSingle(),_currentStore())
       let errors = [];
       const executor = new importCSV(this.state.raw,_isSingle(),_currentStore());
       const calc = new bpiCalculator();
@@ -55,9 +57,11 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
         ));
         await h.add(Object.assign(resultHistory[i],{difficultyLevel:calcData.difficultyLevel}),{currentBPI:calcData.bpi,exScore:resultHistory[i].exScore},true);
       }
-      return this.setState({raw:"",isSnackbarOpen:true,stateText:"Data.Success",errors:errors});
+      this.props.global.setMove(false);
+      return this.setState({isSaving:false,raw:"",isSnackbarOpen:true,stateText:"Data.Success",errors:errors});
     }catch(e){
-      return this.setState({isSnackbarOpen:true,stateText:"Data.Failed",errors:[e.message]});
+      this.props.global.setMove(false);
+      return this.setState({isSaving:false,isSnackbarOpen:true,stateText:"Data.Failed",errors:[e.message]});
     }
   }
 
@@ -65,7 +69,7 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
   handleClose = ()=> this.setState({isSnackbarOpen:false});
 
   render(){
-    const {raw,isSnackbarOpen,stateText,errors} = this.state;
+    const {raw,isSnackbarOpen,stateText,errors,isSaving} = this.state;
     return (
       <Container className="commonLayout" fixed>
         <Snackbar
@@ -91,19 +95,22 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
           onChange={this.onChangeText}
           value={raw}
           style={{width:"100%"}}
-          id="outlined-dense-multiline"
           label="Paste here"
           margin="dense"
           variant="outlined"
           multiline
           rowsMax="4"/>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={this.execute}
-          style={{width:"100%",margin:"5px 0"}}>
-          <FormattedMessage id="Data.Execute"/>
-        </Button>
+        <div style={{position:"relative"}}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.execute}
+            disabled={isSaving}
+            style={{width:"100%",margin:"5px 0"}}>
+            <FormattedMessage id="Data.Execute"/>
+          </Button>
+          {isSaving && <CircularProgress size={24} style={{color:"#777",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
+        </div>
         <Divider variant="middle" style={{margin:"10px 0"}}/>
         {errors && errors.map(item=><span>{item}<br/></span>)}
         <FormattedMessage id="Data.notPremium1"/>

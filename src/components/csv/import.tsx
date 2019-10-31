@@ -41,7 +41,6 @@ export default class importCSV {
             //Rootage以前のCSV判別
             mode = 1;
           }
-          console.log(p[5]);
           if(mode === 0){
             //HYPER
             if(Number(p[19]) > 10 && Number(p[20]) > 0){

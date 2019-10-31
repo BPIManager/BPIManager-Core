@@ -12,7 +12,7 @@ const storageWrapper = class extends Dexie{
   constructor(){
     super("ScoreCoach");
     this.version(1).stores({
-      scores : "title,*difficulty,*difficultyLevel,*version,currentBPI,exScore,Pgreat,great,missCount,clearState,DJLevel,lastPlayed,storedAt,isSingle,isImported,updatedAt,[title+difficulty+storedAt+isSingle]",
+      scores : "[title+difficulty+storedAt+isSingle],title,*difficulty,*difficultyLevel,*version,currentBPI,exScore,Pgreat,great,missCount,clearState,DJLevel,lastPlayed,storedAt,isSingle,isImported,updatedAt",
       songs : "&++num,title,*difficulty,*difficultyLevel,wr,avg,notes,bpm,textage,dpLevel,isCreated,isFavorited,[title+difficulty]",
       stores : "&name,updatedAt",
       scoreHistory : "&++num,[title+storedAt+difficulty+isSingle+updatedAt],title,difficulty,difficultyLevel,storedAt,exScore,BPI,isSingle,updatedAt"
@@ -88,16 +88,20 @@ export const scoresDB = class extends storageWrapper{
   async updateScore(score:scoreData|null,data:{currentBPI:number,exScore:number}):Promise<boolean>{
     try{
       if(!score){return false;}
-      score.updatedAt = timeFormatter(0);
       if(score.updatedAt === "-"){
         //put
         let newScoreData:scoreData = score;
         newScoreData.currentBPI = data.currentBPI;
         newScoreData.exScore = data.exScore;
+        newScoreData.updatedAt = timeFormatter(0);
         await this.scores.add(newScoreData);
       }else{
         //update
-        await this.scores.where("[title+difficulty+storedAt+isSingle]").equals([score.title,score.difficulty,score.storedAt,score.isSingle]).modify(data);
+        await this.scores.where("[title+difficulty+storedAt+isSingle]").equals([score.title,score.difficulty,score.storedAt,score.isSingle]).modify(
+        Object.assign(data,{
+          updatedAt : timeFormatter(0)
+        })
+        );
       }
       return true;
     }catch(e){
@@ -149,6 +153,17 @@ export const scoreHistoryDB = class extends storageWrapper{
     }catch(e){
       console.log(e);
       return [];
+    }
+  }
+
+  async reset(isSingle:number,storedAt:string):Promise<any>{
+    try{
+      return await this.scoreHistory.where(
+        {storedAt:storedAt,isSingle:isSingle}
+      ).delete();
+    }catch(e){
+      console.log(e);
+      return 0;
     }
   }
 

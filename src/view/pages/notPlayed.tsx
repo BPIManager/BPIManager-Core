@@ -25,7 +25,12 @@ export default class NotPlayed extends React.Component<{},S> {
     await this.updateScoreData();
   }
 
-  async updateScoreData(){
+  async updateScoreData(whenUpdated:boolean = false,willDeleteItem?:{title:string,difficulty:string}){
+    if(whenUpdated && willDeleteItem){
+      let currentState = this.state.full;
+      currentState = currentState.filter((item:songData)=>item.title !== willDeleteItem.title && willDeleteItem.difficulty);
+      return this.setState({full:currentState});
+    }
     const currentStore = "27";
     const isSingle = _isSingle();
     const songs:songData[] = await new songsDB().getAll(isSingle);

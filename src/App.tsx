@@ -8,6 +8,7 @@ import defaultTheme from './themes/dark';
 
 export default function App() {
 
+  document.title = "BPI Manager";
   return (
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline />

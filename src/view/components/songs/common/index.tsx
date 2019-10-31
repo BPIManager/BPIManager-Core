@@ -1,7 +1,7 @@
 import { _prefix } from "../../../../components/songs/filter";
 
 export const diffColor = (i:number,row: any):string=>{
-  if(i !== 0){return "#ffffff";}
+  if(i !== 0){return "transparent";}
   switch (row.clearState){
     case 0 : return "#e0dede";
     case 1 : return "#ea63ff";

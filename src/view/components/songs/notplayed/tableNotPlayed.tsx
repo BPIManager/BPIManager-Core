@@ -8,7 +8,6 @@ import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 
 import {scoreData, songData} from "../../../../types/data";
-import { _prefix } from "../../../../components/songs/filter";
 import DetailedSongInformation from "../detailsScreen";
 import { difficultyDiscriminator } from '../../../../components/songs/filter';
 import { _isSingle,_currentStore } from '../../../../components/settings';
@@ -23,7 +22,7 @@ interface P{
   sort:number,
   isDesc:boolean,
   changeSort:(newNum:number)=>void,
-  updateScoreData:()=>void,
+  updateScoreData:(willDelete?:boolean,willDeleteItems?:{title:string,difficulty:string})=>void,
 }
 
 interface S{
@@ -47,8 +46,8 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
     }
   }
 
-  handleOpen = async(updateFlag:boolean = false,row?:any):Promise<void>=> {
-    if(updateFlag){await this.props.updateScoreData();}
+  handleOpen = async(updateFlag:boolean = false,row?:any,willDeleteItems?:{title:string,difficulty:string}):Promise<void>=> {
+    if(updateFlag){await this.props.updateScoreData(true,willDeleteItems);}
     const t = row ? {
       difficulty:difficultyDiscriminator(row.difficulty),
       title:row.title,
@@ -137,7 +136,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
           onChangeRowsPerPage={this.handleChangeRowsPerPage}
         />
         {isOpen &&
-          <DetailedSongInformation isOpen={isOpen} song={currentSongData} score={currentScoreData} handleOpen={this.handleOpen}/>
+          <DetailedSongInformation isOpen={isOpen} song={currentSongData} score={currentScoreData} handleOpen={this.handleOpen} willDelete={true}/>
         }
       </Paper>
     );

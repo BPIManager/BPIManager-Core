@@ -31,9 +31,9 @@ export default class Router extends React.Component<{},{}> {
               messages={global.state.lang === "ja" ? ja : en}
             >
               <BrowserRouter>
-                <AppBar/>
+                <AppBar global={global}/>
                 <Route path="/" exact component={Index}/>
-                <Route path="/data" exact component={Data}/>
+                <Route path="/data" exact render={_props=><Data global={global}/>}/>
                 <Route path="/songs" exact component={Songs}/>
                 <Route path="/favorite" exact component={Favorite}/>
                 <Route path="/notPlayed" exact component={NotPlayed}/>

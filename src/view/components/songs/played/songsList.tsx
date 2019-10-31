@@ -144,7 +144,7 @@ export default class SongsList extends React.Component<P,stateInt> {
           return item === data.difficultyLevel }) &&
         newState["options"]["difficulty"].some((item:number)=>{
           return diffs[Number(item)] === data.difficulty} ) &&
-        data.title.indexOf(newState["filterByName"]) > -1
+        data.title.toLowerCase().indexOf(newState["filterByName"].toLowerCase()) > -1
       )
     })
   }
@@ -258,7 +258,7 @@ export default class SongsList extends React.Component<P,stateInt> {
           </Grid>
         </Grid>
         <Grid container spacing={1} id="mainFilters" style={{margin:"5px 0"}}>
-          <Grid item xs={6} lg={4}>
+          <Grid item xs={6}>
             <FormControl component="fieldset">
               <FormLabel component="legend"><FormattedMessage id="Songs.filterByLevel"/></FormLabel>
               <FormGroup row>
@@ -273,7 +273,7 @@ export default class SongsList extends React.Component<P,stateInt> {
               </FormGroup>
             </FormControl>
           </Grid>
-          <Grid item xs={6} lg={4}>
+          <Grid item xs={6}>
             <FormControl component="fieldset">
               <FormLabel component="legend"><FormattedMessage id="Songs.filterByDifficulty"/></FormLabel>
               <FormGroup row>

@@ -25,12 +25,15 @@ import ShowSnackBar from "../snackBar";
 import {Tooltip as TooltipMUI, Button, CircularProgress} from '@material-ui/core';
 import BPIChart from "./bpiChart";
 import SongDetails from "./songDetails";
+import { withRouter,RouteComponentProps } from "react-router-dom";
+import { UnregisterCallback } from "history";
 
 interface P{
   isOpen:boolean,
   song:songData|null,
   score:scoreData|null,
-  handleOpen:(flag:boolean)=>Promise<void>
+  handleOpen:(flag:boolean,row?:any,willDeleteItems?:any)=>Promise<void>,
+  willDelete?:boolean
 }
 
 interface S{
@@ -49,11 +52,12 @@ interface S{
   isSaving:boolean,
 }
 
-class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
+class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteComponentProps,S> {
 
   private calc:bpiCalcuator = new bpiCalcuator();
+  private unlisten:UnregisterCallback|null = null;
 
-  constructor(props:P){
+  constructor(props:P & {intl?:any} & RouteComponentProps){
     super(props);
     this.state = {
       isError:false,
@@ -69,6 +73,18 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       errorSnackMessage:"",
       graphLastUpdated:new Date().getTime(),
       isSaving:false,
+    }
+    this.unlisten = this.props.history.listen((_newLocation, action) => {
+      if (action === "POP") {
+        this.props.history.go(1);
+        this.props.handleOpen(false);
+      }
+    });
+  }
+
+  componentWillUnmount(){
+    if(this.unlisten){
+      this.unlisten();
     }
   }
 
@@ -178,13 +194,13 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
   saveAndClose = async()=>{
     try{
       const {newBPI,newScore} = this.state;
-      const {score,song} = this.props;
-      if(!song){return;}
+      const {score,song,willDelete} = this.props;
+      if(!song || !score){return;}
       this.setState({isSaving:true});
       const scores = new scoresDB(), scoreHist = new scoreHistoryDB();
       await scores.updateScore(score,{currentBPI:newBPI,exScore:newScore});
       await scoreHist.add(Object.assign(score,{difficultyLevel:song.difficultyLevel}),{currentBPI:newBPI,exScore:newScore});
-      this.props.handleOpen(true);
+      this.props.handleOpen(true,null,willDelete ? {title:score.title,difficulty:score.difficulty} : null);
     }catch(e){
       return this.setState({errorSnack:true,errorSnackMessage:e});
     }
@@ -365,4 +381,4 @@ class TabPanel extends React.Component<{value:number,index:number},{}>{
   }
 }
 
-export default injectIntl(DetailedSongInformation);
+export default withRouter(injectIntl(DetailedSongInformation));

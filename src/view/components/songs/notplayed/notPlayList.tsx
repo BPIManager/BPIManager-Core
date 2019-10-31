@@ -15,10 +15,8 @@ import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
 
 import {songData} from "../../../../types/data";
-import { _prefix, _prefixFromNum, difficultyDiscriminator } from '../../../../components/songs/filter';
-
+import { difficultyDiscriminator } from '../../../../components/songs/filter';
 import equal from 'fast-deep-equal'
-import { _isSingle } from '../../../../components/settings';
 
 interface stateInt {
   filterByName:string,
@@ -31,7 +29,7 @@ interface stateInt {
 interface P{
   title:string,
   full:songData[],
-  updateScoreData:()=>Promise<void>,
+  updateScoreData:(whenUpdated:boolean,willDeleteItem?:{title:string,difficulty:string})=>Promise<void>,
 }
 
 export default class NotPlayList extends React.Component<P,stateInt> {
@@ -61,8 +59,11 @@ export default class NotPlayList extends React.Component<P,stateInt> {
     }
   }
 
-  updateScoreData():Promise<void>{
-    return this.props.updateScoreData();
+  updateScoreData(whenUpdated:boolean = false,willDeleteItem?:{title:string,difficulty:string}):Promise<void>{
+    if(!whenUpdated || !willDeleteItem){
+      return this.props.updateScoreData(false);
+    }
+    return this.props.updateScoreData(whenUpdated,willDeleteItem);
   }
 
   handleLevelChange = (name:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
@@ -98,7 +99,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
           return item === data.difficultyLevel }) &&
         newState["options"]["difficulty"].some((item:number)=>{
           return diffs[Number(item)] === difficultyDiscriminator(data.difficulty)} ) &&
-        data.title.indexOf(newState["filterByName"]) > -1
+        data.title.toLowerCase().indexOf(newState["filterByName"].toLowerCase()) > -1
       )
     })
   }

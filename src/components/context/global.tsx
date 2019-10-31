@@ -2,7 +2,8 @@ import { Container } from 'unstated'
 import { _lang } from '../settings'
 
 interface S{
-  lang:string
+  lang:string,
+  cannotMove:boolean,
 }
 
 export default class GlobalContainer extends Container<S> {
@@ -13,11 +14,17 @@ export default class GlobalContainer extends Container<S> {
   }
 
   state = {
-    lang : _lang()
+    lang : _lang(),
+    cannotMove: false
   }
 
   setLang(newLang:string) {
     localStorage.setItem("lang",newLang);
     this.setState({ lang: newLang })
   }
+
+  setMove(newState:boolean) {
+    this.setState({ cannotMove: newState })
+  }
+
 }
