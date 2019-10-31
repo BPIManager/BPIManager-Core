@@ -31,7 +31,7 @@
 }
 
 .commonLayout{
-  margin:20px 0 0 0;
+  margin:20px 0 20px 0;
 }
 
 #overlayLayout{
@@ -51,9 +51,71 @@ th.MuiTableCell-root.MuiTableCell-head:first-child,
 td.MuiTableCell-root.MuiTableCell-body:first-child {
     padding: 16px 8px !important;
     text-align: center;
+    width:35px;
 }
 
 .MuiInputBase-root.MuiInput-root.MuiInput-underline.MuiInputBase-formControl.MuiInput-formControl{
   padding:4px;
   width:100%;
+}
+
+th.MuiTableCell-root.MuiTableCell-head{
+  user-select: none;
+}
+
+.MuiTableCell-head,.MuiTableCell-body{
+  cursor: pointer;
+}
+
+.MuiTableBody-root > tr:hover{
+  background:#ececec !important;
+}
+
+a.link{
+  text-decoration:none;
+  color:#3f51b5;
+}
+
+a.link:hover{
+  text-decoration: underline;
+}
+
+#songsVil span.MuiButtonBase-root.MuiIconButton-root.MuiCheckbox-root.MuiCheckbox-colorSecondary.MuiIconButton-colorSecondary{
+  padding:6px !important;
+}
+
+#songsVil #mainFilters legend.MuiFormLabel-root{
+  transform: translate(0, 1.5px) scale(0.75);
+  transform-origin: top left;
+}
+
+.MuiDialog-paperFullScreen{
+  overflow-x: hidden !important;
+}
+
+.be-ellipsis{
+  text-overflow:ellipsis;
+  overflow:hidden;
+  white-space:nowrap;
+}
+
+#detailedScreen .MuiGrid-root.MuiGrid-container{
+  justify-content: space-between;
+}
+
+.loaderCentered{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  height:30vh;
+}
+
+@media screen and (min-width:992px){
+  .responsiveTotalBPI{
+    height:240px !important;
+  }
+}
+
+@media screen and (max-width:1399px){
+  .xsInvisible{ display:none; }
 }

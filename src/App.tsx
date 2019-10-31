@@ -2,16 +2,18 @@ import * as React from 'react';
 import "./styles/App.css";
 import Router from "./route";
 import Initialize from "./components/initialize";
-class App extends React.Component<{},{}> {
+import { ThemeProvider } from '@material-ui/core/styles';
+import CssBaseline from "@material-ui/core/CssBaseline";
+import defaultTheme from './themes/dark';
 
-  render(){
-    return (
-      <div>
-        <Initialize/>
-        <Router/>
-      </div>
-    );
-  }
+export default function App() {
+
+  return (
+    <ThemeProvider theme={defaultTheme}>
+      <CssBaseline />
+      <Initialize/>
+      <Router/>
+    </ThemeProvider>
+  );
+
 }
-
-export default App;
