@@ -45,7 +45,7 @@ export default class Songs extends React.Component<{},S> {
           exScore:0,
           isSingle:isSingle,
           storedAt:currentStore,
-          DJLevel:"-",
+          lastScore:-1,
           updatedAt:"-",
         });
       }else{

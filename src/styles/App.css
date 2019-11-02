@@ -119,3 +119,12 @@ a.link:hover{
 @media screen and (max-width:1399px){
   .xsInvisible{ display:none; }
 }
+
+.plusOverlayScore{
+  font-size:10px;
+  color:#ff0000;
+  position:absolute;
+  z-index:9;
+  right:5px;
+  top:5px
+}

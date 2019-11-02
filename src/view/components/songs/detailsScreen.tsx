@@ -25,8 +25,10 @@ import ShowSnackBar from "../snackBar";
 import {Tooltip as TooltipMUI, Button, CircularProgress} from '@material-ui/core';
 import BPIChart from "./bpiChart";
 import SongDetails from "./songDetails";
+import SongDiffs from "./songDiffs";
 import { withRouter,RouteComponentProps } from "react-router-dom";
 import { UnregisterCallback } from "history";
+import TabPanel from "./common/tabPanel";
 
 interface P{
   isOpen:boolean,
@@ -355,6 +357,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteCom
           onChange={this.handleTabChange}>
           <Tab label={<FormattedMessage id="Details.Graph"/>} />
           <Tab label={<FormattedMessage id="Details.Details"/>} />
+          <Tab label={<FormattedMessage id="Details.Diffs"/>} />
         </Tabs>
         <TabPanel value={currentTab} index={0}>
           {showCharts &&
@@ -364,20 +367,13 @@ class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteCom
         <TabPanel value={currentTab} index={1}>
           <SongDetails song={song} score={score}/>
         </TabPanel>
+        <TabPanel value={currentTab} index={2}>
+          <SongDiffs song={song} score={score}/>
+        </TabPanel>
         <ShowSnackBar message={errorSnackMessage} variant="warning"
             handleClose={this.toggleErrorSnack} open={errorSnack} autoHideDuration={3000}/>
       </Dialog>
     );
-  }
-}
-
-class TabPanel extends React.Component<{value:number,index:number},{}>{
-
-  render(){
-    if(this.props.value !== this.props.index){
-      return (null);
-    }
-    return this.props.children
   }
 }
 

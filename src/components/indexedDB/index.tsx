@@ -1,6 +1,8 @@
 import Dexie from "dexie";
 import {scoreData,songData} from "../../types/data";
 import timeFormatter from "../common/timeFormatter";
+import {_currentStore,_isSingle} from "../settings";
+import moment from "moment";
 
 const storageWrapper = class extends Dexie{
   target: string = "scores";
@@ -12,10 +14,10 @@ const storageWrapper = class extends Dexie{
   constructor(){
     super("ScoreCoach");
     this.version(1).stores({
-      scores : "[title+difficulty+storedAt+isSingle],title,*difficulty,*difficultyLevel,*version,currentBPI,exScore,Pgreat,great,missCount,clearState,DJLevel,lastPlayed,storedAt,isSingle,isImported,updatedAt",
+      scores : "[title+difficulty+storedAt+isSingle],title,*difficulty,*difficultyLevel,*version,currentBPI,exScore,Pgreat,great,missCount,clearState,lastPlayed,storedAt,isSingle,isImported,updatedAt,lastScore",
       songs : "&++num,title,*difficulty,*difficultyLevel,wr,avg,notes,bpm,textage,dpLevel,isCreated,isFavorited,[title+difficulty]",
       stores : "&name,updatedAt",
-      scoreHistory : "&++num,[title+storedAt+difficulty+isSingle+updatedAt],title,difficulty,difficultyLevel,storedAt,exScore,BPI,isSingle,updatedAt"
+      scoreHistory : "&++num,[title+storedAt+difficulty+isSingle],[title+storedAt+difficulty+isSingle+updatedAt],title,difficulty,difficultyLevel,storedAt,exScore,BPI,isSingle,updatedAt"
     });
     this.scores = this.table("scores");
     this.songs = this.table("songs");
@@ -35,7 +37,10 @@ export const scoresDB = class extends storageWrapper{
   }
 
   async getAll():Promise<scoreData[]>{
-    const currentData = await this.scores.toArray();
+    const currentData = await this.scores.where({
+      storedAt:_currentStore(),
+      isSingle:_isSingle(),
+    }).toArray();
     return currentData;
   }
 
@@ -52,7 +57,7 @@ export const scoresDB = class extends storageWrapper{
     let data:scoreData[] = await this.scores.where({
       storedAt:storedAt,isSingle:isSingle,
     }).toArray();
-    data = data.filter(item=>item.difficultyLevel === diff);
+    data = data.filter(item=>item.difficultyLevel === diff) ;
     return data.map((item:scoreData)=>item.currentBPI);
   }
 
@@ -64,25 +69,29 @@ export const scoresDB = class extends storageWrapper{
     return await this.scores.where({isImported:"true"}).delete();
   }
 
-  async setItem(item:any):Promise<any>{
-    return await this.scores.put({
-      title:item["title"],
-      version:item["version"],
-      difficulty:item["difficulty"],
-      difficultyLevel:item["difficultyLevel"],
-      currentBPI:item["currentBPI"],
-      exScore:Number(item["exScore"]),
-      Pgreat:Number(item["Pgreat"]),
-      great:Number(item["great"]),
-      missCount:Number(item["missCount"]),
-      clearState:item["clearState"],
-      DJLevel:item["DJLevel"],
-      lastPlayed:item["lastPlayed"],
-      storedAt:item["storedAt"],
-      isSingle:item["isSingle"],
-      isImported:true,
-      updatedAt : item["updatedAt"]
-    })
+  setItem(item:any):any{
+    try{
+      return this.scores.put({
+        title:item["title"],
+        version:item["version"],
+        difficulty:item["difficulty"],
+        difficultyLevel:item["difficultyLevel"],
+        currentBPI:item["currentBPI"],
+        exScore:Number(item["exScore"]),
+        Pgreat:Number(item["Pgreat"]),
+        great:Number(item["great"]),
+        missCount:Number(item["missCount"]),
+        clearState:item["clearState"],
+        lastPlayed:item["lastPlayed"],
+        lastScore:item["lastScore"],
+        storedAt:item["storedAt"],
+        isSingle:item["isSingle"],
+        isImported:true,
+        updatedAt : item["updatedAt"]
+      })
+    }catch(e){
+      console.log(e);
+    }
   }
 
   async updateScore(score:scoreData|null,data:{currentBPI:number,exScore:number}):Promise<boolean>{
@@ -99,7 +108,8 @@ export const scoresDB = class extends storageWrapper{
         //update
         await this.scores.where("[title+difficulty+storedAt+isSingle]").equals([score.title,score.difficulty,score.storedAt,score.isSingle]).modify(
         Object.assign(data,{
-          updatedAt : timeFormatter(0)
+          updatedAt : timeFormatter(0),
+          lastScore: score.exScore,
         })
         );
       }
@@ -119,16 +129,20 @@ export const scoresDB = class extends storageWrapper{
 
 export const scoreHistoryDB = class extends storageWrapper{
   scoreHistory: Dexie.Table<any, any>;
+  isSingle:number = 1;
+  currentStore:string = "27";
 
   constructor(){
     super();
     this.scoreHistory = this.table("scoreHistory");
+    this.isSingle = _isSingle();
+    this.currentStore = _currentStore();
   }
 
-  async add(score:scoreData|null,data:{currentBPI:number,exScore:number},forceUpdateTime:boolean = false):Promise<boolean>{
+  add(score:scoreData|null,data:{currentBPI:number,exScore:number},forceUpdateTime:boolean = false):boolean{
     try{
       if(!score){return false;}
-      await this.scoreHistory.add({
+      this.scoreHistory.add({
         title:score.title,
         exScore:data.exScore,
         difficulty:score.difficulty,
@@ -145,10 +159,27 @@ export const scoreHistoryDB = class extends storageWrapper{
     }
   }
 
-  async getAll(isSingle:number,storedAt:string,diff:string = "12"):Promise<any[]>{
+  async check(item:scoreData):Promise<{willUpdate:boolean,lastScore:number}>{
+    try{
+      const t = await this.scoreHistory.where("[title+storedAt+difficulty+isSingle]").equals(
+        [item["title"],item["storedAt"],item["difficulty"],item["isSingle"]]
+      ).toArray();
+      return {
+        willUpdate:t.length === 0 ? true : Number(item.exScore) >= Number(t[t.length - 1].exScore),
+        lastScore:t.length === 0 ? -1 : t[t.length-1].exScore
+      };
+    }catch(e){
+      return {
+        willUpdate:false,
+        lastScore:0,
+      };
+    }
+  }
+  //リファクタ済み
+  async getAll(_isSingle:number,_storedAt:string,diff:string = "12"):Promise<any[]>{
     try{
       return await this.scoreHistory.where(
-        {storedAt:storedAt,isSingle:isSingle,difficultyLevel:diff}
+        {storedAt:this.currentStore,isSingle:this.isSingle,difficultyLevel:diff}
       ).toArray();
     }catch(e){
       console.log(e);
@@ -156,14 +187,54 @@ export const scoreHistoryDB = class extends storageWrapper{
     }
   }
 
-  async reset(isSingle:number,storedAt:string):Promise<any>{
+  async reset(_isSingle:number,_storedAt:string):Promise<any>{
     try{
       return await this.scoreHistory.where(
-        {storedAt:storedAt,isSingle:isSingle}
+        {storedAt:this.currentStore,isSingle:this.isSingle}
       ).delete();
     }catch(e){
       console.log(e);
       return 0;
+    }
+  }
+
+  async getWithinVersion(song:songData):Promise<any[]>{
+    try{
+      if(!song){return [];}
+      return await this.scoreHistory.where(
+        {storedAt:this.currentStore,isSingle:this.isSingle,title:song.title}
+      ).toArray().then(t=>t.sort((a,b)=>{
+        return moment(b.updatedAt).diff(moment(a.updatedAt))
+      }));
+    }catch(e){
+      console.log(e);
+      return [];
+    }
+  }
+
+  async getAcrossVersion(song:songData):Promise<any[]>{
+    try{
+      if(!song){return [];}
+      const all = await this.scoreHistory.where(
+        {isSingle:this.isSingle,title:song.title}
+      ).toArray().then(t=>t.reduce((result, current) => {
+        if(!result[current.storedAt]){
+          result[current.storedAt] = [];
+        }
+        result[current.storedAt].push(current);
+        return result;
+      }, {}));
+      let res:any[] = [];
+      Object.keys(all).map((item:string)=>{
+        const t = all[item].sort((a:any,b:any)=>{
+          return b.exScore - a.exScore
+        });
+        res.push(t[0]);
+      });
+      return res.reverse();
+    }catch(e){
+      console.log(e);
+      return [];
     }
   }
 

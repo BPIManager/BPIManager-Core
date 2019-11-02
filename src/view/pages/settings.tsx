@@ -39,7 +39,7 @@ class Settings extends React.Component<{intl:any},S> {
     }
     return (
       <Subscribe to={[GlobalContainer]}>
-        {({state,setLang}:GlobalContainer)=> (
+        {({state,setLang,setStore}:GlobalContainer)=> (
           <Container className="commonLayout" fixed>
             <Typography component="h4" variant="h4" color="textPrimary" gutterBottom>
               <FormattedMessage id="Settings.title"/>
@@ -57,6 +57,24 @@ class Settings extends React.Component<{intl:any},S> {
                 </Select>
               </FormControl>
               <Divider style={{margin:"10px 0"}}/>
+                <FormControl>
+                  <InputLabel><FormattedMessage id="Settings.dataStore"/></InputLabel>
+                  <Select value={state.store} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+                    if(typeof e.target.value === "string"){
+                      setStore(e.target.value)
+                    }
+                  }}>
+                    <MenuItem value="26">26 Rootage</MenuItem>
+                    <MenuItem value="27">27 HEROIC VERSE</MenuItem>
+                  </Select>
+                </FormControl>
+                <Typography variant="caption" display="block">
+                  <FormattedMessage id="Settings.noteMes1"/>
+                </Typography>
+                <Typography variant="caption" display="block">
+                  <FormattedMessage id="Settings.inaccurateMes"/>
+                </Typography>
+                <Divider style={{margin:"10px 0"}}/>
             </Paper>
           </Container>
         )}

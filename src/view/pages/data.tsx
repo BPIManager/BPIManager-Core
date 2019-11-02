@@ -30,7 +30,6 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
     try{
       this.props.global.setMove(true);
       this.setState({isSaving:true});
-      await new scoreHistoryDB().reset(_isSingle(),_currentStore())
       let errors = [];
       const executor = new importCSV(this.state.raw,_isSingle(),_currentStore());
       const calc = new bpiCalculator();
@@ -47,15 +46,20 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
         }
         const s = new scoresDB(), h = new scoreHistoryDB();
         await s.resetImportedItems();
-        await s.setItem(Object.assign(
+        const {willUpdate,lastScore} = await h.check(resultHistory[i]);
+        if(!willUpdate){
+          continue;
+        }
+        s.setItem(Object.assign(
           result[i],
           {
             difficultyLevel:calcData.difficultyLevel,
             currentBPI : calcData.bpi,
             isImported: true,
+            lastScore: lastScore
           }
         ));
-        await h.add(Object.assign(resultHistory[i],{difficultyLevel:calcData.difficultyLevel}),{currentBPI:calcData.bpi,exScore:resultHistory[i].exScore},true);
+        h.add(Object.assign(resultHistory[i],{difficultyLevel:calcData.difficultyLevel}),{currentBPI:calcData.bpi,exScore:resultHistory[i].exScore},true);
       }
       this.props.global.setMove(false);
       return this.setState({isSaving:false,raw:"",isSnackbarOpen:true,stateText:"Data.Success",errors:errors});

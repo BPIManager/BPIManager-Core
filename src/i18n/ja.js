@@ -6,6 +6,7 @@ const ja = {
   "GlobalNav.SongList": "楽曲一覧",
   "GlobalNav.unregisteredSongs": "未プレイ楽曲",
   "GlobalNav.Statistics": "統計",
+  "GlobalNav.compare": "バージョン間比較",
   "GlobalNav.Settings": "設定",
   "Index.heroText": "Web上でbeatmania IIDXのスコアを管理し、BPIとして可視化できます。",
   "Index.importButton" : "使ってみる",
@@ -51,6 +52,7 @@ const ja = {
   "Details.FavButtonAdded":"お気に入り登録しました。",
   "Details.Graph":"グラフ",
   "Details.Details":"詳細",
+  "Details.Diffs":"差分",
   "Details.ErrorIIDXInfo":"IIDXInfoは☆12楽曲でのみ利用できます。",
   "Common.Tweet":"ツイート",
   "SongDetail.SongDetailHead":"楽曲",
@@ -64,6 +66,9 @@ const ja = {
   "SongDetail.MissCount":"ミスカウント",
   "SongDetail.LastPlayed":"最終プレイ",
   "SongDetail.ScoreDetails":"詳細",
+  "SongDiffs.Target":"データセット",
+  "SongDiffs.WithinSameVersion":"同一バージョン内",
+  "SongDiffs.EachVersion":"バージョン間",
   "Favorites.Title":"お気に入り",
   "NotPlayed.Title":"未プレイ楽曲",
   "Stats.title":"統計データ",
@@ -76,7 +81,10 @@ const ja = {
   "Stats.PossibleToGetBetter":"伸びそうな曲",
   "Settings.title":"設定",
   "Settings.language":"言語",
-  "Settings.delete":"データのリセット"
+  "Settings.dataStore":"バージョン",
+  "Settings.delete":"データのリセット",
+  "Settings.noteMes1":"過去作スコアを登録することで、最新作とのデータ比較が可能です。",
+  "Settings.inaccurateMes":"過去作のスコアも今現在の最新全1,平均スコアでBPIが計算されます。参考程度にしてください。",
 };
 
 export default ja;

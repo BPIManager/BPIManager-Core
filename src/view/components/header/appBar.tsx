@@ -20,6 +20,7 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import StorageIcon from "@material-ui/icons/Storage";
 import BorderColorIcon from '@material-ui/icons/BorderColor';
 import StarIcon from '@material-ui/icons/Star';
+import FilterNoneIcon from '@material-ui/icons/FilterNone';
 
 import { FormattedMessage } from "react-intl";
 
@@ -109,6 +110,12 @@ class GlobalHeader extends React.Component<{global:any} & HideOnScrollProps,{isO
               <ListItem button>
                 <ListItemIcon><BorderColorIcon /></ListItemIcon>
                 <ListItemText primary={<FormattedMessage id="GlobalNav.unregisteredSongs"/>} />
+              </ListItem>
+            </Link>
+            <Link to="/compare" className="forceTextColorBlack" onClick={this.toggleNav}>
+              <ListItem button>
+                <ListItemIcon><FilterNoneIcon /></ListItemIcon>
+                <ListItemText primary={<FormattedMessage id="GlobalNav.compare"/>} />
               </ListItem>
             </Link>
             <Link to="/stats" className="forceTextColorBlack" onClick={this.toggleNav}>

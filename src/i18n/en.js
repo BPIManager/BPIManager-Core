@@ -4,8 +4,9 @@ const ja = {
   "GlobalNav.Data": "Data",
   "GlobalNav.FavoriteSongs": "Favorite Songs",
   "GlobalNav.SongList": "Songs",
-  "GlobalNav.unregisteredSongs": "Songs not played yet",
+  "GlobalNav.unregisteredSongs": "Not played yet",
   "GlobalNav.Statistics": "Statistics",
+  "GlobalNav.compare": "Compare",
   "GlobalNav.Settings": "Settings",
   "Index.heroText": "Easily manage your scores of beatmania IIDX and visualize as BPI, in Web.",
   "Index.importButton" : "Try it out!",
@@ -51,6 +52,7 @@ const ja = {
   "Details.FavButtonAdded":"Successfully added.",
   "Details.Graph":"Graph",
   "Details.Details":"Details",
+  "Details.Diffs":"Diffs",
   "Details.ErrorIIDXInfo":"IIDXInfo is only available for level-12.",
   "Common.Tweet":"Tweet",
   "SongDetail.SongDetailHead":"Song",
@@ -60,6 +62,9 @@ const ja = {
   "SongDetail.You":"You",
   "SongDetail.Version":"Version",
   "SongDetail.ScoreDetailHead":"Play Status",
+  "SongDiffs.Target":"Datasets",
+  "SongDiffs.WithinSameVersion":"Within the same version",
+  "SongDiffs.EachVersion":"Across versions",
   "SongDetail.ClearState":"Clear State",
   "SongDetail.MissCount":"Miss Count",
   "SongDetail.LastPlayed":"Last Played",
@@ -75,7 +80,10 @@ const ja = {
   "Stats.PossibleToGetBetter":"Songs Possible to Get better",
   "Settings.title":"Settings",
   "Settings.language":"Language",
-  "Settings.delete":"Delete all data"
+  "Settings.dataStore":"Version",
+  "Settings.delete":"Delete all data",
+  "Settings.noteMes1":"Registering scores in older IIDX makes you able to compare scores across versions.",
+  "Settings.inaccurateMes":"Please note that since BPI in older IIDX versions will also be calculated with the latest WR and average scores so they would be rather inaccurate than them at the time."
 };
 
 export default ja;

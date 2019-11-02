@@ -1,6 +1,5 @@
 import {scoreData} from "../../types/data";
 import { convertClearState } from "../songs/filter";
-import timeFormatter from "../common/timeFormatter";
 
 export default class importCSV {
 
@@ -87,12 +86,12 @@ export default class importCSV {
             great:Number(p[eachObjNum[4]]),
             missCount:Number(p[eachObjNum[5]]),
             clearState:clearState,
-            DJLevel:p[eachObjNum[7]],
             lastPlayed:p[eachObjNum[8]],
+            lastScore:-1,
             storedAt:self.currentStore,
             isSingle:self.isSingle,
             isImported:true,
-            updatedAt:timeFormatter(0)
+            updatedAt:p[eachObjNum[8]]
           });
           resultHistory.push({
             title:p[eachObjNum[1]],

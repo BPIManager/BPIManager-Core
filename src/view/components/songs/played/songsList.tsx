@@ -10,9 +10,12 @@ import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import BackspaceIcon from '@material-ui/icons/Backspace';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
 
 import SongsTable from "./tablePlayed";
-import TextField from '@material-ui/core/TextField';
+import Input from '@material-ui/core/Input';
 
 import {scoreData} from "../../../../types/data";
 import InputLabel from '@material-ui/core/InputLabel';
@@ -106,11 +109,10 @@ export default class SongsList extends React.Component<P,stateInt> {
     return this.setState({scoreData:this.songFilter(newState),options:newState["options"]});
   }
 
-  handleInputChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+  handleInputChange = (e:React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>|null)=>{
     let newState = this.cloneState();
-    newState.filterByName = e.target.value;
-
-    return this.setState({scoreData:this.songFilter(newState),filterByName:e.target.value});
+    newState.filterByName = e ? e.target.value : "";
+    return this.setState({scoreData:this.songFilter(newState),filterByName:newState.filterByName});
   }
 
   songFilter = (newState:{[s:string]:any} = this.state) =>{
@@ -243,18 +245,22 @@ export default class SongsList extends React.Component<P,stateInt> {
             </FormControl>
           </Grid>
           <Grid item xs={6}>
-            <form noValidate autoComplete="off">
-              <TextField
+            <FormControl component="fieldset" style={{width:"100%"}}>
+            <InputLabel htmlFor="standard-adornment-password"><FormattedMessage id="Songs.filterByName"/></InputLabel>
+              <Input
                 style={{width:"100%"}}
-                label={<FormattedMessage id="Songs.filterByName"/>}
                 placeholder={"(ex.)255"}
                 value={filterByName}
                 onChange={this.handleInputChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton onClick={()=>this.handleInputChange(null)}>
+                      <BackspaceIcon/>
+                    </IconButton>
+                  </InputAdornment>
+                }
               />
-            </form>
+            </FormControl>
           </Grid>
         </Grid>
         <Grid container spacing={1} id="mainFilters" style={{margin:"5px 0"}}>

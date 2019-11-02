@@ -4,7 +4,9 @@ import Typography from '@material-ui/core/Typography';
 import { FormattedMessage } from "react-intl";
 
 import SongsTable from "./tableNotPlayed";
-
+import BackspaceIcon from '@material-ui/icons/Backspace';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
@@ -12,7 +14,8 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
-import TextField from '@material-ui/core/TextField';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
 
 import {songData} from "../../../../types/data";
 import { difficultyDiscriminator } from '../../../../components/songs/filter';
@@ -84,11 +87,11 @@ export default class NotPlayList extends React.Component<P,stateInt> {
     return this.setState({songData:this.songFilter(newState),options:newState["options"]});
   }
 
-  handleInputChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+  handleInputChange = (e:React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>|null)=>{
     let newState = this.cloneState();
-    newState.filterByName = e.target.value;
+    newState.filterByName = e ? e.target.value : "";
 
-    return this.setState({songData:this.songFilter(newState),filterByName:e.target.value});
+    return this.setState({songData:this.songFilter(newState),filterByName:newState.filterByName});
   }
 
   songFilter = (newState:{[s:string]:any} = this.state) =>{
@@ -141,18 +144,22 @@ export default class NotPlayList extends React.Component<P,stateInt> {
         </Typography>
         <Grid container spacing={1} style={{margin:"5px 0"}}>
           <Grid item xs={12}>
-            <form noValidate autoComplete="off">
-              <TextField
+            <FormControl component="fieldset" style={{width:"100%"}}>
+            <InputLabel htmlFor="standard-adornment-password"><FormattedMessage id="Songs.filterByName"/></InputLabel>
+              <Input
                 style={{width:"100%"}}
-                label={<FormattedMessage id="Songs.filterByName"/>}
                 placeholder={"(ex.)255"}
                 value={filterByName}
                 onChange={this.handleInputChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton onClick={()=>this.handleInputChange(null)}>
+                      <BackspaceIcon/>
+                    </IconButton>
+                  </InputAdornment>
+                }
               />
-            </form>
+            </FormControl>
           </Grid>
         </Grid>
         <Grid container spacing={1} id="mainFilters" style={{margin:"5px 0"}}>

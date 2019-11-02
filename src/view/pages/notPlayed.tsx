@@ -2,7 +2,7 @@ import * as React from 'react';
 import { scoresDB, songsDB } from '../../components/indexedDB';
 import { songData } from '../../types/data';
 import { difficultyDiscriminator } from '../../components/songs/filter';
-import { _isSingle } from '../../components/settings';
+import { _isSingle,_currentStore } from '../../components/settings';
 import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import NotPlayList from '../components/songs/notplayed/notPlayList';
@@ -31,7 +31,7 @@ export default class NotPlayed extends React.Component<{},S> {
       currentState = currentState.filter((item:songData)=>item.title !== willDeleteItem.title && willDeleteItem.difficulty);
       return this.setState({full:currentState});
     }
-    const currentStore = "27";
+    const currentStore = _currentStore();
     const isSingle = _isSingle();
     const songs:songData[] = await new songsDB().getAll(isSingle);
     const db = new scoresDB();
