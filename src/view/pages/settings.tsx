@@ -56,6 +56,9 @@ class Settings extends React.Component<{intl:any},S> {
                   <MenuItem value="en">English</MenuItem>
                 </Select>
               </FormControl>
+              <Typography variant="caption" display="block">
+                <FormattedMessage id="Settings.noteLang"/>
+              </Typography>
               <Divider style={{margin:"10px 0"}}/>
                 <FormControl>
                   <InputLabel><FormattedMessage id="Settings.dataStore"/></InputLabel>

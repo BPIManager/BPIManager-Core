@@ -67,7 +67,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
     });
   }
 
-  handleChangePage = (event:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number):void => this.setState({page:newPage});
+  handleChangePage = (_event:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number):void => this.setState({page:newPage});
 
   handleChangeRowsPerPage = (event:React.ChangeEvent<HTMLInputElement>):void => this.setState({page:0,rowsPerPage:+event.target.value});
 

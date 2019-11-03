@@ -6,6 +6,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import bpiCalcuator from '../../components/bpi';
+import {_isSingle,_currentStore} from "../../components/settings";
 import moment from 'moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart } from 'recharts';
@@ -35,8 +36,8 @@ class Stats extends React.Component<{intl:any},S> {
   async updateScoreData(){
     const db = new scoresDB();
     const bpi = new bpiCalcuator();
-    const currentStore = "27";
-    const isSingle = 1;
+    const currentStore = _currentStore();
+    const isSingle = _isSingle();
     bpi.allTwelvesLength = await new songsDB().getAllTwelvesLength(isSingle);
     bpi.allTwelvesBPI = await db.getAllTwelvesBPI(isSingle,currentStore,"12");
 

@@ -1,5 +1,5 @@
 import {scoreData} from "../../types/data";
-import { convertClearState } from "../songs/filter";
+import { convertClearState,convertLeggendariaStates } from "../songs/filter";
 
 export default class importCSV {
 
@@ -71,14 +71,14 @@ export default class importCSV {
           if(!p[eachObjNum[1]]){
             continue;
           }
-
+          const {name,difficulty} = mode === 1 ? convertLeggendariaStates(p[eachObjNum[1]],t) : {name:p[eachObjNum[1]],difficulty:t};
           const clearState:string|number = convertClearState(p[eachObjNum[6]],0);
           if(typeof clearState !== "number"){throw new Error();}
 
           result.push({
-            title:p[eachObjNum[1]],
+            title:name,
             version:p[eachObjNum[0]],
-            difficulty:t,
+            difficulty:difficulty,
             currentBPI:0,
             difficultyLevel:"-",
             exScore:Number(p[eachObjNum[2]]),
@@ -94,9 +94,9 @@ export default class importCSV {
             updatedAt:p[eachObjNum[8]]
           });
           resultHistory.push({
-            title:p[eachObjNum[1]],
+            title:name,
             exScore:Number(p[eachObjNum[2]]),
-            difficulty:t,
+            difficulty:difficulty,
             difficultyLevel:"-",
             storedAt:self.currentStore,
             isSingle:self.isSingle,

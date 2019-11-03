@@ -76,7 +76,7 @@ class SongDiffs extends React.Component<P,S> {
       <div>
         <Container>
           <FormControl style={{width:"100%"}}>
-          <InputLabel shrink id="demo-simple-select-placeholder-label-label">
+          <InputLabel shrink>
               <FormattedMessage id="SongDiffs.Target"/>
             </InputLabel>
             <Select

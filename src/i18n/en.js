@@ -11,7 +11,7 @@ const ja = {
   "Index.heroText": "Easily manage your scores of beatmania IIDX and visualize as BPI, in Web.",
   "Index.importButton" : "Try it out!",
   "Index.notes1" : "beatmania is the trademark registered by Konami Degital Entertainment Co., Ltd.",
-  "Index.notes2" : "This tool was affected and made by both of BPI which was invented by norimiso and BPICL which was released by ZUBU.",
+  "Index.notes2" : "This tool was affected by both of BPI which was invented by norimiso and BPICL which was released by ZUBU.",
   "Data.add" : "Import score data",
   "Data.infoBulk" : "If you've been subscribed to e-AMUSEMENT Premium Course, you can import all your scores in bulk by importing CSV from official IIDX website.",
   "Data.howToBulk1" : "Just access ",
@@ -78,10 +78,14 @@ const ja = {
   "Stats.UpdatedSum":"The total of updated songs",
   "Stats.Average":"Average BPI",
   "Stats.PossibleToGetBetter":"Songs Possible to Get better",
+  "Compare.Title":"Compare",
+  "Compare.From":"Data source",
+  "Compare.To":"Compare with",
   "Settings.title":"Settings",
   "Settings.language":"Language",
   "Settings.dataStore":"Version",
   "Settings.delete":"Delete all data",
+  "Settings.noteLang":"Select language you want to use. Please contribute to improve the quality of translation.(contact @notAesthet1c)",
   "Settings.noteMes1":"Registering scores in older IIDX makes you able to compare scores across versions.",
   "Settings.inaccurateMes":"Please note that since BPI in older IIDX versions will also be calculated with the latest WR and average scores so they would be rather inaccurate than them at the time."
 };

@@ -35,8 +35,15 @@ export default class Index extends React.Component<{},{}> {
           <div>
             <Grid container spacing={2} justify="center">
               <Grid item>
-                <Typography align="center" color="textSecondary" paragraph>
+                <Typography align="center" color="textSecondary" paragraph variant="caption">
                   <FormattedMessage id="Index.notes1"/>
+                </Typography>
+                <Typography align="center" color="textSecondary" paragraph variant="caption">
+                  <FormattedMessage id="Index.notes2"/>
+                </Typography>
+                <Typography align="center" color="textSecondary" paragraph variant="caption">
+                  BPIManager beta ver0.0.0.1<br/>
+                  If you have encountered unintended behaviours or have opinions to make this tool much better, please contact <a href="https://twitter.com/notAesthet1c">@notAesthet1c</a>.
                 </Typography>
               </Grid>
             </Grid>

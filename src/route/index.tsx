@@ -8,6 +8,7 @@ import Favorite from "../view/pages/favorites";
 import NotPlayed from "../view/pages/notPlayed";
 import Stats from "../view/pages/stats";
 import Settings from "../view/pages/settings";
+import Compare from "../view/pages/compare";
 import {BrowserRouter, Route} from "react-router-dom";
 
 
@@ -39,6 +40,7 @@ export default class Router extends React.Component<{},{}> {
                 <Route path="/favorite" exact component={Favorite}/>
                 <Route path="/notPlayed" exact component={NotPlayed}/>
                 <Route path="/stats" exact component={Stats}/>
+                <Route path="/compare" exact component={Compare}/>
                 <Route path="/settings" exact component={Settings}/>
               </BrowserRouter>
             </IntlProvider>

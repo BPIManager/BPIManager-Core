@@ -12,7 +12,7 @@ import bpiCalculator from "../../components/bpi";
 import { _currentStore, _isSingle } from '../../components/settings';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-export default class Index extends React.Component<{global:any},{raw:string,isSnackbarOpen:boolean,stateText:string,errors:string[],isSaving:boolean}> {
+export default class Index extends React.Component<{global:any},{raw:string,isSnackbarOpen:boolean,stateText:string,errors:string[],isSaving:boolean,currentState:string,progress:number}> {
 
   constructor(props:{global:any}){
     super(props);
@@ -22,6 +22,8 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
       stateText:"Data.Success",
       errors:[],
       isSaving:false,
+      currentState:"",
+      progress:0,
     }
     this.execute = this.execute.bind(this);
   }
@@ -37,28 +39,36 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
       if(!exec){
         throw new Error("CSVデータの形式が正しくありません");
       }
+
       const result = executor.getResult(),resultHistory = executor.getResultHistory();
-      for(let i = 0;i < result.length;++i){
+      const s = new scoresDB(_isSingle(),_currentStore()), h = new scoreHistoryDB();
+      const all = await s.getAll().then(t=>t.reduce((result:any, current:any) => {
+        result[current.title] = current;
+        return result;
+      }, {}));
+
+      const len = result.length;
+      for(let i = 0;i < len;++i){
         const calcData = await calc.calc(result[i]["title"],result[i]["difficulty"],result[i]["exScore"])
         if(calcData.error && calcData.reason){
           errors.push(result[i]["title"] + " - " + calcData.reason);
           continue;
         }
-        const s = new scoresDB(), h = new scoreHistoryDB();
-        await s.resetImportedItems();
-        const {willUpdate,lastScore} = await h.check(resultHistory[i]);
-        if(!willUpdate){
+        if(all[result[i]["title"]] && all[result[i]["title"]]["exScore"] >= result[i]["exScore"]){
+          //this.setState({progress:i / len * 100,currentState:result[i]["title"] + "をスキップしました"});
           continue;
         }
-        s.setItem(Object.assign(
+        //this.setState({progress:i / len * 100,currentState:result[i]["title"] + "を保存しています"});
+        const body = Object.assign(
           result[i],
           {
             difficultyLevel:calcData.difficultyLevel,
             currentBPI : calcData.bpi,
             isImported: true,
-            lastScore: lastScore
+            lastScore: all[result[i]["exScore"]]
           }
-        ));
+        );
+        all[result[i]["title"]] ? s.setItem(body) : s.putItem(body);
         h.add(Object.assign(resultHistory[i],{difficultyLevel:calcData.difficultyLevel}),{currentBPI:calcData.bpi,exScore:resultHistory[i].exScore},true);
       }
       this.props.global.setMove(false);

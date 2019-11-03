@@ -152,6 +152,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
                 value={filterByName}
                 onChange={this.handleInputChange}
                 endAdornment={
+                  filterByName && 
                   <InputAdornment position="end">
                     <IconButton onClick={()=>this.handleInputChange(null)}>
                       <BackspaceIcon/>

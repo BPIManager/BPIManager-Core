@@ -117,11 +117,11 @@ export default class SongsList extends React.Component<P,stateInt> {
 
   songFilter = (newState:{[s:string]:any} = this.state) =>{
     const diffs:string[] = ["hyper","another","leggendaria"];
+    const m = newState.mode;
+    const r = newState.range;
+    const f = this.state.allSongsData;
     if(Object.keys(this.state.allSongsData).length === 0){return [];}
     return this.props.full.filter((data)=>{
-      const m = newState.mode;
-      const r = newState.range;
-      const f = this.state.allSongsData;
       const max = f[data.title + _prefix(data["difficulty"])]["notes"] * 2;
       const evaluateRange = ():boolean=>{
         const format = (t:string|Date)=>moment(t).format("YYYYMMDD");
@@ -253,6 +253,7 @@ export default class SongsList extends React.Component<P,stateInt> {
                 value={filterByName}
                 onChange={this.handleInputChange}
                 endAdornment={
+                  filterByName &&
                   <InputAdornment position="end">
                     <IconButton onClick={()=>this.handleInputChange(null)}>
                       <BackspaceIcon/>

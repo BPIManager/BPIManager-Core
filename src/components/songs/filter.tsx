@@ -63,3 +63,67 @@ export const getSongSuffixForIIDXInfo = (name:string,difficulty:string):string=>
   }
   return "";
 }
+
+
+export const convertLeggendariaStates = (name:string,difficulty:string):{name:string,difficulty:string}=>{
+  const leggendariaSongs:string[] = [
+    "ABSOLUTE†",
+    "Clione†",
+    "RED ZONE†",
+    "spiral galaxy†",
+    "Little Little Princess†",
+    "CONTRACT†",
+    "waxing and wanding†",
+    "KAMAITACHI†",
+    "VANESSA†",
+    "Blue Rain†",
+    "ICARUS†",
+    "THE DEEP STRIKER†",
+    "Übertreffen†",
+    "Kung-fu Empire†",
+    "naughty girl@Queen's Palace†",
+    "THANK YOU FOR PLAYING†",
+    "凛として咲く花の如く†",
+    "SOLID STATE SQUAD†",
+    "Golden Palms†",
+    "QUANTUM TELEPORTATION†",
+    "Howling†",
+    "LUV CAN SAVE U†",
+    "朧†",
+    "仮想空間の旅人たち†",
+    "龍と少女とデコヒーレンス†",
+    "Ancient Scapes†LEGGENDARIA",
+    "Close the World feat.a☆ru†LEGGENDARIA",
+    "Feel The Beat†LEGGENDARIA",
+    "invoker†LEGGENDARIA",
+    "Sigmund†LEGGENDARIA",
+    "Verflucht†LEGGENDARIA",
+    "疾風迅雷†LEGGENDARIA",
+    "廿†",
+    "Beat Radiance†",
+    "CHRONO DIVER -NORNIR-†",
+    "Cosmic Cat†",
+    "EBORY & IVORY†",
+    "恋は白帯、サンシロー†",
+    "超青少年ノ為ノ超多幸ナ超古典的超舞曲†",
+    "Damage Per Second†",
+    "STARLIGHT DANCEHALL†",
+    "Amazing Mirage†",
+    "冬椿 ft. Kanae Asaba†",
+  ]
+  let newName = name,newDifficulty = difficulty;
+  if(difficulty !== "another"){
+    return {
+      name:newName,
+      difficulty:newDifficulty
+    }
+  }
+  if(leggendariaSongs.indexOf(name) > -1){
+    newName = name.replace("†LEGGENDARIA","").replace("†","");
+    newDifficulty = "leggendaria";
+  }
+  return {
+    name:newName,
+    difficulty:newDifficulty
+  }
+}
