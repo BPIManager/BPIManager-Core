@@ -4,6 +4,7 @@ import timeFormatter from "../common/timeFormatter";
 import {_currentStore,_isSingle} from "../settings";
 import moment from "moment";
 import {difficultyDiscriminator} from "../songs/filter";
+import bpiCalcuator, { B } from "../bpi";
 
 const storageWrapper = class extends Dexie{
   target: string = "scores";
@@ -11,6 +12,7 @@ const storageWrapper = class extends Dexie{
   scores:Dexie.Table<any, any>;
   songs:Dexie.Table<any, any>;
   stores: Dexie.Table<any, any>;
+  calculator:bpiCalcuator = new bpiCalcuator(true);
 
   constructor(){
     super("ScoreCoach");
@@ -23,6 +25,17 @@ const storageWrapper = class extends Dexie{
     this.scores = this.table("scores");
     this.songs = this.table("songs");
     this.stores = this.table("stores");
+  }
+
+  protected newSongs:{[key:string]:songData} = {};
+
+  setNewSongsDBRawData(reduced:{[key:string]:songData}):this{
+    this.newSongs = reduced;
+    return this;
+  }
+
+  protected apply(t:string,s:number):number{
+    return this.calculator.setPropData(this.newSongs[t],s);
   }
 
 }
@@ -170,6 +183,17 @@ export const scoresDB = class extends storageWrapper{
 
   async removeItem(title:string,storedAt:string):Promise<number>{
     return await this.scores.where({title:title,storedAt:storedAt}).delete();
+  }
+
+  async recalculateBPI(){
+    try{
+      const self = this;
+      return await this.scores.toCollection().modify(function(val: { currentBPI: number; title: string; exScore: number;}){
+        val.currentBPI = self.apply(val.title,val.exScore);
+      })
+    }catch(e){
+      console.log("failed recalculate - " + e);
+    }
   }
 
 }
@@ -357,9 +381,19 @@ export const songsDB = class extends storageWrapper{
       textage:item["textage"],
       difficultyLevel:item["difficultyLevel"],
       dpLevel:item["dpLevel"],
-      isFavorited:item["isFavorited"],
-      isCreated: item["isCreated"],
-      updatedAt: item["updatedAt"],
+      isFavorited:item["isFavorited"] || false,
+      isCreated: item["isCreated"] || false,
+      updatedAt: item["updatedAt"] || timeFormatter(0),
+    })
+  }
+
+  async updateItem(item:any):Promise<any>{
+    return await this.songs.where({
+      "title":item["title"],"difficulty":item["difficulty"]
+    }).modify({
+      wr:Number(item["wr"]),
+      avg:Number(item["avg"]),
+      updatedAt: timeFormatter(0),
     })
   }
 

@@ -9,3 +9,7 @@ export const _currentStore = ()=>{
 export const _lang = ()=>{
   return localStorage.getItem("lang") || "ja";
 }
+
+export const _currentVersion = ()=>{
+  return localStorage.getItem("lastDefFileVer") || "undefined";
+}

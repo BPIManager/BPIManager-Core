@@ -27,7 +27,6 @@ export default class Router extends React.Component<{},{}> {
       <Provider>
         <Subscribe to={[GlobalContainer]}>
           {global =>{
-            console.log(global);
             return (<IntlProvider
               locale={global.state.lang}
               messages={global.state.lang === "ja" ? ja : en}
@@ -41,7 +40,7 @@ export default class Router extends React.Component<{},{}> {
                 <Route path="/notPlayed" exact component={NotPlayed}/>
                 <Route path="/stats" exact component={Stats}/>
                 <Route path="/compare" exact component={Compare}/>
-                <Route path="/settings" exact component={Settings}/>
+                <Route path="/settings" exact render={_props=><Settings global={global}/>}/>
               </BrowserRouter>
             </IntlProvider>
           )}}
