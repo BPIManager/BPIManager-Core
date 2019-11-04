@@ -11,6 +11,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Divider from '@material-ui/core/Divider';
 import { Subscribe } from 'unstated';
 import GlobalContainer from '../../components/context/global';
+import Button from '@material-ui/core/Button';
+import UpdateIcon from '@material-ui/icons/Update';
 
 interface S {
   isLoading:boolean,
@@ -60,24 +62,42 @@ class Settings extends React.Component<{intl:any},S> {
                 <FormattedMessage id="Settings.noteLang"/>
               </Typography>
               <Divider style={{margin:"10px 0"}}/>
+              <FormControl>
+                <InputLabel><FormattedMessage id="Settings.dataStore"/></InputLabel>
+                <Select value={state.store} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+                  if(typeof e.target.value === "string"){
+                    setStore(e.target.value)
+                  }
+                }}>
+                  <MenuItem value="26">26 Rootage</MenuItem>
+                  <MenuItem value="27">27 HEROIC VERSE</MenuItem>
+                </Select>
+              </FormControl>
+              <Typography variant="caption" display="block">
+                <FormattedMessage id="Settings.noteMes1"/>
+              </Typography>
+              <Typography variant="caption" display="block">
+                <FormattedMessage id="Settings.inaccurateMes"/>
+              </Typography>
+              <Divider style={{margin:"10px 0"}}/>
                 <FormControl>
-                  <InputLabel><FormattedMessage id="Settings.dataStore"/></InputLabel>
-                  <Select value={state.store} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
-                    if(typeof e.target.value === "string"){
-                      setStore(e.target.value)
-                    }
-                  }}>
-                    <MenuItem value="26">26 Rootage</MenuItem>
-                    <MenuItem value="27">27 HEROIC VERSE</MenuItem>
-                  </Select>
+                  <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
+                    <FormattedMessage id="Settings.Update"/>
+                  </Typography>
+                  <Button
+                  variant="contained"
+                  color="secondary"
+                  startIcon={<UpdateIcon />}
+                  >
+                  <FormattedMessage id="Settings.UpdateResourcePacks"/>
+                  </Button>
                 </FormControl>
                 <Typography variant="caption" display="block">
-                  <FormattedMessage id="Settings.noteMes1"/>
+                  <FormattedMessage id="Settings.currentVersion"/>
                 </Typography>
                 <Typography variant="caption" display="block">
-                  <FormattedMessage id="Settings.inaccurateMes"/>
+                  <FormattedMessage id="Settings.updateWarning"/>
                 </Typography>
-                <Divider style={{margin:"10px 0"}}/>
             </Paper>
           </Container>
         )}

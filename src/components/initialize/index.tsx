@@ -30,8 +30,8 @@ export default class Initialize extends React.Component<{},{show:boolean}>{
         return this.setState({show:false});
       }
       const now = timeFormatter(0);
-      for(let i=0;i < csv.length;++i){
-        await this.songsDB.setItem(Object.assign(csv[i],{
+      for(let i=0;i < csv.body.length;++i){
+        await this.songsDB.setItem(Object.assign(csv["body"][i],{
           isFavorited:false,
           isCreated:false,
           updatedAt:now,
@@ -39,6 +39,7 @@ export default class Initialize extends React.Component<{},{show:boolean}>{
         this.wait(3);
       }
       localStorage.setItem("isSingle","true");
+      localStorage.setItem("lastDefFileVer",csv.version);
       return this.setState({show:false});
     }catch(e){
       console.log(e);

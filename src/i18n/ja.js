@@ -6,7 +6,7 @@ const ja = {
   "GlobalNav.SongList": "楽曲一覧",
   "GlobalNav.unregisteredSongs": "未プレイ楽曲",
   "GlobalNav.Statistics": "統計",
-  "GlobalNav.compare": "バージョン間比較",
+  "GlobalNav.compare": "スコア比較",
   "GlobalNav.Settings": "設定",
   "Index.heroText": "Web上でbeatmania IIDXのスコアを管理し、BPIとして可視化できます。",
   "Index.importButton" : "使ってみる",
@@ -89,6 +89,10 @@ const ja = {
   "Settings.noteLang":"UIに用いる言語を選択してください。",
   "Settings.noteMes1":"過去作スコアを登録することで、最新作とのデータ比較が可能です。",
   "Settings.inaccurateMes":"過去作のスコアも今現在の最新全1,平均スコアでBPIが計算されます。参考程度にしてください。",
+  "Settings.Update":"更新",
+  "Settings.UpdateResourcePacks":"定義データの更新",
+  "Settings.currentVersion":"現在の定義バージョン:",
+  "Settings.updateWarning":"更新には時間がかかる場合があります。",
 };
 
 export default ja;

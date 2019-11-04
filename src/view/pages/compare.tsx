@@ -190,6 +190,8 @@ export default class Compare extends React.Component<{},S> {
               <Select value={compareTo} onChange={this.handleCompareToChange}>
                 <MenuItem value={"26"}>26 Rootage</MenuItem>
                 <MenuItem value={"27"}>27 HEROIC VERSE</MenuItem>
+                <MenuItem value={"WR"}>WORLD RECORD</MenuItem>
+                <MenuItem value={"AVERAGE"}>AVERAGE</MenuItem>
               </Select>
             </FormControl>
           </Grid>

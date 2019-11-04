@@ -87,7 +87,11 @@ const ja = {
   "Settings.delete":"Delete all data",
   "Settings.noteLang":"Select language you want to use. Please contribute to improve the quality of translation.(contact @notAesthet1c)",
   "Settings.noteMes1":"Registering scores in older IIDX makes you able to compare scores across versions.",
-  "Settings.inaccurateMes":"Please note that since BPI in older IIDX versions will also be calculated with the latest WR and average scores so they would be rather inaccurate than them at the time."
+  "Settings.inaccurateMes":"Please note that since BPI in older IIDX versions will also be calculated with the latest WR and average scores so they would be rather inaccurate than them at the time.",
+  "Settings.Update":"Update",
+  "Settings.UpdateResourcePacks":"Update definition file",
+  "Settings.currentVersion":"Current version of the definition data:",
+  "Settings.updateWarning":"This process may take a few minutes.",
 };
 
 export default ja;
