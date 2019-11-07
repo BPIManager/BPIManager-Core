@@ -23,10 +23,11 @@ interface P{
   isDesc:boolean,
   changeSort:(newNum:number)=>void,
   updateScoreData:(willDelete?:boolean,willDeleteItems?:{title:string,difficulty:string})=>void,
+  page:number,
+  handleChangePage:(_e:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number)=>void
 }
 
 interface S{
-  page:number,
   rowsPerPage:number,
   isOpen:boolean,
   currentSongData:songData | null,
@@ -38,7 +39,6 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
   constructor(props:Readonly<P>){
     super(props);
     this.state = {
-      page : 0,
       rowsPerPage : 10,
       isOpen:false,
       currentSongData:null,
@@ -46,8 +46,8 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
     }
   }
 
-  handleOpen = async(updateFlag:boolean = false,row?:any,willDeleteItems?:{title:string,difficulty:string}):Promise<void>=> {
-    if(updateFlag){await this.props.updateScoreData(true,willDeleteItems);}
+  handleOpen = (updateFlag:boolean = false,row?:any,willDeleteItems?:{title:string,difficulty:string}):void=> {
+    if(updateFlag){this.props.updateScoreData(true, willDeleteItems);}
     const t = row ? {
       difficulty:difficultyDiscriminator(row.difficulty),
       title:row.title,
@@ -67,13 +67,14 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
     });
   }
 
-  handleChangePage = (_event:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number):void => this.setState({page:newPage});
-
-  handleChangeRowsPerPage = (event:React.ChangeEvent<HTMLInputElement>):void => this.setState({page:0,rowsPerPage:+event.target.value});
+  handleChangeRowsPerPage = (event:React.ChangeEvent<HTMLInputElement>):void => {
+    this.props.handleChangePage(null,0);
+    this.setState({rowsPerPage:+event.target.value});
+  }
 
   render(){
-    const {page,rowsPerPage,isOpen,currentSongData,currentScoreData} = this.state;
-    const {data,changeSort,sort,isDesc} = this.props;
+    const {rowsPerPage,isOpen,currentSongData,currentScoreData} = this.state;
+    const {page,data,changeSort,sort,isDesc} = this.props;
     return (
       <Paper style={{width:"100%",overflowX:"auto"}}>
         <div>
@@ -102,7 +103,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                 return (
                   <TableRow
                     onClick={()=>this.handleOpen(false,row)}
-                    hover role="checkbox" tabIndex={-1} key={row.title + row.difficulty} style ={ i % 2? { background : "#f7f7f7" }:{ background : "white" }}>
+                    hover role="checkbox" tabIndex={-1} key={row.title + row.difficulty} className={ i % 2 ? "isOdd" : "isEven"}>
                     {columns.map((column,j) => {
                       const d = difficultyDiscriminator(row.difficulty);
                       const prefix = d === "hyper" ? "(H)" : d === "leggendaria" ? "(†)" : "";
@@ -132,7 +133,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
           nextIconButtonProps={{
             "aria-label": "next page",
           }}
-          onChangePage={this.handleChangePage}
+          onChangePage={this.props.handleChangePage}
           onChangeRowsPerPage={this.handleChangeRowsPerPage}
         />
         {isOpen &&

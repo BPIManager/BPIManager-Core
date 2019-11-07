@@ -14,7 +14,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import Table from "@material-ui/core/Table";
 import TableRow from "@material-ui/core/TableRow";
-import moment from "moment";
 
 interface P{
   song:songData|null,
@@ -52,7 +51,6 @@ class SongDiffs extends React.Component<P,S> {
     const {song} = this.props;
     if(!song){return};
     const s = new scoreHistoryDB();
-    console.log(newState);
     if(newState === 0){
       return this.setState({
         dataset:await s.getWithinVersion(song),
@@ -130,7 +128,7 @@ class DiffsTable extends React.Component<{scoreTable:any[],type:number},{}>{
           {this.props.scoreTable.map((row:any,i:number) => {
             return (
               <TableRow
-                hover role="checkbox" tabIndex={-1} key={row.title + row.difficulty + i} style ={ i % 2? { background : "#f7f7f7" }:{ background : "white" }}>
+                hover role="checkbox" tabIndex={-1} key={row.title + row.difficulty + i} className={ i % 2 ? "isOdd" : "isEven"}>
                 {columns.map((column,j) => {
                   return (
                     <TableCell key={column.id}>

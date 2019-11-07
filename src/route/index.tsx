@@ -9,6 +9,7 @@ import NotPlayed from "../view/pages/notPlayed";
 import Stats from "../view/pages/stats";
 import Settings from "../view/pages/settings";
 import Compare from "../view/pages/compare";
+import Help from "../view/pages/help";
 import {BrowserRouter, Route} from "react-router-dom";
 
 
@@ -41,6 +42,7 @@ export default class Router extends React.Component<{},{}> {
                 <Route path="/stats" exact component={Stats}/>
                 <Route path="/compare" exact component={Compare}/>
                 <Route path="/settings" exact render={_props=><Settings global={global}/>}/>
+                <Route path="/help" exact component={Help}/>
               </BrowserRouter>
             </IntlProvider>
           )}}

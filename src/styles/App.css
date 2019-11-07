@@ -67,8 +67,28 @@ th.MuiTableCell-root.MuiTableCell-head{
   cursor: pointer;
 }
 
-.MuiTableBody-root > tr:hover{
+#__light .MuiTableBody-root > tr:hover{
   background:#ececec !important;
+}
+
+#__dark .MuiTableBody-root > tr:hover{
+  background:#313131 !important;
+}
+
+#__light .isOdd{
+  background:#f7f7f7;
+}
+
+#__dark .isOdd{
+  background:#4a4a4a;
+}
+
+#__dark .MuiTableRow-root .MuiTableCell-body:first-child{
+  color:#333;
+}
+
+#__dark #_notPlayed .MuiTableRow-root .MuiTableCell-body:first-child{
+  color:#fff;
 }
 
 a.link{
@@ -127,4 +147,8 @@ a.link:hover{
   z-index:9;
   right:5px;
   top:5px
+}
+
+.SocialMediaShareButton div{
+  margin:0 auto;
 }

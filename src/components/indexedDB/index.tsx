@@ -4,7 +4,7 @@ import timeFormatter from "../common/timeFormatter";
 import {_currentStore,_isSingle} from "../settings";
 import moment from "moment";
 import {difficultyDiscriminator} from "../songs/filter";
-import bpiCalcuator, { B } from "../bpi";
+import bpiCalcuator from "../bpi";
 
 const storageWrapper = class extends Dexie{
   target: string = "scores";
@@ -63,19 +63,29 @@ export const scoresDB = class extends storageWrapper{
   }
 
   async getAll():Promise<scoreData[]>{
-    const currentData = await this.scores.where({
-      storedAt:_currentStore(),
-      isSingle:_isSingle(),
-    }).toArray();
-    return currentData;
+    try{
+      const currentData = await this.scores.where({
+        storedAt:_currentStore(),
+        isSingle:_isSingle(),
+      }).toArray();
+      return currentData;
+    }catch(e){
+      console.error(e);
+      return [];
+    }
   }
 
   async getSpecificVersionAll():Promise<scoreData[]>{
-    const currentData = await this.scores.where({
-      storedAt:this.storedAt,
-      isSingle:this.isSingle,
-    }).toArray();
-    return currentData;
+    try{
+      const currentData = await this.scores.where({
+        storedAt:this.storedAt,
+        isSingle:this.isSingle,
+      }).toArray();
+      return currentData;
+    }catch(e){
+      console.error(e);
+      return [];
+    }
   }
 
   async deleteAll():Promise<void>{
@@ -88,11 +98,16 @@ export const scoresDB = class extends storageWrapper{
 
   //for statistics
   async getAllTwelvesBPI(isSingle:number,storedAt:string,diff:string = "12"):Promise<number[]>{
-    let data:scoreData[] = await this.scores.where({
-      storedAt:storedAt,isSingle:isSingle,
-    }).toArray();
-    data = data.filter(item=>item.difficultyLevel === diff) ;
-    return data.map((item:scoreData)=>item.currentBPI);
+    try{
+      let data:scoreData[] = await this.scores.where({
+        storedAt:storedAt,isSingle:isSingle,
+      }).toArray();
+      data = data.filter(item=>item.difficultyLevel === diff) ;
+      return data.map((item:scoreData)=>item.currentBPI);
+    }catch(e){
+      console.error(e);
+      return [];
+    }
   }
 
   async resetItems(storedAt:string):Promise<number>{
@@ -126,7 +141,8 @@ export const scoresDB = class extends storageWrapper{
         updatedAt : item["updatedAt"]
       })
     }catch(e){
-      console.log(e);
+      console.error(e);
+      return;
     }
   }
 
@@ -151,7 +167,7 @@ export const scoresDB = class extends storageWrapper{
         updatedAt : item["updatedAt"]
       })
     }catch(e){
-      console.log(e);
+      console.error(e);
     }
   }
 
@@ -176,7 +192,7 @@ export const scoresDB = class extends storageWrapper{
       }
       return true;
     }catch(e){
-      console.log(e);
+      console.error(e);
       return false;
     }
   }
@@ -192,7 +208,7 @@ export const scoresDB = class extends storageWrapper{
         val.currentBPI = self.apply(val.title,val.exScore);
       })
     }catch(e){
-      console.log("failed recalculate - " + e);
+      console.error("failed recalculate - " + e);
     }
   }
 
@@ -226,7 +242,7 @@ export const scoreHistoryDB = class extends storageWrapper{
       });
       return true;
     }catch(e){
-      console.log(e);
+      console.error(e);
       return false;
     }
   }
@@ -247,25 +263,25 @@ export const scoreHistoryDB = class extends storageWrapper{
       };
     }
   }
-  //リファクタ済み
-  async getAll(_isSingle:number,_storedAt:string,diff:string = "12"):Promise<any[]>{
+
+  async getAll(diff:string = "12"):Promise<any[]>{
     try{
       return await this.scoreHistory.where(
         {storedAt:this.currentStore,isSingle:this.isSingle,difficultyLevel:diff}
       ).toArray();
     }catch(e){
-      console.log(e);
+      console.error(e);
       return [];
     }
   }
 
-  async reset(_isSingle:number,_storedAt:string):Promise<any>{
+  async reset(storedAt?:string):Promise<any>{
     try{
       return await this.scoreHistory.where(
-        {storedAt:this.currentStore,isSingle:this.isSingle}
+        {storedAt:storedAt ? storedAt : this.currentStore,isSingle:this.isSingle}
       ).delete();
     }catch(e){
-      console.log(e);
+      console.error(e);
       return 0;
     }
   }
@@ -279,7 +295,7 @@ export const scoreHistoryDB = class extends storageWrapper{
         return moment(b.updatedAt).diff(moment(a.updatedAt))
       }));
     }catch(e){
-      console.log(e);
+      console.error(e);
       return [];
     }
   }
@@ -302,11 +318,24 @@ export const scoreHistoryDB = class extends storageWrapper{
           return b.exScore - a.exScore
         });
         res.push(t[0]);
+        return 0;
       });
       return res.reverse();
     }catch(e){
-      console.log(e);
+      console.error(e);
       return [];
+    }
+  }
+
+  async recalculateBPI(){
+    try{
+      const self = this;
+      return await this.scoreHistory.toCollection().modify(function(val: { BPI: number; title: string; exScore: number;}){
+        val.BPI = self.apply(val.title,val.exScore);
+      })
+    }catch(e){
+      console.error("failed recalculate - " + e);
+      return;
     }
   }
 
@@ -321,36 +350,54 @@ export const songsDB = class extends storageWrapper{
   }
 
   async getAll(isSingle:number = 1,willCollection:boolean = false):Promise<any>{
-    const data = isSingle === 1 ?
-      this.songs.where("dpLevel").equals("0") :
-      this.songs.where("dpLevel").notEqual("0");
-    return willCollection ? data : await data.toArray();
+    try{
+      const data = isSingle === 1 ?
+        this.songs.where("dpLevel").equals("0") :
+        this.songs.where("dpLevel").notEqual("0");
+      return willCollection ? data : await data.toArray();
+    }catch(e){
+      return [];
+    }
   }
 
   async getAllTwelvesLength(isSingle:number = 1):Promise<number>{
-    const data = isSingle === 1 ?
-      await this.songs.where("dpLevel").equals("0").toArray() :
-      await this.songs.where("dpLevel").notEqual("0").toArray();
-    let matched = 0;
-    for(let i = 0; i < data.length; ++i){
-      if(data[i]["difficultyLevel"] === "12"){
-        matched++;
+    try{
+      const data = isSingle === 1 ?
+        await this.songs.where("dpLevel").equals("0").toArray() :
+        await this.songs.where("dpLevel").notEqual("0").toArray();
+      let matched = 0;
+      for(let i = 0; i < data.length; ++i){
+        if(data[i]["difficultyLevel"] === "12"){
+          matched++;
+        }
       }
+      return matched;
+    }catch(e){
+      console.error(e);
+      return 0;
     }
-    return matched;
   }
 
   async getAllFavoritedItems(isSingle:number = 1):Promise<any[]>{
-    const data = await this.getAll(isSingle,true);
-    return data.and((item:songData)=>item.isFavorited === true).toArray();
+    try{
+      return await this.getAll(isSingle,true).then(t=>t.and((item:songData)=>item.isFavorited === true).toArray());
+    }catch(e){
+      console.error(e);
+      return [];
+    }
   }
 
   async deleteAll():Promise<void>{
     return await this.songs.clear();
   }
 
-  getItem(title:string):Promise<string[]>{
-    return this.songs.where({title:title}).toArray();
+  async getItem(title:string):Promise<any[]>{
+    try{
+      return await this.songs.where({title:title}).toArray();
+    }catch(e){
+      console.error(e);
+      return [];
+    }
   }
 
   async getOneItemIsSingle(title:string,difficulty:string):Promise<songData[]>{
@@ -363,48 +410,76 @@ export const songsDB = class extends storageWrapper{
         return difficulty;
       }
     };
-    return await this.songs.where("[title+difficulty]").equals([title,diffs()]).toArray();
+    try{
+      return await this.songs.where("[title+difficulty]").equals([title,diffs()]).toArray();
+    }catch(e){
+      return [];
+    }
   }
 
   async resetItems(storedAt:string):Promise<number>{
-    return await this.songs.where({storedAt:storedAt}).delete();
+    try{
+      return await this.songs.where({storedAt:storedAt}).delete();
+    }catch(e){
+      return 1;
+    }
   }
 
   async setItem(item:any):Promise<any>{
-    return await this.songs.put({
-      title:item["title"],
-      difficulty:item["difficulty"],
-      wr:Number(item["wr"]),
-      avg:Number(item["avg"]),
-      notes:Number(item["notes"]),
-      bpm:item["bpm"],
-      textage:item["textage"],
-      difficultyLevel:item["difficultyLevel"],
-      dpLevel:item["dpLevel"],
-      isFavorited:item["isFavorited"] || false,
-      isCreated: item["isCreated"] || false,
-      updatedAt: item["updatedAt"] || timeFormatter(0),
-    })
+    try{
+      return await this.songs.put({
+        title:item["title"],
+        difficulty:item["difficulty"],
+        wr:Number(item["wr"]),
+        avg:Number(item["avg"]),
+        notes:Number(item["notes"]),
+        bpm:item["bpm"],
+        textage:item["textage"],
+        difficultyLevel:item["difficultyLevel"],
+        dpLevel:item["dpLevel"],
+        isFavorited:item["isFavorited"] || false,
+        isCreated: item["isCreated"] || false,
+        updatedAt: item["updatedAt"] || timeFormatter(0),
+      })
+    }catch(e){
+      console.error(e);
+      return 1;
+    }
   }
 
   async updateItem(item:any):Promise<any>{
-    return await this.songs.where({
-      "title":item["title"],"difficulty":item["difficulty"]
-    }).modify({
-      wr:Number(item["wr"]),
-      avg:Number(item["avg"]),
-      updatedAt: timeFormatter(0),
-    })
+    try{
+      return await this.songs.where({
+        "title":item["title"],"difficulty":item["difficulty"]
+      }).modify({
+        wr:Number(item["wr"]),
+        avg:Number(item["avg"]),
+        updatedAt: timeFormatter(0),
+      })
+    }catch(e){
+      console.error(e);
+      return 1;
+    }
   }
 
   async toggleFavorite(title:string,difficulty:string,newState:boolean):Promise<any>{
-    return await this.songs.where({title:title,difficulty:difficulty}).modify({
-      isFavorited:newState
-    });
+    try{
+      return await this.songs.where({title:title,difficulty:difficulty}).modify({
+        isFavorited:newState
+      });
+    }catch(e){
+      console.error(e);
+      return 1;
+    }
   }
 
   async removeItem(title:string):Promise<number>{
-    return await this.songs.where({title:title}).delete();
+    try{
+      return await this.songs.where({title:title}).delete();
+    }catch(e){
+      console.error(e);
+      return 1;
+    }
   }
 
 }

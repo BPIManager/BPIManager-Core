@@ -38,6 +38,7 @@ interface stateInt {
   isDesc:boolean,
   mode:number,
   range:number,
+  page:number,
 }
 
 interface P{
@@ -63,9 +64,12 @@ export default class SongsList extends React.Component<P,stateInt> {
         difficulty:["0","1","2"],
       },
       range:0,
+      page:0,
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
+
+  handleChangePage = (_e:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number):void => this.setState({page:newPage});
 
   async componentDidMount(){
     let allSongs:{[key:string]:string|number} = {};
@@ -106,13 +110,13 @@ export default class SongsList extends React.Component<P,stateInt> {
     }else{
       newState["options"][target] = newState["options"][target].filter((t:string)=> t !== name);
     }
-    return this.setState({scoreData:this.songFilter(newState),options:newState["options"]});
+    return this.setState({scoreData:this.songFilter(newState),options:newState["options"],page:0});
   }
 
   handleInputChange = (e:React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>|null)=>{
     let newState = this.cloneState();
     newState.filterByName = e ? e.target.value : "";
-    return this.setState({scoreData:this.songFilter(newState),filterByName:newState.filterByName});
+    return this.setState({scoreData:this.songFilter(newState),filterByName:newState.filterByName,page:0});
   }
 
   songFilter = (newState:{[s:string]:any} = this.state) =>{
@@ -208,7 +212,7 @@ export default class SongsList extends React.Component<P,stateInt> {
   cloneState = () => JSON.parse(JSON.stringify(this.state))
 
   render(){
-    const {isLoading,filterByName,options,sort,isDesc,mode,range} = this.state;
+    const {isLoading,filterByName,options,sort,isDesc,mode,range,page} = this.state;
     if(isLoading){
       return (
         <Container className="loaderCentered">
@@ -302,6 +306,7 @@ export default class SongsList extends React.Component<P,stateInt> {
         </Grid>
 
         <SongsTable
+          page={page} handleChangePage={this.handleChangePage}
           data={this.sortedData()} sort={sort} isDesc={isDesc} mode={mode}
           changeSort={this.changeSort} allSongsData={this.state.allSongsData}
           updateScoreData={this.updateScoreData}/>

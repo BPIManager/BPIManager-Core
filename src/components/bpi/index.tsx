@@ -2,7 +2,7 @@ import {songsDB} from "../indexedDB";
 import { songData } from "../../types/data";
 
 export interface B{
-  error:boolean,bpi:number,reason?:any,difficultyLevel?:number
+  error:boolean,bpi:number,reason?:any,difficultyLevel?:string
 }
 
 export default class bpiCalcuator{
@@ -27,7 +27,7 @@ export default class bpiCalcuator{
   private s:number = 0;
   private k:number = 0;
   private z:number = 0;
-  private pgf = (j:number):number=> 1 + ( j / this.m - 0.5 ) / ( 1 - j / this.m );
+  private pgf = (j:number):number=> j === this.m ? this.m : 1 + ( j / this.m - 0.5 ) / ( 1 - j / this.m );
 
   async calc(songTitle:string,difficulty:string,exScore:number):Promise<B>{
     try{
@@ -41,7 +41,7 @@ export default class bpiCalcuator{
       this.k = this.propData[0]["avg"];
       this.z = this.propData[0]["wr"];
       this.m = this.propData[0]["notes"] * 2;
-      return {error:false,bpi:this.exec(),difficultyLevel:Number(this.propData[0]["difficultyLevel"])};
+      return {error:false,bpi:this.exec(),difficultyLevel:this.propData[0]["difficultyLevel"]};
 
     }catch(e){
       return {error:true,bpi:NaN,reason:e.message || e};
@@ -63,7 +63,6 @@ export default class bpiCalcuator{
 
     const _s_ = _s / _k;
     const _z_ = _z / _k;
-
     if(s >= k){
       res = 100 * ( Math.pow(Math.log(_s_),1.5) / Math.pow(Math.log(_z_),1.5) );
     }else{
@@ -94,7 +93,7 @@ export default class bpiCalcuator{
   }
 
   rank(bpi:number):number{
-    return Math.ceil(Math.pow(2616, (100 - bpi ) / 100 ));
+    return Math.ceil(Math.pow(2645, (100 - bpi ) / 100 ));
   }
 
   _allTwelvesLength:number = 0;

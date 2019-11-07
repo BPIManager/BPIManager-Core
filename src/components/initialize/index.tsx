@@ -2,9 +2,9 @@ import * as React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import timeFormatter from "../common/timeFormatter";
 import storageWrapper,{songsDB} from "../indexedDB";
-import {csv} from "../../data/music.js";
+import WarningIcon from '@material-ui/icons/Warning';
 
-export default class Initialize extends React.Component<{},{show:boolean}>{
+export default class Initialize extends React.Component<{},{show:boolean,error:boolean,errorMessage:string}>{
   storage:any;
   songsDB:any;
 
@@ -14,6 +14,8 @@ export default class Initialize extends React.Component<{},{show:boolean}>{
     this.songsDB = new songsDB();
     this.state = {
       show : true,
+      error:false,
+      errorMessage:""
     }
   }
 
@@ -30,6 +32,7 @@ export default class Initialize extends React.Component<{},{show:boolean}>{
         return this.setState({show:false});
       }
       const now = timeFormatter(0);
+      const csv = await fetch("https://files.poyashi.me/json/songs.json?t=initialized").then(t=>t.json());
       for(let i=0;i < csv.body.length;++i){
         await this.songsDB.setItem(Object.assign(csv["body"][i],{
           isFavorited:false,
@@ -43,12 +46,23 @@ export default class Initialize extends React.Component<{},{show:boolean}>{
       return this.setState({show:false});
     }catch(e){
       console.log(e);
+      return this.setState({error:true,errorMessage:e.message || "不明なエラーが発生したため続行できません。"})
     }
   }
 
   render(){
     if(!this.state.show){
       return (null);
+    }
+    if(this.state.error){
+      return (<div id="overlayLayout">
+        <div>
+          <WarningIcon/>
+        </div>
+        <div>
+          <p>{this.state.errorMessage}</p>
+        </div>
+      </div>);
     }
     return (
       <div id="overlayLayout">

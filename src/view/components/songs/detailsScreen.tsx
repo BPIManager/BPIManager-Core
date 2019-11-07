@@ -34,7 +34,7 @@ interface P{
   isOpen:boolean,
   song:songData|null,
   score:scoreData|null,
-  handleOpen:(flag:boolean,row?:any,willDeleteItems?:any)=>Promise<void>,
+  handleOpen:(flag:boolean,row?:any,willDeleteItems?:any)=>void,
   willDelete?:boolean
 }
 

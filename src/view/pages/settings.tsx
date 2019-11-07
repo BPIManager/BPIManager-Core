@@ -14,15 +14,24 @@ import GlobalContainer from '../../components/context/global';
 import Button from '@material-ui/core/Button';
 import UpdateIcon from '@material-ui/icons/Update';
 import { _currentVersion, _isSingle } from '../../components/settings';
-import { songsDB, scoresDB } from '../../components/indexedDB';
+import { songsDB, scoresDB, scoreHistoryDB } from '../../components/indexedDB';
 import { songData } from '../../types/data';
-import PromisePool from "es6-promise-pool";
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogActions from '@material-ui/core/DialogActions';
 
 interface S {
   isLoading:boolean,
   disableUpdateBtn:boolean,
+  disableDeleteBtn:boolean,
   currentVersion:string,
   message:string,
+  message2:string,
+  currentResetStore:string,
+  isDialogOpen:boolean,
 }
 
 interface P{
@@ -39,11 +48,29 @@ class Settings extends React.Component<P,S> {
       disableUpdateBtn:false,
       currentVersion:_currentVersion(),
       message:"",
+      message2:"",
+      currentResetStore:"27",
+      disableDeleteBtn:false,
+      isDialogOpen:false,
     }
   }
 
-  async componentDidMount(){
+  deleteDef = async()=>{
+    try{
+      this.props.global.setMove(true);
+      this.setState({disableDeleteBtn:true,message2:""});
+      const sdb = new scoresDB(), shdb = new scoreHistoryDB();
+      await sdb.resetItems(this.state.currentResetStore);
+      await shdb.reset(this.state.currentResetStore)
+      this.setState({disableDeleteBtn:false,message2:"正常に削除しました"});
+    }catch(e){
+      console.log(e);
+      this.setState({disableDeleteBtn:false,message2:"更新に失敗しました"});
+    }
+    this.props.global.setMove(false);
   }
+
+  toggleDialog = ()=> this.setState({isDialogOpen:!this.state.isDialogOpen})
 
   updateDef = async()=>{
     const end = ()=>{this.props.global.setMove(false);}
@@ -51,6 +78,7 @@ class Settings extends React.Component<P,S> {
       this.props.global.setMove(true);
       this.setState({disableUpdateBtn:true,message:""});
       const sdb = new songsDB();
+      const schDB = new scoreHistoryDB();
       const reducer = (t:songData[])=>t.reduce((result:{[key:string]:songData}, current:songData) => {result[current.title] = current;return result;}, {});
       const allSongs = await sdb.getAll(_isSingle()).then(t=>reducer(t));
 
@@ -77,17 +105,19 @@ class Settings extends React.Component<P,S> {
       const scDB = new scoresDB();
       scDB.setNewSongsDBRawData(reducer(res.body));
       await scDB.recalculateBPI();
+      await schDB.recalculateBPI();
       localStorage.setItem("lastDefFileVer",res.version);
       this.setState({currentVersion:res.version,disableUpdateBtn:false,message:"更新完了"});
     }catch(e){
       console.log(e);
+      this.setState({disableUpdateBtn:false,message:"更新に失敗しました"});
     }
     end();
     return;
   }
 
   render(){
-    const {isLoading,disableUpdateBtn,message} = this.state;
+    const {isLoading,isDialogOpen,disableUpdateBtn,message,message2,currentResetStore,disableDeleteBtn} = this.state;
     if(isLoading){
       return (
         <Container className="loaderCentered">
@@ -97,7 +127,7 @@ class Settings extends React.Component<P,S> {
     }
     return (
       <Subscribe to={[GlobalContainer]}>
-        {({state,setLang,setStore}:GlobalContainer)=> (
+        {({state,setLang,setStore,setTheme}:GlobalContainer)=> (
           <Container className="commonLayout" fixed>
             <Typography component="h4" variant="h4" color="textPrimary" gutterBottom>
               <FormattedMessage id="Settings.title"/>
@@ -117,6 +147,18 @@ class Settings extends React.Component<P,S> {
               <Typography variant="caption" display="block">
                 <FormattedMessage id="Settings.noteLang"/>
               </Typography>
+              <Divider style={{margin:"10px 0"}}/>
+              <FormControl>
+                <InputLabel><FormattedMessage id="Settings.theme"/></InputLabel>
+                <Select value={state.theme} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+                  if(typeof e.target.value === "string"){
+                    setTheme(e.target.value)
+                  }
+                }}>
+                  <MenuItem value="light">Light</MenuItem>
+                  <MenuItem value="dark">Dark</MenuItem>
+                </Select>
+              </FormControl>
               <Divider style={{margin:"10px 0"}}/>
               <FormControl>
                 <InputLabel><FormattedMessage id="Settings.dataStore"/></InputLabel>
@@ -161,6 +203,36 @@ class Settings extends React.Component<P,S> {
                 <Typography variant="caption" display="block">
                   <FormattedMessage id="Settings.updateWarning"/>
                 </Typography>
+                <Divider style={{margin:"10px 0"}}/>
+                <FormControl>
+                  <InputLabel><FormattedMessage id="Settings.dataClear"/></InputLabel>
+                  <Select value={currentResetStore} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+                    if(typeof e.target.value !== "string"){return;}
+                    this.setState({currentResetStore:e.target.value});
+                  }}>
+                    <MenuItem value="26">26 Rootage</MenuItem>
+                    <MenuItem value="27">27 HEROIC VERSE</MenuItem>
+                  </Select>
+                </FormControl>
+                <Typography variant="caption" display="block">
+                  <FormattedMessage id="Settings.resetWarning"/>
+                </Typography>
+                <div style={{position:"relative"}}>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    style={{background:"#dc004e"}}
+                    onClick={this.toggleDialog}
+                    disabled={disableDeleteBtn}
+                    startIcon={<DeleteForeverIcon />}>
+                    <FormattedMessage id="Settings.DeleteExec"/>
+                  </Button>
+                  <Typography variant="caption" display="block">
+                    {message2}
+                  </Typography>
+                  <AlertDialog isDialogOpen={isDialogOpen} exec={this.deleteDef} close={this.toggleDialog} currentResetStore={currentResetStore}/>
+                  {disableDeleteBtn && <CircularProgress size={24} style={{color:"#777",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
+                </div>
             </Paper>
           </Container>
         )}
@@ -170,3 +242,43 @@ class Settings extends React.Component<P,S> {
 }
 
 export default injectIntl(Settings);
+
+class AlertDialog extends React.Component<{isDialogOpen:boolean,exec:()=>void,close:()=>void,currentResetStore:string},{}> {
+
+  handleOk = () => {
+    this.props.exec();
+    this.props.close();
+  };
+
+  handleClose = () => {
+    this.props.close();
+  };
+
+  render(){
+    const {isDialogOpen,currentResetStore} = this.props;
+    return (
+      <div>
+        <Dialog
+          open={isDialogOpen}
+          onClose={this.handleClose}>
+          <DialogTitle>Confirm</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              <FormattedMessage id="Settings.DeleteDialogBody"/><br/>
+              <FormattedMessage id="Settings.DeleteDialogBody2"/><br/>
+              {currentResetStore === "26" ? "26 Rootage" : "27 HEROIC VERSE"}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="secondary">
+              Cancel
+            </Button>
+            <Button onClick={this.handleOk} color="secondary" autoFocus>
+              Continue
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+    );
+  }
+}

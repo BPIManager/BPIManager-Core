@@ -52,7 +52,7 @@ export default class NotPlayed extends React.Component<{},S> {
         </Container>);
     }
     return (
-      <div>
+      <div id="_notPlayed">
         <NotPlayList title="NotPlayed.Title" full={this.state.full} updateScoreData={this.updateScoreData}/>
       </div>
     );

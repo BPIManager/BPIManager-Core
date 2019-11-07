@@ -10,7 +10,7 @@ export const diffColor = (i:number,row: any):string=>{
     case 4 : return "#ff4545";
     case 5 : return "#fff373";
     case 6 : return "#ff793b";
-    default: return "#ffffff";
+    default: return "rgba(255,255,255,.55)";
   }
 }
 

@@ -69,7 +69,7 @@ function SnackBarWrapper(props: Props) {
         </span>
       }
       action={[
-        <Button onClick={onClose} color="inherit" size="small">
+        <Button onClick={onClose} color="inherit" size="small" key="ok">
           Ok
         </Button>,
       ]}

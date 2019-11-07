@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { scoresDB, songsDB } from '../../components/indexedDB';
-import {_isSingle, _currentStore} from "../../components/settings";
-import { scoreData, songData } from '../../types/data';
+import {_isSingle} from "../../components/settings";
 import Container from "@material-ui/core/Container";
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
@@ -125,6 +124,12 @@ export default class Compare extends React.Component<{},S> {
       }else{
         tScore = tData[0]["exScore"];
       }
+      if(t === "WR"){
+        tScore = songData[0]["wr"];
+      }
+      if(t === "AVERAGE"){
+        tScore = songData[0]["avg"];
+      }
       result.push({
         title:fData[i]["title"],
         songData: songData[0],
@@ -154,7 +159,6 @@ export default class Compare extends React.Component<{},S> {
           return b.gap - a.gap;
       }
     });
-    console.log(sortedData);
     return isDesc ? sortedData.reverse() : sortedData;
   }
 
@@ -165,12 +169,12 @@ export default class Compare extends React.Component<{},S> {
   handleChangeRowsPerPage = (value:string):void => this.setState({page:0,rowsPerPage:+value});
 
   render(){
-    const {full,compareFrom,compareTo,isLoading,page,rowsPerPage,options,sort,isDesc} = this.state;
+    const {compareFrom,compareTo,isLoading,page,rowsPerPage,options,sort,isDesc} = this.state;
     if(!this.state.full){
       return (null);
     }
     return (
-      <Container className="commonLayout" fixed>
+      <Container className="commonLayout" fixed  id="songsVil">
         <Typography component="h4" variant="h4" color="textPrimary" gutterBottom>
           <FormattedMessage id="Compare.Title"/>
         </Typography>
@@ -191,7 +195,7 @@ export default class Compare extends React.Component<{},S> {
                 <MenuItem value={"26"}>26 Rootage</MenuItem>
                 <MenuItem value={"27"}>27 HEROIC VERSE</MenuItem>
                 <MenuItem value={"WR"}>WORLD RECORD</MenuItem>
-                <MenuItem value={"AVERAGE"}>AVERAGE</MenuItem>
+                <MenuItem value={"AVERAGE"}>KAIDEN AVERAGE</MenuItem>
               </Select>
             </FormControl>
           </Grid>

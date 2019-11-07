@@ -27,6 +27,7 @@ interface stateInt {
   options:{[key:string]:string[]},
   sort:number,
   isDesc:boolean,
+  page:number,
 }
 
 interface P{
@@ -47,7 +48,8 @@ export default class NotPlayList extends React.Component<P,stateInt> {
       options:{
         level:["11","12"],
         difficulty:["0","1","2"],
-      }
+      },
+      page:0,
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
@@ -61,6 +63,8 @@ export default class NotPlayList extends React.Component<P,stateInt> {
       return this.setState({songData:this.songFilter()});
     }
   }
+
+  handleChangePage = (_event:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number):void => this.setState({page:newPage});
 
   updateScoreData(whenUpdated:boolean = false,willDeleteItem?:{title:string,difficulty:string}):Promise<void>{
     if(!whenUpdated || !willDeleteItem){
@@ -84,14 +88,14 @@ export default class NotPlayList extends React.Component<P,stateInt> {
     }else{
       newState["options"][target] = newState["options"][target].filter((t:string)=> t !== name);
     }
-    return this.setState({songData:this.songFilter(newState),options:newState["options"]});
+    return this.setState({songData:this.songFilter(newState),options:newState["options"],page:0});
   }
 
   handleInputChange = (e:React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>|null)=>{
     let newState = this.cloneState();
     newState.filterByName = e ? e.target.value : "";
 
-    return this.setState({songData:this.songFilter(newState),filterByName:newState.filterByName});
+    return this.setState({songData:this.songFilter(newState),filterByName:newState.filterByName,page:0});
   }
 
   songFilter = (newState:{[s:string]:any} = this.state) =>{
@@ -135,7 +139,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
   cloneState = () => JSON.parse(JSON.stringify(this.state))
 
   render(){
-    const {filterByName,options,sort,isDesc} = this.state;
+    const {filterByName,options,sort,isDesc,page} = this.state;
     return (
       <Container className="commonLayout" fixed id="songsVil">
         <Typography component="h4" variant="h4" color="textPrimary" gutterBottom
@@ -152,7 +156,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
                 value={filterByName}
                 onChange={this.handleInputChange}
                 endAdornment={
-                  filterByName && 
+                  filterByName &&
                   <InputAdornment position="end">
                     <IconButton onClick={()=>this.handleInputChange(null)}>
                       <BackspaceIcon/>
@@ -201,6 +205,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
         </Grid>
 
         <SongsTable
+          page={page} handleChangePage={this.handleChangePage}
           data={this.sortedData()} sort={sort} isDesc={isDesc}
           changeSort={this.changeSort}
           updateScoreData={this.updateScoreData}/>

@@ -71,9 +71,12 @@ export default class importCSV {
           if(!p[eachObjNum[1]]){
             continue;
           }
-          const {name,difficulty} = mode === 1 ? convertLeggendariaStates(p[eachObjNum[1]],t) : {name:p[eachObjNum[1]],difficulty:t};
+
+          let {name,difficulty} = mode === 1 ? convertLeggendariaStates(p[eachObjNum[1]],t) : {name:p[eachObjNum[1]],difficulty:t};
           const clearState:string|number = convertClearState(p[eachObjNum[6]],0);
           if(typeof clearState !== "number"){throw new Error();}
+          if(mode === 1 && name === "炎影") name = "火影";
+          if(mode === 1 && name === "Rave*it!! Rave*it!! ") name = "Rave*it!! Rave*it!!";
 
           result.push({
             title:name,

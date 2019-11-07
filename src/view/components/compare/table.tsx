@@ -42,6 +42,9 @@ export default class Compare extends React.Component<P,S> {
   }
 
   handleOpen = async(updateFlag:boolean,row?:any):Promise<void>=> {
+    if(updateFlag){
+
+    }
     return this.setState({
       isOpen:!this.state.isOpen,
       currentSongData:row ? row["songData"] : null,
@@ -62,10 +65,10 @@ export default class Compare extends React.Component<P,S> {
     const columns = [
       { id: "difficultyLevel", label: "☆"},
       { id: "title", label: "曲名" },
-      { id: "exScore", label: "Source"},
+      { id: "exScore", label: "S"},
       {
         id: "compareData",
-        label: "Compare",
+        label: "W",
       }
     ];
     if(isLoading){
@@ -103,12 +106,13 @@ export default class Compare extends React.Component<P,S> {
               return (
                 <TableRow
                   onClick={()=>this.handleOpen(false,row)}
-                  hover role="checkbox" tabIndex={-1} key={row.title} style ={ i % 2? { background : "#f7f7f7" }:{ background : "white" }}>
+                  hover role="checkbox" tabIndex={-1} key={row.title} className={ i % 2 ? "isOdd" : "isEven"}>
                   {columns.map((column,j) => {
                     const prefix = row.difficulty === "hyper" ? "(H)" : row.difficulty === "leggendaria" ? "(†)" : "";
                     return (
                       <TableCell key={column.id + prefix} style={{backgroundColor : diffColor(j,row.scoreData),position:"relative"}}>
                         {row[column.id]}
+                        {j === 1 && prefix}
                         {(j === 3) && <span className="plusOverlayScore">
                           {row.gap}
                           </span>
