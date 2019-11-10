@@ -10,9 +10,9 @@ export default class importCSV {
   isSingle:number = 1;
   currentStore:string = "";
 
-  constructor(raw:string,isSingle?:number,currentStore?:string){
+  constructor(raw:string,isSingle:number = 1,currentStore?:string){
     this.rawData = raw;
-    if(isSingle)this.isSingle = isSingle;
+    this.isSingle = isSingle;
     if(currentStore)this.currentStore = currentStore;
   }
 

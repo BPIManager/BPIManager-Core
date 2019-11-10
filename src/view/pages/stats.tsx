@@ -6,7 +6,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import bpiCalcuator from '../../components/bpi';
-import {_isSingle,_currentStore} from "../../components/settings";
+import {_isSingle,_currentStore, _chartColor} from "../../components/settings";
 import moment from 'moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, Legend } from 'recharts';
@@ -103,6 +103,7 @@ class Stats extends React.Component<{intl:any},S> {
   render(){
     const {totalBPI,isLoading,perDate,groupedByBPI} = this.state;
     const {formatMessage} = this.props.intl;
+    const chartColor = _chartColor();
     if(isLoading){
       return (
         <Container className="loaderCentered">
@@ -112,7 +113,7 @@ class Stats extends React.Component<{intl:any},S> {
     }
     return (
       <Container className="commonLayout" fixed>
-        <Typography component="h4" variant="h4" color="textPrimary" gutterBottom>
+        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
           <FormattedMessage id="Stats.title"/>
         </Typography>
         <Grid container spacing={3}>
@@ -140,9 +141,9 @@ class Stats extends React.Component<{intl:any},S> {
                         top: 5, right: 30, left: -30, bottom: 25,
                       }}>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis orientation="left" tickLine={false} axisLine={false}/>
-                      <Tooltip />
+                      <XAxis dataKey="name" stroke={chartColor} />
+                      <YAxis orientation="left" tickLine={false} axisLine={false} stroke={chartColor}/>
+                      <Tooltip contentStyle={{color:"#333"}}/>
                       <Bar dataKey="sum" name={formatMessage({id:"Stats.UpdatedSum"})} fill="#82ca9d" />
                       <Line dataKey="avg" name={formatMessage({id:"Stats.Average"})} />
                     </ComposedChart>
@@ -169,9 +170,9 @@ class Stats extends React.Component<{intl:any},S> {
                       }}
                       >
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" />
-                        <YAxis/>
-                        <Tooltip />
+                        <XAxis dataKey="name" stroke={chartColor} />
+                        <YAxis stroke={chartColor}/>
+                        <Tooltip contentStyle={{color:"#333"}}/>
                         <Legend />
                         <Line type="monotone" dataKey="☆11" stroke="#8884d8" activeDot={{ r: 8 }} />
                         <Line type="monotone" dataKey="☆12" stroke="#82ca9d" />

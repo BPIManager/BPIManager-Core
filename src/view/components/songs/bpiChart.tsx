@@ -2,6 +2,7 @@ import React from "react";
 
 import { scoreData, songData } from "../../../types/data";
 import {BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer, Label} from "recharts";
+import { _chartColor } from "../../../components/settings";
 
 interface P{
   song:songData|null,
@@ -13,6 +14,7 @@ interface P{
 class BPIChart extends React.Component<P,{}> {
 
   render(){
+    const chartColor = _chartColor();
     const {chartData,song,score,graphLastUpdated} = this.props;
     if(!song || !score){
       return (null);
@@ -23,10 +25,10 @@ class BPIChart extends React.Component<P,{}> {
         <ResponsiveContainer width="100%">
           <BarChart data={chartData} key={graphLastUpdated}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis domain={[0,max]} ticks={[Math.ceil(max * (6/9)),Math.ceil(max * (7/9)),Math.ceil(max * (8/9)),max]} width={40}>
+            <XAxis stroke={chartColor} dataKey="name" />
+            <YAxis stroke={chartColor} domain={[0,max]} ticks={[Math.ceil(max * (6/9)),Math.ceil(max * (7/9)),Math.ceil(max * (8/9)),max]} width={40}>
             </YAxis>
-            <Tooltip />
+            <Tooltip contentStyle={{color:"#333"}} />
             <Bar dataKey="EX SCORE" isAnimationActive={false}>
               {
                 chartData.map((item) => {
@@ -35,9 +37,9 @@ class BPIChart extends React.Component<P,{}> {
                 })
               }
             </Bar>
-            <ReferenceLine y={max * (8/9)} label={<Label position="insideTopRight">AAA</Label>} stroke="#004018" isFront={true} />
-            <ReferenceLine y={max * (7/9)} label={<Label position="insideTopRight">AA</Label>} stroke="#004018" isFront />
-            <ReferenceLine y={max * (2/3)} label={<Label position="insideTopRight">A</Label>} stroke="#004018" isFront />
+            <ReferenceLine y={max * (8/9)} label={<Label position="insideTopRight" style={{fill: chartColor}}>AAA</Label>} stroke={chartColor} isFront={true} />
+            <ReferenceLine y={max * (7/9)} label={<Label position="insideTopRight" style={{fill: chartColor}}>AA</Label>} stroke={chartColor} isFront />
+            <ReferenceLine y={max * (2/3)} label={<Label position="insideTopRight" style={{fill: chartColor}}>A</Label>} stroke={chartColor} isFront />
           </BarChart>
         </ResponsiveContainer>
       </div>

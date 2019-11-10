@@ -3,7 +3,7 @@ import {scoreData,songData} from "../../types/data";
 import timeFormatter from "../common/timeFormatter";
 import {_currentStore,_isSingle} from "../settings";
 import moment from "moment";
-import {difficultyDiscriminator} from "../songs/filter";
+import {difficultyDiscriminator, difficultyParser} from "../songs/filter";
 import bpiCalcuator from "../bpi";
 
 const storageWrapper = class extends Dexie{
@@ -12,7 +12,7 @@ const storageWrapper = class extends Dexie{
   scores:Dexie.Table<any, any>;
   songs:Dexie.Table<any, any>;
   stores: Dexie.Table<any, any>;
-  calculator:bpiCalcuator = new bpiCalcuator(true);
+  protected calculator:bpiCalcuator|null = null;
 
   constructor(){
     super("ScoreCoach");
@@ -34,8 +34,16 @@ const storageWrapper = class extends Dexie{
     return this;
   }
 
-  protected apply(t:string,s:number):number{
-    return this.calculator.setPropData(this.newSongs[t],s);
+  protected setCalcClass(){
+    this.calculator = new bpiCalcuator();
+    return this;
+  }
+
+  protected apply(t:songData,s:number,i:number = 1):number{
+    if(!this.calculator){
+      return 0;
+    }
+    return this.calculator.setPropData(t,s,i);
   }
 
 }
@@ -45,10 +53,10 @@ export const scoresDB = class extends storageWrapper{
   storedAt:string = "";
   isSingle:number = 1;
 
-  constructor(isSingle?:number,storedAt?:string){
+  constructor(isSingle:number = 1,storedAt?:string){
     super();
     this.scores = this.table("scores");
-    if(isSingle) this.isSingle = isSingle;
+    this.isSingle = isSingle;
     if(storedAt) this.storedAt = storedAt;
   }
 
@@ -118,9 +126,9 @@ export const scoresDB = class extends storageWrapper{
     return await this.scores.where({isImported:"true"}).delete();
   }
 
-  setItem(item:any):any{
+  async setItem(item:any):Promise<any>{
     try{
-      return this.scores.where("[title+difficulty+storedAt+isSingle]").equals(
+      return await this.scores.where("[title+difficulty+storedAt+isSingle]").equals(
         [item["title"],item["difficulty"],this.storedAt,this.isSingle]
       ).modify({
         title:item["title"],
@@ -204,11 +212,19 @@ export const scoresDB = class extends storageWrapper{
   async recalculateBPI(){
     try{
       const self = this;
-      return await this.scores.toCollection().modify(function(val: { currentBPI: number; title: string; exScore: number;}){
-        val.currentBPI = self.apply(val.title,val.exScore);
-      })
+      this.setCalcClass();
+      const array = await this.scores.where("title").notEqual("").toArray();
+      //modify使って書き直したい
+      for(let i =0; i < array.length; ++i){
+        const t = array[i];
+        if(!self.calculator){return;}
+        const bpi = await self.calculator.setIsSingle(t.isSingle).calc(t.title,difficultyParser(t.difficulty,t.isSingle),t.exScore);
+        this.scores.where("[title+difficulty+storedAt+isSingle]").equals([t.title,t.difficulty,t.storedAt,t.isSingle]).modify(
+          {currentBPI:!bpi.error ? bpi.bpi : -15}
+        );
+      }
     }catch(e){
-      console.error("failed recalculate - " + e);
+      console.log(e);
     }
   }
 
@@ -330,11 +346,20 @@ export const scoreHistoryDB = class extends storageWrapper{
   async recalculateBPI(){
     try{
       const self = this;
-      return await this.scoreHistory.toCollection().modify(function(val: { BPI: number; title: string; exScore: number;}){
-        val.BPI = self.apply(val.title,val.exScore);
-      })
+      this.setCalcClass();
+      const array = await this.scoreHistory.where("title").notEqual("").toArray();
+      //modify使って書き直したい
+      for(let i =0; i < array.length; ++i){
+        const t = array[i];
+        if(!self.calculator){return;}
+        const bpi = await self.calculator.setIsSingle(t.isSingle).calc(t.title,difficultyParser(t.difficulty,t.isSingle),t.exScore);
+        this.scoreHistory.where("[title+storedAt+difficulty+isSingle]").equals([t.title,t.storedAt,t.difficulty,t.isSingle]).modify(
+          {BPI:!bpi.error ? bpi.bpi : -15}
+        );
+      }
     }catch(e){
-      console.error("failed recalculate - " + e);
+      console.log(e);
+      console.log("failed recalculate [scoreHistoryDB] - ");
       return;
     }
   }
@@ -355,6 +380,14 @@ export const songsDB = class extends storageWrapper{
         this.songs.where("dpLevel").equals("0") :
         this.songs.where("dpLevel").notEqual("0");
       return willCollection ? data : await data.toArray();
+    }catch(e){
+      return [];
+    }
+  }
+
+  async getAllWithAllPlayModes():Promise<any>{
+    try{
+      return await this.songs.toCollection().toArray();
     }catch(e){
       return [];
     }
@@ -417,11 +450,20 @@ export const songsDB = class extends storageWrapper{
     }
   }
 
-  async resetItems(storedAt:string):Promise<number>{
+  async getOneItemIsDouble(title:string,difficulty:string):Promise<songData[]>{
+    const diffs = ():string=>{
+      switch(difficulty){
+        case "hyper":return "8";
+        case "another":return "9";
+        case "leggendaria":return "11";
+        default:
+        return difficulty;
+      }
+    };
     try{
-      return await this.songs.where({storedAt:storedAt}).delete();
+      return await this.songs.where("[title+difficulty]").equals([title,diffs()]).toArray();
     }catch(e){
-      return 1;
+      return [];
     }
   }
 

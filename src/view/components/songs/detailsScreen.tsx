@@ -29,6 +29,7 @@ import SongDiffs from "./songDiffs";
 import { withRouter,RouteComponentProps } from "react-router-dom";
 import { UnregisterCallback } from "history";
 import TabPanel from "./common/tabPanel";
+import { _currentTheme } from "../../../components/settings";
 
 interface P{
   isOpen:boolean,
@@ -104,7 +105,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteCom
     const bpiBasis = [0,10,20,30,40,50,60,70,80,90,100];
     const mybest = newScore ? newScore : score.exScore;
     for(let i = 0;i < bpiBasis.length; ++i){
-      const exScoreFromBPI:number = Math.floor(this.calc.calcFromBPI(bpiBasis[i]));
+      const exScoreFromBPI:number = this.calc.calcFromBPI(bpiBasis[i],true);
       if(lastExScore < mybest && mybest <= exScoreFromBPI){
         dataInserter(mybest,"YOU");
         lastExScore = mybest;
@@ -254,7 +255,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteCom
     }
     const detectStarIconColor = favorited ? "#ffd700" : "#c3c3c3";
     return (
-      <Dialog id="detailedScreen" fullScreen open={isOpen} onClose={handleOpen} style={{overflowX:"hidden",width:"100%"}}>
+      <Dialog id="detailedScreen" className={_currentTheme() === "dark" ? "darkDetailedScreen" : "lightDetailedScreen"} fullScreen open={isOpen} onClose={handleOpen} style={{overflowX:"hidden",width:"100%"}}>
         <AppBar>
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={()=>handleOpen(false)} aria-label="close">

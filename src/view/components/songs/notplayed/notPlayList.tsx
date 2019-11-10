@@ -37,6 +37,7 @@ interface P{
 }
 
 export default class NotPlayList extends React.Component<P,stateInt> {
+  _mounted: boolean = false;
 
   constructor(props:P){
     super(props);
@@ -55,6 +56,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
   }
 
   componentDidMount(){
+    this._mounted = true;
     this.setState({songData:this.songFilter()})
   }
 
@@ -62,6 +64,10 @@ export default class NotPlayList extends React.Component<P,stateInt> {
     if(!equal(prevProps.full,this.props.full)){
       return this.setState({songData:this.songFilter()});
     }
+  }
+
+  componentWillUnmount(){
+    this._mounted = false;
   }
 
   handleChangePage = (_event:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number):void => this.setState({page:newPage});
@@ -108,7 +114,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
           return diffs[Number(item)] === difficultyDiscriminator(data.difficulty)} ) &&
         data.title.toLowerCase().indexOf(newState["filterByName"].toLowerCase()) > -1
       )
-    })
+    });
   }
 
   changeSort = (newNum:number):void=>{
@@ -142,7 +148,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
     const {filterByName,options,sort,isDesc,page} = this.state;
     return (
       <Container className="commonLayout" fixed id="songsVil">
-        <Typography component="h4" variant="h4" color="textPrimary" gutterBottom
+        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom
           style={{display:"flex",justifyContent:"space-between"}}>
           <FormattedMessage id={this.props.title}/>
         </Typography>

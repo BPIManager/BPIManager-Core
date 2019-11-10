@@ -40,6 +40,29 @@ export const difficultyDiscriminator = (difficulty:string):string=>{
   return diff;
 }
 
+export const difficultyParser = (difficulty: string,isSingle: number):string=>{
+  if(difficulty === "another"){
+    if(isSingle === 1){
+      return "4";
+    }else{
+      return "9";
+    }
+  }else if(difficulty === "hyper"){
+    if(isSingle === 1){
+      return "3";
+    }else{
+      return "8";
+    }
+  }else if(difficulty === "leggendaria"){
+    if(isSingle === 1){
+      return "10";
+    }else{
+      return "11";
+    }
+  }
+  return "4";
+}
+
 export const getSongSuffixForIIDXInfo = (name:string,difficulty:string):string=>{
   if(difficulty === "3" || difficulty === "8"){
     return "[H]";

@@ -124,28 +124,32 @@ export default class SongsList extends React.Component<P,stateInt> {
     const m = newState.mode;
     const r = newState.range;
     const f = this.state.allSongsData;
+
+    const evaluateRange = (data:scoreData):boolean=>{
+      const format = (t:string|Date)=>moment(t).format("YYYYMMDD");
+      return r === 0 ? true :
+      r === 1 ? format(data.updatedAt) === format(new Date()) :
+      moment(data.updatedAt).week() === moment(new Date()).week()
+    }
+
+    const evaluateMode = (data:scoreData,max:number):boolean=>{
+      return m === 0 ? true :
+      m === 1 ? data.exScore / max < 2 / 3 :
+      m === 2 ? data.exScore / max < 7 / 9 && 2/3 < data.exScore / max :
+      m === 3 ? data.exScore / max < 8 / 9 && 7/9 < data.exScore / max :
+      m === 4 ? true :
+      m === 5 ? data.clearState <= 3 :
+      m === 6 ? data.clearState <= 4 :
+      m === 7 ? data.clearState <= 5 : true
+    }
+    
     if(Object.keys(this.state.allSongsData).length === 0){return [];}
     return this.props.full.filter((data)=>{
+      if(!f[data.title + _prefix(data["difficulty"])]){return false;}
       const max = f[data.title + _prefix(data["difficulty"])]["notes"] * 2;
-      const evaluateRange = ():boolean=>{
-        const format = (t:string|Date)=>moment(t).format("YYYYMMDD");
-        return r === 0 ? true :
-        r === 1 ? format(data.updatedAt) === format(new Date()) :
-        moment(data.updatedAt).week() === moment(new Date()).week()
-      }
-      const evaluateMode = ():boolean=>{
-        return m === 0 ? true :
-        m === 1 ? data.exScore / max < 2 / 3 :
-        m === 2 ? data.exScore / max < 7 / 9 && 2/3 < data.exScore / max :
-        m === 3 ? data.exScore / max < 8 / 9 && 7/9 < data.exScore / max :
-        m === 4 ? true :
-        m === 5 ? data.clearState <= 3 :
-        m === 6 ? data.clearState <= 4 :
-        m === 7 ? data.clearState <= 5 : true
-      }
       return (
-        evaluateRange() &&
-        evaluateMode() &&
+        evaluateRange(data) &&
+        evaluateMode(data,max) &&
         newState["options"]["level"].some((item:string)=>{
           return item === data.difficultyLevel }) &&
         newState["options"]["difficulty"].some((item:number)=>{
@@ -221,7 +225,7 @@ export default class SongsList extends React.Component<P,stateInt> {
     }
     return (
       <Container className="commonLayout" fixed id="songsVil">
-        <Typography component="h4" variant="h4" color="textPrimary" gutterBottom
+        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom
           style={{display:"flex",justifyContent:"space-between"}}>
           <FormattedMessage id={this.props.title}/>
           <FormControl>

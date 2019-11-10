@@ -14,7 +14,7 @@ export default class Index extends React.Component<{},{}> {
     return (
       <div>
         <Container className="commonLayout" fixed>
-          <Typography component="h4" variant="h4" color="textPrimary" gutterBottom>
+          <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
             <FormattedMessage id="Help.title"/>
           </Typography>
           <ExpansionPanel>
@@ -160,6 +160,7 @@ export default class Index extends React.Component<{},{}> {
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <Typography display="block">
+                <p>2019/11/09 : v0.0.0.4 目標BPI/パーセンテージ機能追加、DP対応(β版)、未プレイ楽曲絞り込みに関するバグを修正,定義データ更新時に自動でBPIが再計算されない問題を修正</p>
                 <p>2019/11/07 : v0.0.0.3 データリセット機能の追加,定義データ更新の処理を変更,絞り込み条件変更時にテーブルを1ページ目に戻すようにした,例外処理諸々,とか</p>
                 <p>2019/11/06 : v0.0.0.2 ダークテーマの追加、シェアボタンの設置(シェアお願いします!)</p>
                 <p>2019/11/06 : v0.0.0.1 公開した</p>

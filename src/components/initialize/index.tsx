@@ -27,6 +27,10 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
 
   async componentDidMount(){
     try{
+
+      // Close the world bug fix 2019/11/11
+        this.songsDB.removeItem("Close the World feat. a☆ru");
+      //
       const songsAvailable:string[] = await this.songsDB.getAll();
       if(songsAvailable.length > 0){
         return this.setState({show:false});
@@ -41,7 +45,7 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
         }));
         this.wait(3);
       }
-      localStorage.setItem("isSingle","true");
+      localStorage.setItem("isSingle","1");
       localStorage.setItem("lastDefFileVer",csv.version);
       return this.setState({show:false});
     }catch(e){

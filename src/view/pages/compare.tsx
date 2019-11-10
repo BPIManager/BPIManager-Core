@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { scoresDB, songsDB } from '../../components/indexedDB';
-import {_isSingle} from "../../components/settings";
+import {_isSingle, _goalBPI, _goalPercentage} from "../../components/settings";
 import Container from "@material-ui/core/Container";
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
@@ -14,6 +14,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Typography from "@material-ui/core/Typography";
 import { FormattedMessage } from "react-intl";
 import CompareTable from "../components/compare/table";
+import bpiCalcuator from '../../components/bpi';
 
 interface S {
   isLoading:boolean,
@@ -30,6 +31,7 @@ interface S {
 }
 
 export default class Compare extends React.Component<{},S> {
+  _mounted: boolean = false;
 
   constructor(props:Object){
     super(props);
@@ -42,17 +44,23 @@ export default class Compare extends React.Component<{},S> {
       options:{
         level:["11","12"],
         difficulty:["0","1","2"],
+        pm:["+","-"],
       },
       filterByName:"",
       compareFrom:"27",
       compareTo:"26",
-      page:1,
+      page:0,
       rowsPerPage:10,
     }
   }
 
   async componentDidMount(){
+    this._mounted = true;
     this.dataHandler();
+  }
+
+  componentWillUnmount(){
+    this._mounted = false;
   }
 
   handleLevelChange = (name:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
@@ -61,6 +69,10 @@ export default class Compare extends React.Component<{},S> {
 
   handleDiffChange = (name:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
     this.handleExec(name,e.target.checked,"difficulty");
+  }
+
+  handlePMChange = (name:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
+    this.handleExec(name,e.target.checked,"pm");
   }
 
   handleExec = (name:string,checked:boolean,target:string)=>{
@@ -114,11 +126,16 @@ export default class Compare extends React.Component<{},S> {
     const isSingle = _isSingle();
     const scores = new scoresDB(isSingle,f);
     const sdb = new songsDB();
+    const calc = new bpiCalcuator();
     const fData = await scores.getSpecificVersionAll();
+    const goalBPI = _goalBPI(), goalPerc = _goalPercentage();
     for(let i =0; i < fData.length; ++i){
       let tScore = 0;
       const tData = await scores.getItem(fData[i]["title"],fData[i]["difficulty"],t,isSingle);
-      const songData = await sdb.getOneItemIsSingle(fData[i]["title"],fData[i]["difficulty"]);
+      const songData = isSingle ?
+      await sdb.getOneItemIsSingle(fData[i]["title"],fData[i]["difficulty"]) :
+      await sdb.getOneItemIsDouble(fData[i]["title"],fData[i]["difficulty"]);
+      calc.setData(songData[0]["notes"] * 2,songData[0]["avg"],songData[0]["wr"]);
       if(!tData || tData.length === 0){
         tScore = 0;
       }else{
@@ -129,6 +146,12 @@ export default class Compare extends React.Component<{},S> {
       }
       if(t === "AVERAGE"){
         tScore = songData[0]["avg"];
+      }
+      if(t === "BPI"){
+        tScore = calc.calcFromBPI(goalBPI,true);
+      }
+      if(t === "PERCENTAGE"){
+        tScore = Math.ceil(songData[0]["notes"] * 2 * goalPerc / 100)
       }
       result.push({
         title:fData[i]["title"],
@@ -141,6 +164,7 @@ export default class Compare extends React.Component<{},S> {
         gap:fData[i]["exScore"] - tScore
       });
     }
+    if(!this._mounted){return;}
     return this.setState({full:result,isLoading:false});
   }
 
@@ -158,6 +182,15 @@ export default class Compare extends React.Component<{},S> {
         case 3:
           return b.gap - a.gap;
       }
+    }).filter((t:any)=>{
+      const pm:string[] = this.state.options.pm;
+      if(pm.indexOf("+") === -1 && pm.indexOf("-") > -1){
+        return t.gap <= 0;
+      }
+      if(pm.indexOf("+") > -1 && pm.indexOf("-") === -1){
+        return t.gap > 0;
+      }
+      return pm.indexOf("+") > -1 && pm.indexOf("-") > -1 ? true : false;
     });
     return isDesc ? sortedData.reverse() : sortedData;
   }
@@ -175,7 +208,7 @@ export default class Compare extends React.Component<{},S> {
     }
     return (
       <Container className="commonLayout" fixed  id="songsVil">
-        <Typography component="h4" variant="h4" color="textPrimary" gutterBottom>
+        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
           <FormattedMessage id="Compare.Title"/>
         </Typography>
         <Grid container spacing={1} style={{margin:"5px 0"}}>
@@ -196,12 +229,14 @@ export default class Compare extends React.Component<{},S> {
                 <MenuItem value={"27"}>27 HEROIC VERSE</MenuItem>
                 <MenuItem value={"WR"}>WORLD RECORD</MenuItem>
                 <MenuItem value={"AVERAGE"}>KAIDEN AVERAGE</MenuItem>
+                <MenuItem value={"BPI"}>TARGET BPI</MenuItem>
+                <MenuItem value={"PERCENTAGE"}>TARGET PERCENTAGE</MenuItem>
               </Select>
             </FormControl>
           </Grid>
         </Grid>
         <Grid container spacing={1} id="mainFilters" style={{margin:"5px 0"}}>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <FormControl component="fieldset">
               <FormLabel component="legend"><FormattedMessage id="Songs.filterByLevel"/></FormLabel>
               <FormGroup row>
@@ -216,7 +251,7 @@ export default class Compare extends React.Component<{},S> {
               </FormGroup>
             </FormControl>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={5}>
             <FormControl component="fieldset">
               <FormLabel component="legend"><FormattedMessage id="Songs.filterByDifficulty"/></FormLabel>
               <FormGroup row>
@@ -231,6 +266,21 @@ export default class Compare extends React.Component<{},S> {
                 <FormControlLabel
                   control={<Checkbox checked={options.difficulty.some(t=> t === "2")} onChange={this.handleDiffChange("2")} value="leggendaria" />}
                   label="†"
+                />
+              </FormGroup>
+            </FormControl>
+          </Grid>
+          <Grid item xs={3}>
+            <FormControl component="fieldset">
+              <FormLabel component="legend"><FormattedMessage id="Compare.filterByPlusMinus"/></FormLabel>
+              <FormGroup row>
+                <FormControlLabel
+                  control={<Checkbox checked={options.pm.some(t=> t === "+")} onChange={this.handlePMChange("+")} value="+" />}
+                  label="+"
+                />
+                <FormControlLabel
+                  control={<Checkbox checked={options.pm.some(t=> t === "-")} onChange={this.handlePMChange("-")} value="-" />}
+                  label="-"
                 />
               </FormGroup>
             </FormControl>

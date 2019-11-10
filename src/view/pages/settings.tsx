@@ -13,7 +13,7 @@ import { Subscribe } from 'unstated';
 import GlobalContainer from '../../components/context/global';
 import Button from '@material-ui/core/Button';
 import UpdateIcon from '@material-ui/icons/Update';
-import { _currentVersion, _isSingle } from '../../components/settings';
+import { _currentVersion } from '../../components/settings';
 import { songsDB, scoresDB, scoreHistoryDB } from '../../components/indexedDB';
 import { songData } from '../../types/data';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
@@ -22,6 +22,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogActions from '@material-ui/core/DialogActions';
+import Switch from '@material-ui/core/Switch';
+import { config } from '../../config';
+import TextField from '@material-ui/core/TextField';
 
 interface S {
   isLoading:boolean,
@@ -59,9 +62,14 @@ class Settings extends React.Component<P,S> {
     try{
       this.props.global.setMove(true);
       this.setState({disableDeleteBtn:true,message2:""});
-      const sdb = new scoresDB(), shdb = new scoreHistoryDB();
-      await sdb.resetItems(this.state.currentResetStore);
-      await shdb.reset(this.state.currentResetStore)
+      const sdb = new scoresDB(), shdb = new scoreHistoryDB(),sodb = new songsDB();
+      const target = this.state.currentResetStore;
+      if(target === "Songs Database"){
+        await sodb.deleteAll();
+      }else{
+        await sdb.resetItems(target);
+        await shdb.reset(target);
+      }
       this.setState({disableDeleteBtn:false,message2:"正常に削除しました"});
     }catch(e){
       console.log(e);
@@ -79,10 +87,13 @@ class Settings extends React.Component<P,S> {
       this.setState({disableUpdateBtn:true,message:""});
       const sdb = new songsDB();
       const schDB = new scoreHistoryDB();
-      const reducer = (t:songData[])=>t.reduce((result:{[key:string]:songData}, current:songData) => {result[current.title] = current;return result;}, {});
-      const allSongs = await sdb.getAll(_isSingle()).then(t=>reducer(t));
-
-      const res = await fetch("https://files.poyashi.me/json/songs.json").then(t=>t.json());
+      const reducer = (t:songData[])=>t.reduce((result:{[key:string]:songData}, current:songData) => {result[current.title + current.difficulty + current.dpLevel] = current;return result;}, {});
+      const allSongs = await sdb.getAllWithAllPlayModes().then(t=>reducer(t));
+      const res = await fetch("https://files.poyashi.me/json/songsWithDP.json").then(t=>t.json());
+      if(Number(res.requireVersion) > Number(config.versionNumber) ){
+        end();
+        return this.setState({disableUpdateBtn:false,message:"最新の定義データを導入するために本体を更新する必要があります:要求バージョン>="+ res.requireVersion });
+      }
       if(res.version === this.state.currentVersion){
         end();
         return this.setState({disableUpdateBtn:false,message:"定義データはすでに最新です"});
@@ -90,8 +101,8 @@ class Settings extends React.Component<P,S> {
       const promiseProducer = ()=>{
         return res.body.map((t:songData) => {
           return new Promise(resolve=>{
-            console.log(t["title"]);
-            if(allSongs[t["title"]]){
+            const pfx = t["title"] + t["difficulty"] + t["dpLevel"];
+            if(allSongs[pfx] && allSongs[pfx]["dpLevel"] === t["dpLevel"]){
               //既存曲
               sdb.updateItem(t).then(()=>resolve());
             }else{
@@ -127,9 +138,9 @@ class Settings extends React.Component<P,S> {
     }
     return (
       <Subscribe to={[GlobalContainer]}>
-        {({state,setLang,setStore,setTheme}:GlobalContainer)=> (
+        {({state,setLang,setStore,setTheme,setIsSingle,setGoalBPI,setGoalPercentage}:GlobalContainer)=> (
           <Container className="commonLayout" fixed>
-            <Typography component="h4" variant="h4" color="textPrimary" gutterBottom>
+            <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
               <FormattedMessage id="Settings.title"/>
             </Typography>
             <Paper style={{padding:"15px"}}>
@@ -178,6 +189,53 @@ class Settings extends React.Component<P,S> {
                 <FormattedMessage id="Settings.inaccurateMes"/>
               </Typography>
               <Divider style={{margin:"10px 0"}}/>
+              <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
+                <FormattedMessage id="Settings.DPMode"/>(beta)
+              </Typography>
+              <Switch
+                checked={state.isSingle === 0 ? true : false}
+                onChange={(e:React.ChangeEvent<HTMLInputElement>,)=>{
+                  if(typeof e.target.checked === "boolean"){
+                    setIsSingle(e.target.checked === true ? 0 : 1);
+                  }
+                }}
+              />
+              <Typography variant="caption" display="block">
+                <FormattedMessage id="Settings.dpDescription"/>
+              </Typography>
+              <Divider style={{margin:"10px 0"}}/>
+              <TextField
+                value={state.goalBPI}
+                label={<FormattedMessage id="Settings.MyGoalBPI"/>}
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onChange={(e:React.ChangeEvent<HTMLInputElement>,)=>{
+                  if(typeof e.target.value === "string"){
+                    setGoalBPI(Number(e.target.value) > 100 ? 100 : Number(e.target.value));
+                  }
+                }}
+                style={{margin:"0 0 5px 0",width:"100%"}}
+              />
+              <TextField
+                value={state.goalPercentage}
+                label={<FormattedMessage id="Settings.MyGoalPercentage"/>}
+                type="number"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                onChange={(e:React.ChangeEvent<HTMLInputElement>,)=>{
+                  if(typeof e.target.value === "string"){
+                    setGoalPercentage(Number(e.target.value) > 100 ? 100 : Number(e.target.value));
+                  }
+                }}
+                style={{margin:"0 0 5px 0",width:"100%"}}
+              />
+              <Typography variant="caption" display="block">
+                <FormattedMessage id="Settings.MyGoalDescription"/>
+              </Typography>
+              <Divider style={{margin:"10px 0"}}/>
                 <FormControl>
                   <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
                     <FormattedMessage id="Settings.Update"/>
@@ -212,6 +270,7 @@ class Settings extends React.Component<P,S> {
                   }}>
                     <MenuItem value="26">26 Rootage</MenuItem>
                     <MenuItem value="27">27 HEROIC VERSE</MenuItem>
+                    <MenuItem value="Songs Database">Songs Database</MenuItem>
                   </Select>
                 </FormControl>
                 <Typography variant="caption" display="block">
@@ -266,7 +325,7 @@ class AlertDialog extends React.Component<{isDialogOpen:boolean,exec:()=>void,cl
             <DialogContentText>
               <FormattedMessage id="Settings.DeleteDialogBody"/><br/>
               <FormattedMessage id="Settings.DeleteDialogBody2"/><br/>
-              {currentResetStore === "26" ? "26 Rootage" : "27 HEROIC VERSE"}
+              {currentResetStore === "26" ? "26 Rootage" : currentResetStore === "27" ? "27 HEROIC VERSE" : "Songs Database"}
             </DialogContentText>
           </DialogContent>
           <DialogActions>

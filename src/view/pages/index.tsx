@@ -14,7 +14,7 @@ export default class Index extends React.Component<{},{}> {
     return (
       <div className="heroLayout">
         <Container fixed>
-          <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
+          <Typography component="h3" variant="h3" align="center" color="textPrimary" gutterBottom>
             <FormattedMessage id="Top.Title"/>
           </Typography>
           <Typography variant="h5" align="center" color="textSecondary" paragraph>
@@ -71,7 +71,7 @@ export default class Index extends React.Component<{},{}> {
                   <FormattedMessage id="Index.notes2"/>
                 </Typography>
                 <Typography align="center" color="textSecondary" paragraph variant="caption">
-                  BPIManager beta ver0.0.0.3<br/>
+                  BPIManager beta ver0.0.0.4<br/>
                   If you have encountered unintended behaviours or have opinions to make this tool much better, please contact <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>.
                 </Typography>
               </Grid>

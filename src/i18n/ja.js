@@ -16,7 +16,7 @@ const ja = {
   "Index.notes2" : "本ツールはnorimiso様考案のBPIおよびZUBU様制作のBPICLのそれぞれにインスパイアされて制作されました。",
   "Data.add" : "スコアのインポート",
   "Data.infoBulk" : "e-AMUSEMENTプレミアムコースに加入済みの場合、CSVデータを取り込むことで全ての曲データを一括でインポートできます。",
-  "Data.howToBulk1" : "まず",
+  "Data.howToBulk1" : " ",
   "Data.CSVURL" : "こちら",
   "Data.howToBulk2" : "にアクセスし、案内に従って表示されたCSVデータ（テキスト形式）を下のボックスにコピーしてください。",
   "Data.Execute": "取り込み実行",
@@ -85,6 +85,7 @@ const ja = {
   "Compare.Title":"データ比較",
   "Compare.From":"比較元",
   "Compare.To":"比較先",
+  "Compare.filterByPlusMinus":"表示対象",
   "Settings.title":"設定",
   "Settings.language":"言語",
   "Settings.theme":"テーマ",
@@ -98,9 +99,11 @@ const ja = {
   "Settings.currentVersion":"現在の定義バージョン:",
   "Settings.updateWarning":"更新には時間がかかる場合があります。",
   "Settings.dataClear":"データリセット",
+  "Settings.DPMode":"DPモード",
+  "Settings.dpDescription":"オンにすることでDPのスコアを登録できます。",
   "Help.title":"説明書",
   "Help.AboutThisSite":"このサイトについて",
-  "Help.A.1":"BPIManagerは、ZUBU様制作のBPICLのクローンとして開発された(無許可)、☆11および☆12のBPIスコアを管理することができるツールです。",
+  "Help.A.1":"BPIManagerは、ZUBU様制作のBPICLのクローンとして開発された、☆11および☆12のBPIスコアを管理することができるツールです。",
   "Help.A.2":"本家BPICLに搭載されている機能をできる限り再現しつつ、よりスコア詰めが捗るようなオリジナルの機能を盛り込むことを目標としています。",
   "Help.A.3":"本ツールは、スマートフォンのホーム画面に追加して利用することが想定されています。",
   "Help.Functions":"機能について",
@@ -133,7 +136,10 @@ const ja = {
   "Settings.resetWarning":"対象データベースに登録されているデータセットを全削除します。この操作をもとに戻すことはできないことに注意してください。",
   "Settings.DeleteExec":"削除",
   "Settings.DeleteDialogBody":"あなたはデータベース内のデータを削除しようとしています。",
-  "Settings.DeleteDialogBody2":"この操作を巻き戻すことは決してできません。次のデータセットを削除しても本当によろしいですか:"
+  "Settings.DeleteDialogBody2":"この操作を巻き戻すことは決してできません。次のデータセットを削除しても本当によろしいですか:",
+  "Settings.MyGoalBPI":"目標BPI",
+  "Settings.MyGoalPercentage":"目標パーセンテージ",
+  "Settings.MyGoalDescription":"これらの値を設定することで、「データ比較」画面にて当該BPI/パーセンテージに該当するEXスコアを比較対象として選択できます。"
 };
 
 export default ja;

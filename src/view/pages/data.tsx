@@ -34,20 +34,21 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
       this.props.global.setMove(true);
       this.setState({isSaving:true});
       let errors = [];
-      const executor = new importCSV(this.state.raw,_isSingle(),_currentStore());
-      const calc = new bpiCalculator();
+      const isSingle = _isSingle();
+      const currentStore = _currentStore();
+      const executor = new importCSV(this.state.raw,isSingle,currentStore);
+      const calc = new bpiCalculator(isSingle);
       const exec = await executor.execute();
       if(!exec){
         throw new Error("CSVデータの形式が正しくありません");
       }
 
       const result = executor.getResult(),resultHistory = executor.getResultHistory();
-      const s = new scoresDB(_isSingle(),_currentStore()), h = new scoreHistoryDB();
+      const s = new scoresDB(isSingle,currentStore), h = new scoreHistoryDB();
       const all = await s.getAll().then(t=>t.reduce((result:any, current:any) => {
         result[current.title] = current;
         return result;
       }, {}));
-
       const len = result.length;
       for(let i = 0;i < len;++i){
         const calcData = await calc.calc(result[i]["title"],result[i]["difficulty"],result[i]["exScore"])
@@ -69,12 +70,13 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
             lastScore: all[result[i]["title"]] ? all[result[i]["title"]]["exScore"] : 0
           }
         );
-        all[result[i]["title"]] ? s.setItem(body) : s.putItem(body);
+        all[result[i]["title"]] && all[result[i]["isSingle"]] === isSingle ? s.setItem(body) : s.putItem(body);
         h.add(Object.assign(resultHistory[i],{difficultyLevel:calcData.difficultyLevel}),{currentBPI:calcData.bpi,exScore:resultHistory[i].exScore},true);
       }
       this.props.global.setMove(false);
       return this.setState({isSaving:false,raw:"",isSnackbarOpen:true,stateText:"Data.Success",errors:errors});
     }catch(e){
+      console.log(e);
       this.props.global.setMove(false);
       return this.setState({isSaving:false,isSnackbarOpen:true,stateText:"Data.Failed",errors:[e.message]});
     }
@@ -95,17 +97,15 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
           }}
           message={<span id="message-id"><FormattedMessage id={stateText}/></span>}
         />
-        <Typography component="h4" variant="h4" color="textPrimary" gutterBottom>
+        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
           <FormattedMessage id="Data.add"/>
         </Typography>
-        <Typography variant="body1" gutterBottom>
-          <FormattedMessage id="Data.infoBulk"/><br/>
-          <FormattedMessage id="Data.howToBulk1"/>
-          <Link color="secondary" href={"https://p.eagate.573.jp/game/2dx/"+_currentStore()+"/djdata/score_download.html"} target="_blank" rel="noopener noreferrer">
-            <FormattedMessage id="Data.CSVURL"/>
-          </Link>
-          <FormattedMessage id="Data.howToBulk2"/>
-        </Typography>
+        <FormattedMessage id="Data.infoBulk"/><br/>
+        <FormattedMessage id="Data.howToBulk1"/>
+        <Link color="secondary" href={"https://p.eagate.573.jp/game/2dx/"+_currentStore()+"/djdata/score_download.html"} target="_blank" rel="noopener noreferrer">
+          <FormattedMessage id="Data.CSVURL"/>
+        </Link>
+        <FormattedMessage id="Data.howToBulk2"/>
         <TextField
           onChange={this.onChangeText}
           value={raw}
@@ -123,7 +123,8 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
             disabled={isSaving}
             style={{width:"100%",margin:"5px 0"}}>
             <FormattedMessage id="Data.Execute"/>
-            (->{_currentStoreWithFullName() })
+            (->{_currentStoreWithFullName() }&nbsp;/&nbsp;
+            {_isSingle() === 1 ? "SP" : "DP"})
           </Button>
           {isSaving && <CircularProgress size={24} style={{color:"#777",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
         </div>
@@ -131,7 +132,7 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
         <Divider variant="middle" style={{margin:"10px 0"}}/>
         <FormattedMessage id="Data.notPremium1"/>
         <Divider variant="middle" style={{margin:"10px 0"}}/>
-        <Typography component="h4" variant="h4" color="textPrimary" gutterBottom>
+        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
           <FormattedMessage id="Data.edit"/>
         </Typography>
         <FormattedMessage id="Data.howToEdit"/>

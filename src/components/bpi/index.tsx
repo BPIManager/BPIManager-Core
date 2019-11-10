@@ -6,21 +6,26 @@ export interface B{
 }
 
 export default class bpiCalcuator{
-  songsDB:any;
+  songsDB:any = new songsDB();
   isSingle: number;
   propData:songData[]|null = null;
 
-  constructor(alreadyHaveData:boolean = false){
-    this.isSingle = 1;
-    this.songsDB = !alreadyHaveData ? new songsDB() : null;
+  constructor(isSingle:number = 1){
+    this.isSingle = isSingle;
   }
 
-  setPropData(data:songData,exScore:number):number{
+  setPropData(data:songData,exScore:number,isSingle:number):number{
+    this.isSingle = isSingle;
     this.s = exScore;
     this.k = data["avg"];
     this.z = data["wr"];
     this.m = data["notes"] * 2;
     return this.exec();
+  }
+
+  setIsSingle(isSingle:number = 1){
+    this.isSingle = isSingle;
+    return this;
   }
 
   private m:number = 1;
@@ -81,15 +86,14 @@ export default class bpiCalcuator{
     this.wr = wr;
   }
 
-  calcFromBPI(bpi:number):number{
-    const z = this.pgf(this.wr);
-    const k = this.pgf(this.avg);
+  calcFromBPI(bpi:number,ceiled:boolean = false):number{
+    const z = this.pgf(this.wr),k = this.pgf(this.avg);
 
     const i = Math.pow(Math.pow(Math.log(z / k),1.5)  * bpi / 100, 1 / 1.5);
 
     const N = Math.pow(Math.E,i) * k;
-
-    return this.m * ( ( N - 0.5 ) / N );
+    const res = this.m * ( ( N - 0.5 ) / N );
+    return ceiled ? Math.ceil(res) : res;
   }
 
   rank(bpi:number):number{

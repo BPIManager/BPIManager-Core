@@ -27,9 +27,16 @@ export default class NotPlayed extends React.Component<{},S> {
 
   async updateScoreData(whenUpdated:boolean = false,willDeleteItem?:{title:string,difficulty:string}){
     if(whenUpdated && willDeleteItem){
-      let currentState = this.state.full;
-      currentState = currentState.filter((item:songData)=>item.title !== willDeleteItem.title && willDeleteItem.difficulty);
-      return this.setState({full:currentState});
+      return this.setState({full:this.state.full.filter((item:songData)=>{
+        if(item.title !== willDeleteItem.title){
+          return true;
+        }else{
+          if(difficultyDiscriminator(item.difficulty) !== willDeleteItem.difficulty){
+            return true;
+          }
+        }
+        return false;
+      })});
     }
     const currentStore = _currentStore();
     const isSingle = _isSingle();
