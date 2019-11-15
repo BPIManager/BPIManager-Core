@@ -2,7 +2,7 @@ import * as React from 'react';
 import { scoresDB, songsDB } from '../../components/indexedDB';
 import { songData } from '../../types/data';
 import { difficultyDiscriminator } from '../../components/songs/filter';
-import { _isSingle } from '../../components/settings';
+import { _isSingle,_currentStore } from '../../components/settings';
 import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import NotPlayList from '../components/songs/notplayed/notPlayList';
@@ -25,8 +25,20 @@ export default class NotPlayed extends React.Component<{},S> {
     await this.updateScoreData();
   }
 
-  async updateScoreData(){
-    const currentStore = "27";
+  async updateScoreData(whenUpdated:boolean = false,willDeleteItem?:{title:string,difficulty:string}){
+    if(whenUpdated && willDeleteItem){
+      return this.setState({full:this.state.full.filter((item:songData)=>{
+        if(item.title !== willDeleteItem.title){
+          return true;
+        }else{
+          if(difficultyDiscriminator(item.difficulty) !== willDeleteItem.difficulty){
+            return true;
+          }
+        }
+        return false;
+      })});
+    }
+    const currentStore = _currentStore();
     const isSingle = _isSingle();
     const songs:songData[] = await new songsDB().getAll(isSingle);
     const db = new scoresDB();
@@ -47,7 +59,7 @@ export default class NotPlayed extends React.Component<{},S> {
         </Container>);
     }
     return (
-      <div>
+      <div id="_notPlayed">
         <NotPlayList title="NotPlayed.Title" full={this.state.full} updateScoreData={this.updateScoreData}/>
       </div>
     );

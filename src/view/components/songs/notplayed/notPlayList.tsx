@@ -4,7 +4,9 @@ import Typography from '@material-ui/core/Typography';
 import { FormattedMessage } from "react-intl";
 
 import SongsTable from "./tableNotPlayed";
-
+import BackspaceIcon from '@material-ui/icons/Backspace';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
@@ -12,13 +14,12 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
-import TextField from '@material-ui/core/TextField';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
 
 import {songData} from "../../../../types/data";
-import { _prefix, _prefixFromNum, difficultyDiscriminator } from '../../../../components/songs/filter';
-
+import { difficultyDiscriminator } from '../../../../components/songs/filter';
 import equal from 'fast-deep-equal'
-import { _isSingle } from '../../../../components/settings';
 
 interface stateInt {
   filterByName:string,
@@ -26,15 +27,17 @@ interface stateInt {
   options:{[key:string]:string[]},
   sort:number,
   isDesc:boolean,
+  page:number,
 }
 
 interface P{
   title:string,
   full:songData[],
-  updateScoreData:()=>Promise<void>,
+  updateScoreData:(whenUpdated:boolean,willDeleteItem?:{title:string,difficulty:string})=>Promise<void>,
 }
 
 export default class NotPlayList extends React.Component<P,stateInt> {
+  _mounted: boolean = false;
 
   constructor(props:P){
     super(props);
@@ -46,12 +49,14 @@ export default class NotPlayList extends React.Component<P,stateInt> {
       options:{
         level:["11","12"],
         difficulty:["0","1","2"],
-      }
+      },
+      page:0,
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
 
   componentDidMount(){
+    this._mounted = true;
     this.setState({songData:this.songFilter()})
   }
 
@@ -61,8 +66,17 @@ export default class NotPlayList extends React.Component<P,stateInt> {
     }
   }
 
-  updateScoreData():Promise<void>{
-    return this.props.updateScoreData();
+  componentWillUnmount(){
+    this._mounted = false;
+  }
+
+  handleChangePage = (_event:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number):void => this.setState({page:newPage});
+
+  updateScoreData(whenUpdated:boolean = false,willDeleteItem?:{title:string,difficulty:string}):Promise<void>{
+    if(!whenUpdated || !willDeleteItem){
+      return this.props.updateScoreData(false);
+    }
+    return this.props.updateScoreData(whenUpdated,willDeleteItem);
   }
 
   handleLevelChange = (name:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
@@ -80,14 +94,14 @@ export default class NotPlayList extends React.Component<P,stateInt> {
     }else{
       newState["options"][target] = newState["options"][target].filter((t:string)=> t !== name);
     }
-    return this.setState({songData:this.songFilter(newState),options:newState["options"]});
+    return this.setState({songData:this.songFilter(newState),options:newState["options"],page:0});
   }
 
-  handleInputChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+  handleInputChange = (e:React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>|null)=>{
     let newState = this.cloneState();
-    newState.filterByName = e.target.value;
+    newState.filterByName = e ? e.target.value : "";
 
-    return this.setState({songData:this.songFilter(newState),filterByName:e.target.value});
+    return this.setState({songData:this.songFilter(newState),filterByName:newState.filterByName,page:0});
   }
 
   songFilter = (newState:{[s:string]:any} = this.state) =>{
@@ -98,9 +112,9 @@ export default class NotPlayList extends React.Component<P,stateInt> {
           return item === data.difficultyLevel }) &&
         newState["options"]["difficulty"].some((item:number)=>{
           return diffs[Number(item)] === difficultyDiscriminator(data.difficulty)} ) &&
-        data.title.indexOf(newState["filterByName"]) > -1
+        data.title.toLowerCase().indexOf(newState["filterByName"].toLowerCase()) > -1
       )
-    })
+    });
   }
 
   changeSort = (newNum:number):void=>{
@@ -131,27 +145,32 @@ export default class NotPlayList extends React.Component<P,stateInt> {
   cloneState = () => JSON.parse(JSON.stringify(this.state))
 
   render(){
-    const {filterByName,options,sort,isDesc} = this.state;
+    const {filterByName,options,sort,isDesc,page} = this.state;
     return (
       <Container className="commonLayout" fixed id="songsVil">
-        <Typography component="h4" variant="h4" color="textPrimary" gutterBottom
+        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom
           style={{display:"flex",justifyContent:"space-between"}}>
           <FormattedMessage id={this.props.title}/>
         </Typography>
         <Grid container spacing={1} style={{margin:"5px 0"}}>
           <Grid item xs={12}>
-            <form noValidate autoComplete="off">
-              <TextField
+            <FormControl component="fieldset" style={{width:"100%"}}>
+            <InputLabel htmlFor="standard-adornment-password"><FormattedMessage id="Songs.filterByName"/></InputLabel>
+              <Input
                 style={{width:"100%"}}
-                label={<FormattedMessage id="Songs.filterByName"/>}
                 placeholder={"(ex.)255"}
                 value={filterByName}
                 onChange={this.handleInputChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
+                endAdornment={
+                  filterByName &&
+                  <InputAdornment position="end">
+                    <IconButton onClick={()=>this.handleInputChange(null)}>
+                      <BackspaceIcon/>
+                    </IconButton>
+                  </InputAdornment>
+                }
               />
-            </form>
+            </FormControl>
           </Grid>
         </Grid>
         <Grid container spacing={1} id="mainFilters" style={{margin:"5px 0"}}>
@@ -192,6 +211,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
         </Grid>
 
         <SongsTable
+          page={page} handleChangePage={this.handleChangePage}
           data={this.sortedData()} sort={sort} isDesc={isDesc}
           changeSort={this.changeSort}
           updateScoreData={this.updateScoreData}/>
