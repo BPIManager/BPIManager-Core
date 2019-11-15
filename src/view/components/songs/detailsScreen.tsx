@@ -22,15 +22,22 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import {songsDB,scoresDB,scoreHistoryDB} from "../../../components/indexedDB";
 import ShowSnackBar from "../snackBar";
-import {Tooltip as TooltipMUI, Button, CircularProgress} from '@material-ui/core';
+import {Tooltip as TooltipMUI, Button, CircularProgress, Tooltip} from '@material-ui/core';
 import BPIChart from "./bpiChart";
 import SongDetails from "./songDetails";
+import SongDiffs from "./songDiffs";
+import { withRouter,RouteComponentProps } from "react-router-dom";
+import { UnregisterCallback } from "history";
+import TabPanel from "./common/tabPanel";
+import { _currentTheme } from "../../../components/settings";
+import EditScreen from "./editScreen";
 
 interface P{
   isOpen:boolean,
   song:songData|null,
   score:scoreData|null,
-  handleOpen:(flag:boolean)=>Promise<void>
+  handleOpen:(flag:boolean,row?:any,willDeleteItems?:any)=>void,
+  willDelete?:boolean
 }
 
 interface S{
@@ -47,13 +54,16 @@ interface S{
   errorSnackMessage:string,
   graphLastUpdated:number,
   isSaving:boolean,
+  showBody:boolean,
+  editScreenIsOpen:boolean,
 }
 
-class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
+class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteComponentProps,S> {
 
   private calc:bpiCalcuator = new bpiCalcuator();
+  private unlisten:UnregisterCallback|null = null;
 
-  constructor(props:P){
+  constructor(props:P & {intl?:any} & RouteComponentProps){
     super(props);
     this.state = {
       isError:false,
@@ -69,6 +79,24 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       errorSnackMessage:"",
       graphLastUpdated:new Date().getTime(),
       isSaving:false,
+      showBody:false,
+      editScreenIsOpen:false,
+    }
+    this.unlisten = this.props.history.listen((_newLocation, action) => {
+      if (action === "POP") {
+        this.props.history.go(1);
+        this.props.handleOpen(false);
+      }
+    });
+  }
+
+  toggleShowBPI = ():void=>{
+    return this.setState({showBody:!this.state.showBody});
+  }
+
+  componentWillUnmount(){
+    if(this.unlisten){
+      this.unlisten();
     }
   }
 
@@ -86,7 +114,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
     const bpiBasis = [0,10,20,30,40,50,60,70,80,90,100];
     const mybest = newScore ? newScore : score.exScore;
     for(let i = 0;i < bpiBasis.length; ++i){
-      const exScoreFromBPI:number = Math.floor(this.calc.calcFromBPI(bpiBasis[i]));
+      const exScoreFromBPI:number = this.calc.calcFromBPI(bpiBasis[i],true);
       if(lastExScore < mybest && mybest <= exScoreFromBPI){
         dataInserter(mybest,"YOU");
         lastExScore = mybest;
@@ -170,21 +198,22 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
     }
   }
 
-  toggleSuccessSnack = ()=>this.setState({successSnack:!this.state.successSnack})
-  toggleErrorSnack = ()=>this.setState({errorSnack:!this.state.errorSnack})
+  toggleEditScreen = ()=>this.setState({editScreenIsOpen:!this.state.editScreenIsOpen});
+  toggleSuccessSnack = ()=>this.setState({successSnack:!this.state.successSnack});
+  toggleErrorSnack = ()=>this.setState({errorSnack:!this.state.errorSnack});
 
   calcRank = ()=> this.props.score ? `${this.calc.rank(!Number.isNaN(this.state.newBPI) ? this.state.newBPI : this.props.score.currentBPI)}` : "-";
 
   saveAndClose = async()=>{
     try{
       const {newBPI,newScore} = this.state;
-      const {score,song} = this.props;
-      if(!song){return;}
+      const {score,song,willDelete} = this.props;
+      if(!song || !score){return;}
       this.setState({isSaving:true});
       const scores = new scoresDB(), scoreHist = new scoreHistoryDB();
       await scores.updateScore(score,{currentBPI:newBPI,exScore:newScore});
-      await scoreHist.add(Object.assign(score,{difficultyLevel:song.difficultyLevel}),{currentBPI:newBPI,exScore:newScore});
-      this.props.handleOpen(true);
+      scoreHist.add(Object.assign(score, { difficultyLevel: song.difficultyLevel }), { currentBPI: newBPI, exScore: newScore });
+      this.props.handleOpen(true,null,willDelete ? {title:score.title,difficulty:score.difficulty} : null);
     }catch(e){
       return this.setState({errorSnack:true,errorSnackMessage:e});
     }
@@ -192,36 +221,44 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
 
   showRank = (isBody:boolean):string=>{
     const {song,score} = this.props;
-    const {newScore} = this.state;
+    const {showBody,newScore} = this.state;
     if(!song || !score){return "-";}
     const max:number = song.notes * 2;
     const s:number = !Number.isNaN(newScore) ? newScore : score.exScore;
     const percentage:number =  s  / max;
     if(percentage < 2/9){
+      if(showBody) return !isBody ? "F+" : `${Math.ceil(s - max * 1/9)}`;
       return !isBody ? "E-" : `${Math.ceil(max * 2/9 - s)}`;
     }
     if(percentage >= 2/9 && percentage < 1/3){
+      if(showBody) return !isBody ? "E+" : `${Math.ceil(s - max * 2/9)}`;
       return !isBody ? "D-" : `${Math.ceil(max * 1/3 - s)}`;
     }
     if(percentage >= 1/3 && percentage < 4/9){
+      if(showBody) return !isBody ? "D+" : `${Math.ceil(s - max * 1/3)}`;
       return !isBody ? "C-" : `${Math.ceil(max * 4/9 - s)}`;
     }
     if(percentage >= 4/9 && percentage < 5/9){
+      if(showBody) return !isBody ? "C+" : `${Math.ceil(s - max * 4/9)}`;
       return !isBody ? "B-" : `${Math.ceil(max * 5/9 - s)}`;
     }
     if(percentage >= 5/9 && percentage < 2/3){
+      if(showBody) return !isBody ? "B+" : `${Math.ceil(s - max * 5/9)}`;
       return !isBody ? "A-" : `${Math.ceil(max * 2/3 - s)}`;
     }
     if(percentage >= 2/3 && percentage < 7/9){
+      if(showBody) return !isBody ? "A+" : `${Math.ceil(s - max * 2/3)}`;
       return !isBody ? "AA-" : `${Math.ceil(max * 7/9 - s)}`;
     }
     if(percentage >= 7/9 && percentage < 8/9){
+      if(showBody) return !isBody ? "AA+" : `${Math.ceil(s - max * 7/9)}`;
       return !isBody ? "AAA-" : `${Math.ceil(max * 8/9 - s)}`;
     }
     if(percentage >= 8/9 && percentage < 17/18){
       return !isBody ? "AAA+" : `${Math.floor(s - max * 8/9)}`;
     }
     if(percentage >= 17/18){
+      if(showBody) return !isBody ? "AAA+" : `${Math.ceil(s - max * 8/9)}`;
       return !isBody ? "MAX-" : `${Math.ceil(max - s)}`;
     }
     return "";
@@ -230,13 +267,13 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
   render(){
     const {formatMessage} = this.props.intl;
     const {isOpen,handleOpen,song,score} = this.props;
-    const {isSaving,newScore,newBPI,showCharts,chartData,currentTab,anchorEl,favorited,successSnack,errorSnack,errorSnackMessage} = this.state;
+    const {editScreenIsOpen,isSaving,newScore,newBPI,showCharts,chartData,currentTab,anchorEl,favorited,successSnack,errorSnack,errorSnackMessage} = this.state;
     if(!song || !score){
       return (null);
     }
     const detectStarIconColor = favorited ? "#ffd700" : "#c3c3c3";
     return (
-      <Dialog id="detailedScreen" fullScreen open={isOpen} onClose={handleOpen} style={{overflowX:"hidden",width:"100%"}}>
+      <Dialog id="detailedScreen" className={_currentTheme() === "dark" ? "darkDetailedScreen" : "lightDetailedScreen"} fullScreen open={isOpen} onClose={handleOpen} style={{overflowX:"hidden",width:"100%"}}>
         <AppBar>
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={()=>handleOpen(false)} aria-label="close">
@@ -268,13 +305,17 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
                 {(Number.isNaN(score.currentBPI) && Number.isNaN(newBPI)) && <span>-</span>}
               </Typography>
             </Grid>
-            <Grid item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0"}}>
-              <Typography component="h6" variant="h6" color="textSecondary">
-                {score && <span>{this.showRank(false)}</span>}
-              </Typography>
-              <Typography component="h4" variant="h4" color="textPrimary">
-                {score && <span>{this.showRank(true)}</span>}
-              </Typography>
+            <Grid onClick={this.toggleShowBPI} item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0",cursor:"pointer"}}>
+              <Tooltip title="プラス/マイナス表記の切り替え">
+                <div style={{textAlign:"center"}}>
+                  <Typography component="h6" variant="h6" color="textSecondary">
+                    {score && <span>{this.showRank(false)}</span>}
+                  </Typography>
+                  <Typography component="h4" variant="h4" color="textPrimary">
+                    {score && <span>{this.showRank(true)}</span>}
+                  </Typography>
+                </div>
+              </Tooltip>
             </Grid>
             <Grid item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0"}}>
               <Typography component="h6" variant="h6" color="textSecondary">
@@ -339,6 +380,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
           onChange={this.handleTabChange}>
           <Tab label={<FormattedMessage id="Details.Graph"/>} />
           <Tab label={<FormattedMessage id="Details.Details"/>} />
+          <Tab label={<FormattedMessage id="Details.Diffs"/>} />
         </Tabs>
         <TabPanel value={currentTab} index={0}>
           {showCharts &&
@@ -347,6 +389,15 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
         </TabPanel>
         <TabPanel value={currentTab} index={1}>
           <SongDetails song={song} score={score}/>
+          <Button onClick={this.toggleEditScreen} color="secondary" style={{margin:"10px 0"}}>
+            登録内容の編集
+          </Button>
+          {editScreenIsOpen &&
+            <EditScreen isOpen={isOpen} song={song} score={score} toggleEditScreen={this.toggleEditScreen} handleOpen={handleOpen}/>
+          }
+        </TabPanel>
+        <TabPanel value={currentTab} index={2}>
+          <SongDiffs song={song} score={score}/>
         </TabPanel>
         <ShowSnackBar message={errorSnackMessage} variant="warning"
             handleClose={this.toggleErrorSnack} open={errorSnack} autoHideDuration={3000}/>
@@ -355,14 +406,4 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
   }
 }
 
-class TabPanel extends React.Component<{value:number,index:number},{}>{
-
-  render(){
-    if(this.props.value !== this.props.index){
-      return (null);
-    }
-    return this.props.children
-  }
-}
-
-export default injectIntl(DetailedSongInformation);
+export default withRouter(injectIntl(DetailedSongInformation));
