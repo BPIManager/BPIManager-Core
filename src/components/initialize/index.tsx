@@ -36,7 +36,7 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
         return this.setState({show:false});
       }
       const now = timeFormatter(0);
-      const csv = await fetch("https://files.poyashi.me/json/songs.json?t=initialized").then(t=>t.json());
+      const csv = await fetch("https://files.poyashi.me/json/songsWithDP.json?t=initialized").then(t=>t.json());
       for(let i=0;i < csv.body.length;++i){
         await this.songsDB.setItem(Object.assign(csv["body"][i],{
           isFavorited:false,

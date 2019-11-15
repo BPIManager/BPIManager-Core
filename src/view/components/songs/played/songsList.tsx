@@ -137,13 +137,14 @@ export default class SongsList extends React.Component<P,stateInt> {
       m === 1 ? data.exScore / max < 2 / 3 :
       m === 2 ? data.exScore / max < 7 / 9 && 2/3 < data.exScore / max :
       m === 3 ? data.exScore / max < 8 / 9 && 7/9 < data.exScore / max :
-      m === 4 ? true :
-      m === 5 ? data.clearState <= 3 :
-      m === 6 ? data.clearState <= 4 :
-      m === 7 ? data.clearState <= 5 : true
+      m === 4 ? data.exScore / max < 17 / 18 && 8/9 < data.exScore / max :
+      m === 5 ? true :
+      m === 6 ? data.clearState <= 3 :
+      m === 7 ? data.clearState <= 4 :
+      m === 8 ? data.clearState <= 5 : true
     }
-    
-    if(Object.keys(this.state.allSongsData).length === 0){return [];}
+
+    if(Object.keys(this.state.allSongsData).length === 0) return [];
     return this.props.full.filter((data)=>{
       if(!f[data.title + _prefix(data["difficulty"])]){return false;}
       const max = f[data.title + _prefix(data["difficulty"])]["notes"] * 2;
@@ -177,7 +178,7 @@ export default class SongsList extends React.Component<P,stateInt> {
         return b.title.localeCompare(a.title, "ja", {numeric:true});
         default:
         case 2:
-        if(mode > 4){
+        if(mode > 5){
           if(!a.missCount || !b.missCount){
             return -1;
           }
@@ -185,7 +186,7 @@ export default class SongsList extends React.Component<P,stateInt> {
         }
         return b.currentBPI - a.currentBPI;
         case 3:
-        if(mode > 0 && mode < 5){
+        if(mode > 0 && mode < 6){
           const aMax = allSongsData[a.title + _prefix(a.difficulty)]["notes"] * 2;
           const bMax = allSongsData[b.title + _prefix(b.difficulty)]["notes"] * 2;
           return b.exScore / bMax - a.exScore / aMax;
@@ -249,6 +250,7 @@ export default class SongsList extends React.Component<P,stateInt> {
                 <MenuItem value={5}><FormattedMessage id="Songs.mode5"/></MenuItem>
                 <MenuItem value={6}><FormattedMessage id="Songs.mode6"/></MenuItem>
                 <MenuItem value={7}><FormattedMessage id="Songs.mode7"/></MenuItem>
+                <MenuItem value={8}><FormattedMessage id="Songs.mode8"/></MenuItem>
               </Select>
             </FormControl>
           </Grid>

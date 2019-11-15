@@ -40,10 +40,11 @@ const ja = {
   "Songs.mode1":"A狙い",
   "Songs.mode2":"AA狙い",
   "Songs.mode3":"AAA狙い",
-  "Songs.mode4":"MAX狙い",
-  "Songs.mode5":"HARD CLEAR狙い",
-  "Songs.mode6":"EX-HARD CLEAR狙い",
-  "Songs.mode7":"FULLCOMBO狙い",
+  "Songs.mode4":"MAX-狙い",
+  "Songs.mode5":"MAX狙い",
+  "Songs.mode6":"HARD CLEAR狙い",
+  "Songs.mode7":"EX-HARD CLEAR狙い",
+  "Songs.mode8":"FULLCOMBO狙い",
   "Songs.legend":"凡例および使用方法を確認する場合は、ここをクリックしてヘルプを表示してください",
   "Songs.updatedToday":"本日更新分のみ表示",
   "Details.SaveButton":"保存",
@@ -139,7 +140,10 @@ const ja = {
   "Settings.DeleteDialogBody2":"この操作を巻き戻すことは決してできません。次のデータセットを削除しても本当によろしいですか:",
   "Settings.MyGoalBPI":"目標BPI",
   "Settings.MyGoalPercentage":"目標パーセンテージ",
-  "Settings.MyGoalDescription":"これらの値を設定することで、「データ比較」画面にて当該BPI/パーセンテージに該当するEXスコアを比較対象として選択できます。"
+  "Settings.MyGoalDescription":"これらの値を設定することで、「データ比較」画面にて当該BPI/パーセンテージに該当するEXスコアを比較対象として選択できます。",
+  "EditScreen.Title":"編集:",
+  "EditScreen.Details":"プレイデータ",
+  "EditScreen.Histories":"更新ログ",
 };
 
 export default ja;

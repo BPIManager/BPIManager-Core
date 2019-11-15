@@ -82,7 +82,7 @@ export default class Compare extends React.Component<{},S> {
     }else{
       newState["options"][target] = newState["options"][target].filter((t:string)=> t !== name);
     }
-    this.setState({options:newState["options"]});
+    this.setState({options:newState["options"],page:0});
     return this.filter();
   }
 
@@ -98,7 +98,7 @@ export default class Compare extends React.Component<{},S> {
     if (typeof event.target.value !== "string") { return; }
     let newState = this.cloneState();
     newState.compareFrom = event.target.value;
-    this.setState({compareFrom:event.target.value,isLoading:true});
+    this.setState({compareFrom:event.target.value,isLoading:true,page:0});
     return this.dataHandler(newState);
   }
 
@@ -106,7 +106,7 @@ export default class Compare extends React.Component<{},S> {
     if (typeof event.target.value !== "string") { return; }
     let newState = this.cloneState();
     newState.compareTo = event.target.value;
-    this.setState({compareTo:event.target.value,isLoading:true});
+    this.setState({compareTo:event.target.value,isLoading:true,page:0});
     return this.dataHandler(newState);
   }
 

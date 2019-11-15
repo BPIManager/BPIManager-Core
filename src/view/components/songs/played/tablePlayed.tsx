@@ -99,18 +99,18 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                 return (
                   <TableRow
                     onClick={()=>this.handleOpen(false,row)}
-                    hover role="checkbox" tabIndex={-1} key={row.title} className={ i % 2 ? "isOdd" : "isEven"}>
+                    hover role="checkbox" tabIndex={-1} key={row.title + i} className={ i % 2 ? "isOdd" : "isEven"}>
                     {columns.map((column,j) => {
                       const prefix = row.difficulty === "hyper" ? "(H)" : row.difficulty === "leggendaria" ? "(†)" : "";
                       return (
                         <TableCell key={column.id + prefix} style={{backgroundColor : diffColor(j,row),position:"relative"}}>
-                          {(mode < 5 || column.id !== "currentBPI") && row[column.id]}
+                          {(mode < 6 || column.id !== "currentBPI") && row[column.id]}
 
                           {column.id === "title" && prefix}
-                          {(mode > 0 && mode < 5 && column.id === "exScore") &&
-                            <span>(-{behindScore(row,this.props.allSongsData,mode)})</span>
+                          {(mode > 0 && mode < 6 && column.id === "exScore") &&
+                            <span className="plusOverlayScore">-{behindScore(row,this.props.allSongsData,mode)}</span>
                           }
-                          {(mode > 4 && column.id === "currentBPI") && bp(row.missCount)}
+                          {(mode > 5 && column.id === "currentBPI") && bp(row.missCount)}
                           {(j === 3 && mode === 0 && row.lastScore > -1) && <span className="plusOverlayScore">
                             {row.exScore - row.lastScore > 0 ? "+" + Number(row.exScore - row.lastScore) : row.exScore - row.lastScore}
                             </span>

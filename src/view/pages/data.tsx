@@ -34,11 +34,11 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
       this.props.global.setMove(true);
       this.setState({isSaving:true});
       let errors = [];
-      const isSingle = _isSingle();
-      const currentStore = _currentStore();
-      const executor = new importCSV(this.state.raw,isSingle,currentStore);
-      const calc = new bpiCalculator(isSingle);
-      const exec = await executor.execute();
+      const isSingle:number = _isSingle();
+      const currentStore:string = _currentStore();
+      const executor:importCSV = new importCSV(this.state.raw,isSingle,currentStore);
+      const calc:bpiCalculator = new bpiCalculator(isSingle);
+      const exec:number = await executor.execute();
       if(!exec){
         throw new Error("CSVデータの形式が正しくありません");
       }

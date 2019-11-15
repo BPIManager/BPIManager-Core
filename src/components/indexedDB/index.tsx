@@ -52,6 +52,7 @@ export const scoresDB = class extends storageWrapper{
   scores: Dexie.Table<any, any>;
   storedAt:string = "";
   isSingle:number = 1;
+  currentData:scoreData[] = [];
 
   constructor(isSingle:number = 1,storedAt?:string){
     super();
@@ -83,6 +84,19 @@ export const scoresDB = class extends storageWrapper{
     }
   }
 
+  async loadStore():Promise<this>{
+    try{
+      this.currentData = await this.scores.where({
+        storedAt:_currentStore(),
+        isSingle:_isSingle(),
+      }).toArray();
+      return this;
+    }catch(e){
+      console.error(e);
+      return this;
+    }
+  }
+
   async getSpecificVersionAll():Promise<scoreData[]>{
     try{
       const currentData = await this.scores.where({
@@ -105,13 +119,20 @@ export const scoresDB = class extends storageWrapper{
   }
 
   //for statistics
-  async getAllTwelvesBPI(isSingle:number,storedAt:string,diff:string = "12"):Promise<number[]>{
+  async getItemsBySongDifficulty(diff:string = "12"):Promise<number[]>{
     try{
-      let data:scoreData[] = await this.scores.where({
-        storedAt:storedAt,isSingle:isSingle,
-      }).toArray();
-      data = data.filter(item=>item.difficultyLevel === diff) ;
-      return data.map((item:scoreData)=>item.currentBPI);
+      if(!this.currentData){await this.loadStore();}
+      return this.currentData.filter(item=>item.difficultyLevel === diff).map((item:scoreData)=>item.currentBPI);
+    }catch(e){
+      console.error(e);
+      return [];
+    }
+  }
+
+  async getItemsBySongDifficultyName(diff:string = "hyper"):Promise<number[]>{
+    try{
+      if(!this.currentData){await this.loadStore();}
+      return this.currentData.filter(item=>item.difficulty === diff).map((item:scoreData)=>item.currentBPI);
     }catch(e){
       console.error(e);
       return [];
@@ -253,7 +274,7 @@ export const scoreHistoryDB = class extends storageWrapper{
         difficultyLevel:score.difficultyLevel,
         storedAt:score.storedAt,
         BPI:data.currentBPI,
-        updatedAt:forceUpdateTime ? score.updatedAt : timeFormatter(3),
+        updatedAt: forceUpdateTime ? score.updatedAt : timeFormatter(3),
         isSingle:score.isSingle,
       });
       return true;

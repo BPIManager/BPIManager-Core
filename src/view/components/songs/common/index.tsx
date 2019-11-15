@@ -16,7 +16,7 @@ export const diffColor = (i:number,row: any):string=>{
 
 export const behindScore = (row:any,allSongsData:{[key:string]:any},mode:number)=>{
   try{
-    const ghost = [1,2/3,7/9,8/9,1];
+    const ghost = [1,2/3,7/9,8/9,17/18,1];
     const max = allSongsData[row.title + _prefix(row.difficulty)]["notes"] * 2;
     return Math.ceil(max * ghost[mode] - row.exScore)
   }catch(e){

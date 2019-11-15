@@ -15,7 +15,8 @@ interface S {
   isLoading:boolean,
   totalBPI:number,
   perDate:{name:string,sum:string,avg:number}[],
-  groupedByBPI:any[],
+  groupedByLevel:any[],
+  groupedByDiff:any[],
 }
 
 class Stats extends React.Component<{intl:any},S> {
@@ -26,7 +27,8 @@ class Stats extends React.Component<{intl:any},S> {
       isLoading:true,
       totalBPI:0,
       perDate:[],
-      groupedByBPI:[],
+      groupedByLevel:[],
+      groupedByDiff:[],
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
@@ -36,14 +38,12 @@ class Stats extends React.Component<{intl:any},S> {
   }
 
   async updateScoreData(){
-    const db = new scoresDB();
-    const bpi = new bpiCalcuator();
-    const currentStore = _currentStore();
     const isSingle = _isSingle();
-    const allSongsTwelvesBPI = await db.getAllTwelvesBPI(isSingle,currentStore,"12");
-    const allSongsElevensBPI = await db.getAllTwelvesBPI(isSingle,currentStore,"11");
-    bpi.allTwelvesBPI = allSongsTwelvesBPI;
-    bpi.allTwelvesLength = await new songsDB().getAllTwelvesLength(isSingle);
+    const currentStore = _currentStore();
+    const db = await new scoresDB(isSingle,currentStore).loadStore();
+    const bpi = new bpiCalcuator();
+    const allSongsTwelvesBPI = this.groupByBPI(await db.getItemsBySongDifficulty("12"));
+    const allSongsElevensBPI = this.groupByBPI(await db.getItemsBySongDifficulty("11"));
     //compare by date
     const allDiffs = (await new scoreHistoryDB().getAll("12")).reduce((groups, item) => {
       const date = moment(item.updatedAt).format("YYYY/MM/DD");
@@ -54,10 +54,7 @@ class Stats extends React.Component<{intl:any},S> {
       return groups;
     }, {});
     let eachDaySum:{name:string,sum:string,avg:number,}[] = [];
-    Object.keys(allDiffs).map((item,i)=>{
-      if(i > 10){
-        return 0;
-      }
+    Object.keys(allDiffs).map((item)=>{
       const avg:{BPI:number} = allDiffs[item].reduce((a:any,c:any)=>{return {BPI:a.BPI + c.BPI}});
       eachDaySum.push({
         name : item,
@@ -68,22 +65,33 @@ class Stats extends React.Component<{intl:any},S> {
     });
 
     let bpis = [-20,-10,0,10,20,30,40,50,60,70,80,90,100];
-    let groupedByBPI = [];
-    const twelvesBPIGrouped = this.groupByBPI(allSongsTwelvesBPI);
-    const elevensBPIGrouped = this.groupByBPI(allSongsElevensBPI);
+    let groupedByLevel = [], groupedByDiff = [];
     for(let i = 0; i < bpis.length; ++i){
       let obj:{"name":number,"☆11":number,"☆12":number} = {"name":bpis[i],"☆11":0,"☆12":0};
-      obj["☆11"] = elevensBPIGrouped[bpis[i]] ? elevensBPIGrouped[bpis[i]] : 0;
-      obj["☆12"] = twelvesBPIGrouped[bpis[i]] ? twelvesBPIGrouped[bpis[i]] : 0;
-      groupedByBPI.push(obj);
+      obj["☆11"] = allSongsElevensBPI[bpis[i]] ? allSongsElevensBPI[bpis[i]] : 0;
+      obj["☆12"] = allSongsTwelvesBPI[bpis[i]] ? allSongsTwelvesBPI[bpis[i]] : 0;
+      groupedByLevel.push(obj);
     }
+
+    /*
+    const allSongsHyperBPI = this.groupByBPI(await db.getItemsBySongDifficultyName("hyper"));
+    const allSongsAnotherBPI = this.groupByBPI(await db.getItemsBySongDifficultyName("another"));
+    const allSongsLeggendariaBPI = this.groupByBPI(await db.getItemsBySongDifficultyName("leggendaria"));
+    for(let i = 0; i < bpis.length; ++i){
+      let obj:{"name":number,"HYPER":number,"ANOTHER":number,"LEGGENDARIA":number} = {"name":bpis[i],"HYPER":0,"ANOTHER":0,"LEGGENDARIA":0};
+      obj["HYPER"] = allSongsHyperBPI[bpis[i]] ? allSongsHyperBPI[bpis[i]] : 0;
+      obj["ANOTHER"] = allSongsAnotherBPI[bpis[i]] ? allSongsAnotherBPI[bpis[i]] : 0;
+      obj["LEGGENDARIA"] = allSongsLeggendariaBPI[bpis[i]] ? allSongsLeggendariaBPI[bpis[i]] : 0;
+      groupedByDiff.push(obj);
+    }
+    */
 
     //BPI別集計
     this.setState({
       isLoading:false,
       totalBPI:bpi.totalBPI(),
-      perDate:eachDaySum.sort((a,b)=> moment(a.name).diff(b.name)),
-      groupedByBPI:groupedByBPI
+      perDate:eachDaySum.sort((a,b)=> moment(a.name).diff(b.name)).slice(-10),
+      groupedByLevel:groupedByLevel,
     });
   }
 
@@ -101,7 +109,7 @@ class Stats extends React.Component<{intl:any},S> {
   }
 
   render(){
-    const {totalBPI,isLoading,perDate,groupedByBPI} = this.state;
+    const {totalBPI,isLoading,perDate,groupedByLevel,groupedByDiff} = this.state;
     const {formatMessage} = this.props.intl;
     const chartColor = _chartColor();
     if(isLoading){
@@ -160,11 +168,11 @@ class Stats extends React.Component<{intl:any},S> {
               <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
                 <FormattedMessage id="Stats.Distribution"/>
               </Typography>
-              {(groupedByBPI.length > 0) &&
+              {(groupedByLevel.length > 0) &&
                 <div style={{width:"95%",height:"100%",margin:"5px auto"}}>
                   <ResponsiveContainer width="100%">
                     <LineChart
-                      data={groupedByBPI}
+                      data={groupedByLevel}
                       margin={{
                         top: 5, right: 30, left: -30, bottom: 30,
                       }}
@@ -180,7 +188,7 @@ class Stats extends React.Component<{intl:any},S> {
                   </ResponsiveContainer>
                 </div>
               }
-              {groupedByBPI.length === 0 && <p>No data found.</p>}
+              {groupedByLevel.length === 0 && <p>No data found.</p>}
             </Paper>
           </Grid>
         </Grid>

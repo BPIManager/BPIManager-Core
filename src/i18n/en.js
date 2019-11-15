@@ -40,10 +40,11 @@ const ja = {
   "Songs.mode1":"new A",
   "Songs.mode2":"new AA",
   "Songs.mode3":"new AAA",
-  "Songs.mode4":"new MAX",
-  "Songs.mode5":"new HARD CLEAR",
-  "Songs.mode6":"new EX-HARD CLEAR",
-  "Songs.mode7":"new FULLCOMBO",
+  "Songs.mode4":"new MAX-",
+  "Songs.mode5":"new MAX",
+  "Songs.mode6":"new HARD CLEAR",
+  "Songs.mode7":"new EX-HARD CLEAR",
+  "Songs.mode8":"new FULLCOMBO",
   "Songs.legend":"To see legends and usage, click here and go to help",
   "Songs.updatedToday":"Only displays the scores updated today",
   "Details.SaveButton":"Save",
@@ -138,7 +139,10 @@ const ja = {
   "Settings.DeleteDialogBody2":"This action cannot be undone. Really do you want to continue to delete this data :",
   "Settings.MyGoalBPI":"Target BPI",
   "Settings.MyGoalPercentage":"Target Percentage",
-  "Settings.MyGoalDescription":"Setting values above makes it possible to compare with EX score corresponding to them in Compare screen. "
+  "Settings.MyGoalDescription":"Setting values above makes it possible to compare with EX score corresponding to them in Compare screen. ",
+  "EditScreen.Title":"Edit:",
+  "EditScreen.Details":"Play log",
+  "EditScreen.Histories":"Score Diffs",
 };
 
 export default ja;
