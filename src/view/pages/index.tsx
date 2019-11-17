@@ -71,7 +71,7 @@ export default class Index extends React.Component<{},{}> {
                   <FormattedMessage id="Index.notes2"/>
                 </Typography>
                 <Typography align="center" color="textSecondary" paragraph variant="caption">
-                  BPIManager beta ver0.0.0.5<br/>
+                  BPIManager beta ver0.0.0.7<br/>
                   If you have encountered unintended behaviours or have opinions to make this tool much better, please contact <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>.
                 </Typography>
               </Grid>

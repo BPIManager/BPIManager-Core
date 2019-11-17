@@ -200,7 +200,7 @@ export const scoresDB = class extends storageWrapper{
     }
   }
 
-  async updateScore(score:scoreData|null,data:{currentBPI:number,exScore:number}):Promise<boolean>{
+  async updateScore(score:scoreData|null,data:{currentBPI:number,exScore:number,clearState:number,missCount:number}):Promise<boolean>{
     try{
       if(!score){return false;}
       if(score.updatedAt === "-"){
@@ -212,6 +212,10 @@ export const scoresDB = class extends storageWrapper{
         await this.scores.add(newScoreData);
       }else{
         //update
+        if(Number.isNaN(data.currentBPI)) delete data.currentBPI;
+        if(Number.isNaN(data.exScore)) delete data.exScore;
+        if(data.clearState === -1 || data.clearState === score.clearState) delete data.clearState;
+        if(data.missCount === -1 || data.missCount === score.missCount) delete data.missCount;
         await this.scores.where("[title+difficulty+storedAt+isSingle]").equals([score.title,score.difficulty,score.storedAt,score.isSingle]).modify(
         Object.assign(data,{
           updatedAt : timeFormatter(0),
