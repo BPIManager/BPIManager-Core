@@ -156,3 +156,7 @@ a.link:hover{
 .darkDetailedScreen .MuiTab-textColorPrimary.Mui-selected{
   color:#a0a0a0;
 }
+
+.displayNoneObject {
+    display: none!important
+}

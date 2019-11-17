@@ -44,6 +44,8 @@ interface S{
   isError:boolean,
   newScore:number,
   newBPI:number,
+  newClearState:number,
+  newMissCount:number,
   showCharts:boolean,
   chartData:any[],
   currentTab:number,
@@ -55,7 +57,6 @@ interface S{
   graphLastUpdated:number,
   isSaving:boolean,
   showBody:boolean,
-  editScreenIsOpen:boolean,
 }
 
 class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteComponentProps,S> {
@@ -69,6 +70,8 @@ class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteCom
       isError:false,
       newScore: NaN,
       newBPI:NaN,
+      newClearState:-1,
+      newMissCount:-1,
       showCharts : true,
       chartData:this.makeGraph().reverse(),
       favorited:props.song ? props.song.isFavorited : false,
@@ -80,7 +83,6 @@ class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteCom
       graphLastUpdated:new Date().getTime(),
       isSaving:false,
       showBody:false,
-      editScreenIsOpen:false,
     }
     this.unlisten = this.props.history.listen((_newLocation, action) => {
       if (action === "POP") {
@@ -198,7 +200,6 @@ class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteCom
     }
   }
 
-  toggleEditScreen = ()=>this.setState({editScreenIsOpen:!this.state.editScreenIsOpen});
   toggleSuccessSnack = ()=>this.setState({successSnack:!this.state.successSnack});
   toggleErrorSnack = ()=>this.setState({errorSnack:!this.state.errorSnack});
 
@@ -206,13 +207,13 @@ class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteCom
 
   saveAndClose = async()=>{
     try{
-      const {newBPI,newScore} = this.state;
+      const {newBPI,newScore,newClearState,newMissCount} = this.state;
       const {score,song,willDelete} = this.props;
       if(!song || !score){return;}
       this.setState({isSaving:true});
       const scores = new scoresDB(), scoreHist = new scoreHistoryDB();
-      await scores.updateScore(score,{currentBPI:newBPI,exScore:newScore});
-      scoreHist.add(Object.assign(score, { difficultyLevel: song.difficultyLevel }), { currentBPI: newBPI, exScore: newScore });
+      await scores.updateScore(score,{currentBPI:newBPI,exScore:newScore,clearState:newClearState,missCount:newMissCount});
+      if(!Number.isNaN(newBPI)) scoreHist.add(Object.assign(score, { difficultyLevel: song.difficultyLevel }), { currentBPI: newBPI, exScore: newScore });
       this.props.handleOpen(true,null,willDelete ? {title:score.title,difficulty:score.difficulty} : null);
     }catch(e){
       return this.setState({errorSnack:true,errorSnackMessage:e});
@@ -264,10 +265,13 @@ class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteCom
     return "";
   }
 
+  handleClearState = (e:React.ChangeEvent<{ value: unknown }>)=> this.setState({newClearState:Number(e.target.value) < 0 ? 0 : Number(e.target.value)});
+  handleMissCount = (e:React.ChangeEvent<HTMLInputElement>)=> this.setState({newMissCount:Number(e.target.value) < 0 ? 0 : Number(e.target.value)});
+
   render(){
     const {formatMessage} = this.props.intl;
     const {isOpen,handleOpen,song,score} = this.props;
-    const {editScreenIsOpen,isSaving,newScore,newBPI,showCharts,chartData,currentTab,anchorEl,favorited,successSnack,errorSnack,errorSnackMessage} = this.state;
+    const {isSaving,newScore,newBPI,newClearState,newMissCount,showCharts,chartData,currentTab,anchorEl,favorited,successSnack,errorSnack,errorSnackMessage} = this.state;
     if(!song || !score){
       return (null);
     }
@@ -282,7 +286,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteCom
             <Typography variant="h6" className="be-ellipsis" style={{flexGrow:1}}>
               {song.title + _prefixFromNum(song.difficulty)}
             </Typography>
-            {(!Number.isNaN(newBPI) || !Number.isNaN(newScore)) &&
+            {( !Number.isNaN(newBPI) || !Number.isNaN(newScore) || (newClearState !== -1 && newClearState !== score.clearState) || (newMissCount !== -1 && newMissCount !== score.missCount) ) &&
               <div style={{position:"relative"}}>
                 <Button variant="contained" color="secondary" onClick={this.saveAndClose} disabled={isSaving}>
                   <FormattedMessage id="Details.SaveButton"/>
@@ -388,13 +392,8 @@ class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteCom
           }
         </TabPanel>
         <TabPanel value={currentTab} index={1}>
-          <SongDetails song={song} score={score}/>
-          <Button onClick={this.toggleEditScreen} color="secondary" style={{margin:"10px 0"}}>
-            登録内容の編集
-          </Button>
-          {editScreenIsOpen &&
-            <EditScreen isOpen={isOpen} song={song} score={score} toggleEditScreen={this.toggleEditScreen} handleOpen={handleOpen}/>
-          }
+          <SongDetails song={song} score={score} newMissCount={newMissCount} newClearState={newClearState}
+            handleClearState={this.handleClearState} handleMissCount={this.handleMissCount}/>
         </TabPanel>
         <TabPanel value={currentTab} index={2}>
           <SongDiffs song={song} score={score}/>

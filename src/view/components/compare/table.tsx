@@ -106,7 +106,7 @@ export default class Compare extends React.Component<P,S> {
               return (
                 <TableRow
                   onClick={()=>this.handleOpen(false,row)}
-                  hover role="checkbox" tabIndex={-1} key={row.title} className={ i % 2 ? "isOdd" : "isEven"}>
+                  hover role="checkbox" tabIndex={-1} key={row.title + i} className={ i % 2 ? "isOdd" : "isEven"}>
                   {columns.map((column,j) => {
                     const prefix = row.difficulty === "hyper" ? "(H)" : row.difficulty === "leggendaria" ? "(†)" : "";
                     return (

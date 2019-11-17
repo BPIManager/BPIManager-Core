@@ -42,8 +42,13 @@ class Stats extends React.Component<{intl:any},S> {
     const currentStore = _currentStore();
     const db = await new scoresDB(isSingle,currentStore).loadStore();
     const bpi = new bpiCalcuator();
-    const allSongsTwelvesBPI = this.groupByBPI(await db.getItemsBySongDifficulty("12"));
+    const twelves = await db.getItemsBySongDifficulty("12");
+    const allSongsTwelvesBPI = this.groupByBPI(twelves);
     const allSongsElevensBPI = this.groupByBPI(await db.getItemsBySongDifficulty("11"));
+
+    bpi.allTwelvesBPI = twelves;
+    bpi.allTwelvesLength = await new songsDB().getAllTwelvesLength(isSingle);
+
     //compare by date
     const allDiffs = (await new scoreHistoryDB().getAll("12")).reduce((groups, item) => {
       const date = moment(item.updatedAt).format("YYYY/MM/DD");
@@ -65,7 +70,7 @@ class Stats extends React.Component<{intl:any},S> {
     });
 
     let bpis = [-20,-10,0,10,20,30,40,50,60,70,80,90,100];
-    let groupedByLevel = [], groupedByDiff = [];
+    let groupedByLevel = [];
     for(let i = 0; i < bpis.length; ++i){
       let obj:{"name":number,"☆11":number,"☆12":number} = {"name":bpis[i],"☆11":0,"☆12":0};
       obj["☆11"] = allSongsElevensBPI[bpis[i]] ? allSongsElevensBPI[bpis[i]] : 0;
@@ -109,7 +114,7 @@ class Stats extends React.Component<{intl:any},S> {
   }
 
   render(){
-    const {totalBPI,isLoading,perDate,groupedByLevel,groupedByDiff} = this.state;
+    const {totalBPI,isLoading,perDate,groupedByLevel} = this.state;
     const {formatMessage} = this.props.intl;
     const chartColor = _chartColor();
     if(isLoading){
