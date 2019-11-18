@@ -12,6 +12,7 @@ import bpiCalculator from "../../components/bpi";
 import { _currentStore, _isSingle, _currentStoreWithFullName } from '../../components/settings';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Link from '@material-ui/core/Link';
+import { difficultyDiscriminator } from '../../components/songs/filter';
 
 export default class Index extends React.Component<{global:any},{raw:string,isSnackbarOpen:boolean,stateText:string,errors:string[],isSaving:boolean,currentState:string,progress:number}> {
 
@@ -53,7 +54,8 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
       for(let i = 0;i < len;++i){
         const calcData = await calc.calc(result[i]["title"],result[i]["difficulty"],result[i]["exScore"])
         if(calcData.error && calcData.reason){
-          errors.push(result[i]["title"] + " - " + calcData.reason);
+          const suffix = result[i]["difficulty"] === "hyper" ? "(H)" : result[i]["difficulty"] === "leggendaria" ? "(†)" : "(A)";
+          errors.push(result[i]["title"] + suffix + " - " + calcData.reason);
           continue;
         }
         if(all[result[i]["title"]] && (all[result[i]["title"]]["exScore"] >= result[i]["exScore"] && all[result[i]["title"]]["clearState"] === result[i]["clearState"])){
