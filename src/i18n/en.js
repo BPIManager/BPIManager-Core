@@ -143,6 +143,18 @@ const ja = {
   "EditScreen.Title":"Edit:",
   "EditScreen.Details":"Play log",
   "EditScreen.Histories":"Score Diffs",
+  "Settings.syncTitle":"Sync play data",
+  "Settings.syncButton":"Sign in",
+  "Settings.syncDescription":"Save your scores on the Internet and synchronize them on multiple devices!(You need to sign in with Twitter)",
+  "Sync.Control.message1":"You can upload scores by every IIDX versions and playstyles(single or double play)",
+  "Sync.Control.message2":"You cannot upload/download scores if already reached to the daily limitation of database.",
+  "Sync.Control.processing":"Now processing...",
+  "Sync.Control.nodata":"There is no data already uploaded.",
+  "Sync.Control.lastupdate":"Last update",
+  "Sync.Login.needLogin":"Please sign in",
+  "Sync.Login.description":"User authentication data will be only used for identifying users and will not be used for creating new posts or changing a personal data without any permissions.",
+  "Sync.Login.note1":"*Since we're using Free trial version of Firebase, there is a limitation of reading/writing database shared by all users.(daily 50,000 reads and 20,000 writes)",
+  "Sync.Login.note2":"You could be banned for a while to use this function if you are using in abusive way which will cause trouble for other users.",
 };
 
 export default ja;

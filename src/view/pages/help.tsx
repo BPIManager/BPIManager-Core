@@ -160,6 +160,7 @@ export default class Index extends React.Component<{},{}> {
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <Typography display="block">
+                <p>2019/11/19 : v0.0.0.8 CSVインポート時に取り込み失敗した楽曲について、難易度まで表記するようにした,データバックアップ機能実装(仮)</p>
                 <p>2019/11/17 : v0.0.0.7 クリアタイプ,BPの手動入力をできるようにした(楽曲詳細画面→詳細タブ),Rootage CSV読み込み時に一部レジェンダリアを読み込まない問題を修正,その他バグ修正</p>
                 <p>2019/11/17 : v0.0.0.6 バグ修正</p>
                 <p>2019/11/15 : v0.0.0.5 同曲別難易度を読み込まない問題を修正,楽曲一覧にMAX-モードを追加,バグ修正,プログラム内の一部の記述を改善</p>

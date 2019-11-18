@@ -144,6 +144,19 @@ const ja = {
   "EditScreen.Title":"編集:",
   "EditScreen.Details":"プレイデータ",
   "EditScreen.Histories":"更新ログ",
+  "Settings.syncTitle":"プレイデータ同期",
+  "Settings.syncButton":"同期画面を表示",
+  "Settings.syncDescription":"クラウド上にプレイデータを保存して、保存済みデータを複数端末間で同期することができます。(ご利用にはTwitterアカウントが必要です)",
+  "Sync.Control.message1":"保存先(IIDXバージョン)・プレイスタイル(SP/DP)ごとに、プレイデータをクラウドに保管することが可能です。",
+  "Sync.Control.message2":"データベースのアクセス上限に達している場合、データを読み込み/書き込みできないことがあります。",
+  "Sync.Control.processing":"現在処理中です",
+  "Sync.Control.nodata":"まだ保存済みのデータはありません。",
+  "Sync.Control.lastupdate":"最終更新日",
+  "Sync.Login.needLogin":"ログインしてください",
+  "Sync.Login.description":"連携データはユーザー識別のためだけに使用され、勝手に新たな投稿を作成したり、ユーザー設定を変更することはありません。",
+  "Sync.Login.note1":"*Firebase無料版を利用しているため、全ユーザーで1日あたり読み取り5万回、書き込み2万回の制限を共有しています。",
+  "Sync.Login.note2":"他のユーザーの利用に支障をきたす使い方をされた場合、開発者の判断のもと一定期間この機能がご利用いただけなくなる場合があります。",
+
 };
 
 export default ja;

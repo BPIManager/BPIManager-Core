@@ -19,6 +19,7 @@ import ja  from "../i18n/ja";
 import en from "../i18n/en";
 import GlobalContainer from '../components/context/global';
 import { Subscribe, Provider } from 'unstated';
+import SyncIndex from '../view/pages/sync';
 
 //
 export default class Router extends React.Component<{},{}> {
@@ -43,6 +44,7 @@ export default class Router extends React.Component<{},{}> {
                 <Route path="/compare" exact component={Compare}/>
                 <Route path="/settings" exact render={_props=><Settings global={global}/>}/>
                 <Route path="/help" exact component={Help}/>
+                <Route path="/sync" exact component={SyncIndex}/>
               </BrowserRouter>
             </IntlProvider>
           )}}

@@ -30,7 +30,6 @@ import { withRouter,RouteComponentProps } from "react-router-dom";
 import { UnregisterCallback } from "history";
 import TabPanel from "./common/tabPanel";
 import { _currentTheme } from "../../../components/settings";
-import EditScreen from "./editScreen";
 
 interface P{
   isOpen:boolean,

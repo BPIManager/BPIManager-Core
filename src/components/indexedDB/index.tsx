@@ -253,6 +253,16 @@ export const scoresDB = class extends storageWrapper{
     }
   }
 
+  async setDataWithTransaction(scores:scoreData[]){
+    await this.transaction("rw",this.scores,async()=>{
+      await this.scores.where({storedAt:_currentStore(),isSingle:_isSingle()}).delete();
+      this.scores.bulkPut(scores);
+    }).catch(e=>{
+      console.log(e)
+    });;
+    return true;
+  }
+
 }
 
 
@@ -309,6 +319,17 @@ export const scoreHistoryDB = class extends storageWrapper{
     try{
       return await this.scoreHistory.where(
         {storedAt:this.currentStore,isSingle:this.isSingle,difficultyLevel:diff}
+      ).toArray();
+    }catch(e){
+      console.error(e);
+      return [];
+    }
+  }
+
+  async getAllInSpecificVersion():Promise<any[]>{
+    try{
+      return await this.scoreHistory.where(
+        {storedAt:this.currentStore,isSingle:this.isSingle}
       ).toArray();
     }catch(e){
       console.error(e);
@@ -387,6 +408,16 @@ export const scoreHistoryDB = class extends storageWrapper{
       console.log("failed recalculate [scoreHistoryDB] - ");
       return;
     }
+  }
+
+  async setDataWithTransaction(history:any[]){
+    await this.transaction("rw",this.scoreHistory,async()=>{
+      await this.scoreHistory.where({storedAt:_currentStore(),isSingle:_isSingle()}).delete();
+      this.scoreHistory.bulkPut(history);
+    }).catch(e=>{
+      console.log(e)
+    });
+    return;
   }
 
 }

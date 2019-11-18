@@ -8,7 +8,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import { FormattedMessage } from "react-intl";
-import { convertClearState, lampCSVArray } from "../../../components/songs/filter";
+import { lampCSVArray } from "../../../components/songs/filter";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";

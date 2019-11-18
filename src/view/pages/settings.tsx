@@ -25,6 +25,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Switch from '@material-ui/core/Switch';
 import { config } from '../../config';
 import TextField from '@material-ui/core/TextField';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
+import { Link } from 'react-router-dom';
 
 interface S {
   isLoading:boolean,
@@ -236,62 +238,77 @@ class Settings extends React.Component<P,S> {
                 <FormattedMessage id="Settings.MyGoalDescription"/>
               </Typography>
               <Divider style={{margin:"10px 0"}}/>
-                <FormControl>
-                  <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
-                    <FormattedMessage id="Settings.Update"/>
-                  </Typography>
-                  <div style={{position:"relative"}}>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      onClick={this.updateDef}
-                      disabled={disableUpdateBtn}
-                      startIcon={<UpdateIcon />}>
-                      <FormattedMessage id="Settings.UpdateResourcePacks"/>
-                    </Button>
-                    {disableUpdateBtn && <CircularProgress size={24} style={{color:"#777",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
-                  </div>
-                </FormControl>
-                <Typography variant="caption" display="block">
-                  {message}
-                </Typography>
-                <Typography variant="caption" display="block">
-                  <FormattedMessage id="Settings.currentVersion"/>{this.state.currentVersion}
-                </Typography>
-                <Typography variant="caption" display="block">
-                  <FormattedMessage id="Settings.updateWarning"/>
-                </Typography>
-                <Divider style={{margin:"10px 0"}}/>
-                <FormControl>
-                  <InputLabel><FormattedMessage id="Settings.dataClear"/></InputLabel>
-                  <Select value={currentResetStore} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
-                    if(typeof e.target.value !== "string"){return;}
-                    this.setState({currentResetStore:e.target.value});
-                  }}>
-                    <MenuItem value="26">26 Rootage</MenuItem>
-                    <MenuItem value="27">27 HEROIC VERSE</MenuItem>
-                    <MenuItem value="Songs Database">Songs Database</MenuItem>
-                  </Select>
-                </FormControl>
-                <Typography variant="caption" display="block">
-                  <FormattedMessage id="Settings.resetWarning"/>
+              <FormControl>
+                <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
+                  <FormattedMessage id="Settings.Update"/>
                 </Typography>
                 <div style={{position:"relative"}}>
                   <Button
                     variant="contained"
                     color="secondary"
-                    style={{background:"#dc004e"}}
-                    onClick={this.toggleDialog}
-                    disabled={disableDeleteBtn}
-                    startIcon={<DeleteForeverIcon />}>
-                    <FormattedMessage id="Settings.DeleteExec"/>
+                    onClick={this.updateDef}
+                    disabled={disableUpdateBtn}
+                    startIcon={<UpdateIcon />}>
+                    <FormattedMessage id="Settings.UpdateResourcePacks"/>
                   </Button>
-                  <Typography variant="caption" display="block">
-                    {message2}
-                  </Typography>
-                  <AlertDialog isDialogOpen={isDialogOpen} exec={this.deleteDef} close={this.toggleDialog} currentResetStore={currentResetStore}/>
-                  {disableDeleteBtn && <CircularProgress size={24} style={{color:"#777",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
+                  {disableUpdateBtn && <CircularProgress size={24} style={{color:"#777",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
                 </div>
+              </FormControl>
+              <Typography variant="caption" display="block">
+                {message}
+              </Typography>
+              <Typography variant="caption" display="block">
+                <FormattedMessage id="Settings.currentVersion"/>{this.state.currentVersion}
+              </Typography>
+              <Typography variant="caption" display="block">
+                <FormattedMessage id="Settings.updateWarning"/>
+              </Typography>
+              <Divider style={{margin:"10px 0"}}/>
+              <FormControl>
+                <InputLabel><FormattedMessage id="Settings.dataClear"/></InputLabel>
+                <Select value={currentResetStore} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+                  if(typeof e.target.value !== "string"){return;}
+                  this.setState({currentResetStore:e.target.value});
+                }}>
+                  <MenuItem value="26">26 Rootage</MenuItem>
+                  <MenuItem value="27">27 HEROIC VERSE</MenuItem>
+                  <MenuItem value="Songs Database">Songs Database</MenuItem>
+                </Select>
+              </FormControl>
+              <Typography variant="caption" display="block">
+                <FormattedMessage id="Settings.resetWarning"/>
+              </Typography>
+              <div style={{position:"relative"}}>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  style={{background:"#dc004e"}}
+                  onClick={this.toggleDialog}
+                  disabled={disableDeleteBtn}
+                  startIcon={<DeleteForeverIcon />}>
+                  <FormattedMessage id="Settings.DeleteExec"/>
+                </Button>
+                <Typography variant="caption" display="block">
+                  {message2}
+                </Typography>
+                <AlertDialog isDialogOpen={isDialogOpen} exec={this.deleteDef} close={this.toggleDialog} currentResetStore={currentResetStore}/>
+                {disableDeleteBtn && <CircularProgress size={24} style={{color:"#777",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
+              </div>
+              <Divider style={{margin:"10px 0"}}/>
+              <Typography variant="caption" display="block">
+                <FormattedMessage id="Settings.syncTitle"/>
+              </Typography>
+              <Link to="/sync" style={{textDecoration:"none"}}>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  startIcon={<LockOpenIcon />}>
+                  <FormattedMessage id="Settings.syncButton"/>
+                </Button>
+              </Link>
+              <Typography variant="caption" display="block">
+                <FormattedMessage id="Settings.syncDescription"/>
+              </Typography>
             </Paper>
           </Container>
         )}

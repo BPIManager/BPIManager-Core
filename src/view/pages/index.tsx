@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button';
 import { FormattedMessage } from "react-intl";
 import { Link } from 'react-router-dom';
 import {Link as RefLink} from '@material-ui/core/';
+import { _lang } from '../../components/settings';
 const {LineShareButton,LineIcon,TwitterShareButton,TwitterIcon} = require('react-share');
 
 export default class Index extends React.Component<{},{}> {
@@ -61,9 +62,11 @@ export default class Index extends React.Component<{},{}> {
           <div style={{marginTop:"15px"}}>
             <Grid container spacing={2} justify="center">
               <Grid item>
-                <Typography align="center" color="textSecondary" variant="caption" paragraph>
-                  If you're not familiar with Japanese, please go firstly to settings and you can change language there.
-                </Typography>
+                {_lang() !== "en" &&
+                  <Typography align="center" color="textSecondary" variant="caption" paragraph>
+                    If you're not familiar with Japanese, please go firstly to settings and you can change language there.
+                  </Typography>
+                }
                 <Typography align="center" color="textSecondary" paragraph variant="caption">
                   <FormattedMessage id="Index.notes1"/>
                 </Typography>
@@ -71,8 +74,14 @@ export default class Index extends React.Component<{},{}> {
                   <FormattedMessage id="Index.notes2"/>
                 </Typography>
                 <Typography align="center" color="textSecondary" paragraph variant="caption">
-                  BPIManager beta ver0.0.0.7<br/>
-                  If you have encountered unintended behaviours or have opinions to make this tool much better, please contact <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>.
+                  BPIManager beta ver0.0.0.8<br/>
+                  {_lang() === "en" &&
+                    <span>If you have encountered unintended behaviours or have opinions to make this tool much better, please contact <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>.</span>
+                  }
+                  {_lang() === "ja" &&
+                    <span>バグ報告などは<RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>までお寄せください。<br/>
+                  また、バージョンアップ情報なども同アカウントにて発信しています。</span>
+                  }
                 </Typography>
               </Grid>
             </Grid>
