@@ -80,6 +80,7 @@ export default class importCSV {
             name = name.replace(/ +$/g,"");
             if(mode === 1 && name === "炎影") name = "火影";
             if(name === "Rave*it!! Rave*it!!") name = "Rave*it!! Rave*it!! ";
+            if(name === "Close the World feat. a☆ru") name = "Close the World feat.a☆ru";
             if(Number(p[eachObjNum[2]]) === 0) continue;
             result.push({
               title:name,

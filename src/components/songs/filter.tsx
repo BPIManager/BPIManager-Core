@@ -133,6 +133,16 @@ export const convertLeggendariaStates = (name:string,difficulty:string):{name:st
     "STARLIGHT DANCEHALL†",
     "Amazing Mirage†",
     "冬椿 ft. Kanae Asaba†",
+    "Wanna Party?†",
+    "AIR RAID FROM THA UNDAGROUND†",
+    "Twelfth Style†",
+    "B4U(BEMANI FOR YOU MIX)†",
+    "Welcome†",
+    "GRID KNIGHT†",
+    "RUGGED ASH†",
+    "Ubertreffen†",
+    "EBONY & IVORY†",
+    "KAISER PHOENIX†",
   ]
   let newName = name,newDifficulty = difficulty;
   if(difficulty !== "another"){

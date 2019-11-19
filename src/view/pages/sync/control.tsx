@@ -52,6 +52,8 @@ class SyncControlScreen extends React.Component<{userData:any},{
     }
     await new scoresDB().setDataWithTransaction(res.scores);
     await new scoreHistoryDB().setDataWithTransaction(res.scoresHistory);
+    await new scoresDB().recalculateBPI();
+    await new scoreHistoryDB().recalculateBPI();
     this.setState({isLoading:false});
   }
 

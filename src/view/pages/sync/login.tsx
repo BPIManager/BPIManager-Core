@@ -20,14 +20,15 @@ class SyncLoginScreen extends React.Component<{},{}> {
           <FormattedMessage id="Sync.Login.description"/>
         </Typography>
         <Divider style={{margin:"10px 0"}}/>
-        <Button
-          variant="outlined"
-          color="secondary"
-          style={{width:"100%"}}
-          onClick={()=>this.fbA.authWithTwitter()}
-          startIcon={<TwitterIcon />}>
-          SIGN IN
-        </Button>
+        <a href="#" onClick={()=>this.fbA.authWithTwitter()} style={{textDecoration:"none"}}>
+          <Button
+            variant="outlined"
+            color="secondary"
+            style={{width:"100%"}}
+            startIcon={<TwitterIcon />}>
+            SIGN IN
+          </Button>
+        </a>
         <Divider style={{margin:"10px 0"}}/>
         <Typography component="p" variant="caption" style={{textAlign:"center"}} gutterBottom>
           <FormattedMessage id="Sync.Login.note1"/><br/>

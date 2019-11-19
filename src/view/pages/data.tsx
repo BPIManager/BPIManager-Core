@@ -12,6 +12,7 @@ import bpiCalculator from "../../components/bpi";
 import { _currentStore, _isSingle, _currentStoreWithFullName } from '../../components/settings';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Link from '@material-ui/core/Link';
+import {Link as RLink} from "react-router-dom";
 
 export default class Index extends React.Component<{global:any},{raw:string,isSnackbarOpen:boolean,stateText:string,errors:string[],isSaving:boolean,currentState:string,progress:number}> {
 
@@ -142,6 +143,14 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
           <li><FormattedMessage id="Data.howToEdit2"/></li>
           <li><FormattedMessage id="Data.howToEdit3"/></li>
         </ol>
+        <Divider variant="middle" style={{margin:"10px 0"}}/>
+        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
+          データを同期
+        </Typography>
+        <RLink to="/sync">「Sync」</RLink>から、端末に保管されているデータをクラウド上にアップロードすることができます。<br/>
+        アップロードされたデータは他の端末と同期することが可能です。<br/>
+        注意:端末内に保管されているデータは、ブラウザのキャッシュをクリアすると削除される場合があります(Google Chromeで「Cookieとサイトデータの削除」を実行した場合など)。<br/>
+        定期的に本機能を用いてデータのバックアップを取ることをおすすめしています。
       </Container>
     );
   }
