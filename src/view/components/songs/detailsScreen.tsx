@@ -6,7 +6,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-
+import TwitterIcon from '@material-ui/icons/Twitter';
 import { scoreData, songData } from "../../../types/data";
 import { _prefixFromNum, getSongSuffixForIIDXInfo } from "../../../components/songs/filter";
 import Grid from "@material-ui/core/Grid";
@@ -22,14 +22,14 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import {songsDB,scoresDB,scoreHistoryDB} from "../../../components/indexedDB";
 import ShowSnackBar from "../snackBar";
-import {Tooltip as TooltipMUI, Button, CircularProgress, Tooltip} from '@material-ui/core';
+import {Tooltip as TooltipMUI, Button, CircularProgress, Tooltip, Fab} from '@material-ui/core';
 import BPIChart from "./bpiChart";
 import SongDetails from "./songDetails";
 import SongDiffs from "./songDiffs";
-import { withRouter,RouteComponentProps } from "react-router-dom";
 import { UnregisterCallback } from "history";
 import TabPanel from "./common/tabPanel";
 import { _currentTheme } from "../../../components/settings";
+import _djRank from "../../../components/common/djRank";
 
 interface P{
   isOpen:boolean,
@@ -58,12 +58,12 @@ interface S{
   showBody:boolean,
 }
 
-class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteComponentProps,S> {
+class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
 
   private calc:bpiCalcuator = new bpiCalcuator();
   private unlisten:UnregisterCallback|null = null;
 
-  constructor(props:P & {intl?:any} & RouteComponentProps){
+  constructor(props:P & {intl?:any}){
     super(props);
     this.state = {
       isError:false,
@@ -83,22 +83,10 @@ class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteCom
       isSaving:false,
       showBody:false,
     }
-    this.unlisten = this.props.history.listen((_newLocation, action) => {
-      if (action === "POP") {
-        this.props.history.go(1);
-        this.props.handleOpen(false);
-      }
-    });
   }
 
   toggleShowBPI = ():void=>{
     return this.setState({showBody:!this.state.showBody});
-  }
-
-  componentWillUnmount(){
-    if(this.unlisten){
-      this.unlisten();
-    }
   }
 
   makeGraph = (newScore?:number):any[]=>{
@@ -174,7 +162,12 @@ class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteCom
         }
       break;
       case 3:
-        window.open("https://twitter.com/intent/tweet?&text=");
+        if(!this.props.score) return;
+        const score = this.state.newScore ? this.state.newScore : this.props.score.exScore;
+        const bpi = this.state.newBPI ? this.state.newBPI : this.props.score.currentBPI;
+        const diff = this.props.score.lastScore !== -1 ? score - this.props.score.lastScore : score;
+        const text = encodeURIComponent(`[${diff > 0 ? "+" + diff : diff}] ${this.props.song.title}${_prefixFromNum(this.props.song.difficulty,true)} [EX:${score}(${this.showRank(false)}${this.showRank(true)})][BPI:${bpi}]`);
+        window.open(`https://twitter.com/intent/tweet?&hashtags=BPIManager&text=${text}`);
       break;
     }
     return this.toggleMenu();
@@ -225,43 +218,8 @@ class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteCom
     if(!song || !score){return "-";}
     const max:number = song.notes * 2;
     const s:number = !Number.isNaN(newScore) ? newScore : score.exScore;
-    const percentage:number =  s  / max;
-    if(percentage < 2/9){
-      if(showBody) return !isBody ? "F+" : `${Math.ceil(s - max * 1/9)}`;
-      return !isBody ? "E-" : `${Math.ceil(max * 2/9 - s)}`;
-    }
-    if(percentage >= 2/9 && percentage < 1/3){
-      if(showBody) return !isBody ? "E+" : `${Math.ceil(s - max * 2/9)}`;
-      return !isBody ? "D-" : `${Math.ceil(max * 1/3 - s)}`;
-    }
-    if(percentage >= 1/3 && percentage < 4/9){
-      if(showBody) return !isBody ? "D+" : `${Math.ceil(s - max * 1/3)}`;
-      return !isBody ? "C-" : `${Math.ceil(max * 4/9 - s)}`;
-    }
-    if(percentage >= 4/9 && percentage < 5/9){
-      if(showBody) return !isBody ? "C+" : `${Math.ceil(s - max * 4/9)}`;
-      return !isBody ? "B-" : `${Math.ceil(max * 5/9 - s)}`;
-    }
-    if(percentage >= 5/9 && percentage < 2/3){
-      if(showBody) return !isBody ? "B+" : `${Math.ceil(s - max * 5/9)}`;
-      return !isBody ? "A-" : `${Math.ceil(max * 2/3 - s)}`;
-    }
-    if(percentage >= 2/3 && percentage < 7/9){
-      if(showBody) return !isBody ? "A+" : `${Math.ceil(s - max * 2/3)}`;
-      return !isBody ? "AA-" : `${Math.ceil(max * 7/9 - s)}`;
-    }
-    if(percentage >= 7/9 && percentage < 8/9){
-      if(showBody) return !isBody ? "AA+" : `${Math.ceil(s - max * 7/9)}`;
-      return !isBody ? "AAA-" : `${Math.ceil(max * 8/9 - s)}`;
-    }
-    if(percentage >= 8/9 && percentage < 17/18){
-      return !isBody ? "AAA+" : `${Math.floor(s - max * 8/9)}`;
-    }
-    if(percentage >= 17/18){
-      if(showBody) return !isBody ? "AAA+" : `${Math.ceil(s - max * 8/9)}`;
-      return !isBody ? "MAX-" : `${Math.ceil(max - s)}`;
-    }
-    return "";
+    return _djRank(showBody,isBody,max,s);
+
   }
 
   handleClearState = (e:React.ChangeEvent<{ value: unknown }>)=> this.setState({newClearState:Number(e.target.value) < 0 ? 0 : Number(e.target.value)});
@@ -370,7 +328,6 @@ class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteCom
                   <MenuItem onClick={()=>this.jumpWeb(0)}>TexTage</MenuItem>
                   <MenuItem onClick={()=>this.jumpWeb(1)}>YouTube</MenuItem>
                   <MenuItem onClick={()=>this.jumpWeb(2)}>IIDX.info</MenuItem>
-                  <MenuItem onClick={()=>this.jumpWeb(3)}><FormattedMessage id="Common.Tweet"/></MenuItem>
                 </Menu>
             </Grid>
           </Grid>
@@ -389,6 +346,9 @@ class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteCom
           {showCharts &&
             <BPIChart song={song} score={score} chartData={chartData} graphLastUpdated={this.state.graphLastUpdated}/>
           }
+          <Fab style={{position:"absolute","right":"20px","bottom":"50px",backgroundColor:"#55acee",color:"#fff"}} onClick={()=>this.jumpWeb(3)} aria-label="tweet">
+            <TwitterIcon />
+          </Fab>
         </TabPanel>
         <TabPanel value={currentTab} index={1}>
           <SongDetails song={song} score={score} newMissCount={newMissCount} newClearState={newClearState}
@@ -404,4 +364,4 @@ class DetailedSongInformation extends React.Component<P & {intl?:any} & RouteCom
   }
 }
 
-export default withRouter(injectIntl(DetailedSongInformation));
+export default injectIntl(DetailedSongInformation);

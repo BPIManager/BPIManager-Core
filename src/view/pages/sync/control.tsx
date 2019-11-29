@@ -48,7 +48,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
     const res = await this.fbA.load();
     if(res === null || res === undefined){
       alert("エラーが発生しました");
-      return this.setState({isLoading:false});;
+      return this.setState({isLoading:false});
     }
     await new scoresDB().setDataWithTransaction(res.scores);
     await new scoreHistoryDB().setDataWithTransaction(res.scoresHistory);

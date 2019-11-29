@@ -1,5 +1,6 @@
 import {songsDB} from "../indexedDB";
 import { songData } from "../../types/data";
+import { _isSingle } from "../settings";
 
 export interface B{
   error:boolean,bpi:number,reason?:any,difficultyLevel?:string
@@ -8,10 +9,12 @@ export interface B{
 export default class bpiCalcuator{
   songsDB:any = new songsDB();
   isSingle: number;
+  totalKaidens: number;
   propData:songData[]|null = null;
 
-  constructor(isSingle:number = 1){
-    this.isSingle = isSingle;
+  constructor(){
+    this.isSingle = _isSingle();
+    this.totalKaidens = this.isSingle ? 2645 : 612;
   }
 
   setPropData(data:songData,exScore:number,isSingle:number):number{
@@ -96,8 +99,10 @@ export default class bpiCalcuator{
     return ceiled ? Math.ceil(res) : res;
   }
 
-  rank(bpi:number):number{
-    return Math.ceil(Math.pow(2645, (100 - bpi ) / 100 ));
+  // when s(isSingleSong) = false : total rank
+  rank(bpi:number,s:boolean = true):number{
+    const p = s ? 100 : 95;
+    return Math.ceil(Math.pow(this.totalKaidens, (p - bpi ) / p ));
   }
 
   _allTwelvesLength:number = 0;
@@ -109,7 +114,7 @@ export default class bpiCalcuator{
   totalBPI():number{
     let sum = 0,playedSongs = this._allTwelvesBPI.length;
     if(playedSongs === 0){return -15;}
-    const k = Math.log2(this._allTwelvesLength);
+    let k = Math.log2(this._allTwelvesLength);
     for (let i=0; i < this._allTwelvesLength; ++i){
       if(i < playedSongs){
         const bpi = this._allTwelvesBPI[i]
@@ -120,6 +125,7 @@ export default class bpiCalcuator{
         }
       }
     }
-    return Math.round(Math.pow(sum, 1 / k) * 100) / 100;
+    const res = Math.round(Math.pow(Math.abs(sum), 1 / k) * 100) / 100;
+    return sum > 0 ? res : -res;
   }
 }

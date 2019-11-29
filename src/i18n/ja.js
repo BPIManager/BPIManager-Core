@@ -10,7 +10,9 @@ const ja = {
   "GlobalNav.Settings": "設定",
   "GlobalNav.Help": "説明書",
   "Index.heroText": "Web上でbeatmania IIDXのスコアを管理し、BPIとして可視化できます。",
-  "Index.importButton" : "使ってみる",
+  "Index.importButton" : "CSVを取り込む",
+  "Index.songsListButton" : "楽曲一覧",
+  "Index.enqueteButton":"アンケートにご協力ください",
   "Index.helpButton" : "ヘルプを読む",
   "Index.notes1" : "beatmaniaは株式会社コナミデジタルエンタテインメントの登録商標です。",
   "Index.notes2" : "本ツールはnorimiso様考案のBPIおよびZUBU様制作のBPICLのそれぞれにインスパイアされて制作されました。",
@@ -156,6 +158,11 @@ const ja = {
   "Sync.Login.description":"連携データはユーザー識別のためだけに使用され、勝手に新たな投稿を作成したり、ユーザー設定を変更することはありません。",
   "Sync.Login.note1":"*Firebase無料版を利用しているため、全ユーザーで1日あたり読み取り5万回、書き込み2万回の制限を共有しています。",
   "Sync.Login.note2":"他のユーザーの利用に支障をきたす使い方をされた場合、開発者の判断のもと一定期間この機能がご利用いただけなくなる場合があります。",
+  "Settings.defFileURLButton":"定義ファイルURLを変更する（上級者向け）",
+  "Settings.ChangeDefinitionURL":"更新用定義ファイルのURLを変更します。定義データファイルの書式および注意事項については、",
+  "Settings.ChangeDefinitionURL2":"こちら",
+  "Settings.ChangeDefinitionURL3":"をご確認ください。",
+  "Settings.ChangeDefinitionURL4":"フォームを空欄にして保存することで、デフォルトのURLを適用します。",
 
 };
 

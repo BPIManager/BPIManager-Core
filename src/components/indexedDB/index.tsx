@@ -399,7 +399,7 @@ export const scoreHistoryDB = class extends storageWrapper{
         const t = array[i];
         if(!self.calculator){return;}
         const bpi = await self.calculator.setIsSingle(t.isSingle).calc(t.title,difficultyParser(t.difficulty,t.isSingle),t.exScore);
-        this.scoreHistory.where("[title+storedAt+difficulty+isSingle]").equals([t.title,t.storedAt,t.difficulty,t.isSingle]).modify(
+        this.scoreHistory.where("num").equals(t.num).modify(
           {BPI:!bpi.error ? bpi.bpi : -15}
         );
       }

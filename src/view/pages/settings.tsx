@@ -13,7 +13,7 @@ import { Subscribe } from 'unstated';
 import GlobalContainer from '../../components/context/global';
 import Button from '@material-ui/core/Button';
 import UpdateIcon from '@material-ui/icons/Update';
-import { _currentVersion } from '../../components/settings';
+import { _currentVersion, _currentDefinitionURL, _setCurrentDefinitionURL } from '../../components/settings';
 import { songsDB, scoresDB, scoreHistoryDB } from '../../components/indexedDB';
 import { songData } from '../../types/data';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
@@ -27,6 +27,7 @@ import { config } from '../../config';
 import TextField from '@material-ui/core/TextField';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import { Link } from 'react-router-dom';
+import {Link as RefLink} from '@material-ui/core/';
 
 interface S {
   isLoading:boolean,
@@ -37,6 +38,7 @@ interface S {
   message2:string,
   currentResetStore:string,
   isDialogOpen:boolean,
+  isURLDialogOpen:boolean
 }
 
 interface P{
@@ -57,6 +59,7 @@ class Settings extends React.Component<P,S> {
       currentResetStore:"27",
       disableDeleteBtn:false,
       isDialogOpen:false,
+      isURLDialogOpen:false,
     }
   }
 
@@ -81,6 +84,11 @@ class Settings extends React.Component<P,S> {
   }
 
   toggleDialog = ()=> this.setState({isDialogOpen:!this.state.isDialogOpen})
+  toggleURLDialog = ()=> this.setState({isURLDialogOpen:!this.state.isURLDialogOpen})
+
+  changeDefinitionURL = (url:string):void=> {
+    return _setCurrentDefinitionURL(url);
+  }
 
   updateDef = async()=>{
     const end = ()=>{this.props.global.setMove(false);}
@@ -91,7 +99,8 @@ class Settings extends React.Component<P,S> {
       const schDB = new scoreHistoryDB();
       const reducer = (t:songData[])=>t.reduce((result:{[key:string]:songData}, current:songData) => {result[current.title + current.difficulty + current.dpLevel] = current;return result;}, {});
       const allSongs = await sdb.getAllWithAllPlayModes().then(t=>reducer(t));
-      const res = await fetch("https://files.poyashi.me/json/songsWithDP.json").then(t=>t.json());
+      const url = _currentDefinitionURL();
+      const res = await fetch(url).then(t=>t.json());
       if(Number(res.requireVersion) > Number(config.versionNumber) ){
         end();
         return this.setState({disableUpdateBtn:false,message:"最新の定義データを導入するために本体を更新する必要があります:要求バージョン>="+ res.requireVersion });
@@ -123,14 +132,14 @@ class Settings extends React.Component<P,S> {
       this.setState({currentVersion:res.version,disableUpdateBtn:false,message:"更新完了"});
     }catch(e){
       console.log(e);
-      this.setState({disableUpdateBtn:false,message:"更新に失敗しました"});
+      this.setState({disableUpdateBtn:false,message:"更新に失敗しました:" + e.message});
     }
     end();
     return;
   }
 
   render(){
-    const {isLoading,isDialogOpen,disableUpdateBtn,message,message2,currentResetStore,disableDeleteBtn} = this.state;
+    const {isLoading,isDialogOpen,isURLDialogOpen,disableUpdateBtn,message,message2,currentResetStore,disableDeleteBtn} = this.state;
     if(isLoading){
       return (
         <Container className="loaderCentered">
@@ -263,6 +272,10 @@ class Settings extends React.Component<P,S> {
               <Typography variant="caption" display="block">
                 <FormattedMessage id="Settings.updateWarning"/>
               </Typography>
+              <Typography variant="caption" display="block">
+                <RefLink component="a" onClick={this.toggleURLDialog} color="secondary" ><FormattedMessage id="Settings.defFileURLButton"/></RefLink>
+              </Typography>
+              {isURLDialogOpen && <URLDialog isDialogOpen={isURLDialogOpen} exec={this.changeDefinitionURL} close={this.toggleURLDialog}/>}
               <Divider style={{margin:"10px 0"}}/>
               <FormControl>
                 <InputLabel><FormattedMessage id="Settings.dataClear"/></InputLabel>
@@ -344,6 +357,68 @@ class AlertDialog extends React.Component<{isDialogOpen:boolean,exec:()=>void,cl
               <FormattedMessage id="Settings.DeleteDialogBody2"/><br/>
               {currentResetStore === "26" ? "26 Rootage" : currentResetStore === "27" ? "27 HEROIC VERSE" : "Songs Database"}
             </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="secondary">
+              Cancel
+            </Button>
+            <Button onClick={this.handleOk} color="secondary" autoFocus>
+              Continue
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+    );
+  }
+}
+
+interface UP {isDialogOpen:boolean,exec:(url:string)=>void,close:()=>void};
+
+class URLDialog extends React.Component<UP,{url:string}> {
+
+  constructor(props:UP){
+    super(props);
+    this.state = {
+      url:_currentDefinitionURL()
+    }
+  }
+
+  handleOk = () => {
+    this.props.exec(this.state.url);
+    this.props.close();
+  };
+
+  handleClose = () => {
+    this.props.close();
+  };
+
+  render(){
+    const {isDialogOpen} = this.props;
+    return (
+      <div>
+        <Dialog
+          open={isDialogOpen}
+          onClose={this.handleClose}>
+          <DialogTitle>定義URLの変更</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              <FormattedMessage id="Settings.ChangeDefinitionURL"/>
+              <RefLink color="secondary" href="https://gist.github.com/potakusan/365b8176ee6634e00fb93cdd8e6bf7a9" target="_blank" rel="noopener noreferrer">
+                <FormattedMessage id="Settings.ChangeDefinitionURL2"/>
+              </RefLink>
+              <FormattedMessage id="Settings.ChangeDefinitionURL3"/><br/>
+              <FormattedMessage id="Settings.ChangeDefinitionURL4"/>
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              label="定義データURL"
+              type="text"
+              value={this.state.url}
+              onChange={(e:React.ChangeEvent<HTMLInputElement>)=>this.setState({url:e.target.value})}
+              fullWidth
+            />
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="secondary">

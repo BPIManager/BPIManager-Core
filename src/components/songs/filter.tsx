@@ -18,8 +18,8 @@ export const convertClearState = (original:string|number,direction:number):strin
 
 export const _prefix = (diff:string):string=> diff === "hyper" ? "(H)" : diff === "leggendaria" ? "(†)" : "";
 
-export const _prefixFromNum = (difficulty:string):string=>{
-  let prefix:string = "";
+export const _prefixFromNum = (difficulty:string,showAnother:boolean = false):string=>{
+  let prefix:string = showAnother ? "(A)" : "";
   if(difficulty === "3" || difficulty === "8"){
     prefix = "(H)";
   }

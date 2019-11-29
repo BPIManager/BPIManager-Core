@@ -21,24 +21,35 @@ export default class Index extends React.Component<{},{}> {
           <Typography variant="h5" align="center" color="textSecondary" paragraph>
             <FormattedMessage id="Index.heroText"/>
           </Typography>
-          <Typography align="center" color="textSecondary" paragraph>
-            ホーム画面/デスクトップに追加してお使いください
-          </Typography>
           <div>
             <Grid container spacing={2} justify="center">
-              <Grid item>
+              <Grid item md={6} xs={12}>
                 <Link to="/data" style={{textDecoration:"none"}}>
-                  <Button variant="contained" color="primary">
+                  <Button fullWidth variant="contained" color="primary">
                     <FormattedMessage id="Index.importButton"/>
                   </Button>
                 </Link>
               </Grid>
-              <Grid item>
+              <Grid item md={6} xs={12}>
+                <Link to="/songs" style={{textDecoration:"none"}}>
+                  <Button fullWidth variant="contained" color="primary">
+                    <FormattedMessage id="Index.songsListButton"/>
+                  </Button>
+                </Link>
+              </Grid>
+              <Grid item md={6} xs={12}>
                 <Link to="/help" style={{textDecoration:"none"}}>
-                  <Button variant="contained" color="secondary">
+                  <Button fullWidth variant="contained" color="primary">
                     <FormattedMessage id="Index.helpButton"/>
                   </Button>
                 </Link>
+              </Grid>
+              <Grid item md={6} xs={12}>
+                <RefLink target="_blank" rel="noopener noreferrer" color="secondary" href="https://forms.gle/Q7cJJYBXVjG8FHLFA">
+                  <Button fullWidth variant="contained" color="secondary" style={{textDecoration:"none"}}>
+                    <FormattedMessage id="Index.enqueteButton"/>
+                  </Button>
+                </RefLink>
               </Grid>
             </Grid>
           </div>
@@ -74,7 +85,7 @@ export default class Index extends React.Component<{},{}> {
                   <FormattedMessage id="Index.notes2"/>
                 </Typography>
                 <Typography align="center" color="textSecondary" paragraph variant="caption">
-                  BPIManager beta ver0.0.0.8-1<br/>
+                  BPIManager beta ver0.0.0.9<br/>
                   {_lang() === "en" &&
                     <span>If you have encountered unintended behaviours or have opinions to make this tool much better, please contact <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>.</span>
                   }

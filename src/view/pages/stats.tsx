@@ -10,10 +10,12 @@ import {_isSingle,_currentStore, _chartColor} from "../../components/settings";
 import moment from 'moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, Legend } from 'recharts';
+import _withOrd from '../../components/common/ord';
 
 interface S {
   isLoading:boolean,
   totalBPI:number,
+  totalRank:number,
   perDate:{name:string,sum:string,avg:number}[],
   groupedByLevel:any[],
   groupedByDiff:any[],
@@ -26,6 +28,7 @@ class Stats extends React.Component<{intl:any},S> {
     this.state ={
       isLoading:true,
       totalBPI:0,
+      totalRank:0,
       perDate:[],
       groupedByLevel:[],
       groupedByDiff:[],
@@ -45,10 +48,8 @@ class Stats extends React.Component<{intl:any},S> {
     const twelves = await db.getItemsBySongDifficulty("12");
     const allSongsTwelvesBPI = this.groupByBPI(twelves);
     const allSongsElevensBPI = this.groupByBPI(await db.getItemsBySongDifficulty("11"));
-
     bpi.allTwelvesBPI = twelves;
     bpi.allTwelvesLength = await new songsDB().getAllTwelvesLength(isSingle);
-
     //compare by date
     const allDiffs = (await new scoreHistoryDB().getAll("12")).reduce((groups, item) => {
       const date = moment(item.updatedAt).format("YYYY/MM/DD");
@@ -59,12 +60,20 @@ class Stats extends React.Component<{intl:any},S> {
       return groups;
     }, {});
     let eachDaySum:{name:string,sum:string,avg:number,}[] = [];
+    const _bpi = new bpiCalcuator();
     Object.keys(allDiffs).map((item)=>{
-      const avg:{BPI:number} = allDiffs[item].reduce((a:any,c:any)=>{return {BPI:a.BPI + c.BPI}});
+      _bpi.allTwelvesLength = allDiffs[item].length;
+      _bpi.allTwelvesBPI = allDiffs[item].reduce((a:number[],val:any)=>{
+        if(val.BPI){
+          a.push(val.BPI);
+        }
+        return a;
+      },[]);
+      const avg = _bpi.totalBPI();
       eachDaySum.push({
         name : item,
         sum : allDiffs[item].length,
-        avg : Math.round(avg.BPI / allDiffs[item].length * 100) / 100
+        avg : avg ? avg : Math.round(allDiffs[item].reduce((a:any,c:any)=>{return {BPI:a.BPI + c.BPI}}).BPI / allDiffs[item].length * 100) / 100
       });
       return 0;
     });
@@ -90,11 +99,12 @@ class Stats extends React.Component<{intl:any},S> {
       groupedByDiff.push(obj);
     }
     */
-
+    const totalBPI = bpi.totalBPI();
     //BPI別集計
     this.setState({
       isLoading:false,
-      totalBPI:bpi.totalBPI(),
+      totalBPI:totalBPI,
+      totalRank:bpi.rank(totalBPI,false),
       perDate:eachDaySum.sort((a,b)=> moment(a.name).diff(b.name)).slice(-10),
       groupedByLevel:groupedByLevel,
     });
@@ -114,7 +124,7 @@ class Stats extends React.Component<{intl:any},S> {
   }
 
   render(){
-    const {totalBPI,isLoading,perDate,groupedByLevel} = this.state;
+    const {totalBPI,isLoading,perDate,totalRank,groupedByLevel} = this.state;
     const {formatMessage} = this.props.intl;
     const chartColor = _chartColor();
     if(isLoading){
@@ -137,6 +147,9 @@ class Stats extends React.Component<{intl:any},S> {
               </Typography>
               <Typography component="h2" variant="h2" color="textPrimary">
                 {totalBPI}
+              </Typography>
+              <Typography component="h5" variant="h5" color="textPrimary">
+                Est. Rank : {_withOrd(totalRank)}
               </Typography>
             </Paper>
           </Grid>

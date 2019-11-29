@@ -201,14 +201,14 @@ export default class SongsList extends React.Component<P,stateInt> {
     if (typeof event.target.value !== "number") { return; }
     let newState = this.cloneState();
     newState.mode = event.target.value;
-    return this.setState({scoreData:this.songFilter(newState),mode:event.target.value});
+    return this.setState({scoreData:this.songFilter(newState),mode:event.target.value,page:0});
   }
 
   handleRangeCange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
     if (typeof event.target.value !== "number") { return; }
     let newState = this.cloneState();
     newState.range = event.target.value;
-    return this.setState({scoreData:this.songFilter(newState),range:event.target.value});
+    return this.setState({scoreData:this.songFilter(newState),range:event.target.value,page:0});
   }
 
   // readonly修飾子が付いているデータに一時的な書き込みをするための措置

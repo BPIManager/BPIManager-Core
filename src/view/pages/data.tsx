@@ -38,7 +38,7 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
       const isSingle:number = _isSingle();
       const currentStore:string = _currentStore();
       const executor:importCSV = new importCSV(this.state.raw,isSingle,currentStore);
-      const calc:bpiCalculator = new bpiCalculator(isSingle);
+      const calc:bpiCalculator = new bpiCalculator();
       const exec:number = await executor.execute();
       if(!exec){
         throw new Error("CSVデータの形式が正しくありません");
@@ -88,6 +88,7 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
   handleClose = ()=> this.setState({isSnackbarOpen:false});
 
   render(){
+    const spdp = _isSingle() ? "SP" : "DP";
     const {raw,isSnackbarOpen,stateText,errors,isSaving} = this.state;
     return (
       <Container className="commonLayout" fixed>
@@ -104,7 +105,7 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
         </Typography>
         <FormattedMessage id="Data.infoBulk"/><br/>
         <FormattedMessage id="Data.howToBulk1"/>
-        <Link color="secondary" href={"https://p.eagate.573.jp/game/2dx/"+_currentStore()+"/djdata/score_download.html"} target="_blank" rel="noopener noreferrer">
+        <Link color="secondary" href={"https://p.eagate.573.jp/game/2dx/"+_currentStore()+"/djdata/score_download.html?style=" + spdp} target="_blank" rel="noopener noreferrer">
           <FormattedMessage id="Data.CSVURL"/>
         </Link>
         <FormattedMessage id="Data.howToBulk2"/>
@@ -147,7 +148,7 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
           データを同期
         </Typography>
-        <RLink to="/sync">「Sync」</RLink>から、端末に保管されているデータをクラウド上にアップロードすることができます。<br/>
+        <RLink to="/sync"><Link color="secondary" component="span">「Sync」</Link></RLink>から、端末に保管されているデータをクラウド上にアップロードすることができます。<br/>
         アップロードされたデータは他の端末と同期することが可能です。<br/>
         注意:端末内に保管されているデータは、ブラウザのキャッシュをクリアすると削除される場合があります(Google Chromeで「Cookieとサイトデータの削除」を実行した場合など)。<br/>
         定期的に本機能を用いてデータのバックアップを取ることをおすすめしています。

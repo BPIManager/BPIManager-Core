@@ -64,7 +64,53 @@ class GlobalHeader extends React.Component<{global:any} & HideOnScrollProps,{isO
 
   render(){
     const {isOpen} = this.state;
-
+    const navBar = [
+      {
+        to:"/",
+        id:"GlobalNav.Home",
+        icon:<HomeIcon />
+      },
+      {
+        to:"/data",
+        id:"GlobalNav.Data",
+        icon:<StorageIcon />
+      },
+      {
+        to:"/favorite",
+        id:"GlobalNav.FavoriteSongs",
+        icon:<StarIcon />
+      },
+      {
+        to:"/songs",
+        id:"GlobalNav.SongList",
+        icon:<LibraryMusicIcon />
+      },
+      {
+        to:"/notPlayed",
+        id:"GlobalNav.unregisteredSongs",
+        icon:<BorderColorIcon />
+      },
+      {
+        to:"/compare",
+        id:"GlobalNav.compare",
+        icon:<FilterNoneIcon />
+      },
+      {
+        to:"/stats",
+        id:"GlobalNav.Statistics",
+        icon:<TrendingUpIcon />
+      },
+      {
+        to:"/settings",
+        id:"GlobalNav.Settings",
+        icon:<SettingsIcon />
+      },
+      {
+        to:"/help",
+        id:"GlobalNav.Help",
+        icon:<HelpIcon />
+      }
+    ]
     return (
       <React.Fragment>
         <HideOnScroll {...this.props}>
@@ -88,60 +134,16 @@ class GlobalHeader extends React.Component<{global:any} & HideOnScrollProps,{isO
         <Toolbar />
         <Drawer open={isOpen} onClose={this.toggleNav}>
           <List style={{width:"230px"}}>
-            <Link component={RLink} to="/" underline="none" color="textPrimary" onClick={this.toggleNav}>
-              <ListItem button>
-                <ListItemIcon><HomeIcon /></ListItemIcon>
-                <ListItemText primary={<FormattedMessage id="GlobalNav.Home"/>} />
-              </ListItem>
-            </Link>
-            <Link component={RLink} to="/data" underline="none" color="textPrimary" onClick={this.toggleNav}>
-              <ListItem button>
-                <ListItemIcon><StorageIcon /></ListItemIcon>
-                <ListItemText primary={<FormattedMessage id="GlobalNav.Data"/>} />
-              </ListItem>
-            </Link>
-            <Link component={RLink} to="/favorite" underline="none" color="textPrimary" onClick={this.toggleNav}>
-              <ListItem button>
-                <ListItemIcon><StarIcon /></ListItemIcon>
-                <ListItemText primary={<FormattedMessage id="GlobalNav.FavoriteSongs"/>} />
-              </ListItem>
-            </Link>
-            <Link component={RLink} to="/songs" underline="none" color="textPrimary" onClick={this.toggleNav}>
-              <ListItem button>
-                <ListItemIcon><LibraryMusicIcon /></ListItemIcon>
-                <ListItemText primary={<FormattedMessage id="GlobalNav.SongList"/>} />
-              </ListItem>
-            </Link>
-            <Link component={RLink} to="/notPlayed" underline="none" color="textPrimary" onClick={this.toggleNav}>
-              <ListItem button>
-                <ListItemIcon><BorderColorIcon /></ListItemIcon>
-                <ListItemText primary={<FormattedMessage id="GlobalNav.unregisteredSongs"/>} />
-              </ListItem>
-            </Link>
-            <Link component={RLink} to="/compare" underline="none" color="textPrimary" onClick={this.toggleNav}>
-              <ListItem button>
-                <ListItemIcon><FilterNoneIcon /></ListItemIcon>
-                <ListItemText primary={<FormattedMessage id="GlobalNav.compare"/>} />
-              </ListItem>
-            </Link>
-            <Link component={RLink} to="/stats" underline="none" color="textPrimary" onClick={this.toggleNav}>
-              <ListItem button>
-                <ListItemIcon><TrendingUpIcon /></ListItemIcon>
-                <ListItemText primary={<FormattedMessage id="GlobalNav.Statistics"/>} />
-              </ListItem>
-            </Link>
-            <Link component={RLink} to="/settings" underline="none" color="textPrimary" onClick={this.toggleNav}>
-              <ListItem button>
-                <ListItemIcon><SettingsIcon /></ListItemIcon>
-                <ListItemText primary={<FormattedMessage id="GlobalNav.Settings"/>} />
-              </ListItem>
-            </Link>
-            <Link component={RLink} to="/help" underline="none" color="textPrimary" onClick={this.toggleNav}>
-              <ListItem button>
-                <ListItemIcon><HelpIcon /></ListItemIcon>
-                <ListItemText primary={<FormattedMessage id="GlobalNav.Help"/>} />
-              </ListItem>
-            </Link>
+            {navBar.map(item=>{
+              return (
+                <Link key={item.id} component={RLink} to={item.to} underline="none" color="textPrimary" onClick={this.toggleNav}>
+                  <ListItem button>
+                    <ListItemIcon>{item.icon}</ListItemIcon>
+                    <ListItemText primary={<FormattedMessage id={item.id}/>} />
+                  </ListItem>
+                </Link>
+              )
+            })}
           </List>
           <Divider />
         </Drawer>

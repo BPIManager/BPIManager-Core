@@ -7,6 +7,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import { FormattedMessage } from 'react-intl';
 import Divider from '@material-ui/core/Divider';
+import {Link as RefLink} from '@material-ui/core/';
 
 export default class Index extends React.Component<{},{}> {
 
@@ -134,8 +135,6 @@ export default class Index extends React.Component<{},{}> {
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <Typography display="block">
-
-                <Divider style={{margin:"10px 0"}}/>
                 material-ui : Copyright (c) 2014 Call-Em-All <a href="https://opensource.org/licenses/mit-license.php" target="_blank" rel="noreferrer noopener">The MIT License (MIT)</a><br/>
                 Dexie.js : Copyright (c) dfahlander <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noreferrer noopener">Apache License</a><br/>
                 fast-deep-equal : Copyright (c) epoberezkin MIT<br/>
@@ -160,14 +159,7 @@ export default class Index extends React.Component<{},{}> {
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <Typography display="block">
-                <p>2019/11/19 : v0.0.0.8 CSVインポート時に取り込み失敗した楽曲について、難易度まで表記するようにした,データバックアップ機能実装(仮)</p>
-                <p>2019/11/17 : v0.0.0.7 クリアタイプ,BPの手動入力をできるようにした(楽曲詳細画面→詳細タブ),Rootage CSV読み込み時に一部レジェンダリアを読み込まない問題を修正,その他バグ修正</p>
-                <p>2019/11/17 : v0.0.0.6 バグ修正</p>
-                <p>2019/11/15 : v0.0.0.5 同曲別難易度を読み込まない問題を修正,楽曲一覧にMAX-モードを追加,バグ修正,プログラム内の一部の記述を改善</p>
-                <p>2019/11/09 : v0.0.0.4 目標BPI/パーセンテージ機能追加,DP対応(β版),未プレイ楽曲絞り込みに関するバグを修正,定義データ更新時に自動でBPIが再計算されない問題を修正</p>
-                <p>2019/11/07 : v0.0.0.3 データリセット機能の追加,定義データ更新の処理を変更,絞り込み条件変更時にテーブルを1ページ目に戻すようにした,例外処理諸々,とか</p>
-                <p>2019/11/06 : v0.0.0.2 ダークテーマの追加,シェアボタンの設置(シェアお願いします!)</p>
-                <p>2019/11/06 : v0.0.0.1 公開した</p>
+                <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager(Twitter)</RefLink>にて更新情報をツイートしています。
               </Typography>
             </ExpansionPanelDetails>
           </ExpansionPanel>

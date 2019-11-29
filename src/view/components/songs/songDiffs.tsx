@@ -111,7 +111,7 @@ class DiffsTable extends React.Component<{scoreTable:any[],type:number},{}>{
     ];
 
     return (
-      <Table>
+      <Table className="detailedDiffs">
         <TableHead>
           <TableRow>
             {columns.map((column,i) => (
@@ -129,7 +129,7 @@ class DiffsTable extends React.Component<{scoreTable:any[],type:number},{}>{
             return (
               <TableRow
                 hover role="checkbox" tabIndex={-1} key={row.title + row.difficulty + i} className={ i % 2 ? "isOdd" : "isEven"}>
-                {columns.map((column,j) => {
+                {columns.map((column,_j) => {
                   return (
                     <TableCell key={column.id}>
                       {row[column.id]}

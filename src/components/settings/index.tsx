@@ -26,6 +26,16 @@ export const _currentTheme = ()=>{
   return localStorage.getItem("theme") || "light";
 }
 
+const defaultURL = "https://files.poyashi.me/json/songsWithDP.json";
+
+export const _currentDefinitionURL = ()=>{
+  return localStorage.getItem("defURL") || defaultURL;
+}
+
+export const _setCurrentDefinitionURL = (url:string = defaultURL)=>{
+  return localStorage.setItem("defURL",url);
+}
+
 export const _currentStoreWithFullName = ()=>{
   const t:string = localStorage.getItem("currentStore") || "27";
   return t === "26" ? "26 Rootage" : "27 HEROIC VERSE"

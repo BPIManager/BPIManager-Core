@@ -11,6 +11,7 @@ import {scoreData, songData} from "../../../../types/data";
 import { _prefix } from "../../../../components/songs/filter";
 import DetailedSongInformation from "../detailsScreen";
 import { diffColor, behindScore, bp } from "../common";
+import _djRank from "../../../../components/common/djRank";
 
 const columns = [
   { id: "difficultyLevel", label: "☆"},
@@ -96,23 +97,33 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
             </TableHead>
             <TableBody>
               {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:any,i:number) => {
+                const prefix = row.difficulty === "hyper" ? "(H)" : row.difficulty === "leggendaria" ? "(†)" : "";
+                const max  = this.props.allSongsData[row.title + prefix]["notes"] * 2;
                 return (
                   <TableRow
                     onClick={()=>this.handleOpen(false,row)}
                     hover role="checkbox" tabIndex={-1} key={row.title + i} className={ i % 2 ? "isOdd" : "isEven"}>
                     {columns.map((column,j) => {
-                      const prefix = row.difficulty === "hyper" ? "(H)" : row.difficulty === "leggendaria" ? "(†)" : "";
                       return (
                         <TableCell key={column.id + prefix} style={{backgroundColor : diffColor(j,row),position:"relative"}}>
-                          {(mode < 6 || column.id !== "currentBPI") && row[column.id]}
+                          {(mode < 6 || column.id !== "currentBPI") && <span className={j >= 2 ? "bodyNumber" : ""}>{row[column.id]}</span>}
 
                           {column.id === "title" && prefix}
                           {(mode > 0 && mode < 6 && column.id === "exScore") &&
                             <span className="plusOverlayScore">-{behindScore(row,this.props.allSongsData,mode)}</span>
                           }
                           {(mode > 5 && column.id === "currentBPI") && bp(row.missCount)}
-                          {(j === 3 && mode === 0 && row.lastScore > -1) && <span className="plusOverlayScore">
-                            {row.exScore - row.lastScore > 0 ? "+" + Number(row.exScore - row.lastScore) : row.exScore - row.lastScore}
+                          {(mode === 0 && j === 3) && <span className="plusOverlayScore">
+                            {row.lastScore > -1 &&
+                              row.exScore - row.lastScore > 0 ? "+" + Number(row.exScore - row.lastScore) : Number(row.exScore - row.lastScore)
+                            }
+                            </span>
+                          }
+                          {(mode < 6 && j === 3) && <span className={i % 2 ? "plusOverlayScoreBottom isOddOverLayed" : "plusOverlayScoreBottom isEvenOverLayed"}>
+                            {_djRank(false,false,max,row.exScore)}
+                            {_djRank(false,true,max,row.exScore)}&nbsp;/&nbsp;
+                            {_djRank(true,false,max,row.exScore)}
+                            {_djRank(true,true,max,row.exScore)}
                             </span>
                           }
                         </TableCell>
