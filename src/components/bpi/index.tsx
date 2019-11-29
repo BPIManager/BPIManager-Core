@@ -17,6 +17,10 @@ export default class bpiCalcuator{
     this.totalKaidens = this.isSingle ? 2645 : 612;
   }
 
+  getTotalKaidens(){
+    return this.totalKaidens;
+  }
+
   setPropData(data:songData,exScore:number,isSingle:number):number{
     this.isSingle = isSingle;
     this.s = exScore;

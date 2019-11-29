@@ -179,10 +179,9 @@ export default class SongsList extends React.Component<P,stateInt> {
         default:
         case 2:
         if(mode > 5){
-          if(!a.missCount || !b.missCount){
-            return -1;
-          }
-          return  a.missCount-b.missCount || (a.missCount||Infinity)-(b.missCount||Infinity) || 0
+          const am = !a.missCount ? Infinity : Number.isNaN(a.missCount) ? Infinity : a.missCount,
+          bm = !b.missCount ? Infinity : Number.isNaN(b.missCount) ? Infinity : b.missCount;
+          return  am-bm;
         }
         return b.currentBPI - a.currentBPI;
         case 3:

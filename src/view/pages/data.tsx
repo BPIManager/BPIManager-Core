@@ -47,7 +47,7 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
       const result = executor.getResult(),resultHistory = executor.getResultHistory();
       const s = new scoresDB(isSingle,currentStore), h = new scoreHistoryDB();
       const all = await s.getAll().then(t=>t.reduce((result:any, current:any) => {
-        result[current.title] = current;
+        result[current.title + current.difficulty] = current;
         return result;
       }, {}));
       const len = result.length;
@@ -58,10 +58,13 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
           errors.push(result[i]["title"] + suffix + " - " + calcData.reason);
           continue;
         }
-        if(all[result[i]["title"]] && (all[result[i]["title"]]["exScore"] >= result[i]["exScore"] && all[result[i]["title"]]["clearState"] === result[i]["clearState"])){
+        const item = all[result[i]["title"] + result[i]["difficulty"]];
+        /*
+        if(item && (item["exScore"] >= result[i]["exScore"] && item["clearState"] === result[i]["clearState"])){
           //this.setState({progress:i / len * 100,currentState:result[i]["title"] + "をスキップしました"});
           continue;
         }
+        */
         //this.setState({progress:i / len * 100,currentState:result[i]["title"] + "を保存しています"});
         const body = Object.assign(
           result[i],
@@ -69,10 +72,10 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
             difficultyLevel:calcData.difficultyLevel,
             currentBPI : calcData.bpi,
             isImported: true,
-            lastScore: all[result[i]["title"]] ? all[result[i]["title"]]["exScore"] : 0
+            lastScore: item ? item["exScore"] : 0
           }
         );
-        all[result[i]["title"]] && all[result[i]["isSingle"]] === isSingle ? s.setItem(body) : s.putItem(body);
+        all[result[i]["title"]] && item["isSingle"] === isSingle ? s.setItem(body) : s.putItem(body);
         h.add(Object.assign(resultHistory[i],{difficultyLevel:calcData.difficultyLevel}),{currentBPI:calcData.bpi,exScore:resultHistory[i].exScore},true);
       }
       this.props.global.setMove(false);

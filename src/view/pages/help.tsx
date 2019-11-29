@@ -121,7 +121,8 @@ export default class Index extends React.Component<{},{}> {
                 <FormattedMessage id="Help.F.1"/>
                 <Divider style={{margin:"10px 0"}}/>
                 <FormattedMessage id="Help.F.2"/><br/>
-                <FormattedMessage id="Help.F.3"/>
+                <FormattedMessage id="Help.F.3"/><br/>
+                画面サイズは最低でも横360pxあること
               </Typography>
             </ExpansionPanelDetails>
           </ExpansionPanel>

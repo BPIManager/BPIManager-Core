@@ -116,7 +116,7 @@ th.MuiTableCell-root.MuiTableCell-head{
   background:#4a4a4a;
 }
 
-#__dark .MuiTableRow-root .MuiTableCell-body:first-child{
+#__dark div:not(div#stat) .MuiTableRow-root .MuiTableCell-body:first-child{
   color:#333;
 }
 
@@ -235,5 +235,19 @@ a.link:hover{
 }
 
 #__light span.bodyNumber {
-    text-shadow: 0px 0px 0px #fff;
+    text-shadow: 0px 0px 0px #ffffff;
+}
+
+@media (min-width: 360px){
+  .MuiContainer-fixed {
+    max-width: 100% !important;
+  }
+}
+
+.MuiTypography-h4{
+  font-size:2rem !important;
+}
+
+.recharts-surface{
+  overflow:visible !important;
 }

@@ -6,11 +6,12 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import bpiCalcuator from '../../components/bpi';
-import {_isSingle,_currentStore, _chartColor} from "../../components/settings";
+import {_isSingle,_currentStore, _chartColor, _goalBPI} from "../../components/settings";
 import moment from 'moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, Legend } from 'recharts';
+import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
 import _withOrd from '../../components/common/ord';
+import {Link as RefLink, Table, TableRow, TableHead, TableCell, TableBody} from '@material-ui/core/';
 
 interface S {
   isLoading:boolean,
@@ -19,6 +20,7 @@ interface S {
   perDate:{name:string,sum:string,avg:number}[],
   groupedByLevel:any[],
   groupedByDiff:any[],
+  radar:any[]|null,
 }
 
 class Stats extends React.Component<{intl:any},S> {
@@ -32,6 +34,7 @@ class Stats extends React.Component<{intl:any},S> {
       perDate:[],
       groupedByLevel:[],
       groupedByDiff:[],
+      radar:[]
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
@@ -107,7 +110,108 @@ class Stats extends React.Component<{intl:any},S> {
       totalRank:bpi.rank(totalBPI,false),
       perDate:eachDaySum.sort((a,b)=> moment(a.name).diff(b.name)).slice(-10),
       groupedByLevel:groupedByLevel,
+      radar: isSingle ? await this.getRadar() : null,
     });
+  }
+
+  getRadar = async():Promise<any>=>{
+
+    const songs:{[key:string]:[string,string][]} = {
+      "NOTES":[
+        ["Verflucht","leggendaria"],
+        ["Elemental Creation","another"],
+        ["perditus†paradisus","another"],
+        ["Sigmund","leggendaria"],
+        ["B4U(BEMANI FOR YOU MIX)","leggendaria"],
+        ["Chrono Diver -PENDULUMs-","another"],
+      ],
+      "CHARGE":[
+        ["TOGAKUSHI","another"],
+        ["DIAMOND CROSSING","another"],
+        ["ECHIDNA","another"],
+        ["Timepiece phase II (CN Ver.)","another"],
+        ["Snakey Kung-fu","another"]
+      ],
+      "PEAK":[
+        ["X-DEN","another"],
+        ["卑弥呼","another"],
+        ["疾風迅雷","leggendaria"],
+        ["KAMAITACHI","leggendaria"],
+        ["天空の夜明け","another"],
+      ],
+      "CHORD":[
+        ["Rave*it!! Rave*it!! ","another"],
+        ["waxing and wanding","leggendaria"],
+        ["Little Little Princess","leggendaria"],
+        ["mosaic","another"],
+        ["Despair of ELFERIA","another"],
+        ["Beat Radiance","leggendaria"]
+      ],
+      "GACHIOSHI":[
+        ["255","another"],
+        ["BITTER CHOCOLATE STRIKER","another"],
+        ["童話回廊","another"],
+        ["VANESSA","leggendaria"],
+        ["GRID KNIGHT","leggendaria"]
+      ],
+      "SCRATCH":[
+        ["灼熱 Pt.2 Long Train Running","another"],
+        ["灼熱Beach Side Bunny","another"],
+        ["BLACK.by X-Cross Fade","another"],
+        ["Red. by Jack Trance","another"],
+        ["Level One","another"],
+        ["火影","another"]
+      ],
+      "SOFLAN":[
+        ["冥","another"],
+        ["ICARUS","leggendaria"],
+        ["Fascination MAXX","another"],
+        ["JOMANDA","another"],
+        ["PARANOiA ～HADES～","another"],
+        ["音楽","another"],
+        ["DAY DREAM","another"],
+      ],
+      "DELAY":[
+        ["Mare Nectaris","another"],
+        ["quell～the seventh slave～","another"],
+        ["子供の落書き帳","another"],
+        ["DIAVOLO","another"],
+        ["Thor's Hammer","another"]
+      ],
+      "RENDA":[
+        ["ピアノ協奏曲第１番”蠍火”","another"],
+        ["Scripted Connection⇒ A mix","another"],
+        ["Innocent Walls","hyper"],
+        ["IMPLANTATION","another"],
+        ["Sense 2007","another"],
+        ["ワルツ第17番 ト短調”大犬のワルツ”","4"]
+      ]
+    }
+    const objective = _goalBPI(),isSingle = _isSingle(),currentStore = _currentStore();
+    const db = new scoresDB(isSingle, currentStore);
+    return await Object.keys(songs).reduce(async (obj:Promise<any>,title:string)=>{
+      const collection = await obj;
+      const len = songs[title].length;
+      let pusher:number[] = [];
+
+      for(let i = 0; i < len; ++i){
+        const ind = await db.getItem(songs[title][i][0],songs[title][i][1],currentStore,isSingle);
+        ind.length > 0 && pusher.push(ind[0]["currentBPI"]);
+      }
+
+      const bpi = new bpiCalcuator();
+      bpi.allTwelvesBPI = pusher;
+      bpi.allTwelvesLength = len;
+      const total = bpi.totalBPI()
+      collection.push({
+        title: title,
+        TotalBPI: total,
+        ObjectiveBPI: objective,
+        rank:bpi.rank(total,false) / bpi.getTotalKaidens() * 100,
+        fullMark: 100
+      });
+      return Promise.resolve(obj);
+    },Promise.resolve([]));
   }
 
   groupByBPI = (array:number[])=>{
@@ -124,7 +228,7 @@ class Stats extends React.Component<{intl:any},S> {
   }
 
   render(){
-    const {totalBPI,isLoading,perDate,totalRank,groupedByLevel} = this.state;
+    const {totalBPI,isLoading,perDate,totalRank,groupedByLevel,radar} = this.state;
     const {formatMessage} = this.props.intl;
     const chartColor = _chartColor();
     if(isLoading){
@@ -135,7 +239,7 @@ class Stats extends React.Component<{intl:any},S> {
       );
     }
     return (
-      <Container className="commonLayout" fixed>
+      <Container className="commonLayout" id="stat" fixed>
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
           <FormattedMessage id="Stats.title"/>
         </Typography>
@@ -210,7 +314,45 @@ class Stats extends React.Component<{intl:any},S> {
             </Paper>
           </Grid>
         </Grid>
-
+        {(_isSingle() === 1 && radar && radar.length > 0) &&
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={12} lg={12}>
+              <Paper style={{padding:"15px"}}>
+                <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
+                  RADAR(<RefLink color="secondary" target="_blank" rel="noopener noreferrer" href="https://gist.github.com/potakusan/6c570528a42b3583a807c88fd3627092">?</RefLink>)
+                </Typography>
+                <Grid container spacing={0}>
+                  <Grid item xs={12} md={12} lg={6} style={{height:"350px"}}>
+                    <div style={{width:"100%",height:"100%"}}>
+                      <ResponsiveContainer>
+                        <RadarChart outerRadius={110} data={radar}>
+                          <PolarGrid />
+                          <PolarAngleAxis dataKey="title" stroke={chartColor} />
+                          <PolarRadiusAxis />
+                          <Radar name="TotalBPI" dataKey="TotalBPI" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+                        </RadarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </Grid>
+                  <Grid item xs={12} md={12} lg={6}>
+                    <Table size="small" style={{minHeight:"350px"}}>
+                      <TableBody>
+                        {radar.concat().sort((a,b)=>b.TotalBPI - a.TotalBPI).map(row => (
+                          <TableRow key={row.title}>
+                            <TableCell component="th">
+                              {row.title}
+                            </TableCell>
+                            <TableCell align="right">{row.TotalBPI}<span style={{fontSize:"7px"}}>(上位{Math.floor(row.rank)}%)</span></TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </Grid>
+                </Grid>
+              </Paper>
+            </Grid>
+          </Grid>
+        }
       </Container>
     );
   }

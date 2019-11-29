@@ -119,7 +119,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                             }
                             </span>
                           }
-                          {(mode < 6 && j === 3) && <span className={i % 2 ? "plusOverlayScoreBottom isOddOverLayed" : "plusOverlayScoreBottom isEvenOverLayed"}>
+                          {j === 3 && <span className={i % 2 ? "plusOverlayScoreBottom isOddOverLayed" : "plusOverlayScoreBottom isEvenOverLayed"}>
                             {_djRank(false,false,max,row.exScore)}
                             {_djRank(false,true,max,row.exScore)}&nbsp;/&nbsp;
                             {_djRank(true,false,max,row.exScore)}
