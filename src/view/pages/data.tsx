@@ -50,8 +50,7 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
         result[current.title + current.difficulty] = current;
         return result;
       }, {}));
-      const len = result.length;
-      for(let i = 0;i < len;++i){
+      for(let i = 0;i < result.length;++i){
         const calcData = await calc.calc(result[i]["title"],result[i]["difficulty"],result[i]["exScore"])
         if(calcData.error && calcData.reason){
           const suffix = result[i]["difficulty"] === "hyper" ? "(H)" : result[i]["difficulty"] === "leggendaria" ? "(†)" : "(A)";
@@ -59,13 +58,9 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
           continue;
         }
         const item = all[result[i]["title"] + result[i]["difficulty"]];
-        /*
         if(item && (item["exScore"] >= result[i]["exScore"] && item["clearState"] === result[i]["clearState"])){
-          //this.setState({progress:i / len * 100,currentState:result[i]["title"] + "をスキップしました"});
           continue;
         }
-        */
-        //this.setState({progress:i / len * 100,currentState:result[i]["title"] + "を保存しています"});
         const body = Object.assign(
           result[i],
           {

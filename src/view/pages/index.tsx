@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { FormattedMessage } from "react-intl";
 import { Link } from 'react-router-dom';
-import {Link as RefLink} from '@material-ui/core/';
+import {Link as RefLink, Card, CardContent, CardActions} from '@material-ui/core/';
 import { _lang } from '../../components/settings';
 const {LineShareButton,LineIcon,TwitterShareButton,TwitterIcon} = require('react-share');
 
@@ -21,6 +21,7 @@ export default class Index extends React.Component<{},{}> {
           <Typography variant="h5" align="center" color="textSecondary" paragraph>
             <FormattedMessage id="Index.heroText"/>
           </Typography>
+          <AddToHomeScreenTicker/>
           <div>
             <Grid container spacing={2} justify="center">
               <Grid item md={6} xs={12}>
@@ -85,7 +86,7 @@ export default class Index extends React.Component<{},{}> {
                   <FormattedMessage id="Index.notes2"/>
                 </Typography>
                 <Typography align="center" color="textSecondary" paragraph variant="caption">
-                  BPIManager beta ver0.0.1.0<br/>
+                  BPIManager beta ver0.0.1.2<br/>
                   {_lang() === "en" &&
                     <span>If you have encountered unintended behaviours or have opinions to make this tool much better, please contact <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>.</span>
                   }
@@ -100,5 +101,41 @@ export default class Index extends React.Component<{},{}> {
         </Container>
       </div>
     );
+  }
+}
+
+class AddToHomeScreenTicker extends React.Component<{},{show:boolean}>{
+
+  constructor(props:{}){
+    super(props);
+    const isStandAloneIn_iOS = () =>("standalone" in window.navigator) && (window.navigator["standalone"]);
+    const isStandAloneInAndroid = ()=>window.matchMedia('(display-mode: standalone)').matches;
+    const regEx = (ua:RegExp)=> ua.test(window.navigator.userAgent.toLowerCase());
+
+    this.state = {
+      show:(regEx(/iphone|ipad|ipod/) && !isStandAloneIn_iOS()) ? true : (regEx(/android/) && !isStandAloneInAndroid()) ? true : false
+    }
+  }
+
+  render(){
+    if(!this.state.show) return null;
+    return (
+      <Card style={{margin:"10px 0"}}>
+        <CardContent>
+          <Typography color="textSecondary" gutterBottom>
+            Tips:ホーム画面に追加してより便利に
+          </Typography>
+          <Typography variant="body2" component="p">
+            <img src="https://files.poyashi.me/1a0f22bf.png" className="addImage"/>
+            本ツールはスマートフォンのホーム画面に追加して利用することを想定して作成されています。<br/>
+            iPhoneをご利用の方は画像中央のボタンを押下し、「ホーム画面に追加」から追加できます。<br/>
+            Androidをご利用中の方は「ホーム画面に BPIM を追加」から追加してください。
+          </Typography>
+          <Typography variant="body2" component="p">
+            このメッセージはスマートフォンのブラウザでご覧になっている方に表示されています。
+          </Typography>
+        </CardContent>
+      </Card>
+    )
   }
 }

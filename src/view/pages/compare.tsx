@@ -28,6 +28,7 @@ interface S {
   compareTo:string,
   page:number,
   rowsPerPage:number,
+  displayMode:string,
 }
 
 export default class Compare extends React.Component<{},S> {
@@ -39,8 +40,8 @@ export default class Compare extends React.Component<{},S> {
       isLoading:true,
       full:[],
       filtered:[],
-      sort:3,
-      isDesc:true,
+      sort:4,
+      isDesc:false,
       options:{
         level:["11","12"],
         difficulty:["0","1","2"],
@@ -51,6 +52,7 @@ export default class Compare extends React.Component<{},S> {
       compareTo:"26",
       page:0,
       rowsPerPage:10,
+      displayMode:"exScore",
     }
   }
 
@@ -110,6 +112,13 @@ export default class Compare extends React.Component<{},S> {
     return this.dataHandler(newState);
   }
 
+  handleDisplayModeChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):Promise<void> =>{
+    let newState = this.cloneState();
+    newState.displayMode = event.target.value;
+    this.setState({displayMode:event.target.value as string,isLoading:true,page:0});
+    return this.dataHandler(newState);
+  }
+
   filter = ():any[]=>{
     const {options,full} = this.state;
     const diffs:string[] = ["hyper","another","leggendaria"];
@@ -129,39 +138,61 @@ export default class Compare extends React.Component<{},S> {
     const calc = new bpiCalcuator();
     const fData = await scores.getSpecificVersionAll();
     const goalBPI = _goalBPI(), goalPerc = _goalPercentage();
+    const displayMode = this.state.displayMode;
     for(let i =0; i < fData.length; ++i){
       let tScore = 0;
       const tData = await scores.getItem(fData[i]["title"],fData[i]["difficulty"],t,isSingle);
       const songData = isSingle ?
       await sdb.getOneItemIsSingle(fData[i]["title"],fData[i]["difficulty"]) :
       await sdb.getOneItemIsDouble(fData[i]["title"],fData[i]["difficulty"]);
+      const max = songData[0]["notes"] * 2;
       calc.setData(songData[0]["notes"] * 2,songData[0]["avg"],songData[0]["wr"]);
+      const percentager = (exScore:number):number =>{
+        return Math.ceil(exScore / max * 10000) / 100;
+      }
       if(!tData || tData.length === 0){
+        if (t !== "BPI" && t !== "PERCENTAGE" && t !== "WR" && t !== "AVERAGE") continue;
         tScore = 0;
       }else{
-        tScore = tData[0]["exScore"];
+        tScore = displayMode === "exScore" ? tData[0]["exScore"] :
+        displayMode === "bpi" ? calc.setPropData(songData[0],tData[0]["exScore"],isSingle) :
+        displayMode === "percentage" ? percentager(tData[0]["exScore"]) : 0;
       }
       if(t === "WR"){
-        tScore = songData[0]["wr"];
+        tScore = displayMode === "exScore" ? songData[0]["wr"] :
+        displayMode === "bpi" ? 100 :
+        displayMode === "percentage" ? percentager(songData[0]["wr"]) : 0;
       }
       if(t === "AVERAGE"){
-        tScore = songData[0]["avg"];
+        tScore = displayMode === "exScore" ? songData[0]["avg"] :
+        displayMode === "bpi" ? 0 :
+        displayMode === "percentage" ? percentager(songData[0]["avg"]) : 0;
       }
       if(t === "BPI"){
-        tScore = calc.calcFromBPI(goalBPI,true);
+        tScore = displayMode === "exScore" ? calc.calcFromBPI(goalBPI,true) :
+        displayMode === "bpi" ? goalBPI :
+        displayMode === "percentage" ? percentager(calc.calcFromBPI(goalBPI,true)) : 0;
       }
       if(t === "PERCENTAGE"){
-        tScore = Math.ceil(songData[0]["notes"] * 2 * goalPerc / 100)
+        tScore = displayMode === "exScore" ? Math.ceil(songData[0]["notes"] * 2 * goalPerc / 100) :
+        displayMode === "bpi" ? calc.setPropData(songData[0],Math.ceil(songData[0]["notes"] * 2 * goalPerc / 100),isSingle) :
+        displayMode === "percentage" ? goalPerc : 0;
       }
+      const percentage = percentager(fData[i]["exScore"]);
+      const gap = (Math.ceil(
+        displayMode === "exScore" ? (fData[i]["exScore"] - tScore) * 10000 :
+        displayMode === "bpi" ? (fData[i]["currentBPI"] - tScore) * 10000 :
+        displayMode === "percentage" ? (percentage - tScore)  * 10000 : 0
+      ) / 10000)
       result.push({
         title:fData[i]["title"],
         songData: songData[0],
         scoreData: fData[i],
         difficulty:fData[i]["difficulty"],
         difficultyLevel:fData[i]["difficultyLevel"],
-        exScore:fData[i]["exScore"],
+        exScore:displayMode === "exScore" ? fData[i]["exScore"] : percentage,
         compareData:tScore,
-        gap:fData[i]["exScore"] - tScore
+        gap: (displayMode === "bpi" || displayMode === "percentage") ? gap.toFixed(2) : gap
       });
     }
     if(!this._mounted){return;}
@@ -178,8 +209,10 @@ export default class Compare extends React.Component<{},S> {
         return b.title.localeCompare(a.title, "ja", {numeric:true});
         default:
         case 2:
-          return b.exScore - a.exScore;
+          return this.state.displayMode !== "bpi" ? b.exScore - a.exScore : b.scoreData.currentBPI - a.scoreData.currentBPI;
         case 3:
+          return b.compareData - a.compareData;
+        case 4:
           return b.gap - a.gap;
       }
     }).filter((t:any)=>{
@@ -202,7 +235,7 @@ export default class Compare extends React.Component<{},S> {
   handleChangeRowsPerPage = (value:string):void => this.setState({page:0,rowsPerPage:+value});
 
   render(){
-    const {compareFrom,compareTo,isLoading,page,rowsPerPage,options,sort,isDesc} = this.state;
+    const {compareFrom,compareTo,displayMode,isLoading,page,rowsPerPage,options,sort,isDesc} = this.state;
     if(!this.state.full){
       return (null);
     }
@@ -231,6 +264,18 @@ export default class Compare extends React.Component<{},S> {
                 <MenuItem value={"AVERAGE"}>KAIDEN AVERAGE</MenuItem>
                 <MenuItem value={"BPI"}>TARGET BPI</MenuItem>
                 <MenuItem value={"PERCENTAGE"}>TARGET PERCENTAGE</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
+        <Grid container spacing={1} style={{margin:"5px 0"}}>
+          <Grid item xs={12}>
+            <FormControl style={{width:"100%"}}>
+              <InputLabel><FormattedMessage id="Compare.Display"/></InputLabel>
+              <Select value={displayMode} onChange={this.handleDisplayModeChange}>
+                <MenuItem value={"exScore"}>EXスコア</MenuItem>
+                <MenuItem value={"bpi"}>BPI</MenuItem>
+                <MenuItem value={"percentage"}>パーセンテージ</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -287,7 +332,7 @@ export default class Compare extends React.Component<{},S> {
           </Grid>
         </Grid>
         <CompareTable full={this.sortedData()} isLoading={isLoading} page={page} rowsPerPage={rowsPerPage} sort={sort} isDesc={isDesc}
-        changeSort={this.changeSort}
+        changeSort={this.changeSort} displayMode={displayMode}
         handleChangeRowsPerPage={this.handleChangeRowsPerPage} handleChangePage={this.handleChangePage}/>
       </Container>
     );

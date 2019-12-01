@@ -116,7 +116,7 @@ th.MuiTableCell-root.MuiTableCell-head{
   background:#4a4a4a;
 }
 
-#__dark div:not(div#stat) .MuiTableRow-root .MuiTableCell-body:first-child{
+#__dark div#songsVil .MuiTableRow-root .MuiTableCell-body:first-child{
   color:#333;
 }
 
@@ -221,7 +221,7 @@ a.link:hover{
   border-left: 1px dotted rgba(224, 224, 224, .3);
 }
 
-#songsVil .MuiTableCell-root:nth-child(3), #songsVil .MuiTableCell-root:nth-child(4),
+#songsVil .MuiTableCell-root:nth-child(3), #songsVil .MuiTableCell-root:nth-child(4), #songsVil .MuiTableCell-root:nth-child(5),
 .detailedDiffs .MuiTableCell-root:nth-child(2),.detailedDiffs .MuiTableCell-root:nth-child(3){
   text-align:center;
 }
@@ -250,4 +250,26 @@ a.link:hover{
 
 .recharts-surface{
   overflow:visible !important;
+}
+
+.addImage{
+  max-width:220px;
+  display:block;
+  float:right;
+  margin:8px;
+  border-radius:7px;
+}
+
+@media screen and (max-width:440px){
+  .addImage{
+    float:inherit;
+    margin:8px auto;
+    width:100%;
+    max-width:100%;
+  }
+
+}
+
+.compareGap{
+  font-size:11px !important;
 }

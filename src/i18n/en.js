@@ -87,6 +87,7 @@ const ja = {
   "Compare.Title":"Compare",
   "Compare.From":"Data source",
   "Compare.To":"Compare with",
+  "Compare.Display":"Format",
   "Compare.filterByPlusMinus":"P/M",
   "Settings.title":"Settings",
   "Settings.language":"Language",

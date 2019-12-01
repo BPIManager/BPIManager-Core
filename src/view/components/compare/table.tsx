@@ -11,6 +11,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Container from "@material-ui/core/Container";
 import { scoreData, songData } from '../../../types/data';
 import { diffColor } from "../songs/common";
+import Tooltip from '@material-ui/core/Tooltip';
 
 interface S {
   isOpen:boolean,
@@ -28,6 +29,7 @@ interface P{
   changeSort:(value:number)=>void,
   sort:number,
   isDesc:boolean,
+  displayMode:string,
 }
 
 export default class Compare extends React.Component<P,S> {
@@ -60,8 +62,7 @@ export default class Compare extends React.Component<P,S> {
 
   render(){
     const {currentScoreData,currentSongData,isOpen} = this.state;
-    const {full,isLoading,page,rowsPerPage,changeSort,sort,isDesc} = this.props;
-
+    const {full,isLoading,page,rowsPerPage,changeSort,sort,isDesc,displayMode} = this.props;
     const columns = [
       { id: "difficultyLevel", label: "☆"},
       { id: "title", label: "曲名" },
@@ -69,6 +70,10 @@ export default class Compare extends React.Component<P,S> {
       {
         id: "compareData",
         label: "W",
+      },
+      {
+        id: "gap",
+        label: "G",
       }
     ];
     if(isLoading){
@@ -88,15 +93,20 @@ export default class Compare extends React.Component<P,S> {
                 <TableCell
                   key={column.id}
                   onClick={()=>changeSort(i)}
+                  className={i === 4 ? "compareGap" : ""}
                 >
-                  {column.label}
-                  {i === sort &&
+                  <Tooltip title={i === 2 ? "比較元" : i === 3 ? "比較先" : i === 4 ? "差" : ""} placement="top">
                     <span>
-                      { isDesc && <span>▼</span> }
-                      { !isDesc && <span>▲</span> }
+                    {column.label}
+                    {i === sort &&
+                      <span>
+                        { isDesc && <span>▼</span> }
+                        { !isDesc && <span>▲</span> }
+                      </span>
+                    }
+                    {i !== sort && <span>△</span>}
                     </span>
-                  }
-                  {i !== sort && <span>△</span>}
+                  </Tooltip>
                 </TableCell>
               ))}
             </TableRow>
@@ -110,13 +120,19 @@ export default class Compare extends React.Component<P,S> {
                   {columns.map((column,j) => {
                     const prefix = row.difficulty === "hyper" ? "(H)" : row.difficulty === "leggendaria" ? "(†)" : "";
                     return (
-                      <TableCell key={column.id + prefix} style={{backgroundColor : diffColor(j,row.scoreData),position:"relative"}}>
-                        {row[column.id]}
-                        {j === 1 && prefix}
-                        {(j === 3) && <span className="plusOverlayScore">
-                          {row.gap}
+                      <TableCell key={column.id + prefix} className={j === 4 ? "compareGap" : ""} style={{backgroundColor : diffColor(j,row.scoreData),position:"relative"}}>
+                        {j === 2 &&
+                          <span>
+                            {displayMode !== "bpi" && row[column.id]}
+                            {displayMode === "bpi" && row.scoreData.currentBPI}
                           </span>
                         }
+                        {j !==  2 &&
+                          <span style={ (j === 4 && row[column.id] >= 0) ? {color:"rgb(0, 177, 14)"} : (j === 4 && row[column.id] < 0) ? {color:"#ff0000"} : {color:"inherit"}}>
+                            {row[column.id]}
+                          </span>
+                        }
+                        {j === 1 && prefix}
                       </TableCell>
                     );
                   })}
