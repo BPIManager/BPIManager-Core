@@ -1,3 +1,8 @@
+*{
+  font-family: "Hiragino Kaku Gothic ProN","メイリオ", sans-serif !important;
+  font-weight: 500 !important;
+}
+
 .App {
   text-align: center;
 }
@@ -31,7 +36,7 @@
 }
 
 .commonLayout{
-  margin:20px 0 20px 0;
+  margin:20px auto !important;
 }
 
 #overlayLayout{
@@ -49,7 +54,7 @@
 
 th.MuiTableCell-root.MuiTableCell-head:first-child,
 td.MuiTableCell-root.MuiTableCell-body:first-child {
-    padding: 16px 8px !important;
+    padding: 20px 5px !important;
     text-align: center;
     width:35px;
 }
@@ -67,8 +72,56 @@ th.MuiTableCell-root.MuiTableCell-head{
   cursor: pointer;
 }
 
-.MuiTableBody-root > tr:hover{
+#__light .MuiTableBody-root > tr:hover,#__light .MuiTableBody-root > tr:hover .plusOverlayScoreBottom{
   background:#ececec !important;
+}
+
+#__dark .MuiTableBody-root > tr:hover,#__dark .MuiTableBody-root > tr:hover .plusOverlayScoreBottom{
+  background:#313131 !important;
+}
+
+#__light .isOdd{
+  background:#f7f7f7;
+}
+
+
+#__light .isEven{
+  background:#fff;
+}
+
+#__light .isOdd{
+  background:#f7f7f7;
+}
+#__dark .isOdd{
+  background:#4a4a4a;
+}
+
+#__dark .isEven{
+  background:#424242;
+}
+
+#__light .isEvenOverLayed{
+  background:#ffffff;
+}
+
+#__light .isOddOverLayed{
+  background:#f7f7f77;
+}
+
+#__dark .isEvenOverLayed{
+  background:#424242;
+}
+
+#__dark .isOddOverLayed{
+  background:#4a4a4a;
+}
+
+#__dark div#songsVil .MuiTableRow-root .MuiTableCell-body:first-child{
+  color:#333;
+}
+
+#__dark #_notPlayed .MuiTableRow-root .MuiTableCell-body:first-child{
+  color:#fff;
 }
 
 a.link{
@@ -118,4 +171,105 @@ a.link:hover{
 
 @media screen and (max-width:1399px){
   .xsInvisible{ display:none; }
+}
+
+.plusOverlayScore{
+  font-size:10px;
+  color:#ff0000;
+  position:absolute;
+  z-index:9;
+  right:5px;
+  top:5px;
+  white-space: nowrap;
+}
+
+.plusOverlayScoreBottom{
+  padding:5px 0;
+  font-size:10px;
+  color:#909090;
+  position:absolute;
+  z-index:9;
+  right:5px;
+  bottom:0;
+  white-space: nowrap;
+}
+
+
+.SocialMediaShareButton div{
+  margin:0 auto;
+}
+
+.darkDetailedScreen .MuiTab-textColorPrimary.Mui-selected{
+  color:#a0a0a0;
+}
+
+.displayNoneObject {
+  display: none!important
+}
+
+.MuiDialog-paperScrollPaper:not(.MuiDialog-paperFullScreen){
+  width:calc(100% - 12px) !important;
+  margin:0 !important;
+}
+
+.MuiTableCell-root{
+  padding:5px 5px 5px 7px !important;
+  font-size:14px !important;
+}
+
+.MuiTableBody-root .MuiTableCell-root:not(:first-child){
+  border-left: 1px dotted rgba(224, 224, 224, .3);
+}
+
+#songsVil .MuiTableCell-root:nth-child(3), #songsVil .MuiTableCell-root:nth-child(4), #songsVil .MuiTableCell-root:nth-child(5),
+.detailedDiffs .MuiTableCell-root:nth-child(2),.detailedDiffs .MuiTableCell-root:nth-child(3){
+  text-align:center;
+}
+
+.MuiFormControlLabel-root{
+  margin-left:-12px !important;
+}
+
+#__dark span.bodyNumber {
+  text-shadow: 1px 1px 2px #000000;
+}
+
+#__light span.bodyNumber {
+    text-shadow: 0px 0px 0px #ffffff;
+}
+
+@media (min-width: 360px){
+  .MuiContainer-fixed {
+    max-width: 100% !important;
+  }
+}
+
+.MuiTypography-h4{
+  font-size:2rem !important;
+}
+
+.recharts-surface{
+  overflow:visible !important;
+}
+
+.addImage{
+  max-width:220px;
+  display:block;
+  float:right;
+  margin:8px;
+  border-radius:7px;
+}
+
+@media screen and (max-width:440px){
+  .addImage{
+    float:inherit;
+    margin:8px auto;
+    width:100%;
+    max-width:100%;
+  }
+
+}
+
+.compareGap{
+  font-size:11px !important;
 }

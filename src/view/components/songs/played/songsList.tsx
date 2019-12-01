@@ -10,9 +10,12 @@ import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import BackspaceIcon from '@material-ui/icons/Backspace';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
 
 import SongsTable from "./tablePlayed";
-import TextField from '@material-ui/core/TextField';
+import Input from '@material-ui/core/Input';
 
 import {scoreData} from "../../../../types/data";
 import InputLabel from '@material-ui/core/InputLabel';
@@ -35,6 +38,7 @@ interface stateInt {
   isDesc:boolean,
   mode:number,
   range:number,
+  page:number,
 }
 
 interface P{
@@ -60,9 +64,12 @@ export default class SongsList extends React.Component<P,stateInt> {
         difficulty:["0","1","2"],
       },
       range:0,
+      page:0,
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
+
+  handleChangePage = (_e:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number):void => this.setState({page:newPage});
 
   async componentDidMount(){
     let allSongs:{[key:string]:string|number} = {};
@@ -103,48 +110,52 @@ export default class SongsList extends React.Component<P,stateInt> {
     }else{
       newState["options"][target] = newState["options"][target].filter((t:string)=> t !== name);
     }
-    return this.setState({scoreData:this.songFilter(newState),options:newState["options"]});
+    return this.setState({scoreData:this.songFilter(newState),options:newState["options"],page:0});
   }
 
-  handleInputChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+  handleInputChange = (e:React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>|null)=>{
     let newState = this.cloneState();
-    newState.filterByName = e.target.value;
-
-    return this.setState({scoreData:this.songFilter(newState),filterByName:e.target.value});
+    newState.filterByName = e ? e.target.value : "";
+    return this.setState({scoreData:this.songFilter(newState),filterByName:newState.filterByName,page:0});
   }
 
   songFilter = (newState:{[s:string]:any} = this.state) =>{
     const diffs:string[] = ["hyper","another","leggendaria"];
-    if(Object.keys(this.state.allSongsData).length === 0){return [];}
+    const m = newState.mode;
+    const r = newState.range;
+    const f = this.state.allSongsData;
+
+    const evaluateRange = (data:scoreData):boolean=>{
+      const format = (t:string|Date)=>moment(t).format("YYYYMMDD");
+      return r === 0 ? true :
+      r === 1 ? format(data.updatedAt) === format(new Date()) :
+      moment(data.updatedAt).week() === moment(new Date()).week()
+    }
+
+    const evaluateMode = (data:scoreData,max:number):boolean=>{
+      return m === 0 ? true :
+      m === 1 ? data.exScore / max < 2 / 3 :
+      m === 2 ? data.exScore / max < 7 / 9 && 2/3 < data.exScore / max :
+      m === 3 ? data.exScore / max < 8 / 9 && 7/9 < data.exScore / max :
+      m === 4 ? data.exScore / max < 17 / 18 && 8/9 < data.exScore / max :
+      m === 5 ? true :
+      m === 6 ? data.clearState <= 3 :
+      m === 7 ? data.clearState <= 4 :
+      m === 8 ? data.clearState <= 5 : true
+    }
+
+    if(Object.keys(this.state.allSongsData).length === 0) return [];
     return this.props.full.filter((data)=>{
-      const m = newState.mode;
-      const r = newState.range;
-      const f = this.state.allSongsData;
+      if(!f[data.title + _prefix(data["difficulty"])]){return false;}
       const max = f[data.title + _prefix(data["difficulty"])]["notes"] * 2;
-      const evaluateRange = ():boolean=>{
-        const format = (t:string|Date)=>moment(t).format("YYYYMMDD");
-        return r === 0 ? true :
-        r === 1 ? format(data.updatedAt) === format(new Date()) :
-        moment(data.updatedAt).week() === moment(new Date()).week()
-      }
-      const evaluateMode = ():boolean=>{
-        return m === 0 ? true :
-        m === 1 ? data.exScore / max < 2 / 3 :
-        m === 2 ? data.exScore / max < 7 / 9 && 2/3 < data.exScore / max :
-        m === 3 ? data.exScore / max < 8 / 9 && 7/9 < data.exScore / max :
-        m === 4 ? true :
-        m === 5 ? data.clearState <= 3 :
-        m === 6 ? data.clearState <= 4 :
-        m === 7 ? data.clearState <= 5 : true
-      }
       return (
-        evaluateRange() &&
-        evaluateMode() &&
+        evaluateRange(data) &&
+        evaluateMode(data,max) &&
         newState["options"]["level"].some((item:string)=>{
           return item === data.difficultyLevel }) &&
         newState["options"]["difficulty"].some((item:number)=>{
           return diffs[Number(item)] === data.difficulty} ) &&
-        data.title.indexOf(newState["filterByName"]) > -1
+        data.title.toLowerCase().indexOf(newState["filterByName"].toLowerCase()) > -1
       )
     })
   }
@@ -167,15 +178,14 @@ export default class SongsList extends React.Component<P,stateInt> {
         return b.title.localeCompare(a.title, "ja", {numeric:true});
         default:
         case 2:
-        if(mode > 4){
-          if(!a.missCount || !b.missCount){
-            return -1;
-          }
-          return  a.missCount-b.missCount || (a.missCount||Infinity)-(b.missCount||Infinity) || 0
+        if(mode > 5){
+          const am = !a.missCount ? Infinity : Number.isNaN(a.missCount) ? Infinity : a.missCount,
+          bm = !b.missCount ? Infinity : Number.isNaN(b.missCount) ? Infinity : b.missCount;
+          return  am-bm;
         }
         return b.currentBPI - a.currentBPI;
         case 3:
-        if(mode > 0 && mode < 5){
+        if(mode > 0 && mode < 6){
           const aMax = allSongsData[a.title + _prefix(a.difficulty)]["notes"] * 2;
           const bMax = allSongsData[b.title + _prefix(b.difficulty)]["notes"] * 2;
           return b.exScore / bMax - a.exScore / aMax;
@@ -190,14 +200,14 @@ export default class SongsList extends React.Component<P,stateInt> {
     if (typeof event.target.value !== "number") { return; }
     let newState = this.cloneState();
     newState.mode = event.target.value;
-    return this.setState({scoreData:this.songFilter(newState),mode:event.target.value});
+    return this.setState({scoreData:this.songFilter(newState),mode:event.target.value,page:0});
   }
 
   handleRangeCange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
     if (typeof event.target.value !== "number") { return; }
     let newState = this.cloneState();
     newState.range = event.target.value;
-    return this.setState({scoreData:this.songFilter(newState),range:event.target.value});
+    return this.setState({scoreData:this.songFilter(newState),range:event.target.value,page:0});
   }
 
   // readonly修飾子が付いているデータに一時的な書き込みをするための措置
@@ -206,7 +216,7 @@ export default class SongsList extends React.Component<P,stateInt> {
   cloneState = () => JSON.parse(JSON.stringify(this.state))
 
   render(){
-    const {isLoading,filterByName,options,sort,isDesc,mode,range} = this.state;
+    const {isLoading,filterByName,options,sort,isDesc,mode,range,page} = this.state;
     if(isLoading){
       return (
         <Container className="loaderCentered">
@@ -215,7 +225,7 @@ export default class SongsList extends React.Component<P,stateInt> {
     }
     return (
       <Container className="commonLayout" fixed id="songsVil">
-        <Typography component="h4" variant="h4" color="textPrimary" gutterBottom
+        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom
           style={{display:"flex",justifyContent:"space-between"}}>
           <FormattedMessage id={this.props.title}/>
           <FormControl>
@@ -239,26 +249,32 @@ export default class SongsList extends React.Component<P,stateInt> {
                 <MenuItem value={5}><FormattedMessage id="Songs.mode5"/></MenuItem>
                 <MenuItem value={6}><FormattedMessage id="Songs.mode6"/></MenuItem>
                 <MenuItem value={7}><FormattedMessage id="Songs.mode7"/></MenuItem>
+                <MenuItem value={8}><FormattedMessage id="Songs.mode8"/></MenuItem>
               </Select>
             </FormControl>
           </Grid>
           <Grid item xs={6}>
-            <form noValidate autoComplete="off">
-              <TextField
+            <FormControl component="fieldset" style={{width:"100%"}}>
+            <InputLabel htmlFor="standard-adornment-password"><FormattedMessage id="Songs.filterByName"/></InputLabel>
+              <Input
                 style={{width:"100%"}}
-                label={<FormattedMessage id="Songs.filterByName"/>}
                 placeholder={"(ex.)255"}
                 value={filterByName}
                 onChange={this.handleInputChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
+                endAdornment={
+                  filterByName &&
+                  <InputAdornment position="end">
+                    <IconButton onClick={()=>this.handleInputChange(null)}>
+                      <BackspaceIcon/>
+                    </IconButton>
+                  </InputAdornment>
+                }
               />
-            </form>
+            </FormControl>
           </Grid>
         </Grid>
         <Grid container spacing={1} id="mainFilters" style={{margin:"5px 0"}}>
-          <Grid item xs={6} lg={4}>
+          <Grid item xs={6}>
             <FormControl component="fieldset">
               <FormLabel component="legend"><FormattedMessage id="Songs.filterByLevel"/></FormLabel>
               <FormGroup row>
@@ -273,7 +289,7 @@ export default class SongsList extends React.Component<P,stateInt> {
               </FormGroup>
             </FormControl>
           </Grid>
-          <Grid item xs={6} lg={4}>
+          <Grid item xs={6}>
             <FormControl component="fieldset">
               <FormLabel component="legend"><FormattedMessage id="Songs.filterByDifficulty"/></FormLabel>
               <FormGroup row>
@@ -295,6 +311,7 @@ export default class SongsList extends React.Component<P,stateInt> {
         </Grid>
 
         <SongsTable
+          page={page} handleChangePage={this.handleChangePage}
           data={this.sortedData()} sort={sort} isDesc={isDesc} mode={mode}
           changeSort={this.changeSort} allSongsData={this.state.allSongsData}
           updateScoreData={this.updateScoreData}/>

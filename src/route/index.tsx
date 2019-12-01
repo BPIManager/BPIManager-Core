@@ -8,6 +8,8 @@ import Favorite from "../view/pages/favorites";
 import NotPlayed from "../view/pages/notPlayed";
 import Stats from "../view/pages/stats";
 import Settings from "../view/pages/settings";
+import Compare from "../view/pages/compare";
+import Help from "../view/pages/help";
 import {BrowserRouter, Route} from "react-router-dom";
 
 
@@ -17,6 +19,7 @@ import ja  from "../i18n/ja";
 import en from "../i18n/en";
 import GlobalContainer from '../components/context/global';
 import { Subscribe, Provider } from 'unstated';
+import SyncIndex from '../view/pages/sync';
 
 //
 export default class Router extends React.Component<{},{}> {
@@ -25,23 +28,26 @@ export default class Router extends React.Component<{},{}> {
     return (
       <Provider>
         <Subscribe to={[GlobalContainer]}>
-          {global =>(
-            <IntlProvider
+          {global =>{
+            return (<IntlProvider
               locale={global.state.lang}
               messages={global.state.lang === "ja" ? ja : en}
             >
               <BrowserRouter>
-                <AppBar/>
+                <AppBar global={global}/>
                 <Route path="/" exact component={Index}/>
-                <Route path="/data" exact component={Data}/>
+                <Route path="/data" exact render={_props=><Data global={global}/>}/>
                 <Route path="/songs" exact component={Songs}/>
                 <Route path="/favorite" exact component={Favorite}/>
                 <Route path="/notPlayed" exact component={NotPlayed}/>
                 <Route path="/stats" exact component={Stats}/>
-                <Route path="/settings" exact component={Settings}/>
+                <Route path="/compare" exact component={Compare}/>
+                <Route path="/settings" exact render={_props=><Settings global={global}/>}/>
+                <Route path="/help" exact component={Help}/>
+                <Route path="/sync" exact component={SyncIndex}/>
               </BrowserRouter>
             </IntlProvider>
-          )}
+          )}}
         </Subscribe>
       </Provider>
     );

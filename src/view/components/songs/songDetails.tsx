@@ -8,17 +8,24 @@ import TableHead from "@material-ui/core/TableHead";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import { FormattedMessage } from "react-intl";
-import { convertClearState } from "../../../components/songs/filter";
+import { lampCSVArray } from "../../../components/songs/filter";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import TextField from "@material-ui/core/TextField";
 
 interface P{
   song:songData|null,
   score:scoreData|null,
+  newMissCount:number,
+  newClearState:number,
+  handleMissCount:(e:React.ChangeEvent<HTMLInputElement>)=>void,
+  handleClearState:(e:React.ChangeEvent<{value:unknown}>)=>void
 }
 
 class SongDetails extends React.Component<P,{}> {
 
   render(){
-    const {song,score} = this.props;
+    const {song,score,newMissCount,newClearState,handleClearState,handleMissCount} = this.props;
     if(!song || !score){
       return (null);
     }
@@ -65,7 +72,6 @@ class SongDetails extends React.Component<P,{}> {
             </TableBody>
           </Table>
         </Paper>
-        { (score.missCount || score.lastPlayed) &&
         <Paper>
           <Table aria-label="Score Details">
             <TableHead>
@@ -75,18 +81,26 @@ class SongDetails extends React.Component<P,{}> {
               </TableRow>
             </TableHead>
             <TableBody>
-              { score.lastPlayed &&
-                <TableRow>
-                  <TableCell><FormattedMessage id="SongDetail.ClearState"/></TableCell>
-                  <TableCell>{convertClearState(score.clearState,1)}</TableCell>
-                </TableRow>
-              }
-              { score.missCount &&
-                <TableRow>
-                  <TableCell><FormattedMessage id="SongDetail.MissCount"/></TableCell>
-                  <TableCell>{score.missCount}</TableCell>
-                </TableRow>
-              }
+              <TableRow>
+                <TableCell><FormattedMessage id="SongDetail.ClearState"/></TableCell>
+                <TableCell>
+                  <Select value={newClearState === -1 ? score.clearState : newClearState} onChange={handleClearState} displayEmpty>
+                    {lampCSVArray.map((item:string,i:number)=>{
+                      return <MenuItem value={i}>{item}</MenuItem>
+                    })}
+                  </Select>
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell><FormattedMessage id="SongDetail.MissCount"/></TableCell>
+                <TableCell>
+                  <TextField
+                    type="number"
+                    onChange={handleMissCount}
+                    value={newMissCount === -1 ? score.missCount : newMissCount}
+                  />
+                </TableCell>
+              </TableRow>
               { score.lastPlayed &&
                 <TableRow>
                   <TableCell><FormattedMessage id="SongDetail.LastPlayed"/></TableCell>
@@ -102,7 +116,6 @@ class SongDetails extends React.Component<P,{}> {
             </TableBody>
           </Table>
         </Paper>
-        }
       </div>
     );
   }

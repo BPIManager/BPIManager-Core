@@ -6,58 +6,79 @@ import { FormattedMessage } from "react-intl";
 import {scoresDB, scoreHistoryDB} from "../../components/indexedDB";
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
-
 import Snackbar from '@material-ui/core/Snackbar';
-
 import importCSV from "../../components/csv/import";
 import bpiCalculator from "../../components/bpi";
-import timeFormatter from "../../components/common/timeFormatter";
-import { _currentStore, _isSingle } from '../../components/settings';
+import { _currentStore, _isSingle, _currentStoreWithFullName } from '../../components/settings';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Link from '@material-ui/core/Link';
+import {Link as RLink} from "react-router-dom";
 
-export default class Index extends React.Component<{},{raw:string,isSnackbarOpen:boolean,stateText:string,errors:string[]}> {
+export default class Index extends React.Component<{global:any},{raw:string,isSnackbarOpen:boolean,stateText:string,errors:string[],isSaving:boolean,currentState:string,progress:number}> {
 
-  constructor(props:Object){
+  constructor(props:{global:any}){
     super(props);
     this.state = {
       raw: "",
       isSnackbarOpen:false,
       stateText:"Data.Success",
-      errors:[]
+      errors:[],
+      isSaving:false,
+      currentState:"",
+      progress:0,
     }
     this.execute = this.execute.bind(this);
   }
 
   async execute(){
     try{
+      this.props.global.setMove(true);
+      this.setState({isSaving:true});
       let errors = [];
-      const executor = new importCSV(this.state.raw,_isSingle(),_currentStore());
-      const calc = new bpiCalculator();
-      const exec = await executor.execute();
+      const isSingle:number = _isSingle();
+      const currentStore:string = _currentStore();
+      const executor:importCSV = new importCSV(this.state.raw,isSingle,currentStore);
+      const calc:bpiCalculator = new bpiCalculator();
+      const exec:number = await executor.execute();
       if(!exec){
         throw new Error("CSVデータの形式が正しくありません");
       }
+
       const result = executor.getResult(),resultHistory = executor.getResultHistory();
+      const s = new scoresDB(isSingle,currentStore), h = new scoreHistoryDB();
+      const all = await s.getAll().then(t=>t.reduce((result:any, current:any) => {
+        result[current.title + current.difficulty] = current;
+        return result;
+      }, {}));
       for(let i = 0;i < result.length;++i){
         const calcData = await calc.calc(result[i]["title"],result[i]["difficulty"],result[i]["exScore"])
         if(calcData.error && calcData.reason){
-          errors.push(result[i]["title"] + " - " + calcData.reason);
+          const suffix = result[i]["difficulty"] === "hyper" ? "(H)" : result[i]["difficulty"] === "leggendaria" ? "(†)" : "(A)";
+          errors.push(result[i]["title"] + suffix + " - " + calcData.reason);
           continue;
         }
-        const s = new scoresDB(), h = new scoreHistoryDB();
-        await s.resetImportedItems();
-        await s.setItem(Object.assign(
+        const item = all[result[i]["title"] + result[i]["difficulty"]];
+        if(item && (item["exScore"] >= result[i]["exScore"] && item["clearState"] === result[i]["clearState"])){
+          continue;
+        }
+        const body = Object.assign(
           result[i],
           {
             difficultyLevel:calcData.difficultyLevel,
             currentBPI : calcData.bpi,
             isImported: true,
+            lastScore: item ? item["exScore"] : 0
           }
-        ));
-        await h.add(Object.assign(resultHistory[i],{difficultyLevel:calcData.difficultyLevel}),{currentBPI:calcData.bpi,exScore:resultHistory[i].exScore},true);
+        );
+        all[result[i]["title"]] && item["isSingle"] === isSingle ? s.setItem(body) : s.putItem(body);
+        h.add(Object.assign(resultHistory[i],{difficultyLevel:calcData.difficultyLevel}),{currentBPI:calcData.bpi,exScore:resultHistory[i].exScore},true);
       }
-      return this.setState({raw:"",isSnackbarOpen:true,stateText:"Data.Success",errors:errors});
+      this.props.global.setMove(false);
+      return this.setState({isSaving:false,raw:"",isSnackbarOpen:true,stateText:"Data.Success",errors:errors});
     }catch(e){
-      return this.setState({isSnackbarOpen:true,stateText:"Data.Failed",errors:[e.message]});
+      console.log(e);
+      this.props.global.setMove(false);
+      return this.setState({isSaving:false,isSnackbarOpen:true,stateText:"Data.Failed",errors:[e.message]});
     }
   }
 
@@ -65,7 +86,8 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
   handleClose = ()=> this.setState({isSnackbarOpen:false});
 
   render(){
-    const {raw,isSnackbarOpen,stateText,errors} = this.state;
+    const spdp = _isSingle() ? "SP" : "DP";
+    const {raw,isSnackbarOpen,stateText,errors,isSaving} = this.state;
     return (
       <Container className="commonLayout" fixed>
         <Snackbar
@@ -76,39 +98,42 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
           }}
           message={<span id="message-id"><FormattedMessage id={stateText}/></span>}
         />
-        <Typography component="h4" variant="h4" color="textPrimary" gutterBottom>
+        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
           <FormattedMessage id="Data.add"/>
         </Typography>
-        <Typography variant="body1" gutterBottom>
-          <FormattedMessage id="Data.infoBulk"/><br/>
-          <FormattedMessage id="Data.howToBulk1"/>
-          <a href="https://p.eagate.573.jp/game/2dx/27/djdata/score_download.html" target="_blank" rel="noopener noreferrer">
-            <FormattedMessage id="Data.CSVURL"/>
-          </a>
-          <FormattedMessage id="Data.howToBulk2"/>
-        </Typography>
+        <FormattedMessage id="Data.infoBulk"/><br/>
+        <FormattedMessage id="Data.howToBulk1"/>
+        <Link color="secondary" href={"https://p.eagate.573.jp/game/2dx/"+_currentStore()+"/djdata/score_download.html?style=" + spdp} target="_blank" rel="noopener noreferrer">
+          <FormattedMessage id="Data.CSVURL"/>
+        </Link>
+        <FormattedMessage id="Data.howToBulk2"/>
         <TextField
           onChange={this.onChangeText}
           value={raw}
           style={{width:"100%"}}
-          id="outlined-dense-multiline"
           label="Paste here"
           margin="dense"
           variant="outlined"
           multiline
           rowsMax="4"/>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={this.execute}
-          style={{width:"100%",margin:"5px 0"}}>
-          <FormattedMessage id="Data.Execute"/>
-        </Button>
+        <div style={{position:"relative"}}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.execute}
+            disabled={isSaving}
+            style={{width:"100%",margin:"5px 0"}}>
+            <FormattedMessage id="Data.Execute"/>
+            (->{_currentStoreWithFullName() }&nbsp;/&nbsp;
+            {_isSingle() === 1 ? "SP" : "DP"})
+          </Button>
+          {isSaving && <CircularProgress size={24} style={{color:"#777",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
+        </div>
+        {errors && errors.map(item=><span key={item}>{item}<br/></span>)}
         <Divider variant="middle" style={{margin:"10px 0"}}/>
-        {errors && errors.map(item=><span>{item}<br/></span>)}
         <FormattedMessage id="Data.notPremium1"/>
         <Divider variant="middle" style={{margin:"10px 0"}}/>
-        <Typography component="h4" variant="h4" color="textPrimary" gutterBottom>
+        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
           <FormattedMessage id="Data.edit"/>
         </Typography>
         <FormattedMessage id="Data.howToEdit"/>
@@ -117,6 +142,14 @@ export default class Index extends React.Component<{},{raw:string,isSnackbarOpen
           <li><FormattedMessage id="Data.howToEdit2"/></li>
           <li><FormattedMessage id="Data.howToEdit3"/></li>
         </ol>
+        <Divider variant="middle" style={{margin:"10px 0"}}/>
+        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
+          データを同期
+        </Typography>
+        <RLink to="/sync"><Link color="secondary" component="span">「Sync」</Link></RLink>から、端末に保管されているデータをクラウド上にアップロードすることができます。<br/>
+        アップロードされたデータは他の端末と同期することが可能です。<br/>
+        注意:端末内に保管されているデータは、ブラウザのキャッシュをクリアすると削除される場合があります(Google Chromeで「Cookieとサイトデータの削除」を実行した場合など)。<br/>
+        定期的に本機能を用いてデータのバックアップを取ることをおすすめしています。
       </Container>
     );
   }

@@ -11,13 +11,13 @@ export interface scoreData{
   great?:number,
   missCount?:number,
   clearState:number,
-  DJLevel:string,
   lastPlayed?:string,
   storedAt:string,
   updatedAt:string,
   isSingle:number,
   isImported?:boolean,
   _isAvailable?:boolean,
+  lastScore:number,
 }
 
 export interface songData{

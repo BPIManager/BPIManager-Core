@@ -6,7 +6,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-
+import TwitterIcon from '@material-ui/icons/Twitter';
 import { scoreData, songData } from "../../../types/data";
 import { _prefixFromNum, getSongSuffixForIIDXInfo } from "../../../components/songs/filter";
 import Grid from "@material-ui/core/Grid";
@@ -22,21 +22,29 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import {songsDB,scoresDB,scoreHistoryDB} from "../../../components/indexedDB";
 import ShowSnackBar from "../snackBar";
-import {Tooltip as TooltipMUI, Button, CircularProgress} from '@material-ui/core';
+import {Tooltip as TooltipMUI, Button, CircularProgress, Tooltip, Fab} from '@material-ui/core';
 import BPIChart from "./bpiChart";
 import SongDetails from "./songDetails";
+import SongDiffs from "./songDiffs";
+import { UnregisterCallback } from "history";
+import TabPanel from "./common/tabPanel";
+import { _currentTheme } from "../../../components/settings";
+import _djRank from "../../../components/common/djRank";
 
 interface P{
   isOpen:boolean,
   song:songData|null,
   score:scoreData|null,
-  handleOpen:(flag:boolean)=>Promise<void>
+  handleOpen:(flag:boolean,row?:any,willDeleteItems?:any)=>void,
+  willDelete?:boolean
 }
 
 interface S{
   isError:boolean,
   newScore:number,
   newBPI:number,
+  newClearState:number,
+  newMissCount:number,
   showCharts:boolean,
   chartData:any[],
   currentTab:number,
@@ -47,18 +55,22 @@ interface S{
   errorSnackMessage:string,
   graphLastUpdated:number,
   isSaving:boolean,
+  showBody:boolean,
 }
 
 class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
 
   private calc:bpiCalcuator = new bpiCalcuator();
+  private unlisten:UnregisterCallback|null = null;
 
-  constructor(props:P){
+  constructor(props:P & {intl?:any}){
     super(props);
     this.state = {
       isError:false,
       newScore: NaN,
       newBPI:NaN,
+      newClearState:-1,
+      newMissCount:-1,
       showCharts : true,
       chartData:this.makeGraph().reverse(),
       favorited:props.song ? props.song.isFavorited : false,
@@ -69,7 +81,12 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       errorSnackMessage:"",
       graphLastUpdated:new Date().getTime(),
       isSaving:false,
+      showBody:false,
     }
+  }
+
+  toggleShowBPI = ():void=>{
+    return this.setState({showBody:!this.state.showBody});
   }
 
   makeGraph = (newScore?:number):any[]=>{
@@ -86,7 +103,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
     const bpiBasis = [0,10,20,30,40,50,60,70,80,90,100];
     const mybest = newScore ? newScore : score.exScore;
     for(let i = 0;i < bpiBasis.length; ++i){
-      const exScoreFromBPI:number = Math.floor(this.calc.calcFromBPI(bpiBasis[i]));
+      const exScoreFromBPI:number = this.calc.calcFromBPI(bpiBasis[i],true);
       if(lastExScore < mybest && mybest <= exScoreFromBPI){
         dataInserter(mybest,"YOU");
         lastExScore = mybest;
@@ -145,7 +162,12 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
         }
       break;
       case 3:
-        window.open("https://twitter.com/intent/tweet?&text=");
+        if(!this.props.score) return;
+        const score = this.state.newScore ? this.state.newScore : this.props.score.exScore;
+        const bpi = this.state.newBPI ? this.state.newBPI : this.props.score.currentBPI;
+        const diff = this.props.score.lastScore !== -1 ? score - this.props.score.lastScore : score;
+        const text = encodeURIComponent(`[${diff > 0 ? "+" + diff : diff}] ${this.props.song.title}${_prefixFromNum(this.props.song.difficulty,true)} [EX:${score}(${this.showRank(false)}${this.showRank(true)})][BPI:${bpi}]`);
+        window.open(`https://twitter.com/intent/tweet?&hashtags=BPIManager&text=${text}`);
       break;
     }
     return this.toggleMenu();
@@ -170,21 +192,21 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
     }
   }
 
-  toggleSuccessSnack = ()=>this.setState({successSnack:!this.state.successSnack})
-  toggleErrorSnack = ()=>this.setState({errorSnack:!this.state.errorSnack})
+  toggleSuccessSnack = ()=>this.setState({successSnack:!this.state.successSnack});
+  toggleErrorSnack = ()=>this.setState({errorSnack:!this.state.errorSnack});
 
   calcRank = ()=> this.props.score ? `${this.calc.rank(!Number.isNaN(this.state.newBPI) ? this.state.newBPI : this.props.score.currentBPI)}` : "-";
 
   saveAndClose = async()=>{
     try{
-      const {newBPI,newScore} = this.state;
-      const {score,song} = this.props;
-      if(!song){return;}
+      const {newBPI,newScore,newClearState,newMissCount} = this.state;
+      const {score,song,willDelete} = this.props;
+      if(!song || !score){return;}
       this.setState({isSaving:true});
       const scores = new scoresDB(), scoreHist = new scoreHistoryDB();
-      await scores.updateScore(score,{currentBPI:newBPI,exScore:newScore});
-      await scoreHist.add(Object.assign(score,{difficultyLevel:song.difficultyLevel}),{currentBPI:newBPI,exScore:newScore});
-      this.props.handleOpen(true);
+      await scores.updateScore(score,{currentBPI:newBPI,exScore:newScore,clearState:newClearState,missCount:newMissCount});
+      if(!Number.isNaN(newBPI)) scoreHist.add(Object.assign(score, { difficultyLevel: song.difficultyLevel }), { currentBPI: newBPI, exScore: newScore });
+      this.props.handleOpen(true,null,willDelete ? {title:score.title,difficulty:score.difficulty} : null);
     }catch(e){
       return this.setState({errorSnack:true,errorSnackMessage:e});
     }
@@ -192,51 +214,27 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
 
   showRank = (isBody:boolean):string=>{
     const {song,score} = this.props;
-    const {newScore} = this.state;
+    const {showBody,newScore} = this.state;
     if(!song || !score){return "-";}
     const max:number = song.notes * 2;
     const s:number = !Number.isNaN(newScore) ? newScore : score.exScore;
-    const percentage:number =  s  / max;
-    if(percentage < 2/9){
-      return !isBody ? "E-" : `${Math.ceil(max * 2/9 - s)}`;
-    }
-    if(percentage >= 2/9 && percentage < 1/3){
-      return !isBody ? "D-" : `${Math.ceil(max * 1/3 - s)}`;
-    }
-    if(percentage >= 1/3 && percentage < 4/9){
-      return !isBody ? "C-" : `${Math.ceil(max * 4/9 - s)}`;
-    }
-    if(percentage >= 4/9 && percentage < 5/9){
-      return !isBody ? "B-" : `${Math.ceil(max * 5/9 - s)}`;
-    }
-    if(percentage >= 5/9 && percentage < 2/3){
-      return !isBody ? "A-" : `${Math.ceil(max * 2/3 - s)}`;
-    }
-    if(percentage >= 2/3 && percentage < 7/9){
-      return !isBody ? "AA-" : `${Math.ceil(max * 7/9 - s)}`;
-    }
-    if(percentage >= 7/9 && percentage < 8/9){
-      return !isBody ? "AAA-" : `${Math.ceil(max * 8/9 - s)}`;
-    }
-    if(percentage >= 8/9 && percentage < 17/18){
-      return !isBody ? "AAA+" : `${Math.floor(s - max * 8/9)}`;
-    }
-    if(percentage >= 17/18){
-      return !isBody ? "MAX-" : `${Math.ceil(max - s)}`;
-    }
-    return "";
+    return _djRank(showBody,isBody,max,s);
+
   }
+
+  handleClearState = (e:React.ChangeEvent<{ value: unknown }>)=> this.setState({newClearState:Number(e.target.value) < 0 ? 0 : Number(e.target.value)});
+  handleMissCount = (e:React.ChangeEvent<HTMLInputElement>)=> this.setState({newMissCount:Number(e.target.value) < 0 ? 0 : Number(e.target.value)});
 
   render(){
     const {formatMessage} = this.props.intl;
     const {isOpen,handleOpen,song,score} = this.props;
-    const {isSaving,newScore,newBPI,showCharts,chartData,currentTab,anchorEl,favorited,successSnack,errorSnack,errorSnackMessage} = this.state;
+    const {isSaving,newScore,newBPI,newClearState,newMissCount,showCharts,chartData,currentTab,anchorEl,favorited,successSnack,errorSnack,errorSnackMessage} = this.state;
     if(!song || !score){
       return (null);
     }
     const detectStarIconColor = favorited ? "#ffd700" : "#c3c3c3";
     return (
-      <Dialog id="detailedScreen" fullScreen open={isOpen} onClose={handleOpen} style={{overflowX:"hidden",width:"100%"}}>
+      <Dialog id="detailedScreen" className={_currentTheme() === "dark" ? "darkDetailedScreen" : "lightDetailedScreen"} fullScreen open={isOpen} onClose={handleOpen} style={{overflowX:"hidden",width:"100%"}}>
         <AppBar>
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={()=>handleOpen(false)} aria-label="close">
@@ -245,7 +243,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
             <Typography variant="h6" className="be-ellipsis" style={{flexGrow:1}}>
               {song.title + _prefixFromNum(song.difficulty)}
             </Typography>
-            {(!Number.isNaN(newBPI) || !Number.isNaN(newScore)) &&
+            {( !Number.isNaN(newBPI) || !Number.isNaN(newScore) || (newClearState !== -1 && newClearState !== score.clearState) || (newMissCount !== -1 && newMissCount !== score.missCount) ) &&
               <div style={{position:"relative"}}>
                 <Button variant="contained" color="secondary" onClick={this.saveAndClose} disabled={isSaving}>
                   <FormattedMessage id="Details.SaveButton"/>
@@ -268,13 +266,17 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
                 {(Number.isNaN(score.currentBPI) && Number.isNaN(newBPI)) && <span>-</span>}
               </Typography>
             </Grid>
-            <Grid item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0"}}>
-              <Typography component="h6" variant="h6" color="textSecondary">
-                {score && <span>{this.showRank(false)}</span>}
-              </Typography>
-              <Typography component="h4" variant="h4" color="textPrimary">
-                {score && <span>{this.showRank(true)}</span>}
-              </Typography>
+            <Grid onClick={this.toggleShowBPI} item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0",cursor:"pointer"}}>
+              <Tooltip title="プラス/マイナス表記の切り替え">
+                <div style={{textAlign:"center"}}>
+                  <Typography component="h6" variant="h6" color="textSecondary">
+                    {score && <span>{this.showRank(false)}</span>}
+                  </Typography>
+                  <Typography component="h4" variant="h4" color="textPrimary">
+                    {score && <span>{this.showRank(true)}</span>}
+                  </Typography>
+                </div>
+              </Tooltip>
             </Grid>
             <Grid item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0"}}>
               <Typography component="h6" variant="h6" color="textSecondary">
@@ -326,7 +328,6 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
                   <MenuItem onClick={()=>this.jumpWeb(0)}>TexTage</MenuItem>
                   <MenuItem onClick={()=>this.jumpWeb(1)}>YouTube</MenuItem>
                   <MenuItem onClick={()=>this.jumpWeb(2)}>IIDX.info</MenuItem>
-                  <MenuItem onClick={()=>this.jumpWeb(3)}><FormattedMessage id="Common.Tweet"/></MenuItem>
                 </Menu>
             </Grid>
           </Grid>
@@ -339,29 +340,27 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
           onChange={this.handleTabChange}>
           <Tab label={<FormattedMessage id="Details.Graph"/>} />
           <Tab label={<FormattedMessage id="Details.Details"/>} />
+          <Tab label={<FormattedMessage id="Details.Diffs"/>} />
         </Tabs>
         <TabPanel value={currentTab} index={0}>
           {showCharts &&
             <BPIChart song={song} score={score} chartData={chartData} graphLastUpdated={this.state.graphLastUpdated}/>
           }
+          <Fab style={{position:"absolute","right":"20px","bottom":"50px",backgroundColor:"#55acee",color:"#fff"}} onClick={()=>this.jumpWeb(3)} aria-label="tweet">
+            <TwitterIcon />
+          </Fab>
         </TabPanel>
         <TabPanel value={currentTab} index={1}>
-          <SongDetails song={song} score={score}/>
+          <SongDetails song={song} score={score} newMissCount={newMissCount} newClearState={newClearState}
+            handleClearState={this.handleClearState} handleMissCount={this.handleMissCount}/>
+        </TabPanel>
+        <TabPanel value={currentTab} index={2}>
+          <SongDiffs song={song} score={score}/>
         </TabPanel>
         <ShowSnackBar message={errorSnackMessage} variant="warning"
             handleClose={this.toggleErrorSnack} open={errorSnack} autoHideDuration={3000}/>
       </Dialog>
     );
-  }
-}
-
-class TabPanel extends React.Component<{value:number,index:number},{}>{
-
-  render(){
-    if(this.props.value !== this.props.index){
-      return (null);
-    }
-    return this.props.children
   }
 }
 
