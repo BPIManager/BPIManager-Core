@@ -275,8 +275,8 @@ a.link:hover{
 }
 
 .custom-tooltip{
-  background:rgba(255,255,255,.6);
-  padding:6px;
+  background:rgba(255,255,255,.8);
+  padding:6px 12px;
   border:1px solid #ccc;
   color:#000 !important;
 }
