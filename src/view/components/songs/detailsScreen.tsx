@@ -344,7 +344,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
         </Tabs>
         <TabPanel value={currentTab} index={0}>
           {showCharts &&
-            <BPIChart song={song} score={score} chartData={chartData} graphLastUpdated={this.state.graphLastUpdated}/>
+            <BPIChart song={song} newScore={newScore} score={score} chartData={chartData} graphLastUpdated={this.state.graphLastUpdated}/>
           }
           <Fab style={{position:"absolute","right":"20px","bottom":"50px",backgroundColor:"#55acee",color:"#fff"}} onClick={()=>this.jumpWeb(3)} aria-label="tweet">
             <TwitterIcon />
