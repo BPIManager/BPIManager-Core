@@ -119,20 +119,25 @@ export const scoresDB = class extends storageWrapper{
   }
 
   //for statistics
-  async getItemsBySongDifficulty(diff:string = "12"):Promise<number[]>{
+  async getItemsBySongDifficulty(diff:string = "12"):Promise<scoreData[]>{
     try{
       if(!this.currentData){await this.loadStore();}
-      return this.currentData.filter(item=>item.difficultyLevel === diff).map((item:scoreData)=>item.currentBPI);
+      return this.currentData.filter(item=>item.difficultyLevel === diff);
     }catch(e){
       console.error(e);
       return [];
     }
   }
 
-  async getItemsBySongDifficultyName(diff:string = "hyper"):Promise<number[]>{
+  async getItemsBySongDifficultyWithSpecificVersion(diff:string = "12",store:string):Promise<any>{
     try{
-      if(!this.currentData){await this.loadStore();}
-      return this.currentData.filter(item=>item.difficulty === diff).map((item:scoreData)=>item.currentBPI);
+      return await this.scores.where({
+        storedAt:store,
+        isSingle:_isSingle(),
+      }).toArray().then(t=>t.filter(item=>item.difficultyLevel === diff).reduce((group,item)=>{
+        group[item.title + item.difficulty] = item.currentBPI;
+        return group;
+      },{}));
     }catch(e){
       console.error(e);
       return [];

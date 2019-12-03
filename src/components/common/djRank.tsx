@@ -40,4 +40,17 @@ const _djRank = (showBody:boolean,isBody:boolean,max:number,s:number):string =>{
   return "";
 }
 
+export const _DiscriminateRanksByNumber = (percentage:number):number =>{
+  return (
+    (percentage < 2/9) ? 0 :
+    (percentage >= 2/9 && percentage < 1/3) ? 1 :
+    (percentage >= 1/3 && percentage < 4/9) ? 2 :
+    (percentage >= 4/9 && percentage < 5/9) ? 3 :
+    (percentage >= 5/9 && percentage < 2/3) ? 4 :
+    (percentage >= 2/3 && percentage < 7/9) ? 5 :
+    (percentage >= 7/9 && percentage < 8/9) ? 6 :
+    (percentage >= 8/9) ? 7 : 0
+  )
+}
+
 export default _djRank;
