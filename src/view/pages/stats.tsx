@@ -9,9 +9,12 @@ import bpiCalcuator from '../../components/bpi';
 import {_isSingle,_currentStore, _chartColor, _goalBPI} from "../../components/settings";
 import moment from 'moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
+import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, BarChart, ScatterChart, Scatter } from 'recharts';
 import _withOrd from '../../components/common/ord';
-import {Link as RefLink, Table, TableRow, TableHead, TableCell, TableBody} from '@material-ui/core/';
+import {Link as RefLink, Table, TableRow, TableCell, TableBody} from '@material-ui/core/';
+import { difficultyDiscriminator, _prefix } from '../../components/songs/filter';
+import { songData, scoreData } from '../../types/data';
+import { _DiscriminateRanksByNumber } from '../../components/common/djRank';
 
 interface S {
   isLoading:boolean,
@@ -21,6 +24,9 @@ interface S {
   groupedByLevel:any[],
   groupedByDiff:any[],
   radar:any[]|null,
+  groupedByDJRank:any[],
+  groupedByClearState:any[],
+  scatterGraph:any[]
 }
 
 class Stats extends React.Component<{intl:any},S> {
@@ -34,7 +40,10 @@ class Stats extends React.Component<{intl:any},S> {
       perDate:[],
       groupedByLevel:[],
       groupedByDiff:[],
-      radar:[]
+      radar:[],
+      groupedByDJRank:[],
+      groupedByClearState:[],
+      scatterGraph:[]
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
@@ -46,12 +55,59 @@ class Stats extends React.Component<{intl:any},S> {
   async updateScoreData(){
     const isSingle = _isSingle();
     const currentStore = _currentStore();
+    const lastStore = String(Number(currentStore) - 1);
     const db = await new scoresDB(isSingle,currentStore).loadStore();
     const bpi = new bpiCalcuator();
     const twelves = await db.getItemsBySongDifficulty("12");
-    const allSongsTwelvesBPI = this.groupByBPI(twelves);
-    const allSongsElevensBPI = this.groupByBPI(await db.getItemsBySongDifficulty("11"));
-    bpi.allTwelvesBPI = twelves;
+    const elevens = await db.getItemsBySongDifficulty("11");
+    const lastVerTwelves = await db.getItemsBySongDifficultyWithSpecificVersion("12",lastStore);
+    const bpiMapper = (t:scoreData[])=>t.map((item:scoreData)=>item.currentBPI);
+    const allSongsTwelvesBPI = this.groupBy(bpiMapper(twelves));
+    const allSongsElevensBPI = this.groupBy(bpiMapper(elevens));
+    const songFinder = (level:string,title:string,difficulty:string)=>(
+      level === "12" ? twelves : elevens
+    ).find(elm=>( elm.title === title && elm.difficulty === difficultyDiscriminator(difficulty) ) )
+    //[AAA,AA,A,B,C,D,E,F];
+    const songsByDJRank:any[] = [
+      {name:"F","☆11":0,"☆12":0},
+      {name:"E","☆11":0,"☆12":0},
+      {name:"D","☆11":0,"☆12":0},
+      {name:"C","☆11":0,"☆12":0},
+      {name:"B","☆11":0,"☆12":0},
+      {name:"A","☆11":0,"☆12":0},
+      {name:"AA","☆11":0,"☆12":0},
+      {name:"AAA","☆11":0,"☆12":0},
+    ]
+    //[FAILED,ASSISTED,EASY,CLEAR,HARD,EXHARD,FC]
+    const songsByClearState:any[] = [
+      {name:"FAILED","☆11":0,"☆12":0},
+      {name:"ASSIST","☆11":0,"☆12":0},
+      {name:"EASY","☆11":0,"☆12":0},
+      {name:"CLEAR","☆11":0,"☆12":0},
+      {name:"HARD","☆11":0,"☆12":0},
+      {name:"EXHARD","☆11":0,"☆12":0},
+      {name:"FULLCOMBO","☆11":0,"☆12":0},
+    ];
+    let scatterGraph:{label:string,x:number,y:number,last:number}[]  = [];
+    for(let item in twelves){
+      const current = twelves[item];
+      const last = lastVerTwelves[current.title + current.difficulty];
+      if(last){
+        scatterGraph.push({label:current.title + _prefix(current.difficulty) ,x:Math.ceil( 1000 * current.currentBPI / last )  / 10  - 100 ,y:current.currentBPI,last:last})
+      }
+    }
+
+    await new songsDB().getAll(isSingle).then(t=>t.reduce((groups:any,item:songData) =>{
+      const score = songFinder(item["difficultyLevel"],item["title"],item["difficulty"]);
+      if(score){
+        const p = score.exScore / (item["notes"] * 2);
+        songsByDJRank[_DiscriminateRanksByNumber(p)]["☆" + item["difficultyLevel"]]++;
+        score.clearState < 7 && songsByClearState[score.clearState]["☆" + item["difficultyLevel"]]++;
+      }
+      return groups;
+    },[]));
+
+    bpi.allTwelvesBPI = bpiMapper(twelves);
     bpi.allTwelvesLength = await new songsDB().getAllTwelvesLength(isSingle);
     //compare by date
     const allDiffs = (await new scoreHistoryDB().getAll("12")).reduce((groups, item) => {
@@ -90,18 +146,6 @@ class Stats extends React.Component<{intl:any},S> {
       groupedByLevel.push(obj);
     }
 
-    /*
-    const allSongsHyperBPI = this.groupByBPI(await db.getItemsBySongDifficultyName("hyper"));
-    const allSongsAnotherBPI = this.groupByBPI(await db.getItemsBySongDifficultyName("another"));
-    const allSongsLeggendariaBPI = this.groupByBPI(await db.getItemsBySongDifficultyName("leggendaria"));
-    for(let i = 0; i < bpis.length; ++i){
-      let obj:{"name":number,"HYPER":number,"ANOTHER":number,"LEGGENDARIA":number} = {"name":bpis[i],"HYPER":0,"ANOTHER":0,"LEGGENDARIA":0};
-      obj["HYPER"] = allSongsHyperBPI[bpis[i]] ? allSongsHyperBPI[bpis[i]] : 0;
-      obj["ANOTHER"] = allSongsAnotherBPI[bpis[i]] ? allSongsAnotherBPI[bpis[i]] : 0;
-      obj["LEGGENDARIA"] = allSongsLeggendariaBPI[bpis[i]] ? allSongsLeggendariaBPI[bpis[i]] : 0;
-      groupedByDiff.push(obj);
-    }
-    */
     const totalBPI = bpi.totalBPI();
     //BPI別集計
     this.setState({
@@ -111,6 +155,9 @@ class Stats extends React.Component<{intl:any},S> {
       perDate:eachDaySum.sort((a,b)=> moment(a.name).diff(b.name)).slice(-10),
       groupedByLevel:groupedByLevel,
       radar: isSingle ? await this.getRadar() : null,
+      groupedByDJRank:songsByDJRank.reverse(),
+      groupedByClearState:songsByClearState.reverse(),
+      scatterGraph:scatterGraph,
     });
   }
 
@@ -198,6 +245,11 @@ class Stats extends React.Component<{intl:any},S> {
         const ind = await db.getItem(songs[title][i][0],songs[title][i][1],currentStore,isSingle);
         ind.length > 0 && pusher.push(ind[0]["currentBPI"]);
       }
+      if(pusher.length < len){
+        for(let j =0; j < len - pusher.length;++j){
+          pusher.push(-15);
+        }
+      }
 
       const bpi = new bpiCalcuator();
       bpi.allTwelvesBPI = pusher;
@@ -214,7 +266,7 @@ class Stats extends React.Component<{intl:any},S> {
     },Promise.resolve([]));
   }
 
-  groupByBPI = (array:number[])=>{
+  groupBy = (array:number[])=>{
     return array.reduce((groups:{[key:number]:number}, item:number) => {
       let _ = Math.floor(item / 10) * 10;
       if(_ > 100) _ = 100
@@ -228,9 +280,23 @@ class Stats extends React.Component<{intl:any},S> {
   }
 
   render(){
-    const {totalBPI,isLoading,perDate,totalRank,groupedByLevel,radar} = this.state;
+    const {totalBPI,isLoading,perDate,totalRank,groupedByLevel,radar,groupedByDJRank,groupedByClearState,scatterGraph} = this.state;
     const {formatMessage} = this.props.intl;
     const chartColor = _chartColor();
+    const CustomTooltip = (props:any) => {
+      if (props.active && props.payload[0].payload) {
+        const p = props.payload[0].payload;
+        return (
+          <div className="custom-tooltip">
+            <p><b>{p.label}</b></p>
+            <p>上昇率:{p.x > 0 && "+"}{p.x.toFixed(1)}%</p>
+            <p>今作:{p.y}</p>
+            <p>前作:{p.last}</p>
+          </div>
+        );
+      }
+      return (null);
+    }
     if(isLoading){
       return (
         <Container className="loaderCentered">
@@ -347,6 +413,90 @@ class Stats extends React.Component<{intl:any},S> {
                         ))}
                       </TableBody>
                     </Table>
+                  </Grid>
+                </Grid>
+              </Paper>
+            </Grid>
+          </Grid>
+        }
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6} lg={6}>
+            <Paper style={{padding:"15px",height:270}}>
+              <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
+                <FormattedMessage id="Stats.DistributionOfDJRank"/>
+              </Typography>
+              {(groupedByDJRank.length > 0) &&
+                <div style={{width:"95%",height:"100%",margin:"5px auto"}}>
+                  <ResponsiveContainer width="100%">
+                    <BarChart
+                      data={groupedByDJRank}
+                      margin={{
+                        top: 5, right: 30, left: -30, bottom: 30,
+                      }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" stroke={chartColor} />
+                        <YAxis stroke={chartColor}/>
+                        <Tooltip contentStyle={{color:"#333"}}/>
+                        <Legend />
+                        <Bar dataKey="☆12" fill="#82ca9d" />
+                        <Bar dataKey="☆11" fill="#8884d8" />
+                      </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              }
+              {groupedByDJRank.length === 0 && <p>No data found.</p>}
+            </Paper>
+          </Grid>
+          <Grid item xs={12} md={6} lg={6}>
+            <Paper style={{padding:"15px",height:270}}>
+              <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
+                <FormattedMessage id="Stats.DistributionOfClearState"/>
+              </Typography>
+              {(groupedByClearState.length > 0) &&
+                <div style={{width:"95%",height:"100%",margin:"5px auto"}}>
+                  <ResponsiveContainer width="100%">
+                    <BarChart
+                      data={groupedByClearState}
+                      margin={{
+                        top: 5, right: 30, left: -30, bottom: 30,
+                      }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" stroke={chartColor} />
+                        <YAxis stroke={chartColor}/>
+                        <Tooltip contentStyle={{color:"#333"}}/>
+                        <Legend />
+                        <Bar dataKey="☆12" fill="#82ca9d" />
+                        <Bar dataKey="☆11" fill="#8884d8" />
+                      </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              }
+              {groupedByClearState.length === 0 && <p>No data found.</p>}
+            </Paper>
+          </Grid>
+        </Grid>
+        {(scatterGraph.length > 0) &&
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={12} lg={12}>
+              <Paper style={{padding:"15px"}}>
+                <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
+                  前作比BPI相関図(☆12)
+                </Typography>
+                <Grid container spacing={0}>
+                  <Grid item xs={12} md={12} lg={12} style={{height:"450px"}}>
+                    <div style={{width:"100%",height:"100%"}}>
+                      <ResponsiveContainer>
+                        <ScatterChart margin={{top: 5, right: 30, left: -30, bottom: 30,}}>
+                          <CartesianGrid />
+                          <XAxis type="number" dataKey="x" name="前作からのBPI上昇率" unit="％" stroke={chartColor} />
+                          <YAxis type="number" dataKey="y" name="今作BPI" unit="" stroke={chartColor} />
+                          <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} />
+                          <Scatter name="A school" data={scatterGraph} fill="#8884d8" />
+                        </ScatterChart>
+                      </ResponsiveContainer>
+                    </div>
                   </Grid>
                 </Grid>
               </Paper>

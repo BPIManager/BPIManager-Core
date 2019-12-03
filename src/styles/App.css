@@ -121,7 +121,7 @@ th.MuiTableCell-root.MuiTableCell-head{
 }
 
 #__dark #_notPlayed .MuiTableRow-root .MuiTableCell-body:first-child{
-  color:#fff;
+  color:#fff !important;
 }
 
 a.link{
@@ -272,4 +272,11 @@ a.link:hover{
 
 .compareGap{
   font-size:11px !important;
+}
+
+.custom-tooltip{
+  background:rgba(255,255,255,.6);
+  padding:6px;
+  border:1px solid #ccc;
+  color:#000 !important;
 }
