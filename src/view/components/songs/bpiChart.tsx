@@ -24,7 +24,6 @@ class BPIChart extends React.Component<P,{}> {
     const CustomTooltip = (props:any) => {
       if (props.active && props.payload[0].payload) {
         const p = props.payload[0].payload;
-        console.log(p);
         return (
           <div className="custom-tooltip">
           {p.name !== "YOU" && <div>
