@@ -255,7 +255,7 @@ export default class SongsList extends React.Component<P,stateInt> {
           </Grid>
           <Grid item xs={6}>
             <FormControl component="fieldset" style={{width:"100%"}}>
-            <InputLabel htmlFor="standard-adornment-password"><FormattedMessage id="Songs.filterByName"/></InputLabel>
+            <InputLabel><FormattedMessage id="Songs.filterByName"/></InputLabel>
               <Input
                 style={{width:"100%"}}
                 placeholder={"(ex.)255"}
