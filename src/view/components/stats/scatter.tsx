@@ -58,7 +58,7 @@ class ScatterGraph extends React.Component<{},S> {
       const current = currentVer[item];
       const last = targetVersion === "OBPI" ? goalBPI : lastVer[current.title + current.difficulty];
       if(!Number.isNaN(last)){
-        const m = way === 0 && last !== 0 ? Math.ceil( 1000 * current.currentBPI / last )  / 10  - 100 : current.currentBPI - last;
+        const m = way === 0 && last !== 0 ? Math.ceil( 1000 * current.currentBPI / last )  / 10  - 100 : way === 1 ? current.currentBPI - last : last;
         scatterGraph.push({label:current.title + _prefix(current.difficulty) ,x:m ,y:current.currentBPI,last:last})
       }
     }
@@ -156,6 +156,7 @@ class ScatterGraph extends React.Component<{},S> {
                     <Select value={way} onChange={this.handleWayChange}>
                       <MenuItem value={0}>上昇率</MenuItem>
                       <MenuItem value={1}>点数差</MenuItem>
+                      <MenuItem value={2}>単純比較</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
