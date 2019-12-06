@@ -39,7 +39,7 @@ class Stats extends React.Component<{intl:any},S> {
           style={{margin:"5px 0"}}
         >
           <Tab label="基本データ" />
-          <Tab label="相関" />
+          <Tab label="分布" />
         </Tabs>
         {this.state.currentTab === 0 && <Main/>}
         {this.state.currentTab === 1 && <Scatter/>}

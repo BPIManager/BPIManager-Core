@@ -12,6 +12,9 @@ import { _prefix } from "../../../../components/songs/filter";
 import DetailedSongInformation from "../detailsScreen";
 import { diffColor, behindScore, bp } from "../common";
 import _djRank from "../../../../components/common/djRank";
+import { _currentViewComponents } from "../../../../components/settings";
+import bpiCalcuator from "../../../../components/bpi";
+import { scoresDB } from "../../../../components/indexedDB";
 
 const columns = [
   { id: "difficultyLevel", label: "☆"},
@@ -39,7 +42,8 @@ interface S{
   rowsPerPage:number,
   isOpen:boolean,
   currentSongData:songData | null,
-  currentScoreData:scoreData | null
+  currentScoreData:scoreData | null,
+  components:string[]
 }
 
 export default class SongsTable extends React.Component<Readonly<P>,S>{
@@ -50,9 +54,12 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
       rowsPerPage : 10,
       isOpen:false,
       currentSongData:null,
-      currentScoreData:null
+      currentScoreData:null,
+      components:_currentViewComponents().split(","),
     }
   }
+
+  private scoresDB = new scoresDB();
 
   handleOpen = (updateFlag:boolean,row?:any,_willDeleteItems?:any):void=> {
     if(updateFlag){this.props.updateScoreData();}
@@ -68,7 +75,14 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
     this.setState({rowsPerPage:+event.target.value});
   }
 
+  willBeRendered =(component:string):boolean=>{
+    return this.state.components.indexOf(component) > -1;
+  }
+
   render(){
+    const bpiCalc = new bpiCalcuator();
+    const last = this.willBeRendered("last"), lastVer = this.willBeRendered("lastVer"),
+    estRank = this.willBeRendered("estRank"), djLevel = this.willBeRendered("djLevel");
     const {rowsPerPage,isOpen,currentSongData,currentScoreData} = this.state;
     const {page,data,changeSort,sort,isDesc,mode} = this.props;
     return (
@@ -109,21 +123,40 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                           {(mode < 6 || column.id !== "currentBPI") && <span className={j >= 2 ? "bodyNumber" : ""}>{row[column.id]}</span>}
 
                           {column.id === "title" && prefix}
-                          {(mode > 0 && mode < 6 && column.id === "exScore") &&
-                            <span className="plusOverlayScore">-{behindScore(row,this.props.allSongsData,mode)}</span>
-                          }
                           {(mode > 5 && column.id === "currentBPI") && bp(row.missCount)}
-                          {(mode === 0 && j === 3) && <span className="plusOverlayScore">
-                            {row.lastScore > -1 &&
-                              row.exScore - row.lastScore > 0 ? "+" + Number(row.exScore - row.lastScore) : Number(row.exScore - row.lastScore)
+                          <span className="plusOverlayScore">
+                            {(j === 3) &&
+                              <span>
+                                {lastVer && <LastVerComparison row={row} scoresDB={this.scoresDB} lastVer={lastVer} last={last}/>}
+                                {(last && row.lastScore > -1 && mode === 0) &&
+                                  `${row.exScore - row.lastScore > 0 && "+"}${Number(row.exScore - row.lastScore)}`
+                                }
+                                {(mode > 0 && mode < 6) &&
+                                  <span>-{behindScore(row,this.props.allSongsData,mode)}</span>
+                                }
+                              </span>
                             }
-                            </span>
-                          }
-                          {j === 3 && <span className={i % 2 ? "plusOverlayScoreBottom isOddOverLayed" : "plusOverlayScoreBottom isEvenOverLayed"}>
-                            {_djRank(false,false,max,row.exScore)}
-                            {_djRank(false,true,max,row.exScore)}&nbsp;/&nbsp;
-                            {_djRank(true,false,max,row.exScore)}
-                            {_djRank(true,true,max,row.exScore)}
+                          </span>
+                          {(j === 3) &&
+                            <span className={i % 2 ? "plusOverlayScoreBottom isOddOverLayed" : "plusOverlayScoreBottom isEvenOverLayed"}>
+                              {estRank &&
+                                <span>
+                                  {bpiCalc.rank(row.currentBPI)}位
+                                </span>
+                              }
+                              {(estRank && djLevel) &&
+                                <span>
+                                  &nbsp;/&nbsp;
+                                </span>
+                              }
+                              {djLevel &&
+                                <span>
+                                  {_djRank(false,false,max,row.exScore)}
+                                  {_djRank(false,true,max,row.exScore)}&nbsp;/&nbsp;
+                                  {_djRank(true,false,max,row.exScore)}
+                                  {_djRank(true,true,max,row.exScore)}
+                                </span>
+                              }
                             </span>
                           }
                         </TableCell>
@@ -155,6 +188,47 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
           <DetailedSongInformation isOpen={isOpen} song={currentSongData} score={currentScoreData} handleOpen={this.handleOpen}/>
         }
       </Paper>
+    );
+  }
+}
+
+class LastVerComparison extends React.Component<{row:any,scoresDB:any,last:boolean,lastVer:boolean},{diff:number}>{
+
+  private _isMounted = false;
+
+  constructor(props:{row:any,scoresDB:any,last:boolean,lastVer:boolean}){
+    super(props);
+    this.state = {
+      diff:NaN,
+    }
+  }
+
+  async componentDidMount(){
+    this._isMounted = true;
+    const {row} = this.props;
+    const t = await this.props.scoresDB.getItem(row.title,row.difficulty,String(Number((row.storedAt)) - 1),row.isSingle);
+    if(!this._isMounted || !t || t.length === 0) return;
+    return this.setState({diff: row.exScore - t[0]["exScore"]});
+  }
+
+  componentWillUnmount(){
+    this._isMounted = false;
+  }
+  render(){
+    const {last,lastVer} = this.props;
+    const {diff} = this.state;
+    if(Number.isNaN(diff) || !lastVer){
+      return (null);
+    }
+    return (
+      <span style={{color:"#909090"}}>
+        <span>前作{diff > 0 ? "+" + diff : diff}</span>
+        {(last) &&
+          <span>
+            &nbsp;/&nbsp;
+          </span>
+        }
+      </span>
     );
   }
 }

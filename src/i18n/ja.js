@@ -6,6 +6,7 @@ const ja = {
   "GlobalNav.SongList": "楽曲一覧",
   "GlobalNav.unregisteredSongs": "未プレイ楽曲",
   "GlobalNav.Statistics": "統計",
+  "GlobalNav.Sync":"Sync",
   "GlobalNav.compare": "データ比較",
   "GlobalNav.Settings": "設定",
   "GlobalNav.Help": "説明書",

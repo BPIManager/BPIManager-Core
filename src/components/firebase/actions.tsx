@@ -7,8 +7,8 @@ export default class fbActions{
 
   authWithTwitter():void{
     fb.auth().signInWithRedirect(twitter);
-    fb.auth().getRedirectResult().then(result => {
-      console.log(result);
+    fb.auth().getRedirectResult().then(_result => {
+      return;
     }).catch(error => {
       console.log(error);
     });

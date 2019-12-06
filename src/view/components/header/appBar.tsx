@@ -23,7 +23,7 @@ import BorderColorIcon from '@material-ui/icons/BorderColor';
 import StarIcon from '@material-ui/icons/Star';
 import FilterNoneIcon from '@material-ui/icons/FilterNone';
 import HelpIcon from '@material-ui/icons/Help';
-
+import SwapVerticalCircleIcon from '@material-ui/icons/SwapVerticalCircle';
 import { FormattedMessage } from "react-intl";
 
 import Slide from "@material-ui/core/Slide";
@@ -104,6 +104,11 @@ class GlobalHeader extends React.Component<{global:any} & HideOnScrollProps,{isO
         to:"/settings",
         id:"GlobalNav.Settings",
         icon:<SettingsIcon />
+      },
+      {
+        to:"/sync",
+        id:"GlobalNav.Sync",
+        icon:<SwapVerticalCircleIcon />
       },
       {
         to:"/help",

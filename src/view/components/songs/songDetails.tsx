@@ -86,7 +86,7 @@ class SongDetails extends React.Component<P,{}> {
                 <TableCell>
                   <Select value={newClearState === -1 ? score.clearState : newClearState} onChange={handleClearState} displayEmpty>
                     {lampCSVArray.map((item:string,i:number)=>{
-                      return <MenuItem value={i}>{item}</MenuItem>
+                      return <MenuItem value={i} key={i}>{item}</MenuItem>
                     })}
                   </Select>
                 </TableCell>

@@ -26,6 +26,17 @@ export const _currentTheme = ()=>{
   return localStorage.getItem("theme") || "light";
 }
 
+export const _currentViewComponents = ()=>{
+  return localStorage.getItem("viewComponents") || "last,djLevel";
+}
+
+export const _setCurrentViewComponents = (array:string[]):string[]=>{
+  array = array.filter((x, i, self)=>self.indexOf(x) === i && x !== "none");
+  if(array.length === 0){ array.push("none"); }
+  localStorage.setItem("viewComponents",array.join());
+  return array;
+}
+
 const defaultURL = "https://files.poyashi.me/json/songsWithDP.json";
 
 export const _currentDefinitionURL = ()=>{

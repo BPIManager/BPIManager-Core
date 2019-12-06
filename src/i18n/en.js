@@ -7,6 +7,7 @@ const ja = {
   "GlobalNav.unregisteredSongs": "Not played yet",
   "GlobalNav.Statistics": "Statistics",
   "GlobalNav.compare": "Compare",
+  "GlobalNav.Sync":"Sync",
   "GlobalNav.Settings": "Settings",
   "GlobalNav.Help": "Help",
   "Index.heroText": "Easily manage your beatmania IIDX scores and visualize them as BPI, in Web.",

@@ -118,9 +118,6 @@ class ScatterGraph extends React.Component<{},S> {
         <Grid container spacing={3}>
           <Grid item xs={12} md={12} lg={12}>
             <Paper style={{padding:"15px"}}>
-              <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
-                BPI相関
-              </Typography>
               <Grid container spacing={1} style={{margin:"5px 0"}}>
                 <Grid item xs={6} lg={3}>
                   <FormControl style={{width:"100%"}}>
