@@ -72,11 +72,11 @@ th.MuiTableCell-root.MuiTableCell-head{
   cursor: pointer;
 }
 
-#__light .MuiTableBody-root > tr:hover,#__light .MuiTableBody-root > tr:hover .plusOverlayScoreBottom{
+#__light .MuiTableBody-root > tr:hover,#__light .MuiTableBody-root > tr:hover .plusOverlayScore,#__light .MuiTableBody-root > tr:hover .plusOverlayScoreBottom{
   background:#ececec !important;
 }
 
-#__dark .MuiTableBody-root > tr:hover,#__dark .MuiTableBody-root > tr:hover .plusOverlayScoreBottom{
+#__dark .MuiTableBody-root > tr:hover,#__dark .MuiTableBody-root > tr:hover .plusOverlayScore,#__dark .MuiTableBody-root > tr:hover .plusOverlayScoreBottom{
   background:#313131 !important;
 }
 

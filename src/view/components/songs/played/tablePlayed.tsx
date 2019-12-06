@@ -124,7 +124,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
 
                           {column.id === "title" && prefix}
                           {(mode > 5 && column.id === "currentBPI") && bp(row.missCount)}
-                          <span className="plusOverlayScore">
+                          <span className={i % 2 ? "plusOverlayScore isOddOverLayed" : "plusOverlayScore isEvenOverLayed"}>
                             {(j === 3) &&
                               <span>
                                 {lastVer && <LastVerComparison row={row} scoresDB={this.scoresDB} lastVer={lastVer} last={last}/>}
