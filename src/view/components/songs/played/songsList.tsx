@@ -126,9 +126,10 @@ export default class SongsList extends React.Component<P,stateInt> {
     const f = this.state.allSongsData;
 
     const evaluateRange = (data:scoreData):boolean=>{
-      const format = (t:string|Date)=>moment(t).format("YYYYMMDD");
+      const format = (t:string|Date|moment.Moment)=>moment(t).format("YYYYMMDD");
       return r === 0 ? true :
       r === 1 ? format(data.updatedAt) === format(new Date()) :
+      r === 2 ? format(data.updatedAt) === format(moment().subtract(1, 'day')) :
       moment(data.updatedAt).week() === moment(new Date()).week()
     }
 
@@ -232,7 +233,8 @@ export default class SongsList extends React.Component<P,stateInt> {
             <Select value={range} displayEmpty onChange={this.handleRangeCange}>
               <MenuItem value={0}>全期間</MenuItem>
               <MenuItem value={1}>本日更新分</MenuItem>
-              <MenuItem value={2}>今週更新分</MenuItem>
+              <MenuItem value={2}>前日更新分</MenuItem>
+              <MenuItem value={3}>今週更新分</MenuItem>
             </Select>
           </FormControl>
         </Typography>
