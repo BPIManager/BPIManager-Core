@@ -30,6 +30,10 @@ export const _currentViewComponents = ()=>{
   return localStorage.getItem("viewComponents") || "last,djLevel";
 }
 
+export const _currentBPIDefinition = ()=>{
+  return Number(localStorage.getItem("BPIDefinition")) || 1;
+}
+
 export const _setCurrentViewComponents = (array:string[]):string[]=>{
   array = array.filter((x, i, self)=>self.indexOf(x) === i && x !== "none");
   if(array.length === 0){ array.push("none"); }

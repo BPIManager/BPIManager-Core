@@ -16,7 +16,7 @@ export default class bpiCalcuator{
   private s:number = 0;
   private k:number = 0;
   private z:number = 0;
-  private powCoef:number = 1.5; //1.22
+  private powCoef:number = 1.175;
   private pgf = (j:number):number=> j === this.m ? this.m : 1 + ( j / this.m - 0.5 ) / ( 1 - j / this.m );
 
   private _allTwelvesLength:number = 0;

@@ -36,15 +36,12 @@ export default class Index extends React.Component<{},{}> {
           <Typography component="h3" variant="h3" align="center" color="textPrimary" gutterBottom>
             <FormattedMessage id="Top.Title"/>
           </Typography>
-          <Typography variant="h5" align="center" color="textSecondary" paragraph>
-            <FormattedMessage id="Index.heroText"/>
-          </Typography>
-          <Typography variant="body2" align="center" color="textSecondary" paragraph>
-            BPIの定義については、
-            <RefLink target="_blank" rel="noopener noreferrer" color="secondary" href="http://norimiso.web.fc2.com/aboutBPI.html">
+          <Typography variant="body2" align="center" paragraph style={{color:"#ff0000",fontWeight:"bold"}}>
+            BPIの定義式を一部改変しました。<br/>
+            <RefLink target="_blank" rel="noopener noreferrer" color="secondary" href="https://gist.github.com/potakusan/2675d2a8fbbfcf2372c8cbacf5f81617">
             こちら(外部サイト)
             </RefLink>
-            の記述を参照してください。
+            を参照してください。
           </Typography>
           <AddToHomeScreenTicker/>
           <div>
@@ -91,13 +88,13 @@ export default class Index extends React.Component<{},{}> {
                   <FormattedMessage id="Index.notes2"/>
                 </Typography>
                 <Typography align="center" color="textSecondary" paragraph variant="caption">
-                  BPIManager beta ver0.0.1.6<br/>
+                  BPIManager beta ver0.0.1.7<br/>
                   {_lang() === "en" &&
                     <span>If you have encountered unintended behaviours or have opinions to make this tool much better, please contact <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>.</span>
                   }
                   {_lang() === "ja" &&
                     <span>バグ報告などは<RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>までお寄せください。<br/>
-                  また、バージョンアップ情報なども同アカウントにて発信しています。</span>
+                  バージョンアップ情報も同アカウントにて発信しています。</span>
                   }
                 </Typography>
               </Grid>

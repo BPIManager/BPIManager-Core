@@ -1,21 +1,25 @@
 import * as React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import timeFormatter from "../common/timeFormatter";
-import storageWrapper,{songsDB} from "../indexedDB";
+import storageWrapper,{songsDB, scoresDB, scoreHistoryDB} from "../indexedDB";
 import WarningIcon from '@material-ui/icons/Warning';
+import { _currentBPIDefinition } from '../settings';
 
-export default class Initialize extends React.Component<{},{show:boolean,error:boolean,errorMessage:string}>{
+export default class Initialize extends React.Component<{},{show:boolean,error:boolean,errorMessage:string,consoleMes:string}>{
   storage:any;
   songsDB:any;
+  scoresDB:any;
 
   constructor(props:Object){
     super(props);
     this.storage = new storageWrapper();
     this.songsDB = new songsDB();
+    this.scoresDB = new scoresDB();
     this.state = {
       show : true,
       error:false,
-      errorMessage:""
+      consoleMes:"",
+      errorMessage:"Loading essential components..."
     }
   }
 
@@ -28,10 +32,20 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
   async componentDidMount(){
     try{
 
-      // Close the world bug fix 2019/11/11
+      // Close the world bug fix 2019/11/11 & 2019/12/08
         this.songsDB.removeItem("Close the World feat. a☆ru");
+        this.scoresDB.removeSpecificItemAtAllStores("Close the World feat. a☆ru");
       //
       const songsAvailable:string[] = await this.songsDB.getAll();
+      if(songsAvailable.length > 0 && _currentBPIDefinition() < 2){
+        this.setState({consoleMes:"BPI定義式を更新しています..."});
+        const schDB = new scoreHistoryDB();
+        const scDB = new scoresDB();
+        await scDB.recalculateBPI();
+        await schDB.recalculateBPI();
+        localStorage.setItem("BPIDefinition","2");
+        return this.setState({show:false});
+      }
       if(songsAvailable.length > 0){
         return this.setState({show:false});
       }
@@ -74,7 +88,8 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
           <CircularProgress/>
         </div>
         <div>
-          <p>Loading essential components...</p>
+          <p style={{textAlign:"center"}}>{this.state.consoleMes}</p>
+          <p style={{textAlign:"center"}}>画面を閉じないでください</p>
         </div>
       </div>
     );

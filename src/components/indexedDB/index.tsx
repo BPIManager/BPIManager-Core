@@ -239,6 +239,10 @@ export const scoresDB = class extends storageWrapper{
     return await this.scores.where({title:title,storedAt:storedAt}).delete();
   }
 
+  async removeSpecificItemAtAllStores(title:string):Promise<number>{
+    return await this.scores.where({title:title}).delete();
+  }
+
   async recalculateBPI(){
     try{
       const self = this;

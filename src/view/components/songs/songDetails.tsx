@@ -101,18 +101,6 @@ class SongDetails extends React.Component<P,{}> {
                   />
                 </TableCell>
               </TableRow>
-              { score.lastPlayed &&
-                <TableRow>
-                  <TableCell><FormattedMessage id="SongDetail.LastPlayed"/></TableCell>
-                  <TableCell>{score.lastPlayed}</TableCell>
-                </TableRow>
-              }
-              { (score.Pgreat && score.great) &&
-                <TableRow>
-                  <TableCell><FormattedMessage id="SongDetail.ScoreDetails"/></TableCell>
-                  <TableCell>PG:{score.Pgreat} G:{score.great}</TableCell>
-                </TableRow>
-              }
             </TableBody>
           </Table>
         </Paper>

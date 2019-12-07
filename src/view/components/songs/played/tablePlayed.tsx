@@ -116,7 +116,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                 return (
                   <TableRow
                     onClick={()=>this.handleOpen(false,row)}
-                    hover role="checkbox" tabIndex={-1} key={row.title + i} className={ i % 2 ? "isOdd" : "isEven"}>
+                    hover role="checkbox" tabIndex={-1} key={row.title + row.prefix + i} className={ i % 2 ? "isOdd" : "isEven"}>
                     {columns.map((column,j) => {
                       return (
                         <TableCell key={column.id + prefix} style={{backgroundColor : diffColor(j,row),position:"relative"}}>
@@ -127,7 +127,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                           <span className={i % 2 ? "plusOverlayScore isOddOverLayed" : "plusOverlayScore isEvenOverLayed"}>
                             {(j === 3) &&
                               <span>
-                                {lastVer && <LastVerComparison row={row} scoresDB={this.scoresDB} lastVer={lastVer} last={last}/>}
+                                {lastVer && <LastVerComparison row={row} scoresDB={this.scoresDB} lastVer={lastVer} last={last} mode={mode}/>}
                                 {(last && row.lastScore > -1 && mode === 0) &&
                                   `${row.exScore - row.lastScore > 0 && "+"}${Number(row.exScore - row.lastScore)}`
                                 }
@@ -192,11 +192,11 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
   }
 }
 
-class LastVerComparison extends React.Component<{row:any,scoresDB:any,last:boolean,lastVer:boolean},{diff:number}>{
+class LastVerComparison extends React.Component<{row:any,scoresDB:any,last:boolean,lastVer:boolean,mode:number},{diff:number}>{
 
   private _isMounted = false;
 
-  constructor(props:{row:any,scoresDB:any,last:boolean,lastVer:boolean}){
+  constructor(props:{row:any,scoresDB:any,last:boolean,lastVer:boolean,mode:number}){
     super(props);
     this.state = {
       diff:NaN,
@@ -215,7 +215,7 @@ class LastVerComparison extends React.Component<{row:any,scoresDB:any,last:boole
     this._isMounted = false;
   }
   render(){
-    const {last,lastVer} = this.props;
+    const {last,lastVer,mode} = this.props;
     const {diff} = this.state;
     if(Number.isNaN(diff) || !lastVer){
       return (null);
@@ -223,7 +223,7 @@ class LastVerComparison extends React.Component<{row:any,scoresDB:any,last:boole
     return (
       <span style={{color:"#909090"}}>
         <span>前作{diff > 0 ? "+" + diff : diff}</span>
-        {(last) &&
+        {(last && mode < 6) &&
           <span>
             &nbsp;/&nbsp;
           </span>

@@ -164,21 +164,6 @@ export default class Index extends React.Component<{},{}> {
               </Typography>
             </ExpansionPanelDetails>
           </ExpansionPanel>
-          <ExpansionPanel>
-            <ExpansionPanelSummary
-              expandIcon={<ExpandMoreIcon />}
-            >
-              <Typography>
-                BPI定義
-              </Typography>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
-              <Typography display="block">
-                昨今の状況を踏まえ、BPIの定義式自体を改変して使用する可能性があります。<br/>
-                現状で改変点はありませんが、新たに改変を行った場合はGitHubにてその点のソースコード開示を行います。
-              </Typography>
-            </ExpansionPanelDetails>
-          </ExpansionPanel>
         </Container>
       </div>
     );
