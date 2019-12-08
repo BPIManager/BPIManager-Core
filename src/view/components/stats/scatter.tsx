@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { scoresDB } from '../../../components/indexedDB';
 import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import {_isSingle,_currentStore, _chartColor, _goalBPI} from "../../../components/settings";

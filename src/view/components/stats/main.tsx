@@ -9,7 +9,7 @@ import bpiCalcuator from '../../../components/bpi';
 import {_isSingle,_currentStore, _chartColor, _goalBPI} from "../../../components/settings";
 import moment from 'moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, BarChart } from 'recharts';
+import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, BarChart} from 'recharts';
 import _withOrd from '../../../components/common/ord';
 import {Link as RefLink, Table, TableRow, TableCell, TableBody} from '@material-ui/core/';
 import { difficultyDiscriminator } from '../../../components/songs/filter';
@@ -218,7 +218,7 @@ class Main extends React.Component<{intl:any},S> {
         ["Innocent Walls","hyper"],
         ["IMPLANTATION","another"],
         ["Sense 2007","another"],
-        ["ワルツ第17番 ト短調”大犬のワルツ”","4"]
+        ["ワルツ第17番 ト短調”大犬のワルツ”","another"]
       ]
     }
     const objective = _goalBPI(),isSingle = _isSingle(),currentStore = _currentStore();
@@ -229,18 +229,19 @@ class Main extends React.Component<{intl:any},S> {
       let pusher:number[] = [];
 
       for(let i = 0; i < len; ++i){
-        const ind = await db.getItem(songs[title][i][0],songs[title][i][1],currentStore,isSingle);
+        const ind = await db.getItem(unescape(songs[title][i][0]),songs[title][i][1],currentStore,isSingle);
         ind.length > 0 && pusher.push(ind[0]["currentBPI"]);
       }
       if(pusher.length < len){
-        for(let j =0; j < len - pusher.length;++j){
+        const l = len - pusher.length;
+        for(let j = 0; j < l;++j){
           pusher.push(-15);
         }
       }
 
       const bpi = new bpiCalcuator();
       bpi.allTwelvesBPI = pusher;
-      bpi.allTwelvesLength = len;
+      bpi.allTwelvesLength = pusher.length;
       const total = bpi.totalBPI()
       collection.push({
         title: title,

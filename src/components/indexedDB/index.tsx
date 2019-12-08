@@ -84,6 +84,18 @@ export const scoresDB = class extends storageWrapper{
     }
   }
 
+  async getAllVersions():Promise<scoreData[]>{
+    try{
+      const currentData = await this.scores.where({
+        isSingle:_isSingle(),
+      }).toArray();
+      return currentData;
+    }catch(e){
+      console.error(e);
+      return [];
+    }
+  }
+
   async loadStore():Promise<this>{
     try{
       this.currentData = await this.scores.where({

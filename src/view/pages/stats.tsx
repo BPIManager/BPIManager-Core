@@ -7,6 +7,7 @@ import Tab from '@material-ui/core/Tab';
 
 import Main from "../components/stats/main";
 import Scatter from "../components/stats/scatter";
+import MyBest from "../components/stats/mybest";
 
 interface S {
   currentTab:number
@@ -40,9 +41,11 @@ class Stats extends React.Component<{intl:any},S> {
         >
           <Tab label="基本データ" />
           <Tab label="分布" />
+          <Tab label="マイ歴代" />
         </Tabs>
         {this.state.currentTab === 0 && <Main/>}
         {this.state.currentTab === 1 && <Scatter/>}
+        {this.state.currentTab === 2 && <MyBest/>}
       </Container>
     );
   }

@@ -129,7 +129,10 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                               <span>
                                 {lastVer && <LastVerComparison row={row} scoresDB={this.scoresDB} lastVer={lastVer} last={last} mode={mode}/>}
                                 {(last && row.lastScore > -1 && mode === 0) &&
-                                  `${row.exScore - row.lastScore > 0 && "+"}${Number(row.exScore - row.lastScore)}`
+                                  <span>
+                                    {row.exScore - row.lastScore >= 0 && <span>+</span>}
+                                    {Number(row.exScore - row.lastScore)}
+                                  </span>
                                 }
                                 {(mode > 0 && mode < 6) &&
                                   <span>-{behindScore(row,this.props.allSongsData,mode)}</span>
@@ -214,6 +217,7 @@ class LastVerComparison extends React.Component<{row:any,scoresDB:any,last:boole
   componentWillUnmount(){
     this._isMounted = false;
   }
+
   render(){
     const {last,lastVer,mode} = this.props;
     const {diff} = this.state;
@@ -222,7 +226,7 @@ class LastVerComparison extends React.Component<{row:any,scoresDB:any,last:boole
     }
     return (
       <span style={{color:"#909090"}}>
-        <span>前作{diff > 0 ? "+" + diff : diff}</span>
+        <span>前作{diff >= 0 ? "+" + diff : diff}</span>
         {(last && mode < 6) &&
           <span>
             &nbsp;/&nbsp;
