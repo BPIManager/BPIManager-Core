@@ -91,7 +91,7 @@ export default class bpiCalcuator{
     const _s = this.pgf(s),_k = this.pgf(k),_z = this.pgf(z);
     const _s_ = _s / _k, _z_ = _z / _k;
     const p = s >= k;
-    return Math.max(-15,Math.round((p ? 100 : -100 ) * ( Math.pow((p ? Math.log(_s_) : -Math.log(_s_)),this.powCoef) / Math.pow(Math.log(_z_),this.powCoef) ) * 1000) / 1000);
+    return Math.max(-15,Math.round((p ? 100 : -100 ) * ( Math.pow((p ? Math.log(_s_) : -Math.log(_s_)),this.powCoef) / Math.pow(Math.log(_z_),this.powCoef) ) * 100) / 100);
   }
 
   setData(max:number,avg:number,wr:number):void{
