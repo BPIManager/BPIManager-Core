@@ -72,6 +72,7 @@ const ja = {
   "SongDetail.MissCount":"ミスカウント",
   "SongDetail.LastPlayed":"最終プレイ",
   "SongDetail.ScoreDetails":"詳細",
+  "SongDetail.Coef":"譜面係数",
   "SongDiffs.Target":"データセット",
   "SongDiffs.WithinSameVersion":"同一バージョン内",
   "SongDiffs.EachVersion":"バージョン間",

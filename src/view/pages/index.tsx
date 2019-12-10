@@ -37,11 +37,13 @@ export default class Index extends React.Component<{},{}> {
             <FormattedMessage id="Top.Title"/>
           </Typography>
           <Typography variant="body2" align="center" paragraph style={{color:"#ff0000",fontWeight:"bold"}}>
-            BPIの定義式を一部改変しました。<br/>
-            <RefLink target="_blank" rel="noopener noreferrer" color="secondary" href="https://gist.github.com/potakusan/2675d2a8fbbfcf2372c8cbacf5f81617">
-            こちら(外部サイト)
+            2019/12/11<br/>
+            BPIの定義式を<u>再度</u>一部改変しました。<br/>
+            <RefLink target="_blank" rel="noopener noreferrer" color="secondary" href="https://gist.github.com/potakusan/30004f4c05e6887399e779afe0fac4e6">
+            こちら
             </RefLink>
-            を参照してください。
+            を参照してください。<br/>
+            (設定より定義ファイル更新が必要です)
           </Typography>
           <AddToHomeScreenTicker/>
           <div>
@@ -88,8 +90,8 @@ export default class Index extends React.Component<{},{}> {
                   <FormattedMessage id="Index.notes2"/>
                 </Typography>
                 <Typography align="center" color="textSecondary" paragraph variant="caption">
-                  BPIManager beta ver0.0.1.8<br/>
-                  last update: 2019/12/08 JST<br/>
+                  BPIManager beta ver0.0.1.9<br/>
+                  last update: 2019/12/10 JST<br/>
                   {_lang() === "en" &&
                     <span>If you have encountered unintended behaviours or have opinions to make this tool much better, please contact <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>.</span>
                   }

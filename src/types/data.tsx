@@ -33,4 +33,5 @@ export interface songData{
   isFavorited:boolean,
   isCreated:boolean,
   updatedAt:string,
+  coef?:number,
 }

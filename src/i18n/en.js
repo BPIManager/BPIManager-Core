@@ -68,6 +68,7 @@ const ja = {
   "SongDetail.You":"You",
   "SongDetail.Version":"Version",
   "SongDetail.ScoreDetailHead":"Play Status",
+  "SongDetail.Coef":"Coefficiency of this chart",
   "SongDiffs.Target":"Datasets",
   "SongDiffs.WithinSameVersion":"Within the same version",
   "SongDiffs.EachVersion":"Across versions",
@@ -164,6 +165,8 @@ const ja = {
   "Settings.ChangeDefinitionURL2":"this page",
   "Settings.ChangeDefinitionURL3":" to learn about the format for definition files and precautions.",
   "Settings.ChangeDefinitionURL4":"Leave form blank and save to apply the default url.",
+  "Stats.DistributionOfDJRank":"DJ Ranks",
+  "Stats.DistributionOfClearState":"Clear States",
 };
 
 export default ja;

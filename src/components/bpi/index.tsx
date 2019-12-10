@@ -27,6 +27,11 @@ export default class bpiCalcuator{
     this.totalKaidens = this.isSingle ? 2645 : 612;
   }
 
+  setCoef(coef:number = 1.175){
+    if(coef !== -1) this.powCoef = coef;
+    return;
+  }
+
   getTotalKaidens(){
     return this.totalKaidens;
   }
@@ -38,6 +43,7 @@ export default class bpiCalcuator{
       this.k = data["avg"];
       this.z = data["wr"];
       this.m = data["notes"] * 2;
+      (data["coef"] && data["coef"] > 0 && data["difficultyLevel"] === "12" && data["dpLevel"] === "0") && this.setCoef(data["coef"]);
       return this.exec();
     }catch(e){
       return -15;
@@ -61,6 +67,12 @@ export default class bpiCalcuator{
       this.k = this.propData[0]["avg"];
       this.z = this.propData[0]["wr"];
       this.m = this.propData[0]["notes"] * 2;
+      if(this.propData[0]["coef"] && this.propData[0]["coef"] > 0 && this.propData[0]["difficultyLevel"] === "12"
+      && this.propData[0]["dpLevel"] === "0"){
+        this.setCoef(this.propData[0]["coef"]);
+      }else{
+        this.setCoef();
+      }
       return {error:false,bpi:this.exec(),difficultyLevel:this.propData[0]["difficultyLevel"]};
 
     }catch(e){
@@ -79,8 +91,7 @@ export default class bpiCalcuator{
     const _s = this.pgf(s),_k = this.pgf(k),_z = this.pgf(z);
     const _s_ = _s / _k, _z_ = _z / _k;
     const p = s >= k;
-
-    return Math.max(-15,Math.round((p ? 100 : -100 ) * ( Math.pow((p ? Math.log(_s_) : -Math.log(_s_)),this.powCoef) / Math.pow(Math.log(_z_),this.powCoef) ) * 100) / 100);
+    return Math.max(-15,Math.round((p ? 100 : -100 ) * ( Math.pow((p ? Math.log(_s_) : -Math.log(_s_)),this.powCoef) / Math.pow(Math.log(_z_),this.powCoef) ) * 1000) / 1000);
   }
 
   setData(max:number,avg:number,wr:number):void{

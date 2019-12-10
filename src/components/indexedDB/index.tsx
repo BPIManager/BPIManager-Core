@@ -22,6 +22,11 @@ const storageWrapper = class extends Dexie{
       stores : "&name,updatedAt",
       scoreHistory : "&++num,[title+storedAt+difficulty+isSingle],[title+storedAt+difficulty+isSingle+updatedAt],title,difficulty,difficultyLevel,storedAt,exScore,BPI,isSingle,updatedAt"
     });
+    this.version(2).stores({
+      scores : "[title+difficulty+storedAt+isSingle],title,*difficulty,*difficultyLevel,*version,currentBPI,exScore,Pgreat,great,missCount,clearState,lastPlayed,storedAt,isSingle,isImported,updatedAt,lastScore",
+      songs : "&++num,title,*difficulty,*difficultyLevel,wr,avg,notes,bpm,textage,dpLevel,isCreated,isFavorited,coef,[title+difficulty]",
+      scoreHistory : "&++num,[title+storedAt+difficulty+isSingle],[title+storedAt+difficulty+isSingle+updatedAt],title,difficulty,difficultyLevel,storedAt,exScore,BPI,isSingle,updatedAt"
+    });
     this.scores = this.table("scores");
     this.songs = this.table("songs");
     this.stores = this.table("stores");
@@ -558,12 +563,20 @@ export const songsDB = class extends storageWrapper{
         dpLevel:item["dpLevel"],
         isFavorited:item["isFavorited"] || false,
         isCreated: item["isCreated"] || false,
+        coef:Number(this.validateCoef(item["coef"] || -1)),
         updatedAt: item["updatedAt"] || timeFormatter(0),
       })
     }catch(e){
       console.error(e);
       return 1;
     }
+  }
+
+  validateCoef = (coef = -1):number=>{
+    if(coef < 0.8 && coef !== -1){
+      return 0.88;
+    }
+    return coef;
   }
 
   async updateItem(item:any):Promise<any>{
@@ -573,6 +586,7 @@ export const songsDB = class extends storageWrapper{
       }).modify({
         wr:Number(item["wr"]),
         avg:Number(item["avg"]),
+        coef:Number(this.validateCoef(item["coef"] || -1)),
         updatedAt: timeFormatter(0),
       })
     }catch(e){

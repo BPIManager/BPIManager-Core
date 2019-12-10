@@ -8,7 +8,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import { FormattedMessage } from "react-intl";
-import { lampCSVArray } from "../../../components/songs/filter";
+import { lampCSVArray, getSongSuffixForIIDXInfo } from "../../../components/songs/filter";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
@@ -100,6 +100,27 @@ class SongDetails extends React.Component<P,{}> {
                     value={newMissCount === -1 ? score.missCount : newMissCount}
                   />
                 </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </Paper>
+        <Paper>
+          <Table aria-label="Score Details">
+            <TableHead>
+              <TableRow>
+                <TableCell style={{minWidth:"130px",maxWidth:"130px"}}>Coefficient</TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell><FormattedMessage id="SongDetail.Coef"/></TableCell>
+                <TableCell>{song.coef || 1.175}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Plot</TableCell>
+                <TableCell><img src={`https://files.poyashi.me/plots/`+ song.title.replace(/:|\"|\*/g,"") + getSongSuffixForIIDXInfo(song.title,song.difficulty) + ".jpeg"}
+                  style={{maxWidth:"100%"}} onError={(e)=>(e.target as Element).src = 'https://files.poyashi.me/noimg.png'}/></TableCell>
               </TableRow>
             </TableBody>
           </Table>
