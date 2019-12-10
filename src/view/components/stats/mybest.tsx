@@ -3,9 +3,8 @@ import { scoresDB } from '../../../components/indexedDB';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import {_isSingle,_currentStore, _chartColor, _goalBPI} from "../../../components/settings";
+import {_isSingle,} from "../../../components/settings";
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { _prefix } from '../../../components/songs/filter';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
@@ -16,7 +15,6 @@ import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import TableBody from '@material-ui/core/TableBody';
 import TablePagination from '@material-ui/core/TablePagination';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface S {
   isLoading:boolean,
@@ -143,8 +141,7 @@ class MyBest extends React.Component<{},S> {
 
 
   render(){
-    const {page,sort,isDesc,rowsPerPage,isLoading,targetLevel,scoreData,scoreByVersion} = this.state;
-    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+    const {page,sort,isDesc,rowsPerPage,isLoading,targetLevel,scoreData} = this.state;
     return (
       <Container style={{padding:0}} fixed>
         <Grid container spacing={3}>

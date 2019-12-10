@@ -120,7 +120,7 @@ class SongDetails extends React.Component<P,{}> {
               <TableRow>
                 <TableCell>Plot</TableCell>
                 <TableCell><img src={`https://files.poyashi.me/plots/`+ song.title.replace(/:|\"|\*/g,"") + getSongSuffixForIIDXInfo(song.title,song.difficulty) + ".jpeg"}
-                  style={{maxWidth:"100%"}} onError={(e)=>(e.target as Element).src = 'https://files.poyashi.me/noimg.png'}/></TableCell>
+                  style={{maxWidth:"100%"}} onError={(e)=>(e.target as HTMLImageElement).src = 'https://files.poyashi.me/noimg.png'}/></TableCell>
               </TableRow>
             </TableBody>
           </Table>
