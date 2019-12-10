@@ -18,8 +18,8 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
     this.state = {
       show : true,
       error:false,
-      consoleMes:"",
-      errorMessage:"Loading essential components..."
+      consoleMes:"Loading essential components...",
+      errorMessage:""
     }
   }
 
