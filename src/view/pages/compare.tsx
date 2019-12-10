@@ -147,6 +147,7 @@ export default class Compare extends React.Component<{},S> {
       await sdb.getOneItemIsDouble(fData[i]["title"],fData[i]["difficulty"]);
       const max = songData[0]["notes"] * 2;
       calc.setData(songData[0]["notes"] * 2,songData[0]["avg"],songData[0]["wr"]);
+      calc.setCoef(songData[0]["coef"] || -1);
       const percentager = (exScore:number):number =>{
         return Math.ceil(exScore / max * 10000) / 100;
       }
