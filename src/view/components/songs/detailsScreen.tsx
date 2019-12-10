@@ -100,6 +100,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
     }
     if(!song || !score){ return []; }
     this.calc.setData(song.notes * 2, song.avg, song.wr);
+    this.calc.setCoef(song.coef || -1);
     const bpiBasis = [0,10,20,30,40,50,60,70,80,90,100];
     const mybest = newScore ? newScore : score.exScore;
     for(let i = 0;i < bpiBasis.length; ++i){
