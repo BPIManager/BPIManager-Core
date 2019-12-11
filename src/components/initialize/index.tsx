@@ -1,7 +1,7 @@
 import * as React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import timeFormatter from "../common/timeFormatter";
-import storageWrapper,{songsDB, scoresDB, scoreHistoryDB} from "../indexedDB";
+import storageWrapper,{songsDB, scoresDB} from "../indexedDB";
 import WarningIcon from '@material-ui/icons/Warning';
 import { _currentBPIDefinition } from '../settings';
 
@@ -37,15 +37,6 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
         this.scoresDB.removeSpecificItemAtAllStores("Close the World feat. a☆ru");
       //
       const songsAvailable:string[] = await this.songsDB.getAll();
-      if(songsAvailable.length > 0 && _currentBPIDefinition() < 2){
-        this.setState({consoleMes:"BPI定義式を更新しています..."});
-        const schDB = new scoreHistoryDB();
-        const scDB = new scoresDB();
-        await scDB.recalculateBPI();
-        await schDB.recalculateBPI();
-        localStorage.setItem("BPIDefinition","2");
-        return this.setState({show:false});
-      }
       if(songsAvailable.length > 0){
         return this.setState({show:false});
       }

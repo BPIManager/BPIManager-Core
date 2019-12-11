@@ -28,7 +28,7 @@ import SongDetails from "./songDetails";
 import SongDiffs from "./songDiffs";
 import { UnregisterCallback } from "history";
 import TabPanel from "./common/tabPanel";
-import { _currentTheme } from "../../../components/settings";
+import { _currentTheme,isEnableTweetButton } from "../../../components/settings";
 import _djRank from "../../../components/common/djRank";
 
 interface P{
@@ -347,9 +347,11 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
           {showCharts &&
             <BPIChart song={song} newScore={newScore} score={score} chartData={chartData} graphLastUpdated={this.state.graphLastUpdated}/>
           }
-          <Fab style={{position:"absolute","right":"20px","bottom":"50px",backgroundColor:"#55acee",color:"#fff"}} onClick={()=>this.jumpWeb(3)} aria-label="tweet">
-            <TwitterIcon />
-          </Fab>
+          {isEnableTweetButton() &&
+            <Fab style={{position:"absolute","right":"20px","bottom":"50px",backgroundColor:"#55acee",color:"#fff"}} onClick={()=>this.jumpWeb(3)} aria-label="tweet">
+              <TwitterIcon />
+            </Fab>
+          }
         </TabPanel>
         <TabPanel value={currentTab} index={1}>
           <SongDetails song={song} score={score} newMissCount={newMissCount} newClearState={newClearState}

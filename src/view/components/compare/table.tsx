@@ -123,13 +123,15 @@ export default class Compare extends React.Component<P,S> {
                       <TableCell key={column.id + prefix} className={j === 4 ? "compareGap" : ""} style={{backgroundColor : diffColor(j,row.scoreData),position:"relative"}}>
                         {j === 2 &&
                           <span>
-                            {displayMode !== "bpi" && row[column.id]}
-                            {displayMode === "bpi" && row.scoreData.currentBPI}
+                            {displayMode === "exScore" && row[column.id]}
+                            {displayMode === "bpi" && Number(row.scoreData.currentBPI).toFixed(2)}
+                            {displayMode === "percentage" && Number(row[column.id]).toFixed(2)}
                           </span>
                         }
                         {j !==  2 &&
                           <span style={ (j === 4 && row[column.id] >= 0) ? {color:"rgb(0, 177, 14)"} : (j === 4 && row[column.id] < 0) ? {color:"#ff0000"} : {color:"inherit"}}>
-                            {row[column.id]}
+                            {(j <= 2 || displayMode === "exScore") && row[column.id]}
+                            {(j > 2 && displayMode !== "exScore") && Number(row[column.id]).toFixed(2)}
                           </span>
                         }
                         {j === 1 && prefix}

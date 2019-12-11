@@ -77,7 +77,6 @@ class MyBest extends React.Component<{},S> {
       }
     }
     let v:{[key:string]:number} = {};
-    //BPI別集計
     this.setState(Object.assign({
       isLoading:false,
       scoreData:this.apply(Object.keys(scoreDataKeys).reduce((group:any[],item)=>{
@@ -200,7 +199,8 @@ class MyBest extends React.Component<{},S> {
                                 {columns.map((column,j) => {
                                   return (
                                     <TableCell key={column.id + prefix} style={{textAlign:j === 0 ? "left" : "center",width:j === 0 ? "80%" : "initial"}}>
-                                      {row[column.id]}
+                                      {column.id !== "currentBPI" && row[column.id]}
+                                      {column.id === "currentBPI" && Number(row[column.id]).toFixed(2)}
                                       {column.id === "title" && prefix}
                                     </TableCell>
                                   );

@@ -51,6 +51,15 @@ export const _setCurrentDefinitionURL = (url:string = defaultURL)=>{
   return localStorage.setItem("defURL",url);
 }
 
+export const isEnableTweetButton = ()=>{
+  const t = localStorage.getItem("isEnableTweetButton");
+  return t ? (t === "true" ? true : false) : true;
+}
+
+export const setEnableTweetButton = (newState:boolean)=>{
+  return localStorage.setItem("isEnableTweetButton",String(newState));
+}
+
 export const _currentStoreWithFullName = ()=>{
   const t:string = localStorage.getItem("currentStore") || "27";
   return t === "26" ? "26 Rootage" : "27 HEROIC VERSE"

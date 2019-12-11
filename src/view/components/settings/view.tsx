@@ -5,15 +5,18 @@ import { injectIntl } from 'react-intl';
 import Paper from '@material-ui/core/Paper';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
-import { _currentViewComponents, _setCurrentViewComponents } from '../../../components/settings';
+import { _currentViewComponents, _setCurrentViewComponents,isEnableTweetButton,setEnableTweetButton } from '../../../components/settings';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormLabel from '@material-ui/core/FormLabel';
+import Divider from '@material-ui/core/Divider';
+import Switch from '@material-ui/core/Switch';
 
 interface S {
   isLoading:boolean,
   currentVersion:string[],
+  isEnableTweetButton:boolean,
 }
 
 interface P{
@@ -28,6 +31,7 @@ class Settings extends React.Component<P,S> {
     this.state ={
       isLoading:false,
       currentVersion:_currentViewComponents().split(","),
+      isEnableTweetButton:isEnableTweetButton()
     }
   }
 
@@ -46,7 +50,7 @@ class Settings extends React.Component<P,S> {
   }
 
   render(){
-    const {isLoading} = this.state;
+    const {isLoading,isEnableTweetButton} = this.state;
     if(isLoading){
       return (
         <Container className="loaderCentered">
@@ -75,6 +79,22 @@ class Settings extends React.Component<P,S> {
           <Typography variant="caption" display="block">
             楽曲リストにおいて表示する内容を選択してください。<br/>
             「前作スコアからの更新点数」表示は、マシンスペック・表示件数によってはページのレンダリングが遅延する可能性があります。
+          </Typography>
+          <Divider style={{margin:"10px 0"}}/>
+          <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
+            楽曲画面/ツイートボタン
+          </Typography>
+          <Switch
+            checked={isEnableTweetButton}
+            onChange={(e:React.ChangeEvent<HTMLInputElement>,)=>{
+              if(typeof e.target.checked === "boolean"){
+                setEnableTweetButton(e.target.checked);
+                return this.setState({isEnableTweetButton:e.target.checked})
+              }
+            }}
+          />
+          <Typography variant="caption" display="block">
+            個別楽曲ページの「グラフ」タブに、BPI伸びやEXスコアなどをツイートできるボタンを表示します。
           </Typography>
         </Paper>
       </Container>
