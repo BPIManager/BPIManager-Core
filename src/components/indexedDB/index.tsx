@@ -584,6 +584,7 @@ export const songsDB = class extends storageWrapper{
       return await this.songs.where({
         "title":item["title"],"difficulty":item["difficulty"]
       }).modify({
+        notes:Number(item["notes"]),
         wr:Number(item["wr"]),
         avg:Number(item["avg"]),
         coef:Number(this.validateCoef(item["coef"] || -1)),
