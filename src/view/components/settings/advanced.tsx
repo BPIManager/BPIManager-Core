@@ -15,8 +15,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogActions from '@material-ui/core/DialogActions';
-import { _currentVersion } from '../../../components/settings';
+import { _currentVersion, _setTraditionalMode, _traditionalMode } from '../../../components/settings';
 import { scoresDB, scoreHistoryDB, songsDB } from '../../../components/indexedDB';
+import Divider from '@material-ui/core/Divider';
+import { Switch } from '@material-ui/core';
+import CachedIcon from '@material-ui/icons/Cached';
 
 interface S {
   isLoading:boolean,
@@ -27,7 +30,10 @@ interface S {
   message2:string,
   currentResetStore:string,
   isDialogOpen:boolean,
-  isURLDialogOpen:boolean
+  isURLDialogOpen:boolean,
+  traditionalMode:number,
+  initialT:number,
+  recalculating:boolean,
 }
 
 interface P{
@@ -49,6 +55,9 @@ class Settings extends React.Component<P,S> {
       disableDeleteBtn:false,
       isDialogOpen:false,
       isURLDialogOpen:false,
+      traditionalMode:_traditionalMode(),
+      initialT:_traditionalMode(),
+      recalculating:false,
     }
   }
 
@@ -74,8 +83,22 @@ class Settings extends React.Component<P,S> {
 
   toggleDialog = ()=> this.setState({isDialogOpen:!this.state.isDialogOpen})
 
+  recalc = async ()=>{
+    try{
+      const scDB = new scoresDB(), schDB = new scoreHistoryDB();
+      _setTraditionalMode(this.state.traditionalMode);
+      this.setState({recalculating:true});
+      await scDB.recalculateBPI();
+      await schDB.recalculateBPI();
+      this.setState({recalculating:false,initialT:this.state.traditionalMode});
+    }catch(e){
+      console.log(e);
+      this.setState({recalculating:false});
+    }
+  }
+
   render(){
-    const {isLoading,isDialogOpen,message2,currentResetStore,disableDeleteBtn} = this.state;
+    const {isLoading,isDialogOpen,message2,currentResetStore,disableDeleteBtn,traditionalMode,recalculating,initialT} = this.state;
     if(isLoading){
       return (
         <Container className="loaderCentered">
@@ -86,6 +109,31 @@ class Settings extends React.Component<P,S> {
     return (
       <Container fixed style={{padding:0}}>
         <Paper style={{padding:"15px"}}>
+          <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
+            従来の計算方式を利用
+          </Typography>
+          <Switch
+            checked={traditionalMode === 1 ? true : false}
+            onChange={(e:React.ChangeEvent<HTMLInputElement>,)=>{
+              if(typeof e.target.checked !== "boolean"){
+                return;
+              }
+              this.setState({traditionalMode:e.target.checked === true ? 1 : 0});
+            }}
+          />
+          <Typography variant="caption" display="block">
+            計算式上における係数を1.5に固定してBPIを計算します。<br/>
+            全数値を再計算するため、変更の適用には時間がかかります。
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.recalc}
+            disabled={traditionalMode === initialT}
+            startIcon={<CachedIcon />}>
+            適用
+          </Button>
+          <Divider style={{margin:"10px 0"}}/>
           <FormControl>
             <InputLabel><FormattedMessage id="Settings.dataClear"/></InputLabel>
             <Select value={currentResetStore} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
@@ -117,6 +165,14 @@ class Settings extends React.Component<P,S> {
             {disableDeleteBtn && <CircularProgress size={24} style={{color:"#777",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
           </div>
         </Paper>
+        {recalculating && <div style={{width:"100vw",height:"100vh",position:"absolute" as "absolute",zIndex:9999,display:"flex",justifyContent:"center",alignItems:"center",background:"#ffffffd9",top:0,left:0,flexDirection:"column",textAlign:"center"}}>
+          <CircularProgress/>
+          <p>
+          再計算中です<br/>
+          画面を閉じないでください...
+          </p>
+        </div>
+        }
       </Container>
     );
   }

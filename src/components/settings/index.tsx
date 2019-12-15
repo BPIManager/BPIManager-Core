@@ -34,6 +34,10 @@ export const _currentBPIDefinition = ()=>{
   return Number(localStorage.getItem("BPIDefinition")) || 1;
 }
 
+export const _traditionalMode = ()=>{
+  return Number(localStorage.getItem("traditionalMode")) || 0;
+}
+
 export const _setCurrentViewComponents = (array:string[]):string[]=>{
   array = array.filter((x, i, self)=>self.indexOf(x) === i && x !== "none");
   if(array.length === 0){ array.push("none"); }
@@ -49,6 +53,10 @@ export const _currentDefinitionURL = ()=>{
 
 export const _setCurrentDefinitionURL = (url:string = defaultURL)=>{
   return localStorage.setItem("defURL",url);
+}
+
+export const _setTraditionalMode = (newState:number = 0)=>{
+  return localStorage.setItem("traditionalMode",String(newState));
 }
 
 export const isEnableTweetButton = ()=>{

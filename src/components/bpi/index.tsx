@@ -1,6 +1,6 @@
 import {songsDB} from "../indexedDB";
 import { songData } from "../../types/data";
-import { _isSingle } from "../settings";
+import { _traditionalMode,_isSingle } from "../settings";
 
 export interface B{
   error:boolean,bpi:number,reason?:any,difficultyLevel?:string
@@ -16,7 +16,8 @@ export default class bpiCalcuator{
   private s:number = 0;
   private k:number = 0;
   private z:number = 0;
-  private powCoef:number = 1.175;
+  private traditionalMode = _traditionalMode();
+  private powCoef:number = this.traditionalMode === 1 ? 1.5 : 1.175;
   private pgf = (j:number):number=> j === this.m ? this.m : 1 + ( j / this.m - 0.5 ) / ( 1 - j / this.m );
 
   private _allTwelvesLength:number = 0;
@@ -28,6 +29,10 @@ export default class bpiCalcuator{
   }
 
   setCoef(coef:number = 1.175){
+    if(this.traditionalMode === 1){
+      this.powCoef = 1.5;
+      return;
+    }
     if(coef !== -1) this.powCoef = coef;
     return;
   }

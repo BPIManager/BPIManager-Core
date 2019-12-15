@@ -41,7 +41,7 @@ class Stats extends React.Component<{intl:any,global:any},S> {
         >
           <Tab label="基本" />
           <Tab label="表示" />
-          <Tab label="デリート" />
+          <Tab label="その他" />
         </Tabs>
         {this.state.currentTab === 0 && <Basic global={this.props.global}/>}
         {this.state.currentTab === 1 && <View global={this.props.global}/>}
