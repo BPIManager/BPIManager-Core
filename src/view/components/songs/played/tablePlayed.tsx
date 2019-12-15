@@ -12,7 +12,7 @@ import { _prefix } from "../../../../components/songs/filter";
 import DetailedSongInformation from "../detailsScreen";
 import { diffColor, behindScore, bp } from "../common";
 import _djRank from "../../../../components/common/djRank";
-import { _currentViewComponents } from "../../../../components/settings";
+import { _currentViewComponents, _traditionalMode } from "../../../../components/settings";
 import bpiCalcuator from "../../../../components/bpi";
 import { scoresDB } from "../../../../components/indexedDB";
 
@@ -86,7 +86,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
     const {rowsPerPage,isOpen,currentSongData,currentScoreData} = this.state;
     const {page,data,changeSort,sort,isDesc,mode} = this.props;
     return (
-      <Paper style={{width:"100%",overflowX:"auto"}}>
+      <Paper style={{width:"100%",overflowX:"auto"}} className={_traditionalMode() === 1 ? "traditionalMode" : ""}>
         <div>
           <Table>
             <TableHead>
@@ -119,7 +119,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                     hover role="checkbox" tabIndex={-1} key={row.title + row.prefix + i} className={ i % 2 ? "isOdd" : "isEven"}>
                     {columns.map((column,j) => {
                       return (
-                        <TableCell key={column.id + prefix} style={{backgroundColor : diffColor(j,row),position:"relative"}}>
+                        <TableCell key={column.id + prefix} style={{backgroundColor : diffColor(j,row),position:"relative"}} >
                           {(mode < 6 && column.id === "currentBPI") && <span className={j >= 2 ? "bodyNumber" : ""}>{Number(row[column.id]).toFixed(2)}</span>}
                           {(mode < 6 && column.id !== "currentBPI") && <span className={j >= 2 ? "bodyNumber" : ""}>{row[column.id]}</span>}
 

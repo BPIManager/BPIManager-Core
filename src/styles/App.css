@@ -284,3 +284,12 @@ a.link:hover{
 #__dark .MuiFormLabel-root.Mui-focused {
     color: rgba(255, 255, 255, 0.7) !important;
 }
+
+#__light #songsVil .traditionalMode .MuiTableBody-root .MuiTableCell-root:nth-child(3){
+  color:#c50000;
+}
+
+
+#__dark #songsVil .traditionalMode .MuiTableBody-root .MuiTableCell-root:nth-child(3){
+  color:#ffdbdb;
+}
