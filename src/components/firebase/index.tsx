@@ -16,4 +16,5 @@ const fb = firebase.initializeApp({
 export const firestore = fb.firestore();
 export const auth = fb.auth();
 export const twitter = new firebase.auth.TwitterAuthProvider();
+export const google = new firebase.auth.GoogleAuthProvider();
 export default fb;

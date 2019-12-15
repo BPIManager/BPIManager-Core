@@ -22,11 +22,13 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { _prefix, _prefixFromNum } from '../../../../components/songs/filter';
-
+import TuneIcon from '@material-ui/icons/Tune';
 import equal from 'fast-deep-equal'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { _isSingle } from '../../../../components/settings';
 import moment from 'moment';
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
 
 interface stateInt {
   isLoading:boolean,
@@ -130,7 +132,8 @@ export default class SongsList extends React.Component<P,stateInt> {
       return r === 0 ? true :
       r === 1 ? format(data.updatedAt) === format(new Date()) :
       r === 2 ? format(data.updatedAt) === format(moment().subtract(1, 'day')) :
-      moment(data.updatedAt).week() === moment(new Date()).week()
+      r === 3 ? moment(data.updatedAt).week() === moment(new Date()).week() :
+      moment(data.updatedAt).isBefore(moment().subtract(1, 'month'))
     }
 
     const evaluateMode = (data:scoreData,max:number):boolean=>{
@@ -227,7 +230,7 @@ export default class SongsList extends React.Component<P,stateInt> {
     return (
       <Container className="commonLayout" fixed id="songsVil">
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom
-          style={{display:"flex",justifyContent:"space-between"}}>
+          style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <FormattedMessage id={this.props.title}/>
           <FormControl>
             <Select value={range} displayEmpty onChange={this.handleRangeCange}>
@@ -235,6 +238,7 @@ export default class SongsList extends React.Component<P,stateInt> {
               <MenuItem value={1}>本日更新分</MenuItem>
               <MenuItem value={2}>前日更新分</MenuItem>
               <MenuItem value={3}>今週更新分</MenuItem>
+              <MenuItem value={4}>1ヶ月以上未更新</MenuItem>
             </Select>
           </FormControl>
         </Typography>

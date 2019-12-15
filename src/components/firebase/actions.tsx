@@ -1,4 +1,4 @@
-import fb, { twitter,firestore } from ".";
+import fb, { twitter,firestore, google } from ".";
 import timeFormatter from "../common/timeFormatter";
 import { scoresDB, scoreHistoryDB } from "../indexedDB";
 import platform from "platform";
@@ -7,6 +7,16 @@ export default class fbActions{
 
   authWithTwitter():void{
     fb.auth().signInWithRedirect(twitter);
+    fb.auth().getRedirectResult().then(_result => {
+      return;
+    }).catch(error => {
+      console.log(error);
+    });
+    return;
+  }
+
+  authWithGoogle():void{
+    fb.auth().signInWithRedirect(google);
     fb.auth().getRedirectResult().then(_result => {
       return;
     }).catch(error => {

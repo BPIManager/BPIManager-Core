@@ -20,15 +20,25 @@ class SyncLoginScreen extends React.Component<{},{}> {
           <FormattedMessage id="Sync.Login.description"/>
         </Typography>
         <Divider style={{margin:"10px 0"}}/>
-        <a href="#" onClick={()=>this.fbA.authWithTwitter()} style={{textDecoration:"none"}}>
+        <p style={{textAlign:"center"}}>-&nbsp;連携方法を選択&nbsp;-</p>
+        <div style={{display:"block"}}>
+        <a href="#" onClick={()=>this.fbA.authWithTwitter()} style={{textDecoration:"none",display:"block",width:"100%"}}>
           <Button
             variant="outlined"
             color="secondary"
-            style={{width:"100%"}}
-            startIcon={<TwitterIcon />}>
-            SIGN IN
+            style={{width:"100%"}}>
+            Twitter
           </Button>
         </a>
+        <a href="#" onClick={()=>this.fbA.authWithGoogle()} style={{textDecoration:"none",display:"block",width:"100%",margin:"5px 0"}}>
+          <Button
+            variant="outlined"
+            color="secondary"
+            style={{width:"100%"}}>
+            Google
+          </Button>
+        </a>
+        </div>
         <Divider style={{margin:"10px 0"}}/>
         <Typography component="p" variant="caption" style={{textAlign:"center"}} gutterBottom>
           これはデバイス内に蓄積されたスコアデータやスコアの更新履歴をWeb上に保管するための機能です。<br/>
