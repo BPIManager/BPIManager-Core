@@ -122,6 +122,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                         <TableCell key={column.id + prefix} style={{backgroundColor : diffColor(j,row),position:"relative"}} >
                           {(mode < 6 && column.id === "currentBPI") && <span className={j >= 2 ? "bodyNumber" : ""}>{Number(row[column.id]).toFixed(2)}</span>}
                           {(mode < 6 && column.id !== "currentBPI") && <span className={j >= 2 ? "bodyNumber" : ""}>{row[column.id]}</span>}
+                          {(mode > 5 && column.id !== "currentBPI") && <span className={j >= 2 ? "bodyNumber" : ""}>{row[column.id]}</span>}
 
                           {column.id === "title" && prefix}
                           {(mode > 5 && column.id === "currentBPI") && bp(row.missCount)}
