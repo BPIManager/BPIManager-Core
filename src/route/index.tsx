@@ -10,6 +10,7 @@ import Stats from "../view/pages/stats";
 import Settings from "../view/pages/settings";
 import Compare from "../view/pages/compare";
 import Help from "../view/pages/help";
+import Rivals from "../view/pages/rivals";
 import {BrowserRouter, Route} from "react-router-dom";
 
 
@@ -45,6 +46,7 @@ export default class Router extends React.Component<{},{}> {
                 <Route path="/settings" exact render={_props=><Settings global={global}/>}/>
                 <Route path="/help" exact component={Help}/>
                 <Route path="/sync" exact component={SyncIndex}/>
+                <Route path="/rivals" exact component={Rivals}/>
               </BrowserRouter>
             </IntlProvider>
           )}}

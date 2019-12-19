@@ -13,7 +13,7 @@ export default class Index extends React.Component<{},{}> {
 
   buttonGrid = (data:{[key:string]:string})=>{
     return (
-      <Grid item md={6} xs={12}>
+      <Grid item md={6} xs={12} key={data.id}>
         <Link to={data.url} style={{textDecoration:"none"}}>
           <Button fullWidth variant="contained" color="primary">
             <FormattedMessage id={data.id}/>
