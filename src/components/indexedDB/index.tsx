@@ -31,7 +31,7 @@ const storageWrapper = class extends Dexie{
       scores : "[title+difficulty+storedAt+isSingle],title,*difficulty,*difficultyLevel,*version,currentBPI,exScore,Pgreat,great,missCount,clearState,lastPlayed,storedAt,isSingle,isImported,updatedAt,lastScore",
       songs : "&++num,title,*difficulty,*difficultyLevel,wr,avg,notes,bpm,textage,dpLevel,isCreated,isFavorited,[title+difficulty]",
       rivals : "&[title+difficulty+storedAt+isSingle+rivalName],rivalName,title,*difficulty,*difficultyLevel,exScore,missCount,clearState,storedAt,isSingle,updatedAt",
-      rivalLists : "&rivalName,updatedAt,scoreWin,scoreLose,scoreDraw,clearWin,clearLose,clearDraw",
+      rivalLists : "&rivalName,rivalId,updatedAt,scoreWin,scoreLose,scoreDraw,clearWin,clearLose,clearDraw,isSingle,storedAt",
       scoreHistory : "&++num,[title+storedAt+difficulty+isSingle],[title+storedAt+difficulty+isSingle+updatedAt],title,difficulty,difficultyLevel,storedAt,exScore,BPI,isSingle,updatedAt"
     });
     this.scores = this.table("scores");
@@ -620,6 +620,24 @@ export const songsDB = class extends storageWrapper{
     }catch(e){
       console.error(e);
       return 1;
+    }
+  }
+
+}
+
+export const rivalListsDB = class extends storageWrapper{
+  rivalLists: Dexie.Table<any, any>;
+
+  constructor(){
+    super();
+    this.rivalLists = this.table("rivalLists");
+  }
+
+  async getAll():Promise<any>{
+    try{
+      return this.rivalLists.where(["isSingle","storedAt"]).equals([_isSingle(),_currentStore()]).toArray();
+    }catch(e){
+      return [];
     }
   }
 

@@ -87,8 +87,11 @@ export default class fbActions{
 
   async saveName(displayName:string){
     try{
-      console.log(this.name,this.docName,displayName);
       if(!this.name || !this.docName){return {error:true,date:null};}
+      if(displayName.length > 16){
+        console.log("too long error");
+        return {error:true,date:null};
+      }
       if(await this.searchRival(displayName,true) !== null && displayName !== ""){
         console.log("already used error");
         return {error:true,date:null};
