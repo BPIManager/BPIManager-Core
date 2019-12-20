@@ -51,7 +51,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
 
   upload = async()=>{
     this.setState({isLoading:true});
-    const res = await this.fbLoader.save();
+    const res = await this.fbLoader.save(this.state.myName);
     if(res.error){
       alert("エラーが発生しました");
       return this.setState({isLoading:false});;

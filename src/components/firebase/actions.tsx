@@ -50,7 +50,7 @@ export default class fbActions{
     return `${platform.os} / ${platform.name}`
   }
 
-  async save(){
+  async save(isRegistered = ""){
     try{
       if(!this.name || !this.docName){return {error:true,date:null};}
       const lastUpdate = timeFormatter(3);
@@ -60,9 +60,11 @@ export default class fbActions{
         scores: await new scoresDB().getAll(),
         scoresHistory : await new scoreHistoryDB().getAllInSpecificVersion(),
       });
-      await firestore.collection("users").doc(this.docName).set({
-        timeStamp: lastUpdate,
-      });
+      if(isRegistered !== ""){
+        await firestore.collection("users").doc(this.docName).update({
+          timeStamp: lastUpdate,
+        });
+      }
       return {error:false,date:timeFormatter(3)};
     }catch(e){
       console.log(e);
