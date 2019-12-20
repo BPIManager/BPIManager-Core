@@ -44,8 +44,8 @@ class SyncControlScreen extends React.Component<{userData:any},{
       isLoading:false,
       scoreData: await this.fbLoader.load(),
       rivalData: t,
-      myName: t ? t.displayName : "",
-      myProfile: t ? t.profile : "",
+      myName: t && t.displayName ? t.displayName : "",
+      myProfile: t && t.profile ? t.profile : "",
     })
   }
 
@@ -63,6 +63,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
     this.setState({isLoading:true});
     const res = await this.fbLoader.load();
     if(res === null || res === undefined){
+      console.log(res);
       alert("エラーが発生しました");
       return this.setState({isLoading:false});
     }
