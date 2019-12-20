@@ -7,8 +7,6 @@ export interface scoreData{
   difficultyLevel:string,
   exScore:number,
   previousExScore?:number,
-  Pgreat?:number,
-  great?:number,
   missCount?:number,
   clearState:number,
   lastPlayed?:string,

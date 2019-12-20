@@ -89,8 +89,6 @@ export default class importCSV {
               currentBPI:0,
               difficultyLevel:"-",
               exScore:Number(p[eachObjNum[2]]),
-              Pgreat:Number(p[eachObjNum[3]]),
-              great:Number(p[eachObjNum[4]]),
               missCount:Number(p[eachObjNum[5]]),
               clearState:clearState,
               lastPlayed:p[eachObjNum[8]],

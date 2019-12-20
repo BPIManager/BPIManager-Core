@@ -25,7 +25,7 @@ import FilterNoneIcon from '@material-ui/icons/FilterNone';
 import HelpIcon from '@material-ui/icons/Help';
 import SwapVerticalCircleIcon from '@material-ui/icons/SwapVerticalCircle';
 import { FormattedMessage } from "react-intl";
-
+import PeopleIcon from '@material-ui/icons/People';
 import Slide from "@material-ui/core/Slide";
 import ShowSnackBar from "../snackBar";
 
@@ -101,14 +101,19 @@ class GlobalHeader extends React.Component<{global:any} & HideOnScrollProps,{isO
         icon:<TrendingUpIcon />
       },
       {
-        to:"/settings",
-        id:"GlobalNav.Settings",
-        icon:<SettingsIcon />
+        to:"/rivals",
+        id:"GlobalNav.Rivals",
+        icon:<PeopleIcon />
       },
       {
         to:"/sync",
         id:"GlobalNav.Sync",
         icon:<SwapVerticalCircleIcon />
+      },
+      {
+        to:"/settings",
+        id:"GlobalNav.Settings",
+        icon:<SettingsIcon />
       },
       {
         to:"/help",

@@ -4,15 +4,18 @@ export const lampArray:string[] = [
 export const lampCSVArray:string[] = [
   "FAILED","ASSIST CLEAR","EASY CLEAR","CLEAR","HARD CLEAR","EX HARD CLEAR","FULLCOMBO CLEAR"
 ];
+export const simpleLampArray:string[] = [
+  "F","AC","EC","CL","HC","EXH","FC","NONE"
+];
 
-export const convertClearState = (original:string|number,direction:number):string|number=>{
+export const convertClearState = (original:string|number,direction:number,simple:boolean = false):string|number=>{
   if(direction === 0){
     // csv to num
     if(typeof original !== "string"){return 0;}
     return lampCSVArray.indexOf(original);
   }else{
     if(typeof original !== "number"){return 1;}
-    return lampCSVArray[original];
+    return simple ? simpleLampArray[original] : lampCSVArray[original];
   }
 }
 

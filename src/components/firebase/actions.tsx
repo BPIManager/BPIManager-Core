@@ -34,15 +34,15 @@ export default class fbActions{
   }
 
   private name:string = "";
-  private uid:string = "";
+  private docName:string = "";
 
   setColName(name:string):this{
     this.name = name;
     return this;
   }
 
-  setUid(uid:string):this{
-    this.uid = uid;
+  setDocName(docName:string):this{
+    this.docName = docName;
     return this;
   }
 
@@ -52,12 +52,16 @@ export default class fbActions{
 
   async save(){
     try{
-      if(!this.name){return {error:true,date:null};}
-      await firestore.collection(this.name).doc(this.uid).set({
-        timeStamp: timeFormatter(3),
+      if(!this.name || !this.docName){return {error:true,date:null};}
+      const lastUpdate = timeFormatter(3);
+      await firestore.collection(this.name).doc(this.docName).set({
+        timeStamp: lastUpdate,
         type: this.type(),
         scores: await new scoresDB().getAll(),
         scoresHistory : await new scoreHistoryDB().getAllInSpecificVersion(),
+      });
+      await firestore.collection("users").doc(this.docName).set({
+        timeStamp: lastUpdate,
       });
       return {error:false,date:timeFormatter(3)};
     }catch(e){
@@ -69,9 +73,70 @@ export default class fbActions{
   async load(){
     try{
       if(!this.name){return {error:true,data:null}}
-      const res = await firestore.collection(this.name).doc(this.uid).get();
+      const res = await firestore.collection(this.name).doc(this.docName).get();
       if(res.exists){
         return res.data();
+      }else{
+        return null;
+      }
+    }catch(e){
+      console.log(e);
+      return null;
+    }
+  }
+
+  async saveName(displayName:string,profile:string,photoURL:string){
+    try{
+      if(!this.name || !this.docName){return {error:true,date:null};}
+      if(displayName.length > 16 || profile.length > 140){
+        console.log("too long error");
+        return {error:true,date:null};
+      }
+      if(displayName.length !== 0 && !/[a-zA-Z0-9]+$/g.test(displayName)){
+        console.log("invalid inputs error");
+        return {error:true,date:null};
+      }
+      const duplication = await this.searchRival(displayName,true);
+      if(duplication !== null && displayName !== "" && duplication.uid !== this.docName){
+        console.log("already used error");
+        return {error:true,date:null};
+      }
+      const lastUpdate = timeFormatter(3);
+      await firestore.collection("users").doc(this.docName).set({
+        timeStamp: lastUpdate,
+        uid:this.docName,
+        displayName:displayName,
+        profile:profile,
+        photoURL:photoURL,
+      });
+      return {error:false,date:timeFormatter(3)};
+    }catch(e){
+      console.log(e);
+      return {error:true,date:null};
+    }
+  }
+
+  async searchRival(input:string,saving:boolean = false){
+    try{
+      if(!input || (input === "" && saving !== true)){ return [0];}
+      const res = await firestore.collection("users").where("displayName","==",input).get();
+      if(!res.empty && res.size === 1){
+        return res.docs[0].data();
+      }else{
+        return null;
+      }
+    }catch(e){
+      console.log(e);
+      return null;
+    }
+  }
+
+  async searchRivalByUid(input:string){
+    try{
+      if(!input || input === ""){ return [0]; }
+      const res = await firestore.collection("users").where("uid","==",input).get();
+      if(!res.empty && res.size === 1){
+        return res.docs[0].data();
       }else{
         return null;
       }

@@ -228,6 +228,7 @@ a.link:hover{
 
 .MuiFormControlLabel-root{
   margin-left:-12px !important;
+  margin-right:12px !important;
 }
 
 #__dark span.bodyNumber {
@@ -292,4 +293,12 @@ a.link:hover{
 
 #__dark #songsVil .traditionalMode .MuiTableBody-root .MuiTableCell-root:nth-child(3){
   color:#ffdbdb;
+}
+
+.MuiDialogActions-root .MuiButton-textPrimary{
+  color:#a5a5a5 !important;
+}
+
+.clearBoth{
+  clear:both;
 }

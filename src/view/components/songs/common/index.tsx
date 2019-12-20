@@ -1,8 +1,8 @@
 import { _prefix } from "../../../../components/songs/filter";
 
-export const diffColor = (i:number,row: any):string=>{
-  if(i !== 0){return "transparent";}
-  switch (row.clearState){
+export const diffColor = (i:number,clearState: any,alternative:number = 0):string=>{
+  if(i !== alternative){return "transparent";}
+  switch (clearState){
     case 0 : return "#e0dede";
     case 1 : return "#ea63ff";
     case 2 : return "#acffab";

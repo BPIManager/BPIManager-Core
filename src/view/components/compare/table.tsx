@@ -120,7 +120,7 @@ export default class Compare extends React.Component<P,S> {
                   {columns.map((column,j) => {
                     const prefix = row.difficulty === "hyper" ? "(H)" : row.difficulty === "leggendaria" ? "(†)" : "";
                     return (
-                      <TableCell key={column.id + prefix} className={j === 4 ? "compareGap" : ""} style={{backgroundColor : diffColor(j,row.scoreData),position:"relative"}}>
+                      <TableCell key={column.id + prefix} className={j === 4 ? "compareGap" : ""} style={{backgroundColor : diffColor(j,row.scoreData.clearState),position:"relative"}}>
                         {j === 2 &&
                           <span>
                             {displayMode === "exScore" && row[column.id]}
