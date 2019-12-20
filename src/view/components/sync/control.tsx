@@ -10,12 +10,14 @@ import ButtonGroup from '@material-ui/core/ButtonGroup';
 import timeFormatter from '../../../components/common/timeFormatter';
 import { scoresDB, scoreHistoryDB } from '../../../components/indexedDB';
 import TextField from '@material-ui/core/TextField';
+import {Link as RefLink} from '@material-ui/core/';
 
 class SyncControlScreen extends React.Component<{userData:any},{
   isLoading:boolean,
   scoreData:any,
   rivalData:any,
   myName:string,
+  myProfile:string,
   nameErrorMessage:string[],
 }> {
 
@@ -31,6 +33,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
       scoreData:null,
       rivalData:null,
       myName:"",
+      myProfile:"",
       nameErrorMessage:[]
     }
   }
@@ -42,6 +45,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
       scoreData: await this.fbLoader.load(),
       rivalData: t,
       myName: t ? t.displayName : "",
+      myProfile: t ? t.profile : "",
     })
   }
 
@@ -71,20 +75,21 @@ class SyncControlScreen extends React.Component<{userData:any},{
 
   sendName = async()=>{
     this.setState({isLoading:true,nameErrorMessage:[]});
-    console.log("a")
     try{
-      const res = await this.fbA.saveName(this.state.myName);
+      const res = await this.fbA.saveName(this.state.myName,this.state.myProfile,this.props.userData.photoURL);
       if(res.error){
-        this.setState({nameErrorMessage:["エラーが発生しました。次のような理由が挙げられます:","名前に使用できない文字列が含まれている、すでに使用されている名前である、アクセス権限がない"]});
+        return this.setState({nameErrorMessage:["エラーが発生しました。次のような理由が挙げられます:","名前に使用できない文字列が含まれている、すでに使用されている名前である、アクセス権限がない"],isLoading:false});
       }
     }catch(e){
       alert("エラーが発生しました。:" + e);
     }
-    this.setState({isLoading:false});
+    this.setState({nameErrorMessage:["設定を反映しました"],isLoading:false});
   }
 
   render(){
-    const {isLoading,scoreData,nameErrorMessage,myName} = this.state;
+    const {isLoading,scoreData,nameErrorMessage,myName,myProfile} = this.state;
+    const nameError = myName.length !== 0 && !/[a-zA-Z0-9]+$/g.test(myName) || myName.length > 16;
+    const profError = myProfile.length > 140;
     return (
       <div>
         <Typography component="h5" variant="h5">
@@ -113,14 +118,27 @@ class SyncControlScreen extends React.Component<{userData:any},{
         <p>
         下のフォームに名前を入力して送信することで、他の人にあなたのスコアデータを公開できます。<br/>
         他の人と同じ名前は使用できません。名前を変更しても、すでにあなたをライバルとして追加済みのユーザーはあなたを追跡できます。<br/>
-        データを非公開にしたい場合は表示名を空欄にしたまま「送信」ボタンをクリックしてください。
+        データを非公開にしたい場合は表示名を空欄にしたまま「送信」ボタンをクリックしてください。<br/>
+        ユーザー情報として、下記に記載した情報および、連携アカウントに設定されたプロフィール画像が使用されます。<br/>
+        <RefLink color="secondary" href="https://gist.github.com/potakusan/08c5528d6c6a51d10aec6b6556723a80"  target="_blank" rel="noopener noreferrer">ライバル機能の詳細はこちらを見てください</RefLink>
         </p>
         <TextField label="表示名を入力(最大16文字)"
           InputLabelProps={{
             shrink: true,
           }}
+          error={nameError}
+          helperText={nameError && "使用できない文字が含まれているか、長すぎます"}
           value={myName}
           onChange={(e)=>this.setState({myName:e.target.value})}
+          style={{width:"100%",margin:"0px 0px 8px 0"}}/>
+        <TextField label="自己紹介を入力(最大140文字)"
+          InputLabelProps={{
+            shrink: true,
+          }}
+          value={myProfile}
+          error={profError}
+          helperText={profError && "自己紹介が長すぎます"}
+          onChange={(e)=>this.setState({myProfile:e.target.value})}
           style={{width:"100%",margin:"0px 0px 8px 0"}}/>
         <Button
           variant="outlined"

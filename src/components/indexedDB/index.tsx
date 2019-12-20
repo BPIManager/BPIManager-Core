@@ -12,6 +12,8 @@ const storageWrapper = class extends Dexie{
   scores:Dexie.Table<any, any>;
   songs:Dexie.Table<any, any>;
   stores: Dexie.Table<any, any>;
+  protected rivals:Dexie.Table<any, any>;
+  protected rivalLists: Dexie.Table<any, any>;
   protected calculator:bpiCalcuator|null = null;
 
   constructor(){
@@ -28,15 +30,22 @@ const storageWrapper = class extends Dexie{
       scoreHistory : "&++num,[title+storedAt+difficulty+isSingle],[title+storedAt+difficulty+isSingle+updatedAt],title,difficulty,difficultyLevel,storedAt,exScore,BPI,isSingle,updatedAt"
     });
     this.version(3).stores({
-      scores : "[title+difficulty+storedAt+isSingle],title,*difficulty,*difficultyLevel,*version,currentBPI,exScore,Pgreat,great,missCount,clearState,lastPlayed,storedAt,isSingle,isImported,updatedAt,lastScore",
+      scores : "[title+difficulty+storedAt+isSingle],title,*difficulty,*difficultyLevel,*version,currentBPI,exScore,missCount,clearState,lastPlayed,storedAt,isSingle,isImported,updatedAt,lastScore",
       songs : "&++num,title,*difficulty,*difficultyLevel,wr,avg,notes,bpm,textage,dpLevel,isCreated,isFavorited,[title+difficulty]",
       rivals : "&[title+difficulty+storedAt+isSingle+rivalName],rivalName,title,*difficulty,*difficultyLevel,exScore,missCount,clearState,storedAt,isSingle,updatedAt",
-      rivalLists : "&rivalName,rivalId,updatedAt,scoreWin,scoreLose,scoreDraw,clearWin,clearLose,clearDraw,isSingle,storedAt",
+      rivalLists : "&uid,rivalName,lastUpdatedAt,updatedAt,[isSingle+storedAt],photoURL,profile",
       scoreHistory : "&++num,[title+storedAt+difficulty+isSingle],[title+storedAt+difficulty+isSingle+updatedAt],title,difficulty,difficultyLevel,storedAt,exScore,BPI,isSingle,updatedAt"
+    }).upgrade(_tx => {
+      return this.scores.toCollection().modify((item:any)=>{
+        delete item.Pgreat;
+        delete item.great;
+      });
     });
     this.scores = this.table("scores");
     this.songs = this.table("songs");
     this.stores = this.table("stores");
+    this.rivals = this.table("rivals");
+    this.rivalLists = this.table("rivalLists");
   }
 
   protected newSongs:{[key:string]:songData} = {};
@@ -187,8 +196,6 @@ export const scoresDB = class extends storageWrapper{
         difficultyLevel:item["difficultyLevel"],
         currentBPI:item["currentBPI"],
         exScore:Number(item["exScore"]),
-        Pgreat:Number(item["Pgreat"]),
-        great:Number(item["great"]),
         missCount:Number(item["missCount"]),
         clearState:item["clearState"],
         lastPlayed:item["lastPlayed"],
@@ -213,8 +220,6 @@ export const scoresDB = class extends storageWrapper{
         difficultyLevel:item["difficultyLevel"],
         currentBPI:item["currentBPI"],
         exScore:Number(item["exScore"]),
-        Pgreat:Number(item["Pgreat"]),
-        great:Number(item["great"]),
         missCount:Number(item["missCount"]),
         clearState:item["clearState"],
         lastPlayed:item["lastPlayed"],
@@ -289,11 +294,11 @@ export const scoresDB = class extends storageWrapper{
   async setDataWithTransaction(scores:scoreData[]){
     await this.transaction("rw",this.scores,async()=>{
       await this.scores.where({storedAt:_currentStore(),isSingle:_isSingle()}).delete();
-      this.scores.bulkPut(scores);
+      return Promise.all(scores.map(item=>this.putItem(item)));
     }).catch(e=>{
       console.log(e)
-    });;
-    return true;
+    });
+    return null;
   }
 
 }
@@ -626,19 +631,62 @@ export const songsDB = class extends storageWrapper{
 }
 
 export const rivalListsDB = class extends storageWrapper{
-  rivalLists: Dexie.Table<any, any>;
 
   constructor(){
     super();
-    this.rivalLists = this.table("rivalLists");
   }
 
   async getAll():Promise<any>{
     try{
-      return this.rivalLists.where(["isSingle","storedAt"]).equals([_isSingle(),_currentStore()]).toArray();
+      return this.rivalLists.where("[isSingle+storedAt]").equals([_isSingle(),_currentStore()]).toArray();
     }catch(e){
       return [];
     }
+  }
+
+  async getAllScores(rivalName:string):Promise<any>{
+    try{
+      return this.rivals.where({rivalName:rivalName,isSingle:_isSingle(),storedAt:_currentStore()}).toArray();
+    }catch(e){
+      return [];
+    }
+  }
+
+  async addUser(meta:any,body:any[]):Promise<any>{
+    return await this.transaction('rw', this.rivals, this.rivalLists , async () => {
+      this.rivalLists.put(meta);
+      return Promise.all(body.map(item => this.rivals.put({
+          rivalName:meta.uid,
+          title:item.title,
+          difficulty:item.difficulty,
+          difficultyLevel:item.difficultyLevel,
+          exScore:item.exScore,
+          missCount:item.missCount,
+          clearState:item.clearState,
+          storedAt:item.storedAt,
+          isSingle:item.isSingle,
+          updatedAt:item.updatedAt
+        })));
+    }).catch((e)=>{
+      console.log(e);
+      return null;
+    });
+  }
+
+  async removeUser(meta:any):Promise<any>{
+    return await this.transaction('rw', this.rivals, this.rivalLists , async () => {
+      this.rivalLists.delete(meta.uid);
+      return Promise.all((await (this.rivals.where("rivalName").equals(meta.uid).toArray())).map(item => this.rivals.delete([
+          item.title,
+          item.difficulty,
+          item.storedAt,
+          item.isSingle,
+          item.rivalName
+        ])));
+    }).catch((e)=>{
+      console.log(e);
+      return null;
+    });
   }
 
 }

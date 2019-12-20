@@ -4,7 +4,6 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import fbActions from '../../../components/firebase/actions';
-import TwitterIcon from '@material-ui/icons/Twitter';
 
 class SyncLoginScreen extends React.Component<{},{}> {
 

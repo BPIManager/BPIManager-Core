@@ -85,21 +85,29 @@ export default class fbActions{
     }
   }
 
-  async saveName(displayName:string){
+  async saveName(displayName:string,profile:string,photoURL:string){
     try{
       if(!this.name || !this.docName){return {error:true,date:null};}
-      if(displayName.length > 16){
+      if(displayName.length > 16 || profile.length > 140){
         console.log("too long error");
         return {error:true,date:null};
       }
-      if(await this.searchRival(displayName,true) !== null && displayName !== ""){
+      if(displayName.length !== 0 && !/[a-zA-Z0-9]+$/g.test(displayName)){
+        console.log("invalid inputs error");
+        return {error:true,date:null};
+      }
+      const duplication = await this.searchRival(displayName,true);
+      if(duplication !== null && displayName !== "" && duplication.uid !== this.docName){
         console.log("already used error");
         return {error:true,date:null};
       }
       const lastUpdate = timeFormatter(3);
       await firestore.collection("users").doc(this.docName).set({
         timeStamp: lastUpdate,
+        uid:this.docName,
         displayName:displayName,
+        profile:profile,
+        photoURL:photoURL,
       });
       return {error:false,date:timeFormatter(3)};
     }catch(e){
@@ -113,8 +121,22 @@ export default class fbActions{
       if(!input || (input === "" && saving !== true)){ return [0];}
       const res = await firestore.collection("users").where("displayName","==",input).get();
       if(!res.empty && res.size === 1){
-        console.log(res.docs[0].data());
-        return res.docs[0];
+        return res.docs[0].data();
+      }else{
+        return null;
+      }
+    }catch(e){
+      console.log(e);
+      return null;
+    }
+  }
+
+  async searchRivalByUid(input:string){
+    try{
+      if(!input || input === ""){ return [0]; }
+      const res = await firestore.collection("users").where("uid","==",input).get();
+      if(!res.empty && res.size === 1){
+        return res.docs[0].data();
       }else{
         return null;
       }
