@@ -16,7 +16,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogActions from '@material-ui/core/DialogActions';
 import { _currentVersion, _setTraditionalMode, _traditionalMode } from '../../../components/settings';
-import { scoresDB, scoreHistoryDB, songsDB } from '../../../components/indexedDB';
+import { scoresDB, scoreHistoryDB, songsDB, rivalListsDB } from '../../../components/indexedDB';
 import Divider from '@material-ui/core/Divider';
 import { Switch } from '@material-ui/core';
 import CachedIcon from '@material-ui/icons/Cached';
@@ -65,10 +65,12 @@ class Settings extends React.Component<P,S> {
     try{
       this.props.global.setMove(true);
       this.setState({disableDeleteBtn:true,message2:""});
-      const sdb = new scoresDB(), shdb = new scoreHistoryDB(),sodb = new songsDB();
+      const sdb = new scoresDB(), shdb = new scoreHistoryDB(),sodb = new songsDB(),ridb = new rivalListsDB();
       const target = this.state.currentResetStore;
       if(target === "Songs Database"){
         await sodb.deleteAll();
+      }else if(target === "Rivals"){
+        await ridb.deleteAll();
       }else{
         await sdb.resetItems(target);
         await shdb.reset(target);
@@ -143,6 +145,7 @@ class Settings extends React.Component<P,S> {
               <MenuItem value="26">26 Rootage</MenuItem>
               <MenuItem value="27">27 HEROIC VERSE</MenuItem>
               <MenuItem value="Songs Database">Songs Database</MenuItem>
+              <MenuItem value="Rivals">Rivals</MenuItem>
             </Select>
           </FormControl>
           <Typography variant="caption" display="block">
@@ -203,7 +206,7 @@ class AlertDialog extends React.Component<{isDialogOpen:boolean,exec:()=>void,cl
             <DialogContentText>
               <FormattedMessage id="Settings.DeleteDialogBody"/><br/>
               <FormattedMessage id="Settings.DeleteDialogBody2"/><br/>
-              {currentResetStore === "26" ? "26 Rootage" : currentResetStore === "27" ? "27 HEROIC VERSE" : "Songs Database"}
+              {currentResetStore === "26" ? "26 Rootage" : currentResetStore === "27" ? "27 HEROIC VERSE" :  currentResetStore === "Songs Database" ? "Songs Database" : "Rivals"}
             </DialogContentText>
           </DialogContent>
           <DialogActions>

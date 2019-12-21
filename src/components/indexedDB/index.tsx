@@ -689,6 +689,13 @@ export const rivalListsDB = class extends storageWrapper{
     });
   }
 
+  async deleteAll(){
+    return await this.transaction('rw', this.rivals, this.rivalLists , async () => {
+      this.rivalLists.clear();
+      this.rivals.clear();
+    });
+  }
+
 }
 
 export default storageWrapper;
