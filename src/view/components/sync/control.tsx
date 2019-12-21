@@ -52,6 +52,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
       rivalData: t,
       myName: t && t.displayName ? t.displayName : "",
       myProfile: t && t.profile ? t.profile : "",
+      arenaRank: t && t.arenaRank ? t.arenaRank : "-",
     })
   }
 
