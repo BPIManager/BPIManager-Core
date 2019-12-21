@@ -117,7 +117,7 @@ class RecentlyAdded extends React.Component<P,S> {
       <p>最終更新日時が近い順にユーザーを表示しています。</p>
       {res.map((item:any)=>
         (activated && <div>
-        <Card style={{margin:"10px 0"}}>
+        <Card style={{margin:"10px 0"}} key={item.uid}>
           <CardHeader
             avatar={
               <Avatar>

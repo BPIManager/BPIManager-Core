@@ -60,7 +60,7 @@ export default class fbActions{
       if(!this.name || !this.docName){return {error:true,date:null};}
       await firestore.collection(this.name).doc(this.docName).set({
         timeStamp: timeFormatter(3),
-        severTime:this.time(),
+        serverTime:this.time(),
         type: this.type(),
         scores: await new scoresDB().getAll(),
         scoresHistory : await new scoreHistoryDB().getAllInSpecificVersion(),
@@ -69,7 +69,7 @@ export default class fbActions{
       if(isRegisteredAs !== ""){
         await firestore.collection("users").doc(this.docName).update({
           timeStamp: timeFormatter(3),
-          severTime:this.time(),
+          serverTime:this.time(),
         });
       }
       return {error:false,date:timeFormatter(3)};
@@ -115,7 +115,7 @@ export default class fbActions{
       }else{
         await firestore.collection("users").doc(this.docName).set({
           timeStamp: timeFormatter(3),
-          severTime:this.time(),
+          serverTime:this.time(),
           uid:this.docName,
           displayName:displayName,
           profile:profile,
@@ -158,6 +158,7 @@ export default class fbActions{
       }
       const res = await query.get();
       if(!res.empty && res.size >= 1){
+        console.log(res.size);
         return res.docs.reduce((groups:any[],item:firebase.firestore.QueryDocumentSnapshot)=>{
           const body = item.data();
           if(body.displayName && body.displayName !== "" && body.serverTime){
