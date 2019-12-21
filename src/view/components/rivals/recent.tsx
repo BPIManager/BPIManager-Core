@@ -11,10 +11,18 @@ import { _currentStore, _isSingle } from '../../../components/settings';
 import { rivalListsDB } from '../../../components/indexedDB';
 import Grid from '@material-ui/core/Grid';
 import ShowSnackBar from '../snackBar';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 import CheckIcon from '@material-ui/icons/Check';
+import AddIcon from '@material-ui/icons/Add';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+
 interface P {
-  compareUser:(rivalMeta:any,rivalBody:any,last:any)=>void,
+  compareUser:(rivalMeta:any,rivalBody:any,last:any,arenaRank:string)=>void,
   last:any,
+  arenaRank:string,
 }
 
 interface S {
@@ -26,7 +34,8 @@ interface S {
   showSnackBar:boolean,
   variant:"info" | "error" | "success" | "warning",
   message:string,
-  rivals:string[]
+  rivals:string[],
+  arenaRank:string,
 }
 
 class RecentlyAdded extends React.Component<P,S> {
@@ -49,6 +58,7 @@ class RecentlyAdded extends React.Component<P,S> {
       variant:"info",
       showSnackBar:false,
       rivals:[],
+      arenaRank:props.arenaRank || "すべて",
     }
   }
 
@@ -60,9 +70,9 @@ class RecentlyAdded extends React.Component<P,S> {
     },[])})
   }
 
-  search = async(last = null,endAt = null):Promise<void>=>{
+  search = async(last = null,endAt = null,arenaRank = this.state.arenaRank):Promise<void>=>{
     this.setState({processing:true});
-    const res = await this.fbA.recentUpdated(last,endAt);
+    const res = await this.fbA.recentUpdated(last,endAt,arenaRank);
     if(!res){
       return this.toggleSnack("該当ページが見つかりませんでした。","warning")
     }
@@ -93,12 +103,12 @@ class RecentlyAdded extends React.Component<P,S> {
   }
 
   compareButton = async (meta:any)=>{
-    const {res} = this.state;
+    const {res,arenaRank} = this.state;
     const data = await this.fbStores.setDocName(meta.uid).load();
     if(!data){
       return this.toggleSnack("該当ユーザーは当該バージョン/モードにおけるスコアを登録していません。","warning");
     }
-    this.props.compareUser(meta,data.scores,res ? res[res.length-1] : null);
+    this.props.compareUser(meta,data.scores,res ? res[res.length-1] : null,arenaRank);
   }
 
   next = ()=>{
@@ -111,13 +121,28 @@ class RecentlyAdded extends React.Component<P,S> {
   }
 
   render(){
-    const {showSnackBar,activated,res,rivals,processing,message,variant} = this.state;
+    const {showSnackBar,activated,res,rivals,processing,message,variant,arenaRank} = this.state;
     return (
       <div>
-      <p>最終更新日時が近い順にユーザーを表示しています。</p>
+      <FormControl style={{minWidth:"150px",float:"right"}}>
+        <InputLabel>最高アリーナランク</InputLabel>
+        <Select value={arenaRank} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+          if(typeof e.target.value !== "string") return;
+          this.setState({arenaRank:e.target.value,res:[],activated:false});
+          return this.search(null,null,e.target.value);
+        }}>
+          {["すべて","A1","A2","A3","A4","A5","B1","B2","B3","B4","B5"].map(item=><MenuItem value={item} key={item}>{item}</MenuItem>)}
+        </Select>
+      </FormControl>
+      <div className="clearBoth" style={{marginTop:"5px"}}/>
+      {(activated && res.length === 0) && <div>
+        <p>
+        条件に該当するユーザーが見つかりませんでした。
+        </p>
+      </div>}
       {res.map((item:any)=>
-        (activated && <div>
-        <Card style={{margin:"10px 0"}} key={item.uid}>
+        (activated && <div key={item.uid}>
+        <Card style={{margin:"10px 0"}}>
           <CardHeader
             avatar={
               <Avatar>
@@ -126,7 +151,7 @@ class RecentlyAdded extends React.Component<P,S> {
               </Avatar>
             }
             title={item.displayName}
-            subheader={"最終更新:" + item.timeStamp}
+            subheader={"最終更新:" + item.timeStamp + " / " + (item.arenaRank || "-")}
           />
           <CardContent>
             <Typography variant="body2" color="textSecondary" component="p">
@@ -134,6 +159,7 @@ class RecentlyAdded extends React.Component<P,S> {
             </Typography>
             {rivals.indexOf(item.uid) === -1 &&
               <Button disabled={processing} onClick={()=>this.addUser(item)} variant="outlined" color="secondary" style={{float:"right"}}>
+                <AddIcon/>
                 追加
               </Button>
             }
@@ -144,6 +170,7 @@ class RecentlyAdded extends React.Component<P,S> {
               </Button>
             }
             <Button disabled={processing} onClick={()=>this.compareButton(item)} variant="outlined" color="secondary" style={{float:"right",margin:"0px 5px"}}>
+              <VisibilityIcon/>
               比較
             </Button>
             <div className="clearBoth"/>

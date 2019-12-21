@@ -94,14 +94,14 @@ export default class fbActions{
     }
   }
 
-  async saveName(displayName:string,profile:string,photoURL:string){
+  async saveName(displayName:string,profile:string,photoURL:string,arenaRank:string){
     try{
       if(!this.name || !this.docName){return {error:true,date:null};}
       if(displayName.length > 16 || profile.length > 140){
         console.log("too long error");
         return {error:true,date:null};
       }
-      if(displayName.length !== 0 && !/[a-zA-Z0-9]+$/g.test(displayName)){
+      if(displayName.length !== 0 && !/^[a-zA-Z0-9.]+$/g.test(displayName)){
         console.log("invalid inputs error");
         return {error:true,date:null};
       }
@@ -120,6 +120,7 @@ export default class fbActions{
           displayName:displayName,
           profile:profile,
           photoURL:photoURL,
+          arenaRank:arenaRank
         });
       }
       return {error:false,date:timeFormatter(3)};
@@ -144,7 +145,7 @@ export default class fbActions{
     }
   }
 
-  async recentUpdated(last:any,endAt:any){
+  async recentUpdated(last:any,endAt:any,arenaRank:string){
     try{
       let query = firestore.collection("users").orderBy("serverTime", "desc");
       if(last){
@@ -153,12 +154,14 @@ export default class fbActions{
       if(endAt){
         query = query.endAt(endAt.serverTime);
       }
+      if(arenaRank !== "すべて"){
+        query = query.where("arenaRank","==",arenaRank);
+      }
       if(!endAt){
         query = query.limit(10);
       }
       const res = await query.get();
       if(!res.empty && res.size >= 1){
-        console.log(res.size);
         return res.docs.reduce((groups:any[],item:firebase.firestore.QueryDocumentSnapshot)=>{
           const body = item.data();
           if(body.displayName && body.displayName !== "" && body.serverTime){

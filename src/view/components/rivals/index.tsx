@@ -11,9 +11,10 @@ interface S {
 
 interface P{
   showEachRival:(input:string)=>void
-  compareUser:(rivalMeta:any,rivalBody:any,last:any)=>void,
+  compareUser:(rivalMeta:any,rivalBody:any,last:any,arenaRank:string)=>void,
   backToRecentPage:boolean,
-  last:any
+  last:any,
+  arenaRank:string,
 }
 
 class RivalIndex extends React.Component<P,S> {
@@ -44,7 +45,7 @@ class RivalIndex extends React.Component<P,S> {
           <Tab label="探す" />
         </Tabs>
         {currentTab === 0 && <RivalLists showEachRival={this.props.showEachRival}/>}
-        {currentTab === 1 && <RecentlyAdded compareUser={this.props.compareUser} last={this.props.last}/>}
+        {currentTab === 1 && <RecentlyAdded compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
       </div>
     );
   }

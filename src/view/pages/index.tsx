@@ -36,12 +36,10 @@ export default class Index extends React.Component<{},{}> {
           <Typography component="h3" variant="h3" align="center" color="textPrimary" gutterBottom>
             <FormattedMessage id="Top.Title"/>
           </Typography>
-          <Typography variant="body2" align="center" paragraph style={{fontWeight:"bold"}}>
-            2019/12/21<br/>
-            ライバルを探したり、スコア比較できる機能を搭載しました。<br/>
-            <RefLink target="_blank" rel="noopener noreferrer" color="secondary" href="https://gist.github.com/potakusan/08c5528d6c6a51d10aec6b6556723a80">
-            詳細はこちら。
-            </RefLink>
+
+          <Typography align="center" color="textSecondary" paragraph variant="caption">
+            beta ver0.0.2.1<br/>
+            last update: 2019/12/21 JST
           </Typography>
           <AddToHomeScreenTicker/>
           <div>
@@ -76,11 +74,6 @@ export default class Index extends React.Component<{},{}> {
           <div style={{marginTop:"15px"}}>
             <Grid container spacing={2} justify="center">
               <Grid item>
-                {_lang() !== "en" &&
-                  <Typography align="center" color="textSecondary" variant="caption" paragraph>
-                    If you're not familiar with Japanese, please go firstly to settings and you can change language there.
-                  </Typography>
-                }
                 <Typography align="center" color="textSecondary" paragraph variant="caption">
                   <FormattedMessage id="Index.notes1"/>
                 </Typography>
@@ -88,8 +81,6 @@ export default class Index extends React.Component<{},{}> {
                   <FormattedMessage id="Index.notes2"/>
                 </Typography>
                 <Typography align="center" color="textSecondary" paragraph variant="caption">
-                  BPIManager beta ver0.0.2.1<br/>
-                  last update: 2019/12/21 JST<br/>
                   {_lang() === "en" &&
                     <span>If you have encountered unintended behaviours or have opinions to make this tool much better, please contact <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>.</span>
                   }
@@ -97,6 +88,12 @@ export default class Index extends React.Component<{},{}> {
                     <span>バグ報告などは<RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>までお寄せください。<br/>
                   バージョンアップ情報も同アカウントにて発信しています。</span>
                   }
+                </Typography>
+                <Typography align="center" color="textSecondary" paragraph variant="caption">
+                  支援について<br/>
+                  Amazonギフト券による開発支援を受け付けています。<br/>
+                  宛先「msqkn310@gmail.com」迄お願いします。<br/>
+                  (インフラ維持等に充当させていただきます)
                 </Typography>
               </Grid>
             </Grid>

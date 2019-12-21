@@ -16,6 +16,7 @@ interface S {
   rivalMeta?:any,
   descendingRivalData?:any,
   lastVisible:any,
+  arenaRank:string,
 }
 
 class Stats extends React.Component<{intl:any},S> {
@@ -28,16 +29,17 @@ class Stats extends React.Component<{intl:any},S> {
       message:"",
       showSnackBar:false,
       lastVisible:null,
+      arenaRank:"すべて"
     }
   }
 
   showEachRival = (rivalData:string)=> this.setState({currentView:1,currentUser:rivalData,rivalMeta:null,descendingRivalData:null,});
-  compareUser = (rivalMeta:any,rivalBody:any,last:number,)=> this.setState({lastVisible:last,currentView:2,rivalMeta:rivalMeta,descendingRivalData:rivalBody});
+  compareUser = (rivalMeta:any,rivalBody:any,last:number,arenaRank:string)=> this.setState({lastVisible:last,currentView:2,rivalMeta:rivalMeta,descendingRivalData:rivalBody,arenaRank:arenaRank});
   backToMainPage = ()=> this.setState({currentView:0,currentUser:null});
   toggleSnack = (message:string = "ライバルを削除しました")=> this.setState({message:message,showSnackBar:!this.state.showSnackBar});
 
   render(){
-    const {currentView,currentUser,message,showSnackBar,rivalMeta,descendingRivalData,lastVisible} = this.state;
+    const {currentView,currentUser,message,showSnackBar,rivalMeta,descendingRivalData,lastVisible,arenaRank} = this.state;
     return (
       <Container className="commonLayout" id="stat" fixed>
         {currentView === 0 &&
@@ -51,7 +53,7 @@ class Stats extends React.Component<{intl:any},S> {
           </Typography>
         </div>
         }
-        {currentView === 0 && <RivalIndex showEachRival={this.showEachRival} compareUser={this.compareUser} backToRecentPage={!!this.state.rivalMeta} last={lastVisible}/>}
+        {currentView === 0 && <RivalIndex showEachRival={this.showEachRival} compareUser={this.compareUser} backToRecentPage={!!this.state.rivalMeta} last={lastVisible} arenaRank={arenaRank}/>}
         {currentView === 1 && <RivalView toggleSnack={this.toggleSnack} backToMainPage={this.backToMainPage} rivalData={currentUser}/>}
         {currentView === 2 && <RivalView toggleSnack={this.toggleSnack} backToMainPage={this.backToMainPage} rivalData={rivalMeta.uid} rivalMeta={rivalMeta} descendingRivalData={descendingRivalData} isNotRival={true}/>}
         <ShowSnackBar message={message} variant="success"

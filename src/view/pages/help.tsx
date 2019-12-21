@@ -27,11 +27,11 @@ export default class Index extends React.Component<{},{}> {
               </Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-              <Typography display="block">
+              <div>
                 <FormattedMessage id="Help.A.1"/><br/>
                 <FormattedMessage id="Help.A.2"/><br/>
                 <FormattedMessage id="Help.A.3"/>
-              </Typography>
+              </div>
             </ExpansionPanelDetails>
           </ExpansionPanel>
           <ExpansionPanel>
@@ -43,14 +43,15 @@ export default class Index extends React.Component<{},{}> {
               </Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-              <Typography display="block">
+              <div>
                 <FormattedMessage id="Help.B.1"/><br/>
                 <FormattedMessage id="Help.B.2"/><br/>
                 <FormattedMessage id="Help.B.3"/><br/>
-                <FormattedMessage id="Help.B.4"/>
+                <FormattedMessage id="Help.B.4"/><br/>
+                <FormattedMessage id="Help.B.4.1"/>
                 <Divider style={{margin:"10px 0"}}/>
                 <FormattedMessage id="Help.B.5"/>
-              </Typography>
+              </div>
             </ExpansionPanelDetails>
           </ExpansionPanel>
           <ExpansionPanel>
@@ -62,7 +63,7 @@ export default class Index extends React.Component<{},{}> {
               </Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-              <Typography display="block">
+              <div>
                 <FormattedMessage id="Help.C.1"/>
                 <Divider style={{margin:"10px 0"}}/>
                 <FormattedMessage id="Help.C.2"/><br/>
@@ -74,7 +75,7 @@ export default class Index extends React.Component<{},{}> {
                 <FormattedMessage id="Help.C.7"/>
                 <Divider style={{margin:"10px 0"}}/>
                 <FormattedMessage id="Help.C.8"/>
-              </Typography>
+              </div>
             </ExpansionPanelDetails>
           </ExpansionPanel>
           <ExpansionPanel>
@@ -86,12 +87,12 @@ export default class Index extends React.Component<{},{}> {
               </Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-              <Typography display="block">
+              <div>
                 <FormattedMessage id="Help.D.1"/><br/>
                 <FormattedMessage id="Help.D.2"/><br/>
                 <FormattedMessage id="Help.D.3"/><br/>
                 <FormattedMessage id="Help.D.4"/>
-              </Typography>
+              </div>
             </ExpansionPanelDetails>
           </ExpansionPanel>
           <ExpansionPanel>
@@ -103,9 +104,9 @@ export default class Index extends React.Component<{},{}> {
               </Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-              <Typography display="block">
+              <div>
                 <FormattedMessage id="Help.E.1"/>
-              </Typography>
+              </div>
             </ExpansionPanelDetails>
           </ExpansionPanel>
           <ExpansionPanel>
@@ -117,13 +118,13 @@ export default class Index extends React.Component<{},{}> {
               </Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-              <Typography display="block">
+              <div>
                 <FormattedMessage id="Help.F.1"/>
                 <Divider style={{margin:"10px 0"}}/>
                 <FormattedMessage id="Help.F.2"/><br/>
                 <FormattedMessage id="Help.F.3"/><br/>
                 画面サイズは最低でも横360pxあること
-              </Typography>
+              </div>
             </ExpansionPanelDetails>
           </ExpansionPanel>
           <ExpansionPanel>
@@ -135,7 +136,7 @@ export default class Index extends React.Component<{},{}> {
               </Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-              <Typography display="block">
+              <div>
                 material-ui : Copyright (c) 2014 Call-Em-All <a href="https://opensource.org/licenses/mit-license.php" target="_blank" rel="noreferrer noopener">The MIT License (MIT)</a><br/>
                 Dexie.js : Copyright (c) dfahlander <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noreferrer noopener">Apache License</a><br/>
                 fast-deep-equal : Copyright (c) epoberezkin MIT<br/>
@@ -147,7 +148,7 @@ export default class Index extends React.Component<{},{}> {
                 recharts : Copyright (c) recharts MIT<br/>
                 typescript : Copyright (c) Microsoft Apache License<br/>
                 unstated : Copyright (c) 2018-present James Kyle MIT<br/>
-              </Typography>
+              </div>
             </ExpansionPanelDetails>
           </ExpansionPanel>
           <ExpansionPanel>
@@ -159,9 +160,9 @@ export default class Index extends React.Component<{},{}> {
               </Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-              <Typography display="block">
+              <div>
                 <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager(Twitter)</RefLink>にて更新情報をツイートしています。
-              </Typography>
+              </div>
             </ExpansionPanelDetails>
           </ExpansionPanel>
           <ExpansionPanel>
@@ -173,9 +174,9 @@ export default class Index extends React.Component<{},{}> {
               </Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-              <Typography display="block">
+              <div>
                 本ツールにより提供される機能やソフトウェアの不具合によって生じたいかなる損害に対しても、製作者(@notAesthet1c)は一切責任を負いかねますのであらかじめご了承ください。
-              </Typography>
+              </div>
             </ExpansionPanelDetails>
           </ExpansionPanel>
         </Container>

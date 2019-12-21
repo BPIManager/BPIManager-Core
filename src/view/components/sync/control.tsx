@@ -7,6 +7,10 @@ import fbActions from '../../../components/firebase/actions';
 import Typography from '@material-ui/core/Typography';
 import { _currentStore, _isSingle } from '../../../components/settings';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 import timeFormatter from '../../../components/common/timeFormatter';
 import { scoresDB, scoreHistoryDB } from '../../../components/indexedDB';
 import TextField from '@material-ui/core/TextField';
@@ -19,6 +23,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
   myName:string,
   myProfile:string,
   nameErrorMessage:string[],
+  arenaRank:string,
 }> {
 
   private fbA:fbActions = new fbActions();
@@ -34,6 +39,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
       rivalData:null,
       myName:"",
       myProfile:"",
+      arenaRank:"-",
       nameErrorMessage:[]
     }
   }
@@ -77,7 +83,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
   sendName = async()=>{
     this.setState({isLoading:true,nameErrorMessage:[]});
     try{
-      const res = await this.fbA.saveName(this.state.myName,this.state.myProfile,this.props.userData.photoURL);
+      const res = await this.fbA.saveName(this.state.myName,this.state.myProfile,this.props.userData.photoURL,this.state.arenaRank);
       if(res.error){
         return this.setState({nameErrorMessage:["エラーが発生しました。次のような理由が挙げられます:","名前に使用できない文字列が含まれている、すでに使用されている名前である、アクセス権限がない"],isLoading:false});
       }
@@ -88,9 +94,9 @@ class SyncControlScreen extends React.Component<{userData:any},{
   }
 
   render(){
-    const {isLoading,scoreData,nameErrorMessage,myName,myProfile} = this.state;
-    const nameError = myName.length !== 0 && !/[a-zA-Z0-9]+$/g.test(myName) || myName.length > 16;
-    const profError = myProfile.length > 140;
+    const {isLoading,scoreData,nameErrorMessage,myName,myProfile,arenaRank} = this.state;
+    const nameError:boolean = myName.length !== 0 && !/^[a-zA-Z0-9.]+$/g.test(myName) || myName.length > 16;
+    const profError:boolean = myProfile.length > 140;
     return (
       <div>
         <Typography component="h5" variant="h5">
@@ -129,6 +135,15 @@ class SyncControlScreen extends React.Component<{userData:any},{
           value={myName}
           onChange={(e)=>this.setState({myName:e.target.value})}
           style={{width:"100%",margin:"0px 0px 8px 0"}}/>
+        <FormControl fullWidth>
+          <InputLabel>最高アリーナランク</InputLabel>
+          <Select fullWidth value={arenaRank} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+            if(typeof e.target.value !== "string") return;
+            this.setState({arenaRank:e.target.value});
+          }}>
+            {["-","A1","A2","A3","A4","A5","B1","B2","B3","B4","B5"].map(item=><MenuItem value={item} key={item}>{item}</MenuItem>)}
+          </Select>
+        </FormControl>
         <TextField label="自己紹介を入力(最大140文字)"
           InputLabelProps={{
             shrink: true,
@@ -137,7 +152,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
           error={profError}
           helperText={profError && "自己紹介が長すぎます"}
           onChange={(e)=>this.setState({myProfile:e.target.value})}
-          style={{width:"100%",margin:"0px 0px 8px 0"}}/>
+          style={{width:"100%",margin:"8px 0"}}/>
         <Button
           variant="outlined"
           color="secondary"
