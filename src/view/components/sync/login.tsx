@@ -44,10 +44,6 @@ class SyncLoginScreen extends React.Component<{},{}> {
           アップロードされたデータは、いつ・どの端末からでもダウンロードし使用することが可能です。
         </Typography>
         <Divider style={{margin:"10px 0"}}/>
-        <Typography component="p" variant="caption" style={{textAlign:"center"}} gutterBottom>
-          <FormattedMessage id="Sync.Login.note1"/><br/>
-          <FormattedMessage id="Sync.Login.note2"/>
-        </Typography>
       </div>
     );
   }

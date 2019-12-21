@@ -9,13 +9,11 @@ import Paper from '@material-ui/core/Paper';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
 import RivalAdd from './add';
-import Typography from '@material-ui/core/Typography';
 import { _currentStore, _isSingle } from '../../../components/settings';
 import ShowSnackBar from '../snackBar';
 import { rivalListsDB } from '../../../components/indexedDB';
 import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import {Link as RefLink} from '@material-ui/core/';
 
 interface S {
   isAddOpen:boolean,
@@ -69,13 +67,6 @@ class RivalLists extends React.Component<P,S> {
     }
     return (
       <div>
-        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
-          <FormattedMessage id="GlobalNav.Rivals"/>
-        </Typography>
-        <Typography component="p" variant="body2">
-          <RefLink color="secondary" href="https://gist.github.com/potakusan/08c5528d6c6a51d10aec6b6556723a80"  target="_blank" rel="noopener noreferrer">ライバル機能の使い方はこちらを見てください</RefLink><br/>
-          現在の設定:[version:{_currentStore()}] [mode:{_isSingle() === 1 ? "SP" : "DP"}]
-        </Typography>
         {rivals.length === 0 && <p>まだライバルがいません。</p>}
         {rivals.map(item=><div onClick={()=>this.props.showEachRival(item)}><RivalComponent data={item}/></div>)}
         <Fab onClick={this.handleToggleModal} color="secondary" aria-label="add" style={{position:"fixed","bottom":"5%","right":"3%"}}>
@@ -104,7 +95,8 @@ class RivalComponent extends React.Component<CP,{}> {
           <ListItem button>
             <ListItemAvatar>
               <Avatar>
-                <img src={data.photoURL ? data.photoURL : "noimage"} style={{width:"100%",height:"100%"}} onError={(e)=>(e.target as HTMLImageElement).src = 'https://files.poyashi.me/noimg.png'}/>
+                <img src={data.photoURL ? data.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
+                  onError={(e)=>(e.target as HTMLImageElement).src = 'https://files.poyashi.me/noimg.png'}/>
               </Avatar>
             </ListItemAvatar>
             <ListItemText primary={data.rivalName} secondary={text} />

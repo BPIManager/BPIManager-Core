@@ -36,14 +36,12 @@ export default class Index extends React.Component<{},{}> {
           <Typography component="h3" variant="h3" align="center" color="textPrimary" gutterBottom>
             <FormattedMessage id="Top.Title"/>
           </Typography>
-          <Typography variant="body2" align="center" paragraph style={{color:"#ff0000",fontWeight:"bold"}}>
-            2019/12/11<br/>
-            BPIの定義式を<u>再度</u>一部改変しました。<br/>
-            <RefLink target="_blank" rel="noopener noreferrer" color="secondary" href="https://gist.github.com/potakusan/30004f4c05e6887399e779afe0fac4e6">
-            こちら
+          <Typography variant="body2" align="center" paragraph style={{fontWeight:"bold"}}>
+            2019/12/21<br/>
+            ライバルを探したり、スコア比較できる機能を搭載しました。<br/>
+            <RefLink target="_blank" rel="noopener noreferrer" color="secondary" href="https://gist.github.com/potakusan/08c5528d6c6a51d10aec6b6556723a80">
+            詳細はこちら。
             </RefLink>
-            を参照してください。<br/>
-            (設定より定義ファイル更新が必要です)
           </Typography>
           <AddToHomeScreenTicker/>
           <div>
@@ -90,8 +88,8 @@ export default class Index extends React.Component<{},{}> {
                   <FormattedMessage id="Index.notes2"/>
                 </Typography>
                 <Typography align="center" color="textSecondary" paragraph variant="caption">
-                  BPIManager beta ver0.0.2.0<br/>
-                  last update: 2019/12/20 JST<br/>
+                  BPIManager beta ver0.0.2.1<br/>
+                  last update: 2019/12/21 JST<br/>
                   {_lang() === "en" &&
                     <span>If you have encountered unintended behaviours or have opinions to make this tool much better, please contact <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>.</span>
                   }

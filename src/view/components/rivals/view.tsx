@@ -17,14 +17,17 @@ import RivalStats from './viewComponents/stats';
 interface S {
   isLoading:boolean,
   currentTab:number,
-  full:any[]
+  full:any[],
 }
 
 interface P {
   intl:any,
   rivalData:any,
   backToMainPage:()=>void
-  toggleSnack:()=>void
+  toggleSnack:()=>void,
+  isNotRival?:boolean,
+  rivalMeta?:any,
+  descendingRivalData?:any,
 }
 
 class RivalLists extends React.Component<P,S> {
@@ -49,7 +52,7 @@ class RivalLists extends React.Component<P,S> {
       groups[item.title + item.difficulty] = item;
       return groups;
     },{});
-    const allRivalScores = (await new rivalListsDB().getAllScores(rivalData.uid)).reduce((groups:any,item:any)=>{
+    const allRivalScores = (this.props.descendingRivalData || await new rivalListsDB().getAllScores(rivalData.uid)).reduce((groups:any,item:any)=>{
       groups[item.title + item.difficulty] = item;
       return groups;
     },{});
@@ -82,7 +85,7 @@ class RivalLists extends React.Component<P,S> {
 
   render(){
     const {isLoading,currentTab,full} = this.state;
-    const {rivalData,backToMainPage} = this.props;
+    const {rivalData,backToMainPage,isNotRival,rivalMeta} = this.props;
     if(isLoading){
       return (
         <Container className="loaderCentered">
@@ -93,7 +96,7 @@ class RivalLists extends React.Component<P,S> {
       <div>
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
           <Button onClick={backToMainPage} style={{minWidth:"auto",padding:"6px 0px"}}><ArrowBackIcon/></Button>
-          &nbsp;{rivalData.rivalName}
+          &nbsp;{rivalMeta ? rivalMeta.displayName : rivalData.rivalName}
         </Typography>
         <Tabs
           value={this.state.currentTab}
@@ -104,11 +107,11 @@ class RivalLists extends React.Component<P,S> {
         >
           <Tab label="比較" />
           <Tab label="統計" />
-          <Tab label="設定" />
+          {!isNotRival && <Tab label="設定" />}
         </Tabs>
         {currentTab === 0 && <SongsUI type={0} full={full} rivalData={rivalData}/>}
         {currentTab === 1 && <RivalStats full={full} rivalData={rivalData}/>}
-        {currentTab === 2 && <Settings backToMainPage={this.props.backToMainPage} toggleSnack={this.props.toggleSnack} rivalData={rivalData}/>}
+        {(!isNotRival && currentTab === 2) && <Settings backToMainPage={this.props.backToMainPage} toggleSnack={this.props.toggleSnack} rivalData={rivalData}/>}
       </div>
     );
   }

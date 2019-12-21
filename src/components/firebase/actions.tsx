@@ -2,6 +2,7 @@ import fb, { twitter,firestore, google } from ".";
 import timeFormatter from "../common/timeFormatter";
 import { scoresDB, scoreHistoryDB } from "../indexedDB";
 import platform from "platform";
+import firebase from "firebase";
 
 export default class fbActions{
 
@@ -50,12 +51,16 @@ export default class fbActions{
     return `${platform.os} / ${platform.name}`
   }
 
+  time(){
+    return firebase.firestore.FieldValue.serverTimestamp();
+  }
+
   async save(isRegisteredAs = ""){
     try{
       if(!this.name || !this.docName){return {error:true,date:null};}
-      const lastUpdate = timeFormatter(3);
       await firestore.collection(this.name).doc(this.docName).set({
-        timeStamp: lastUpdate,
+        timeStamp: timeFormatter(3),
+        severTime:this.time(),
         type: this.type(),
         scores: await new scoresDB().getAll(),
         scoresHistory : await new scoreHistoryDB().getAllInSpecificVersion(),
@@ -63,7 +68,8 @@ export default class fbActions{
       console.log("signed as :"+isRegisteredAs);
       if(isRegisteredAs !== ""){
         await firestore.collection("users").doc(this.docName).update({
-          timeStamp: lastUpdate,
+          timeStamp: timeFormatter(3),
+          severTime:this.time(),
         });
       }
       return {error:false,date:timeFormatter(3)};
@@ -104,14 +110,18 @@ export default class fbActions{
         console.log("already used error");
         return {error:true,date:null};
       }
-      const lastUpdate = timeFormatter(3);
-      await firestore.collection("users").doc(this.docName).set({
-        timeStamp: lastUpdate,
-        uid:this.docName,
-        displayName:displayName,
-        profile:profile,
-        photoURL:photoURL,
-      });
+      if(displayName === ""){
+        await firestore.collection("users").doc(this.docName).delete();
+      }else{
+        await firestore.collection("users").doc(this.docName).set({
+          timeStamp: timeFormatter(3),
+          severTime:this.time(),
+          uid:this.docName,
+          displayName:displayName,
+          profile:profile,
+          photoURL:photoURL,
+        });
+      }
       return {error:false,date:timeFormatter(3)};
     }catch(e){
       console.log(e);
@@ -125,6 +135,36 @@ export default class fbActions{
       const res = await firestore.collection("users").where("displayName","==",input).get();
       if(!res.empty && res.size === 1){
         return res.docs[0].data();
+      }else{
+        return null;
+      }
+    }catch(e){
+      console.log(e);
+      return null;
+    }
+  }
+
+  async recentUpdated(last:any,endAt:any){
+    try{
+      let query = firestore.collection("users").orderBy("serverTime", "desc");
+      if(last){
+        query = query.startAfter(last.serverTime);
+      }
+      if(endAt){
+        query = query.endAt(endAt.serverTime);
+      }
+      if(!endAt){
+        query = query.limit(10);
+      }
+      const res = await query.get();
+      if(!res.empty && res.size >= 1){
+        return res.docs.reduce((groups:any[],item:firebase.firestore.QueryDocumentSnapshot)=>{
+          const body = item.data();
+          if(body.displayName && body.displayName !== "" && body.serverTime){
+            groups.push(body);
+          }
+          return groups;
+        },[]);
       }else{
         return null;
       }

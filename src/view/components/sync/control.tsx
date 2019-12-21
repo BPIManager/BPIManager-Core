@@ -94,10 +94,9 @@ class SyncControlScreen extends React.Component<{userData:any},{
     return (
       <div>
         <Typography component="h5" variant="h5">
-          バックアップ
+          転送
         </Typography>
-        <FormattedMessage id="Sync.Control.message1"/><br/>
-        <FormattedMessage id="Sync.Control.message2"/>
+        <FormattedMessage id="Sync.Control.message1"/>
         <Divider style={{margin:"10px 0"}}/>
         {isLoading && <p><FormattedMessage id="Sync.Control.processing"/></p>}
         {(!isLoading && scoreData === null) && <p><FormattedMessage id="Sync.Control.nodata"/></p>}
@@ -114,14 +113,12 @@ class SyncControlScreen extends React.Component<{userData:any},{
         </ButtonGroup>
         <Divider style={{margin:"10px 0"}}/>
         <Typography component="h5" variant="h5">
-          ライバル
+          公開設定
         </Typography>
         <p>
-        下のフォームに名前を入力して送信することで、他の人にあなたのスコアデータを公開できます。<br/>
-        他の人と同じ名前は使用できません。名前を変更しても、すでにあなたをライバルとして追加済みのユーザーはあなたを追跡できます。<br/>
-        データを非公開にしたい場合は表示名を空欄にしたまま「送信」ボタンをクリックしてください。<br/>
-        ユーザー情報として、下記に記載した情報および、連携アカウントに設定されたプロフィール画像が使用されます。<br/>
-        <RefLink color="secondary" href="https://gist.github.com/potakusan/08c5528d6c6a51d10aec6b6556723a80"  target="_blank" rel="noopener noreferrer">ライバル機能の詳細はこちらを見てください</RefLink>
+        フォームに名前を入力して送信することで、あなたのスコアデータを他の人に公開できます。<br/>
+        これによって、他の人があなたをライバルとして登録することができます。<br/>
+        <RefLink color="secondary" href="https://gist.github.com/potakusan/08c5528d6c6a51d10aec6b6556723a80"  target="_blank" rel="noopener noreferrer">ライバル機能の詳細はこちら。</RefLink>
         </p>
         <TextField label="表示名を入力(最大16文字)"
           InputLabelProps={{

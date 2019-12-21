@@ -164,6 +164,20 @@ export default class Index extends React.Component<{},{}> {
               </Typography>
             </ExpansionPanelDetails>
           </ExpansionPanel>
+          <ExpansionPanel>
+            <ExpansionPanelSummary
+              expandIcon={<ExpandMoreIcon />}
+            >
+              <Typography>
+                免責事項
+              </Typography>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails>
+              <Typography display="block">
+                本ツールにより提供される機能やソフトウェアの不具合によって生じたいかなる損害に対しても、製作者(@notAesthet1c)は一切責任を負いかねますのであらかじめご了承ください。
+              </Typography>
+            </ExpansionPanelDetails>
+          </ExpansionPanel>
         </Container>
       </div>
     );

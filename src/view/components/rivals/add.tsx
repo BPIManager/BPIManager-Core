@@ -110,7 +110,8 @@ class RivalAdd extends React.Component<P,S> {
               <CardHeader
                 avatar={
                   <Avatar>
-                    <img src={res.photoURL}/>
+                    <img src={res.photoURL ? res.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
+                      onError={(e)=>(e.target as HTMLImageElement).src = 'https://files.poyashi.me/noimg.png'}/>
                   </Avatar>
                 }
                 title={res.displayName}
