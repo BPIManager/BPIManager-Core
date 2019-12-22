@@ -1,4 +1,5 @@
 import { _prefix } from "../../../../components/songs/filter";
+import { B } from "./filter";
 
 export const diffColor = (i:number,clearState: any,alternative:number = 0):string=>{
   if(i !== alternative){return "transparent";}
@@ -29,4 +30,18 @@ export const bp = (bp:number):string=>{
     return "-";
   }
   return String(bp);
+}
+
+export const bpmFilter = (songBPM:string,b:B):boolean=>{
+  if(/\-/.test(songBPM)){ //ソフラン判定
+    return b.soflan; //ソフラン曲表示->true 非表示->false
+  }
+  if(!b.noSoflan){
+    return false;
+  }
+  const num = Number(songBPM);//150
+  if(b.min !== "" && b.max !== ""){ //最小BPM判定&最大BPM判定
+    return num >= b.min && num <= b.max;
+  }
+  return b.min !== "" ? num >= b.min : b.max !== "" ? num <= b.max : true;
 }

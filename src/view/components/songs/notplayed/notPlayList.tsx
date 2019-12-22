@@ -20,6 +20,10 @@ import InputLabel from '@material-ui/core/InputLabel';
 import {songData} from "../../../../types/data";
 import { difficultyDiscriminator } from '../../../../components/songs/filter';
 import equal from 'fast-deep-equal'
+import Button from '@material-ui/core/Button';
+import SongsFilter, { B } from '../common/filter';
+import FilterListIcon from '@material-ui/icons/FilterList';
+import { bpmFilter } from '../common';
 
 interface stateInt {
   filterByName:string,
@@ -28,6 +32,8 @@ interface stateInt {
   sort:number,
   isDesc:boolean,
   page:number,
+  filterOpen:boolean,
+  bpm:B
 }
 
 interface P{
@@ -50,7 +56,14 @@ export default class NotPlayList extends React.Component<P,stateInt> {
         level:["11","12"],
         difficulty:["0","1","2"],
       },
+      bpm:{
+        noSoflan:true,
+        min:"",
+        max:"",
+        soflan:true,
+      },
       page:0,
+      filterOpen:false,
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
@@ -106,8 +119,10 @@ export default class NotPlayList extends React.Component<P,stateInt> {
 
   songFilter = (newState:{[s:string]:any} = this.state) =>{
     const diffs:string[] = ["hyper","another","leggendaria"];
+    const b = newState.bpm;
     return this.props.full.filter((data)=>{
       return (
+        bpmFilter(data.bpm,b) &&
         newState["options"]["level"].some((item:string)=>{
           return item === data.difficultyLevel }) &&
         newState["options"]["difficulty"].some((item:number)=>{
@@ -139,18 +154,29 @@ export default class NotPlayList extends React.Component<P,stateInt> {
     return isDesc ? res : res.reverse();
   }
 
+  applyFilter = (state:{bpm:B}):void=>{
+    let newState = this.cloneState();
+    newState.bpm = state.bpm;
+    return this.setState({songData:this.songFilter(newState),bpm:state.bpm,page:0});
+  }
+
+  handleToggleFilterScreen = ()=> this.setState({filterOpen:!this.state.filterOpen});
+
   // readonly修飾子が付いているデータに一時的な書き込みをするための措置
   // (曲目フィルタのためにのみ使用し、stateには反映しない)
   // アンチパターンなのでなんとかする
   cloneState = () => JSON.parse(JSON.stringify(this.state))
 
   render(){
-    const {filterByName,options,sort,isDesc,page} = this.state;
+    const {filterByName,filterOpen,options,sort,isDesc,page} = this.state;
     return (
       <Container className="commonLayout" fixed id="songsVil">
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom
           style={{display:"flex",justifyContent:"space-between"}}>
           <FormattedMessage id={this.props.title}/>
+          <Button onClick={this.handleToggleFilterScreen} variant="outlined" color="primary" style={{marginRight:"10px",minWidth:"40px",padding:"5px 6px"}}>
+            <FilterListIcon/>
+          </Button>
         </Typography>
         <Grid container spacing={1} style={{margin:"5px 0"}}>
           <Grid item xs={12}>
@@ -215,6 +241,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
           data={this.sortedData()} sort={sort} isDesc={isDesc}
           changeSort={this.changeSort}
           updateScoreData={this.updateScoreData}/>
+        {filterOpen && <SongsFilter handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpm={this.state.bpm}/>}
 
       </Container>
     );

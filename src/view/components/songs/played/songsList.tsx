@@ -13,7 +13,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import BackspaceIcon from '@material-ui/icons/Backspace';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
-
+import FilterListIcon from '@material-ui/icons/FilterList';
 import SongsTable from "./tablePlayed";
 import Input from '@material-ui/core/Input';
 
@@ -26,6 +26,9 @@ import equal from 'fast-deep-equal'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { _isSingle } from '../../../../components/settings';
 import moment from 'moment';
+import Button from '@material-ui/core/Button';
+import SongsFilter, { B } from '../common/filter';
+import { bpmFilter } from '../common';
 
 interface stateInt {
   isLoading:boolean,
@@ -38,6 +41,8 @@ interface stateInt {
   mode:number,
   range:number,
   page:number,
+  filterOpen:boolean,
+  bpm:B
 }
 
 interface P{
@@ -62,8 +67,15 @@ export default class SongsList extends React.Component<P,stateInt> {
         level:["11","12"],
         difficulty:["0","1","2"],
       },
+      bpm:{
+        noSoflan:true,
+        min:"",
+        max:"",
+        soflan:true,
+      },
       range:0,
       page:0,
+      filterOpen:false,
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
@@ -122,6 +134,7 @@ export default class SongsList extends React.Component<P,stateInt> {
     const diffs:string[] = ["hyper","another","leggendaria"];
     const m = newState.mode;
     const r = newState.range;
+    const b = newState.bpm;
     const f = this.state.allSongsData;
 
     const evaluateRange = (data:scoreData):boolean=>{
@@ -147,9 +160,11 @@ export default class SongsList extends React.Component<P,stateInt> {
 
     if(Object.keys(this.state.allSongsData).length === 0) return [];
     return this.props.full.filter((data)=>{
-      if(!f[data.title + _prefix(data["difficulty"])]){return false;}
-      const max = f[data.title + _prefix(data["difficulty"])]["notes"] * 2;
+      const _f = f[data.title + _prefix(data["difficulty"])];
+      if(!_f){return false;}
+      const max = _f["notes"] * 2;
       return (
+        bpmFilter(_f.bpm,b) &&
         evaluateRange(data) &&
         evaluateMode(data,max) &&
         newState["options"]["level"].some((item:string)=>{
@@ -211,13 +226,21 @@ export default class SongsList extends React.Component<P,stateInt> {
     return this.setState({scoreData:this.songFilter(newState),range:event.target.value,page:0});
   }
 
+  applyFilter = (state:{bpm:B}):void=>{
+    let newState = this.cloneState();
+    newState.bpm = state.bpm;
+    return this.setState({scoreData:this.songFilter(newState),bpm:state.bpm,page:0});
+  }
+
+  handleToggleFilterScreen = ()=> this.setState({filterOpen:!this.state.filterOpen});
+
   // readonly修飾子が付いているデータに一時的な書き込みをするための措置
   // (曲目フィルタのためにのみ使用し、stateには反映しない)
   // アンチパターンなのでなんとかする
   cloneState = () => JSON.parse(JSON.stringify(this.state))
 
   render(){
-    const {isLoading,filterByName,options,sort,isDesc,mode,range,page} = this.state;
+    const {isLoading,filterByName,options,sort,isDesc,mode,range,page,filterOpen} = this.state;
     if(isLoading){
       return (
         <Container className="loaderCentered">
@@ -229,15 +252,20 @@ export default class SongsList extends React.Component<P,stateInt> {
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom
           style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <FormattedMessage id={this.props.title}/>
-          <FormControl>
-            <Select value={range} displayEmpty onChange={this.handleRangeCange}>
-              <MenuItem value={0}>全期間</MenuItem>
-              <MenuItem value={1}>本日更新分</MenuItem>
-              <MenuItem value={2}>前日更新分</MenuItem>
-              <MenuItem value={3}>今週更新分</MenuItem>
-              <MenuItem value={4}>1ヶ月以上未更新</MenuItem>
-            </Select>
-          </FormControl>
+          <div style={{display:"flex"}}>
+            <Button onClick={this.handleToggleFilterScreen} variant="outlined" color="primary" style={{marginRight:"10px",minWidth:"40px",padding:"5px 6px"}}>
+              <FilterListIcon/>
+            </Button>
+            <FormControl>
+              <Select value={range} displayEmpty onChange={this.handleRangeCange}>
+                <MenuItem value={0}>全期間</MenuItem>
+                <MenuItem value={1}>本日更新分</MenuItem>
+                <MenuItem value={2}>前日更新分</MenuItem>
+                <MenuItem value={3}>今週更新分</MenuItem>
+                <MenuItem value={4}>1ヶ月以上未更新</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
         </Typography>
         <Grid container spacing={1} style={{margin:"5px 0"}}>
           <Grid item xs={6}>
@@ -318,6 +346,7 @@ export default class SongsList extends React.Component<P,stateInt> {
           data={this.sortedData()} sort={sort} isDesc={isDesc} mode={mode}
           changeSort={this.changeSort} allSongsData={this.state.allSongsData}
           updateScoreData={this.updateScoreData}/>
+        {filterOpen && <SongsFilter handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpm={this.state.bpm}/>}
       </Container>
     );
   }
