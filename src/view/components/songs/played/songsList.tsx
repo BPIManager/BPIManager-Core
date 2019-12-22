@@ -253,7 +253,9 @@ export default class SongsList extends React.Component<P,stateInt> {
           style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <FormattedMessage id={this.props.title}/>
           <div style={{display:"flex"}}>
-            <Button onClick={this.handleToggleFilterScreen} variant="outlined" color="primary" style={{marginRight:"10px",minWidth:"40px",padding:"5px 6px"}}>
+            <Button 
+              className="filterButton"
+              onClick={this.handleToggleFilterScreen} variant="outlined" color="primary" style={{marginRight:"10px",minWidth:"40px",padding:"5px 6px"}}>
               <FilterListIcon/>
             </Button>
             <FormControl>

@@ -174,7 +174,9 @@ export default class NotPlayList extends React.Component<P,stateInt> {
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom
           style={{display:"flex",justifyContent:"space-between"}}>
           <FormattedMessage id={this.props.title}/>
-          <Button onClick={this.handleToggleFilterScreen} variant="outlined" color="primary" style={{marginRight:"10px",minWidth:"40px",padding:"5px 6px"}}>
+          <Button
+            className="filterButton"
+            onClick={this.handleToggleFilterScreen} variant="outlined" color="primary" style={{marginRight:"10px",minWidth:"40px",padding:"5px 6px"}}>
             <FilterListIcon/>
           </Button>
         </Typography>

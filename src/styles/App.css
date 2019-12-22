@@ -302,3 +302,12 @@ a.link:hover{
 .clearBoth{
   clear:both;
 }
+
+#__dark .filterButton{
+  color: #6b6b6b !important;
+  border-color: #6b6b6b !important;
+}
+
+.MuiCheckbox-colorPrimary.Mui-checked{
+  color:#949494 !important;
+}

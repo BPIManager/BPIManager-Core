@@ -112,7 +112,8 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
             <TableBody>
               {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:any,i:number) => {
                 const prefix = row.difficulty === "hyper" ? "(H)" : row.difficulty === "leggendaria" ? "(†)" : "";
-                const max  = this.props.allSongsData[row.title + prefix]["notes"] * 2;
+                const f = this.props.allSongsData[row.title + prefix];
+                const max  = f["notes"] * 2;
                 return (
                   <TableRow
                     onClick={()=>this.handleOpen(false,row)}
@@ -121,10 +122,9 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                       return (
                         <TableCell key={column.id + prefix} style={{backgroundColor : diffColor(j,row.clearState),position:"relative"}} >
                           {(mode < 6 && column.id === "currentBPI") && <span className={j >= 2 ? "bodyNumber" : ""}>{Number(row[column.id]).toFixed(2)}</span>}
-                          {(mode < 6 && column.id !== "currentBPI") && <span className={j >= 2 ? "bodyNumber" : ""}>{row[column.id]}</span>}
-                          {(mode > 5 && column.id !== "currentBPI") && <span className={j >= 2 ? "bodyNumber" : ""}>{row[column.id]}</span>}
+                          {(column.id !== "currentBPI") && <span className={j >= 2 ? "bodyNumber" : ""}>{row[column.id]}</span>}
 
-                          {column.id === "title" && prefix}
+                          {column.id === "title" && <span>{prefix}</span>}
                           {(mode > 5 && column.id === "currentBPI") && bp(row.missCount)}
                           <span className={i % 2 ? "plusOverlayScore isOddOverLayed" : "plusOverlayScore isEvenOverLayed"}>
                             {(j === 3) &&
