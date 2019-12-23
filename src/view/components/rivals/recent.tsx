@@ -18,6 +18,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import CheckIcon from '@material-ui/icons/Check';
 import AddIcon from '@material-ui/icons/Add';
 import VisibilityIcon from '@material-ui/icons/Visibility';
+import Container from '@material-ui/core/Container';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 interface P {
   compareUser:(rivalMeta:any,rivalBody:any,last:any,arenaRank:string)=>void,
@@ -36,6 +38,7 @@ interface S {
   message:string,
   rivals:string[],
   arenaRank:string,
+  isLoading:boolean,
 }
 
 class RecentlyAdded extends React.Component<P,S> {
@@ -59,6 +62,7 @@ class RecentlyAdded extends React.Component<P,S> {
       showSnackBar:false,
       rivals:[],
       arenaRank:props.arenaRank || "すべて",
+      isLoading:true,
     }
   }
 
@@ -71,12 +75,12 @@ class RecentlyAdded extends React.Component<P,S> {
   }
 
   search = async(last = null,endAt = null,arenaRank = this.state.arenaRank):Promise<void>=>{
-    this.setState({processing:true});
+    this.setState({processing:true,isLoading:true,});
     const res = await this.fbA.recentUpdated(last,endAt,arenaRank);
     if(!res){
       return this.toggleSnack("該当ページが見つかりませんでした。","warning")
     }
-    return this.setState({activated:true,res:this.state.res.concat(res),processing:false});
+    return this.setState({activated:true,res:this.state.res.concat(res),processing:false,isLoading:false,});
   }
 
   addUser = async(meta:any):Promise<void>=>{
@@ -117,11 +121,11 @@ class RecentlyAdded extends React.Component<P,S> {
   }
 
   toggleSnack = (message:string = "ライバルを追加しました",variant:"info" | "error" | "success" | "warning" = "info")=>{
-    return this.setState({message:message,showSnackBar:!this.state.showSnackBar,processing:false,variant:variant});
+    return this.setState({message:message,showSnackBar:!this.state.showSnackBar,processing:false,variant:variant,isLoading:false});
   }
 
   render(){
-    const {showSnackBar,activated,res,rivals,processing,message,variant,arenaRank} = this.state;
+    const {isLoading,showSnackBar,activated,res,rivals,processing,message,variant,arenaRank} = this.state;
     return (
       <div>
       <FormControl style={{minWidth:"150px",float:"right"}}>
@@ -178,6 +182,11 @@ class RecentlyAdded extends React.Component<P,S> {
         </Card>
       </div>
       ))}
+      {isLoading && <div>
+        <Container className="loaderCentered" style={{height:"66px"}}>
+          <CircularProgress />
+        </Container>
+      </div>}
       <Grid container>
         <Grid item xs={12}>
           <Button disabled={processing} onClick={this.next} variant="contained" color="secondary" fullWidth>

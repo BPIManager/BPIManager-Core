@@ -68,7 +68,7 @@ class RivalLists extends React.Component<P,S> {
     return (
       <div>
         {rivals.length === 0 && <p>まだライバルがいません。</p>}
-        {rivals.map(item=><div onClick={()=>this.props.showEachRival(item)}><RivalComponent data={item}/></div>)}
+        {rivals.map(item=><div key={item} onClick={()=>this.props.showEachRival(item)}><RivalComponent data={item}/></div>)}
         <Fab onClick={this.handleToggleModal} color="secondary" aria-label="add" style={{position:"fixed","bottom":"5%","right":"3%"}}>
           <AddIcon />
         </Fab>

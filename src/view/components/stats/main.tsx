@@ -15,6 +15,7 @@ import {Link as RefLink, Table, TableRow, TableCell, TableBody} from '@material-
 import { difficultyDiscriminator } from '../../../components/songs/filter';
 import { songData, scoreData } from '../../../types/data';
 import { _DiscriminateRanksByNumber } from '../../../components/common/djRank';
+import { getRadar, Details } from '../common/radar';
 
 interface S {
   isLoading:boolean,
@@ -26,6 +27,7 @@ interface S {
   radar:any[]|null,
   groupedByDJRank:any[],
   groupedByClearState:any[],
+  radarDetail:string
 }
 
 class Main extends React.Component<{intl:any},S> {
@@ -42,6 +44,7 @@ class Main extends React.Component<{intl:any},S> {
       radar:[],
       groupedByDJRank:[],
       groupedByClearState:[],
+      radarDetail:"",
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
@@ -142,116 +145,10 @@ class Main extends React.Component<{intl:any},S> {
       totalRank:bpi.rank(totalBPI,false),
       perDate:eachDaySum.sort((a,b)=> moment(a.name).diff(b.name)).slice(-10),
       groupedByLevel:groupedByLevel,
-      radar: isSingle ? await this.getRadar() : null,
+      radar: isSingle ? await getRadar() : null,
       groupedByDJRank:songsByDJRank.reverse(),
       groupedByClearState:songsByClearState.reverse(),
     });
-  }
-
-  getRadar = async():Promise<any>=>{
-
-    const songs:{[key:string]:[string,string][]} = {
-      "NOTES":[
-        ["Verflucht","leggendaria"],
-        ["Elemental Creation","another"],
-        ["perditus†paradisus","another"],
-        ["Sigmund","leggendaria"],
-        ["B4U(BEMANI FOR YOU MIX)","leggendaria"],
-        ["Chrono Diver -PENDULUMs-","another"],
-      ],
-      "CHARGE":[
-        ["TOGAKUSHI","another"],
-        ["DIAMOND CROSSING","another"],
-        ["ECHIDNA","another"],
-        ["Timepiece phase II (CN Ver.)","another"],
-        ["Snakey Kung-fu","another"]
-      ],
-      "PEAK":[
-        ["X-DEN","another"],
-        ["卑弥呼","another"],
-        ["疾風迅雷","leggendaria"],
-        ["KAMAITACHI","leggendaria"],
-        ["天空の夜明け","another"],
-      ],
-      "CHORD":[
-        ["Rave*it!! Rave*it!! ","another"],
-        ["waxing and wanding","leggendaria"],
-        ["Little Little Princess","leggendaria"],
-        ["mosaic","another"],
-        ["Despair of ELFERIA","another"],
-        ["Beat Radiance","leggendaria"]
-      ],
-      "GACHIOSHI":[
-        ["255","another"],
-        ["BITTER CHOCOLATE STRIKER","another"],
-        ["童話回廊","another"],
-        ["VANESSA","leggendaria"],
-        ["GRID KNIGHT","leggendaria"]
-      ],
-      "SCRATCH":[
-        ["灼熱 Pt.2 Long Train Running","another"],
-        ["灼熱Beach Side Bunny","another"],
-        ["BLACK.by X-Cross Fade","another"],
-        ["Red. by Jack Trance","another"],
-        ["Level One","another"],
-        ["火影","another"]
-      ],
-      "SOFLAN":[
-        ["冥","another"],
-        ["ICARUS","leggendaria"],
-        ["Fascination MAXX","another"],
-        ["JOMANDA","another"],
-        ["PARANOiA ～HADES～","another"],
-        ["音楽","another"],
-        ["DAY DREAM","another"],
-      ],
-      "DELAY":[
-        ["Mare Nectaris","another"],
-        ["quell～the seventh slave～","another"],
-        ["子供の落書き帳","another"],
-        ["DIAVOLO","another"],
-        ["Thor's Hammer","another"]
-      ],
-      "RENDA":[
-        ["ピアノ協奏曲第１番”蠍火”","another"],
-        ["Scripted Connection⇒ A mix","another"],
-        ["Innocent Walls","hyper"],
-        ["IMPLANTATION","another"],
-        ["Sense 2007","another"],
-        ["ワルツ第17番 ト短調”大犬のワルツ”","another"]
-      ]
-    }
-    const objective = _goalBPI(),isSingle = _isSingle(),currentStore = _currentStore();
-    const db = new scoresDB(isSingle, currentStore);
-    return await Object.keys(songs).reduce(async (obj:Promise<any>,title:string)=>{
-      const collection = await obj;
-      const len = songs[title].length;
-      let pusher:number[] = [];
-
-      for(let i = 0; i < len; ++i){
-        const ind = await db.getItem(unescape(songs[title][i][0]),songs[title][i][1],currentStore,isSingle);
-        ind.length > 0 && pusher.push(ind[0]["currentBPI"]);
-      }
-      if(pusher.length < len){
-        const l = len - pusher.length;
-        for(let j = 0; j < l;++j){
-          pusher.push(-15);
-        }
-      }
-
-      const bpi = new bpiCalcuator();
-      bpi.allTwelvesBPI = pusher;
-      bpi.allTwelvesLength = pusher.length;
-      const total = bpi.totalBPI()
-      collection.push({
-        title: title,
-        TotalBPI: total,
-        ObjectiveBPI: objective,
-        rank:bpi.rank(total,false) / bpi.getTotalKaidens() * 100,
-        fullMark: 100
-      });
-      return Promise.resolve(obj);
-    },Promise.resolve([]));
   }
 
   groupBy = (array:number[])=>{
@@ -267,8 +164,11 @@ class Main extends React.Component<{intl:any},S> {
     }, {});
   }
 
+  toggleRadarDetail = (title:string = "")=> this.setState({radarDetail:title});
+
   render(){
-    const {totalBPI,isLoading,perDate,totalRank,groupedByLevel,radar,groupedByDJRank,groupedByClearState} = this.state;
+    const {totalBPI,isLoading,perDate,totalRank,groupedByLevel,radar,groupedByDJRank,groupedByClearState,radarDetail} = this.state;
+    console.log(radar)
     const {formatMessage} = this.props.intl;
     const chartColor = _chartColor();
     if(isLoading){
@@ -375,11 +275,11 @@ class Main extends React.Component<{intl:any},S> {
                     <Table size="small" style={{minHeight:"350px"}}>
                       <TableBody>
                         {radar.concat().sort((a,b)=>b.TotalBPI - a.TotalBPI).map(row => (
-                          <TableRow key={row.title}>
+                          <TableRow key={row.title} onClick={()=>this.toggleRadarDetail(row.title)}>
                             <TableCell component="th">
                               {row.title}
                             </TableCell>
-                            <TableCell align="right">{row.TotalBPI}<span style={{fontSize:"7px"}}>(上位{Math.floor(row.rank)}%)</span></TableCell>
+                            <TableCell align="right">{row.TotalBPI.toFixed(2)}<span style={{fontSize:"7px"}}>(上位{Math.floor(row.rank * 100) / 100}%)</span></TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
@@ -390,6 +290,7 @@ class Main extends React.Component<{intl:any},S> {
             </Grid>
           </Grid>
         }
+        {radarDetail !== "" && <Details closeModal={this.toggleRadarDetail} withRival={false} data={radar} title={radarDetail}/>}
         <Grid container spacing={3}>
           <Grid item xs={12} md={6} lg={6}>
             <Paper style={{padding:"15px",height:270}}>

@@ -38,8 +38,8 @@ export default class Index extends React.Component<{},{}> {
           </Typography>
 
           <Typography align="center" color="textSecondary" paragraph variant="caption">
-            beta ver0.0.2.2<br/>
-            last update: 2019/12/22 JST
+            beta ver0.0.2.3<br/>
+            last update: 2019/12/23 JST
           </Typography>
           <AddToHomeScreenTicker/>
           <div>

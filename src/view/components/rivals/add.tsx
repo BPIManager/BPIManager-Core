@@ -90,7 +90,7 @@ class RivalAdd extends React.Component<P,S> {
     const {handleToggle} = this.props;
     const {input,activated,res,processing,errorMessage} = this.state;
     return (
-      <Dialog open={true} aria-labelledby="form-dialog-title">
+      <Dialog open={true}>
         <DialogTitle>IDからライバルを検索</DialogTitle>
         <DialogContent>
           <DialogContentText>

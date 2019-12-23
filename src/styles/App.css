@@ -311,3 +311,16 @@ a.link:hover{
 .MuiCheckbox-colorPrimary.Mui-checked{
   color:#949494 !important;
 }
+
+.detailModalTableRow th.MuiTableCell-root.MuiTableCell-head:first-child{
+  padding:3px 5px !important;
+}
+
+.narrowDialogContent{
+  padding:6px 5px !important;
+}
+
+.narrowDialogTitle{
+  text-align:center;
+  padding:11px !important;
+}
