@@ -170,7 +170,20 @@ const ja = {
   "Settings.ChangeDefinitionURL2":"こちら",
   "Settings.ChangeDefinitionURL3":"をご確認ください。",
   "Settings.ChangeDefinitionURL4":"フォームを空欄にして保存することで、デフォルトのURLを適用します。",
-
+  "Orders.Title":"曲名",
+  "Orders.Level":"レベル",
+  "Orders.BPI":"BPI",
+  "Orders.MissCount":"ミスカウント",
+  "Orders.EX":"EXスコア",
+  "Orders.Percentage":"パーセンテージ",
+  "Orders.LastUpdate":"最終更新日時",
+  "Orders.MaxBPM":"最高BPM",
+  "Orders.MinBPM":"最低BPM",
+  "Orders.Version":"収録バージョン",
+  "Orders.orderTitle":"並べ替え",
+  "Orders.orderMode":"昇降順",
+  "Orders.asc":"昇順",
+  "Orders.desc":"降順"
 };
 
 export default ja;

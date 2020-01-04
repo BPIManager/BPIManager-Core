@@ -1,8 +1,8 @@
 import * as React from 'react';
 
+import {verArr,verNameArr} from "./";
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
@@ -10,16 +10,19 @@ import Typography from '@material-ui/core/Typography';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
+import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
 
 interface P {
   handleToggle:()=>void,
-  applyFilter:(state:{bpm:B})=>void,
-  bpm:B
+  applyFilter:(state:{bpm:B,versions:number[]})=>void,
+  bpm:B,
+  versions:number[],
 }
 
 interface S {
-  bpm:B
+  bpm:B,
+  versions:number[]
 }
 
 export interface B {
@@ -35,6 +38,7 @@ class SongsFilter extends React.Component<P,S> {
     super(props);
     this.state = {
       bpm:props.bpm,
+      versions:props.versions
     }
   }
 
@@ -55,6 +59,17 @@ class SongsFilter extends React.Component<P,S> {
     })
   }
 
+  handleVerChkBox = (ver:number)=> (event: React.ChangeEvent<HTMLInputElement>)=>{
+    let {versions} = this.state;
+    versions = versions.filter(v=>v !== ver);
+    if(event.target.checked){
+      versions.push(ver);
+    }
+    return this.setState({
+      versions:versions
+    })
+  }
+
   handleInput = (name:"min"|"max" = "min")=> (event: React.ChangeEvent<HTMLInputElement>)=>{
     let bpm = this.cloneState();
     const val = Number(event.target.value);
@@ -64,9 +79,12 @@ class SongsFilter extends React.Component<P,S> {
     })
   }
 
+  allSelect = ()=> this.setState({versions:verArr()});
+  allUnselect = ()=> this.setState({versions:[]});
+
   render(){
     const {handleToggle} = this.props;
-    const {bpm} = this.state;
+    const {bpm,versions} = this.state;
     return (
       <Dialog open={true} onClose={handleToggle} aria-labelledby="form-dialog-title">
         <DialogTitle>詳細フィルタ</DialogTitle>
@@ -128,6 +146,43 @@ class SongsFilter extends React.Component<P,S> {
             }
             label="ソフランあり"
           />
+          <Typography component="h6" variant="h6">
+            Versions
+          </Typography>
+          <Button onClick={this.allUnselect} color="primary">
+            すべて選択解除
+          </Button>
+          <Button onClick={this.allSelect} color="primary">
+            すべて選択
+          </Button>
+          <Divider/>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={versions.indexOf(1.5) > -1}
+                onChange={this.handleVerChkBox(1.5)}
+                value={1.5}
+                color="primary"
+              />
+            }
+            label="substream"
+          />
+          {verArr(false).map(item=>{
+            return (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={versions.indexOf(item) > -1}
+                    onChange={this.handleVerChkBox(item)}
+                    value={item}
+                    color="primary"
+                  />
+                }
+                key={item}
+                label={verNameArr[item]}
+              />
+            )
+          })}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleToggle} color="primary">

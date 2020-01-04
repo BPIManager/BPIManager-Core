@@ -25,6 +25,43 @@ export const behindScore = (row:any,allSongsData:{[key:string]:any},mode:number)
   }
 }
 
+export const verArr = (include:boolean = true):number[]=>{
+  let t = include ? [1.5] : [];
+  for (let i = 3; i < 28; ++i){
+    t.push(i);
+  }
+  return t;
+}
+
+export const verNameArr = [
+  "","","",
+  "3rd style",
+  "4th style",
+  "5th style",
+  "6th style",
+  "7th style",
+  "8th style",
+  "9th style",
+  "10th style",
+  "11 RED",
+  "12 HAPPY SKY",
+  "13 DistorteD",
+  "14 GOLD",
+  "15 DJ TROOPERS",
+  "16 EMPRESS",
+  "17 SIRIUS",
+  "18 Resort Anthem",
+  "19 Lincle",
+  "20 Tricoro",
+  "21 SPADA",
+  "22 PENDUAL",
+  "23 copula",
+  "24 SINOBUZ",
+  "25 CANNON BALLERS",
+  "26 Rootage",
+  "27 HEROIC VERSE",
+]
+
 export const bp = (bp:number):string=>{
   if(Number.isNaN(bp)){
     return "-";

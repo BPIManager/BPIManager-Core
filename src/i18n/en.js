@@ -169,6 +169,20 @@ const ja = {
   "Settings.ChangeDefinitionURL4":"Leave form blank and save to apply the default url.",
   "Stats.DistributionOfDJRank":"DJ Ranks",
   "Stats.DistributionOfClearState":"Clear States",
+  "Orders.Title":"Title",
+  "Orders.Level":"Level",
+  "Orders.BPI":"BPI",
+  "Orders.MissCount":"Miss counts",
+  "Orders.EX":"EX Score",
+  "Orders.Percentage":"Percentage",
+  "Orders.LastUpdate":"Last update",
+  "Orders.MaxBPM":"Max BPM",
+  "Orders.MinBPM":"Min BPM",
+  "Orders.Version":"Version",
+  "Orders.orderTitle":"Orders",
+  "Orders.orderMode":"Asc/Desc",
+  "Orders.asc":"Ascending",
+  "Orders.desc":"Descending"
 };
 
 export default ja;

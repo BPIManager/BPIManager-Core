@@ -28,9 +28,6 @@ const columns = [
 
 interface P{
   data:scoreData[],
-  sort:number,
-  isDesc:boolean,
-  changeSort:(newNum:number)=>void,
   mode:number,
   allSongsData:{[key:string]:any}
   updateScoreData:()=>void,
@@ -84,7 +81,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
     const last = this.willBeRendered("last"), lastVer = this.willBeRendered("lastVer"),
     estRank = this.willBeRendered("estRank"), djLevel = this.willBeRendered("djLevel");
     const {rowsPerPage,isOpen,currentSongData,currentScoreData} = this.state;
-    const {page,data,changeSort,sort,isDesc,mode} = this.props;
+    const {page,data,mode} = this.props;
     return (
       <Paper style={{width:"100%",overflowX:"auto"}} className={_traditionalMode() === 1 ? "traditionalMode" : ""}>
         <div>
@@ -94,17 +91,9 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                 {columns.map((column,i) => (
                   <TableCell
                     key={column.id}
-                    onClick={()=>changeSort(i)}
                   >
                     {(mode < 5 || i !== 2 ) && column.label}
                     {(mode > 4 && i === 2) && "BP"}
-                    {i === sort &&
-                      <span>
-                        { isDesc && <span>▼</span> }
-                        { !isDesc && <span>▲</span> }
-                      </span>
-                    }
-                    {i !== sort && <span>△</span>}
                   </TableCell>
                 ))}
               </TableRow>

@@ -4,6 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import { FormattedMessage } from "react-intl";
 import {songsDB} from "../../../../components/indexedDB";
 
+import { injectIntl } from "react-intl";
 import Grid from '@material-ui/core/Grid';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
@@ -28,7 +29,8 @@ import { _isSingle } from '../../../../components/settings';
 import moment from 'moment';
 import Button from '@material-ui/core/Button';
 import SongsFilter, { B } from '../common/filter';
-import { bpmFilter } from '../common';
+import { bpmFilter,verArr } from '../common';
+import OrderControl from "../common/orders";
 
 interface stateInt {
   isLoading:boolean,
@@ -36,33 +38,34 @@ interface stateInt {
   scoreData:scoreData[],
   allSongsData:{[key:string]:any},
   options:{[key:string]:string[]},
-  sort:number,
-  isDesc:boolean,
   mode:number,
   range:number,
   page:number,
   filterOpen:boolean,
-  bpm:B
+  bpm:B,
+  orderTitle:number,
+  orderMode:number,
+  versions:number[]
 }
 
 interface P{
   title:string,
   full:scoreData[],
   updateScoreData:()=>Promise<void>,
+  intl:any,
 }
 
-export default class SongsList extends React.Component<P,stateInt> {
+class SongsList extends React.Component<P,stateInt> {
 
   constructor(props:P){
     super(props);
+
     this.state = {
       isLoading:true,
       filterByName:"",
       scoreData:[],
       allSongsData:{},
       mode:0,
-      sort:2,
-      isDesc:true,
       options:{
         level:["11","12"],
         difficulty:["0","1","2"],
@@ -76,6 +79,9 @@ export default class SongsList extends React.Component<P,stateInt> {
       range:0,
       page:0,
       filterOpen:false,
+      orderTitle:2,
+      orderMode:1,
+      versions:verArr()
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
@@ -135,6 +141,7 @@ export default class SongsList extends React.Component<P,stateInt> {
     const m = newState.mode;
     const r = newState.range;
     const b = newState.bpm;
+    const v = newState.versions;
     const f = this.state.allSongsData;
 
     const evaluateRange = (data:scoreData):boolean=>{
@@ -158,6 +165,14 @@ export default class SongsList extends React.Component<P,stateInt> {
       m === 8 ? data.clearState <= 5 : true
     }
 
+    const evaluateVersion = (song:string):boolean=>{
+      const songVer = song.split("/")[0];
+      if(songVer === "s"){
+        return v.indexOf(1.5) > -1;
+      }
+      return v.indexOf(Number(songVer)) > -1;
+    }
+
     if(Object.keys(this.state.allSongsData).length === 0) return [];
     return this.props.full.filter((data)=>{
       const _f = f[data.title + _prefix(data["difficulty"])];
@@ -167,6 +182,7 @@ export default class SongsList extends React.Component<P,stateInt> {
         bpmFilter(_f.bpm,b) &&
         evaluateRange(data) &&
         evaluateMode(data,max) &&
+        evaluateVersion(_f.textage) &&
         newState["options"]["level"].some((item:string)=>{
           return item === data.difficultyLevel }) &&
         newState["options"]["difficulty"].some((item:number)=>{
@@ -176,40 +192,57 @@ export default class SongsList extends React.Component<P,stateInt> {
     })
   }
 
-  changeSort = (newNum:number):void=>{
-    const {sort,isDesc} = this.state;
-    if(sort === newNum){
-      return this.setState({isDesc:!isDesc});
-    }
-    return this.setState({sort:newNum,isDesc:true})
+  handleOrderTitleChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
+    const val = event.target.value;
+    if (typeof val !== "number") { return; }
+    return this.setState({orderTitle:val,page:0});
+  }
+
+  handleOrderModeChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
+    const val = event.target.value;
+    if (typeof val !== "number") { return; }
+    return this.setState({orderMode:val,page:0});
   }
 
   sortedData = ():scoreData[]=>{
-    const {scoreData,sort,isDesc,mode,allSongsData} = this.state;
+    const {scoreData,orderMode,orderTitle,allSongsData} = this.state;
     const res = scoreData.sort((a,b)=> {
-      switch(sort){
+      const aFull = allSongsData[a.title + _prefix(a.difficulty)];
+      const bFull = allSongsData[b.title + _prefix(b.difficulty)];
+      switch(orderTitle){
         case 0:
-        return Number(b.difficultyLevel) - Number(a.difficultyLevel);
-        case 1:
-        return b.title.localeCompare(a.title, "ja", {numeric:true});
         default:
+        return b.title.localeCompare(a.title, "ja", {numeric:true});
+        case 1:
+        return Number(a.difficultyLevel) - Number(b.difficultyLevel);
         case 2:
-        if(mode > 5){
-          const am = !a.missCount ? Infinity : Number.isNaN(a.missCount) ? Infinity : a.missCount,
-          bm = !b.missCount ? Infinity : Number.isNaN(b.missCount) ? Infinity : b.missCount;
-          return  am-bm;
-        }
-        return b.currentBPI - a.currentBPI;
+        return a.currentBPI - b.currentBPI;
         case 3:
-        if(mode > 0 && mode < 6){
-          const aMax = allSongsData[a.title + _prefix(a.difficulty)]["notes"] * 2;
-          const bMax = allSongsData[b.title + _prefix(b.difficulty)]["notes"] * 2;
-          return b.exScore / bMax - a.exScore / aMax;
-        }
-        return b.exScore - a.exScore;
+        const am = !a.missCount ? Infinity : Number.isNaN(a.missCount) ? Infinity : a.missCount,
+        bm = !b.missCount ? Infinity : Number.isNaN(b.missCount) ? Infinity : b.missCount;
+        return  am-bm;
+        case 4:
+        return a.exScore - b.exScore;
+        case 5:
+        const aMax = aFull["notes"] * 2;
+        const bMax = bFull["notes"] * 2;
+        return a.exScore / aMax - b.exScore / bMax;
+        case 6:
+        return moment(a.updatedAt).diff(b.updatedAt);
+        case 7:
+        case 8:
+        let aBpm = aFull["bpm"];
+        let bBpm = bFull["bpm"];
+        if(/\-/.test(aBpm)) aBpm = orderTitle === 7 ? aBpm.split("-")[1] : aBpm.split("-")[0];
+        if(/\-/.test(bBpm)) bBpm = orderTitle === 7 ? bBpm.split("-")[1] : bBpm.split("-")[0];
+        return aBpm - bBpm;
+        case 9:
+        let aVer = aFull["textage"].replace(/\/.*?$/,"");
+        let bVer = bFull["textage"].replace(/\/.*?$/,"");
+        return aVer - bVer;
       }
     });
-    return isDesc ? res : res.reverse();
+    return orderMode === 0  ? res : res.reverse();
   }
 
   handleModeChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
@@ -226,10 +259,11 @@ export default class SongsList extends React.Component<P,stateInt> {
     return this.setState({scoreData:this.songFilter(newState),range:event.target.value,page:0});
   }
 
-  applyFilter = (state:{bpm:B}):void=>{
+  applyFilter = (state:{bpm:B,versions:number[]}):void=>{
     let newState = this.cloneState();
     newState.bpm = state.bpm;
-    return this.setState({scoreData:this.songFilter(newState),bpm:state.bpm,page:0});
+    newState.versions = state.versions;
+    return this.setState({scoreData:this.songFilter(newState),bpm:state.bpm,versions:state.versions,page:0});
   }
 
   handleToggleFilterScreen = ()=> this.setState({filterOpen:!this.state.filterOpen});
@@ -240,7 +274,20 @@ export default class SongsList extends React.Component<P,stateInt> {
   cloneState = () => JSON.parse(JSON.stringify(this.state))
 
   render(){
-    const {isLoading,filterByName,options,sort,isDesc,mode,range,page,filterOpen} = this.state;
+    const {formatMessage} = this.props.intl;
+    const {isLoading,filterByName,options,orderMode,orderTitle,mode,range,page,filterOpen,versions} = this.state;
+    const orders = [
+      formatMessage({id:"Orders.Title"}),
+      formatMessage({id:"Orders.Level"}),
+      formatMessage({id:"Orders.BPI"}),
+      formatMessage({id:"Orders.MissCount"}),
+      formatMessage({id:"Orders.EX"}),
+      formatMessage({id:"Orders.Percentage"}),
+      formatMessage({id:"Orders.LastUpdate"}),
+      formatMessage({id:"Orders.MaxBPM"}),
+      formatMessage({id:"Orders.MinBPM"}),
+      formatMessage({id:"Orders.Version"}),
+    ]
     if(isLoading){
       return (
         <Container className="loaderCentered">
@@ -253,7 +300,7 @@ export default class SongsList extends React.Component<P,stateInt> {
           style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <FormattedMessage id={this.props.title}/>
           <div style={{display:"flex"}}>
-            <Button 
+            <Button
               className="filterButton"
               onClick={this.handleToggleFilterScreen} variant="outlined" color="primary" style={{marginRight:"10px",minWidth:"40px",padding:"5px 6px"}}>
               <FilterListIcon/>
@@ -306,6 +353,9 @@ export default class SongsList extends React.Component<P,stateInt> {
             </FormControl>
           </Grid>
         </Grid>
+        <OrderControl
+          orderTitles={orders}
+          orderMode={orderMode} orderTitle={orderTitle} handleOrderModeChange={this.handleOrderModeChange} handleOrderTitleChange={this.handleOrderTitleChange}/>
         <Grid container spacing={1} id="mainFilters" style={{margin:"5px 0"}}>
           <Grid item xs={6}>
             <FormControl component="fieldset">
@@ -345,11 +395,13 @@ export default class SongsList extends React.Component<P,stateInt> {
 
         <SongsTable
           page={page} handleChangePage={this.handleChangePage}
-          data={this.sortedData()} sort={sort} isDesc={isDesc} mode={mode}
-          changeSort={this.changeSort} allSongsData={this.state.allSongsData}
+          data={this.sortedData()} mode={mode}
+          allSongsData={this.state.allSongsData}
           updateScoreData={this.updateScoreData}/>
-        {filterOpen && <SongsFilter handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpm={this.state.bpm}/>}
+        {filterOpen && <SongsFilter versions={versions} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpm={this.state.bpm}/>}
       </Container>
     );
   }
 }
+
+export default injectIntl(SongsList);

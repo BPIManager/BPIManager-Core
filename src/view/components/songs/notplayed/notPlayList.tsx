@@ -23,7 +23,7 @@ import equal from 'fast-deep-equal'
 import Button from '@material-ui/core/Button';
 import SongsFilter, { B } from '../common/filter';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import { bpmFilter } from '../common';
+import { bpmFilter,verArr } from '../common';
 
 interface stateInt {
   filterByName:string,
@@ -33,7 +33,8 @@ interface stateInt {
   isDesc:boolean,
   page:number,
   filterOpen:boolean,
-  bpm:B
+  bpm:B,
+  versions:number[]
 }
 
 interface P{
@@ -64,6 +65,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
       },
       page:0,
       filterOpen:false,
+      versions:verArr()
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
@@ -118,10 +120,19 @@ export default class NotPlayList extends React.Component<P,stateInt> {
   }
 
   songFilter = (newState:{[s:string]:any} = this.state) =>{
+    const v = newState.versions;
+    const evaluateVersion = (song:string):boolean=>{
+      const songVer = song.split("/")[0];
+      if(songVer === "s"){
+        return v.indexOf(1.5) > -1;
+      }
+      return v.indexOf(Number(songVer)) > -1;
+    }
     const diffs:string[] = ["hyper","another","leggendaria"];
     const b = newState.bpm;
     return this.props.full.filter((data)=>{
       return (
+        evaluateVersion(data.textage) &&
         bpmFilter(data.bpm,b) &&
         newState["options"]["level"].some((item:string)=>{
           return item === data.difficultyLevel }) &&
@@ -154,10 +165,11 @@ export default class NotPlayList extends React.Component<P,stateInt> {
     return isDesc ? res : res.reverse();
   }
 
-  applyFilter = (state:{bpm:B}):void=>{
+  applyFilter = (state:{bpm:B,versions:number[]}):void=>{
     let newState = this.cloneState();
     newState.bpm = state.bpm;
-    return this.setState({songData:this.songFilter(newState),bpm:state.bpm,page:0});
+    newState.versions = state.versions;
+    return this.setState({songData:this.songFilter(newState),bpm:state.bpm,versions:state.versions,page:0});
   }
 
   handleToggleFilterScreen = ()=> this.setState({filterOpen:!this.state.filterOpen});
@@ -168,7 +180,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
   cloneState = () => JSON.parse(JSON.stringify(this.state))
 
   render(){
-    const {filterByName,filterOpen,options,sort,isDesc,page} = this.state;
+    const {filterByName,filterOpen,options,sort,isDesc,page,versions} = this.state;
     return (
       <Container className="commonLayout" fixed id="songsVil">
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom
@@ -243,7 +255,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
           data={this.sortedData()} sort={sort} isDesc={isDesc}
           changeSort={this.changeSort}
           updateScoreData={this.updateScoreData}/>
-        {filterOpen && <SongsFilter handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpm={this.state.bpm}/>}
+        {filterOpen && <SongsFilter versions={versions} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpm={this.state.bpm}/>}
 
       </Container>
     );
