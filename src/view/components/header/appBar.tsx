@@ -124,7 +124,7 @@ class GlobalHeader extends React.Component<{global:any} & HideOnScrollProps,{isO
     return (
       <React.Fragment>
         <HideOnScroll {...this.props}>
-          <AppBar>
+          <AppBar className={window.location.href.split('/').pop() === "" ? "appBarIndex": ""}>
             <Toolbar>
               <IconButton edge="start" color="inherit" aria-label="menu" onClick={()=>{
                 if(!this.props.global.state.cannotMove){

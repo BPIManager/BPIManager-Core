@@ -72,9 +72,11 @@ export default class Index extends React.Component<{},{}> {
                 <FormattedMessage id="Help.C.5"/><br/>
                 <FormattedMessage id="Help.C.6"/>
                 <Divider style={{margin:"10px 0"}}/>
-                <FormattedMessage id="Help.C.7"/>
-                <Divider style={{margin:"10px 0"}}/>
-                <FormattedMessage id="Help.C.8"/>
+                <FormattedMessage id="Help.C.7"/><br/>
+                <FormattedMessage id="Help.C.8"/><br/>
+                <FormattedMessage id="Help.C.9"/><br/>
+                <FormattedMessage id="Help.C.10"/>
+                <FormattedMessage id="Help.C.11"/>
               </div>
             </ExpansionPanelDetails>
           </ExpansionPanel>
@@ -89,9 +91,38 @@ export default class Index extends React.Component<{},{}> {
             <ExpansionPanelDetails>
               <div>
                 <FormattedMessage id="Help.D.1"/><br/>
+                <FormattedMessage id="Help.D.1.1"/><br/>
                 <FormattedMessage id="Help.D.2"/><br/>
+                <FormattedMessage id="Help.D.2.1"/><br/>
                 <FormattedMessage id="Help.D.3"/><br/>
-                <FormattedMessage id="Help.D.4"/>
+                <FormattedMessage id="Help.D.3.1"/><br/>
+                <FormattedMessage id="Help.D.3.2"/><br/>
+                <FormattedMessage id="Help.D.4"/><br/>
+                <FormattedMessage id="Help.D.5"/><br/>
+                <FormattedMessage id="Help.D.6"/><br/>
+                <FormattedMessage id="Help.D.7"/><br/>
+                <FormattedMessage id="Help.D.8"/><br/>
+                <FormattedMessage id="Help.D.9"/><br/>
+                <FormattedMessage id="Help.D.10"/>
+              </div>
+            </ExpansionPanelDetails>
+          </ExpansionPanel>
+          <ExpansionPanel>
+            <ExpansionPanelSummary
+              expandIcon={<ExpandMoreIcon />}
+            >
+              <Typography>
+                <FormattedMessage id="Help.Sync"/>
+              </Typography>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails>
+              <div>
+                <FormattedMessage id="Help.DD.1"/><br/>
+                <FormattedMessage id="Help.DD.2"/><br/>
+                <FormattedMessage id="Help.DD.3"/><br/>
+                <FormattedMessage id="Help.DD.4"/><br/>
+                <FormattedMessage id="Help.DD.5"/><br/>
+                <FormattedMessage id="Help.DD.6"/><br/>
               </div>
             </ExpansionPanelDetails>
           </ExpansionPanel>
@@ -123,7 +154,7 @@ export default class Index extends React.Component<{},{}> {
                 <Divider style={{margin:"10px 0"}}/>
                 <FormattedMessage id="Help.F.2"/><br/>
                 <FormattedMessage id="Help.F.3"/><br/>
-                画面サイズは最低でも横360pxあること
+                <FormattedMessage id="Help.F.4"/>
               </div>
             </ExpansionPanelDetails>
           </ExpansionPanel>
@@ -140,10 +171,12 @@ export default class Index extends React.Component<{},{}> {
                 material-ui : Copyright (c) 2014 Call-Em-All <a href="https://opensource.org/licenses/mit-license.php" target="_blank" rel="noreferrer noopener">The MIT License (MIT)</a><br/>
                 Dexie.js : Copyright (c) dfahlander <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noreferrer noopener">Apache License</a><br/>
                 fast-deep-equal : Copyright (c) epoberezkin MIT<br/>
+                firebase : Copyright (c) firebase Apache License<br/>
                 moment,moment-timezone : Copyright (c) JS Foundation and other contributors MIT<br/>
                 react : Copyright (c) Facebook MIT<br/>
                 react-dom : Copyright (c) 2017 Tylor Steinberger MIT<br/>
                 react-router : Copyright (c) React Training 2016-2018 MIT<br/>
+                react-share : Copyright (c) Klaus Nygard<br/>
                 react-intl : Copyright (c) Yahoo! BSD License<br/>
                 recharts : Copyright (c) recharts MIT<br/>
                 typescript : Copyright (c) Microsoft Apache License<br/>
@@ -170,12 +203,28 @@ export default class Index extends React.Component<{},{}> {
               expandIcon={<ExpandMoreIcon />}
             >
               <Typography>
-                免責事項
+                <FormattedMessage id="Help.Disclaimer"/>
               </Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <div>
-                本ツールにより提供される機能やソフトウェアの不具合によって生じたいかなる損害に対しても、製作者(@notAesthet1c)は一切責任を負いかねますのであらかじめご了承ください。
+                <FormattedMessage id="Help.G"/>
+              </div>
+            </ExpansionPanelDetails>
+          </ExpansionPanel>
+          <ExpansionPanel>
+            <ExpansionPanelSummary
+              expandIcon={<ExpandMoreIcon />}
+            >
+              <Typography>
+                <FormattedMessage id="Help.Donation"/>
+              </Typography>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails>
+              <div>
+                <FormattedMessage id="Help.H.1"/><br/>
+                <FormattedMessage id="Help.H.2"/><br/>
+                <FormattedMessage id="Help.H.3"/>
               </div>
             </ExpansionPanelDetails>
           </ExpansionPanel>
