@@ -91,7 +91,7 @@ export default class Index extends React.Component<{},{}> {
                 </Typography>
                 <Typography align="center" color="textSecondary" paragraph variant="caption">
                   支援について<br/>
-                  Amazonギフト券による開発支援を受け付けています。<br/>
+                  <RefLink color="secondary" href="https://www.amazon.co.jp/dp/B004N3APGO/">Amazonギフト券による開発支援を受け付けています。</RefLink><br/>
                   宛先「msqkn310@gmail.com」迄お願いします。<br/>
                   (インフラ維持等に充当させていただきます)
                 </Typography>

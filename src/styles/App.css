@@ -59,6 +59,11 @@ td.MuiTableCell-root.MuiTableCell-body:first-child {
     width:35px;
 }
 
+.MuiTableBody-root.rival .MuiTableRow-root:not(.rivalBody) th.MuiTableCell-root.MuiTableCell-head:first-child,
+.MuiTableBody-root.rival .MuiTableRow-root:not(.rivalBody) td.MuiTableCell-root.MuiTableCell-body:first-child{
+    padding: 20px 20px !important;
+}
+
 .MuiInputBase-root.MuiInput-root.MuiInput-underline.MuiInputBase-formControl.MuiInput-formControl{
   padding:4px;
   width:100%;
@@ -221,6 +226,10 @@ a.link:hover{
   border-left: 1px dotted rgba(224, 224, 224, .3);
 }
 
+.rivalBody td.MuiTableCell-root.MuiTableCell-body {
+    padding: 0 20px !important;
+}
+
 #songsVil .MuiTableCell-root:nth-child(3), #songsVil .MuiTableCell-root:nth-child(4), #songsVil .MuiTableCell-root:nth-child(5),
 .detailedDiffs .MuiTableCell-root:nth-child(2),.detailedDiffs .MuiTableCell-root:nth-child(3){
   text-align:center;
@@ -323,4 +332,35 @@ a.link:hover{
 .narrowDialogTitle{
   text-align:center;
   padding:11px !important;
+}
+
+.MuiTableRow-root.rivalBody{
+  width:100%;
+}
+
+.rivalBody td.MuiTableCell-root.MuiTableCell-body{
+  width:33%;
+  padding:8px 0 !important;
+  text-align: center !important;
+  background:transparent;
+}
+
+.MuiTableRow-root.rivalBody .MuiTableCell-body:hover{
+  background:transparent;
+}
+
+.MuiTableHead-root .MuiTableCell-head{
+  text-align: center !important;
+}
+
+.rivalDetailModalTableBodyDesc{
+  width:20% !important;
+}
+
+#__dark tr.MuiTableRow-root.rivalBody {
+  background: #3a3a3a;
+}
+
+#__light tr.MuiTableRow-root.rivalBody {
+  background: #fbfbfb;
 }

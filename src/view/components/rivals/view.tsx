@@ -72,6 +72,8 @@ class RivalLists extends React.Component<P,S> {
             rivalMissCount:rival.missCount,
             myClearState:mine.clearState,
             rivalClearState:rival.clearState,
+            myLastUpdate:mine.updatedAt,
+            rivalLastUpdate:rival.updatedAt,
           });
         }
         return groups;

@@ -529,10 +529,11 @@ export const songsDB = class extends storageWrapper{
 
   async getOneItemIsSingle(title:string,difficulty:string):Promise<songData[]>{
     const diffs = ():string=>{
+      const s = _isSingle();
       switch(difficulty){
-        case "hyper":return "3";
-        case "another":return "4";
-        case "leggendaria":return "10";
+        case "hyper":return s ? "3" : "8";
+        case "another":return s ? "4" : "9";
+        case "leggendaria":return s ? "10" : "11";
         default:
         return difficulty;
       }
@@ -545,20 +546,7 @@ export const songsDB = class extends storageWrapper{
   }
 
   async getOneItemIsDouble(title:string,difficulty:string):Promise<songData[]>{
-    const diffs = ():string=>{
-      switch(difficulty){
-        case "hyper":return "8";
-        case "another":return "9";
-        case "leggendaria":return "11";
-        default:
-        return difficulty;
-      }
-    };
-    try{
-      return await this.songs.where("[title+difficulty]").equals([title,diffs()]).toArray();
-    }catch(e){
-      return [];
-    }
+    return this.getOneItemIsSingle(title,difficulty);
   }
 
   async setItem(item:any):Promise<any>{

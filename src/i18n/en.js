@@ -209,7 +209,12 @@ const ja = {
   "Orders.orderTitle":"Orders",
   "Orders.orderMode":"Asc/Desc",
   "Orders.asc":"Ascending",
-  "Orders.desc":"Descending"
+  "Orders.desc":"Descending",
+  "Orders.ClearLamp":"ClearLamp",
+  "Orders.Gap":"EXScore gap",
+  "Orders.PercentageGap":"Percentage gap",
+  "Orders.My":"Your ",
+  "Orders.Rival":"Rival's ",
 };
 
 export default ja;

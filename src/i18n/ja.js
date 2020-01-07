@@ -202,6 +202,7 @@ const ja = {
   "Orders.BPI":"BPI",
   "Orders.MissCount":"ミスカウント",
   "Orders.EX":"EXスコア",
+  "Orders.ClearLamp":"クリアランプ",
   "Orders.Percentage":"パーセンテージ",
   "Orders.LastUpdate":"最終更新日時",
   "Orders.MaxBPM":"最高BPM",
@@ -209,6 +210,10 @@ const ja = {
   "Orders.Version":"収録バージョン",
   "Orders.orderTitle":"並べ替え",
   "Orders.orderMode":"昇降順",
+  "Orders.Gap":"EXスコアの差",
+  "Orders.PercentageGap":"パーセンテージ差",
+  "Orders.My":"あなたの",
+  "Orders.Rival":"ライバルの",
   "Orders.asc":"昇順",
   "Orders.desc":"降順"
 };
