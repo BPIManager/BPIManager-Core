@@ -16,6 +16,7 @@ export interface scoreData{
   isImported?:boolean,
   _isAvailable?:boolean,
   lastScore:number,
+  willModified?:boolean,
 }
 
 export interface songData{

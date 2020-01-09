@@ -32,15 +32,15 @@ export default class importCSV {
         const splittedByBreak:string[] = self.rawData.split(/\r\n|\n/);
         const lengthSum:number = splittedByBreak.length;
         let result = [],resultHistory = [];
+        if(splittedByBreak[0].split(/,/)[5] === "NORMAL 難易度"){
+          //Rootage以前のCSV判別
+          mode = 1;
+        }
         for(let i = 0; i < lengthSum; ++i){
           for(let j = 0; j < 3; ++j){
             let eachObjNum:number[] = [];
             let t:string = "";
             const p = splittedByBreak[i].split(/,/);
-            if(i===0 && p[5] === "NORMAL 難易度"){
-              //Rootage以前のCSV判別
-              mode = 1;
-            }
             if(mode === 0){
               //HYPER
               if(j === 0 && Number(p[19]) > 10 && Number(p[20]) > 0){
@@ -95,7 +95,6 @@ export default class importCSV {
               lastScore:-1,
               storedAt:self.currentStore,
               isSingle:self.isSingle,
-              isImported:true,
               updatedAt:p[eachObjNum[8]]
             });
             resultHistory.push({

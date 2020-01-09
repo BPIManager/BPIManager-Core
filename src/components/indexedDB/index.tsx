@@ -9,9 +9,10 @@ import bpiCalcuator from "../bpi";
 const storageWrapper = class extends Dexie{
   target: string = "scores";
   //あとで書いとく
-  scores:Dexie.Table<any, any>;
-  songs:Dexie.Table<any, any>;
-  stores: Dexie.Table<any, any>;
+  protected scores:Dexie.Table<any, any>;
+  protected songs:Dexie.Table<any, any>;
+  protected stores: Dexie.Table<any, any>;
+  protected scoreHistory: Dexie.Table<any, any>;
   protected rivals:Dexie.Table<any, any>;
   protected rivalLists: Dexie.Table<any, any>;
   protected calculator:bpiCalcuator|null = null;
@@ -41,7 +42,19 @@ const storageWrapper = class extends Dexie{
         delete item.great;
       });
     });
+    this.version(4).stores({
+      scores : "[title+difficulty+storedAt+isSingle],title,*difficulty,*difficultyLevel,*version,currentBPI,exScore,missCount,clearState,lastPlayed,storedAt,isSingle,updatedAt,lastScore",
+      songs : "&++num,title,*difficulty,*difficultyLevel,wr,avg,notes,bpm,textage,dpLevel,isCreated,isFavorited,[title+difficulty]",
+      rivals : "&[title+difficulty+storedAt+isSingle+rivalName],rivalName,title,*difficulty,*difficultyLevel,exScore,missCount,clearState,storedAt,isSingle,updatedAt",
+      rivalLists : "&uid,rivalName,lastUpdatedAt,updatedAt,[isSingle+storedAt],photoURL,profile",
+      scoreHistory : "&++num,[title+storedAt+difficulty+isSingle],[title+storedAt+difficulty+isSingle+updatedAt],title,difficulty,difficultyLevel,storedAt,exScore,BPI,isSingle,updatedAt"
+    }).upgrade(_tx => {
+      return this.scores.toCollection().modify((item:any)=>{
+        delete item.isImported;
+      });
+    });
     this.scores = this.table("scores");
+    this.scoreHistory = this.table("scoreHistory");
     this.songs = this.table("songs");
     this.stores = this.table("stores");
     this.rivals = this.table("rivals");
@@ -181,10 +194,6 @@ export const scoresDB = class extends storageWrapper{
     return await this.scores.where({storedAt:storedAt}).delete();
   }
 
-  async resetImportedItems():Promise<number>{
-    return await this.scores.where({isImported:"true"}).delete();
-  }
-
   async setItem(item:any):Promise<any>{
     try{
       return await this.scores.where("[title+difficulty+storedAt+isSingle]").equals(
@@ -202,7 +211,6 @@ export const scoresDB = class extends storageWrapper{
         lastScore:item["lastScore"],
         storedAt:item["storedAt"],
         isSingle:item["isSingle"],
-        isImported:true,
         updatedAt : item["updatedAt"]
       })
     }catch(e){
@@ -226,7 +234,6 @@ export const scoresDB = class extends storageWrapper{
         lastScore:item["lastScore"],
         storedAt:item["storedAt"],
         isSingle:item["isSingle"],
-        isImported:true,
         updatedAt : item["updatedAt"]
       })
     }catch(e){
@@ -302,20 +309,68 @@ export const scoresDB = class extends storageWrapper{
   }
 
 }
+export const importer = class extends storageWrapper{
 
+  private historyArray:any = [];
+  private scoresArray:scoreData[] = [];
+  private shDB = new scoreHistoryDB();
+  private sDB = new scoresDB();
+
+  setHistory = (input:any):this=>{
+    this.historyArray = input;
+    return this;
+  }
+  setScores = (input:any):this=>{
+    this.scoresArray = input;
+    return this;
+  }
+
+  async exec():Promise<any>{
+    return await this.transaction('rw', this.scores, this.scoreHistory , async () => {
+      return Promise.all(this.scoresArray.map((item,i) =>{
+        item.willModified ? this.sDB.setItem(item) : this.sDB.putItem(item);
+        this.shDB._add(this.historyArray[i],true);
+      }));
+    }).catch((e)=>{
+      console.log(e);
+      return null;
+    });
+  }
+
+}
 
 export const scoreHistoryDB = class extends storageWrapper{
-  scoreHistory: Dexie.Table<any, any>;
   isSingle:number = 1;
   currentStore:string = "27";
 
   constructor(){
     super();
-    this.scoreHistory = this.table("scoreHistory");
     this.isSingle = _isSingle();
     this.currentStore = _currentStore();
   }
 
+  //newer method
+  _add(score:scoreData|null,forceUpdateTime:boolean = false):boolean{
+    try{
+      if(!score){return false;}
+      this.scoreHistory.add({
+        title:score.title,
+        exScore:score.exScore,
+        difficulty:score.difficulty,
+        difficultyLevel:score.difficultyLevel,
+        storedAt:score.storedAt,
+        BPI:score.currentBPI,
+        updatedAt: forceUpdateTime ? score.updatedAt : timeFormatter(3),
+        isSingle:score.isSingle,
+      });
+      return true;
+    }catch(e){
+      console.error(e);
+      return false;
+    }
+  }
+
+  //legacy
   add(score:scoreData|null,data:{currentBPI:number,exScore:number},forceUpdateTime:boolean = false):boolean{
     try{
       if(!score){return false;}

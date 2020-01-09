@@ -32,6 +32,7 @@ export const _prefixFromNum = (difficulty:string,showAnother:boolean = false):st
   return prefix;
 }
 
+//difficulty number to string
 export const difficultyDiscriminator = (difficulty:string):string=>{
   let diff:string = "another";
   if(difficulty === "3" || difficulty === "8"){
@@ -43,6 +44,7 @@ export const difficultyDiscriminator = (difficulty:string):string=>{
   return diff;
 }
 
+//difficulty String to number
 export const difficultyParser = (difficulty: string,isSingle: number):string=>{
   if(difficulty === "another"){
     if(isSingle === 1){
@@ -66,6 +68,7 @@ export const difficultyParser = (difficulty: string,isSingle: number):string=>{
   return "4";
 }
 
+//IIDXinfoリンク用
 export const getSongSuffixForIIDXInfo = (name:string,difficulty:string):string=>{
   if(difficulty === "3" || difficulty === "8"){
     return "[H]";
@@ -90,7 +93,7 @@ export const getSongSuffixForIIDXInfo = (name:string,difficulty:string):string=>
   return "";
 }
 
-
+// Rootage規格→HV規格への変換
 export const convertLeggendariaStates = (name:string,difficulty:string):{name:string,difficulty:string}=>{
   const leggendariaSongs:string[] = [
     "ABSOLUTE†",
@@ -148,13 +151,7 @@ export const convertLeggendariaStates = (name:string,difficulty:string):{name:st
     "KAISER PHOENIX†",
   ]
   let newName = name,newDifficulty = difficulty;
-  if(difficulty !== "another"){
-    return {
-      name:newName,
-      difficulty:newDifficulty
-    }
-  }
-  if(leggendariaSongs.indexOf(name) > -1){
+  if(difficulty === "another" && leggendariaSongs.indexOf(name) > -1){
     newName = name.replace("†LEGGENDARIA","").replace("†","");
     newDifficulty = "leggendaria";
   }
