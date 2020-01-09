@@ -3,7 +3,7 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { FormattedMessage } from "react-intl";
-import {scoresDB, importer} from "../../components/indexedDB";
+import {scoresDB,scoreHistoryDB,importer} from "../../components/indexedDB";
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -40,6 +40,7 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
       const isSingle:number = _isSingle();
       const currentStore:string = _currentStore();
       const s = new scoresDB(isSingle,currentStore);
+      const schDB = new scoreHistoryDB();
       const executor:importCSV = new importCSV(this.state.raw,isSingle,currentStore);
       const calc:bpiCalculator = new bpiCalculator();
       const exec:number = await executor.execute();
@@ -68,7 +69,7 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
           ++skipped;
           continue;
         }
-        scores.push(Object.assign(
+        const body = Object.assign(
           result[i],
           {
             difficultyLevel:calcData.difficultyLevel,
@@ -76,12 +77,14 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
             lastScore: item ? item["exScore"] : 0,
             willModified:item ? item["isSingle"] === isSingle : false
           }
-        ));
-        histories.push(Object.assign(resultHistory[i],{difficultyLevel:calcData.difficultyLevel},{currentBPI:calcData.bpi,exScore:resultHistory[i].exScore}));
+        );
+        //更新件数100件以上の場合はこの手法、更新が少ない場合はPromise,all
+        body.willModified ? s.setItem(body) : s.putItem(body);
+        schDB._add(Object.assign(resultHistory[i],{difficultyLevel:calcData.difficultyLevel},{currentBPI:calcData.bpi,exScore:resultHistory[i].exScore}),true);
         ++updated;
       }
 
-      await new importer().setHistory(histories).setScores(scores).exec();
+      //await new importer().setHistory(histories).setScores(scores).exec();
 
       this.props.global.setMove(false);
       errors.unshift(result.length + "件処理しました," + updated + "件更新しました," + skipped + "件スキップされました,"+ errorOccured + "件追加できませんでした");
