@@ -330,8 +330,19 @@ export const importer = class extends storageWrapper{
   }
 
   async exec():Promise<any>{
+    const len = this.scoresArray.length;
+    if(len > 80){
+      for(let i = 0;i < len; ++i){
+        const currentScore = this.scoresArray[i];
+        const currentHist = this.scoresArray[i];
+        currentScore.willModified ? await this.sDB.setItem(currentScore) : await this.sDB.putItem(currentScore);
+        this.shDB._add(currentHist,true);
+      }
+      return;
+    }
+
     return await this.transaction('rw', this.scores, this.scoreHistory , async () => {
-      
+
       this.historyArray.map((item:any)=>{
         return this.shDB._add(item,true);
       })
