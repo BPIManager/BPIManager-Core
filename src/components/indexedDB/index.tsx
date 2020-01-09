@@ -331,11 +331,11 @@ export const importer = class extends storageWrapper{
 
   async exec():Promise<any>{
     return await this.transaction('rw', this.scores, this.scoreHistory , async () => {
-      return Promise.all(this.scoresArray.map((item,i) =>{
-        item.willModified ? this.sDB.setItem(item) : this.sDB.putItem(item);
-        this.shDB._add(this.historyArray[i],true);
-        return true;
-      }));
+      return Promise.all([this.scoresArray.map((item) =>{
+        return item.willModified ? this.sDB.setItem(item) : this.sDB.putItem(item);
+      }),this.historyArray((item:any)=>{
+        return this.shDB._add(item,true);
+      })]);
     }).catch((e)=>{
       console.log(e);
       return null;
