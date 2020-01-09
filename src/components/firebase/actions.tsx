@@ -9,8 +9,9 @@ export default class fbActions{
   async authWithTwitter():Promise<any>{
     return fb.auth().signInWithPopup(twitter).then(async(_result) => {
       if(_result && _result.user && _result.additionalUserInfo && _result.additionalUserInfo.profile){
+        const p = _result.additionalUserInfo.profile as any;
         await firestore.collection("users").doc(_result.user.uid).set({
-          photoURL:_result.additionalUserInfo.profile.profile_image_url_https
+          photoURL:p.profile_image_url_https
         },{merge: true});
       }
       return _result;
