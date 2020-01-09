@@ -73,7 +73,7 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
             difficultyLevel:calcData.difficultyLevel,
             currentBPI : calcData.bpi,
             lastScore: item ? item["exScore"] : 0,
-            willModified:item && item["isSingle"] === isSingle
+            willModified:item ? item["isSingle"] === isSingle : false
           }
         ));
         histories.push(Object.assign(resultHistory[i],{difficultyLevel:calcData.difficultyLevel},{currentBPI:calcData.bpi,exScore:resultHistory[i].exScore}));

@@ -92,7 +92,11 @@ export const scoresDB = class extends storageWrapper{
     super();
     this.scores = this.table("scores");
     this.isSingle = isSingle;
-    if(storedAt) this.storedAt = storedAt;
+    if(storedAt){
+      this.storedAt = storedAt;
+    }else{
+      this.storedAt = _currentStore();
+    }
   }
 
   setIsSingle(isSingle:number):this{
