@@ -70,7 +70,7 @@ export const bp = (bp:number):string=>{
 }
 
 export const bpmFilter = (songBPM:string,b:B):boolean=>{
-  if(/\-/.test(songBPM)){ //ソフラン判定
+  if(/-/.test(songBPM)){ //ソフラン判定
     return b.soflan; //ソフラン曲表示->true 非表示->false
   }
   if(!b.noSoflan){

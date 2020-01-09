@@ -17,10 +17,6 @@ interface P {
 
 export default class extends React.Component<P,{}> {
 
-  constructor(props:P){
-    super(props);
-  }
-
   render(){
     const {orderTitle,orderMode,handleOrderModeChange,handleOrderTitleChange,orderTitles} = this.props;
     return (

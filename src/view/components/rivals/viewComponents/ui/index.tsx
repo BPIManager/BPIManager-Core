@@ -1,21 +1,15 @@
 import * as React from 'react';
 import Container from '@material-ui/core/Container';
 import { FormattedMessage, injectIntl } from "react-intl";
-import {songsDB, scoresDB, rivalListsDB} from "../../../../../components/indexedDB";
+import { songsDB } from "../../../../../components/indexedDB";
 
 import Grid from '@material-ui/core/Grid';
-import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import BackspaceIcon from '@material-ui/icons/Backspace';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
-
 import Table from "../table";
 import Input from '@material-ui/core/Input';
-
 import {scoreData} from "../../../../../types/data";
 import InputLabel from '@material-ui/core/InputLabel';
 import { _prefix, _prefixFromNum } from '../../../../../components/songs/filter';
@@ -27,6 +21,8 @@ import Button from '@material-ui/core/Button';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { verArr, bpmFilter } from '../../../songs/common';
 import SongsFilter, { B } from '../../../songs/common/filter';
+import { commonFunc } from '../../../../../components/common';
+import FilterByLevelAndDiff from "../../../common/selector";
 
 interface stateInt {
   isLoading:boolean,
@@ -96,12 +92,8 @@ class SongsUI extends React.Component<P,stateInt> {
 
   handleToggleFilterScreen = ()=> this.setState({filterOpen:!this.state.filterOpen});
 
-  handleLevelChange = (name:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
-    this.handleExec(name,e.target.checked,"level");
-  }
-
-  handleDiffChange = (name:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
-    this.handleExec(name,e.target.checked,"difficulty");
+  handleChange = (name:string,target:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
+    this.handleExec(name,e.target.checked,target);
   }
 
   handleExec = (name:string,checked:boolean,target:string)=>{
@@ -115,7 +107,7 @@ class SongsUI extends React.Component<P,stateInt> {
   }
 
   handleInputChange = (e:React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>|null)=>{
-    let newState = this.cloneState();
+    let newState = this.clone();
     newState.filterByName = e ? e.target.value : "";
     return this.setState({scoreData:this.songFilter(newState),filterByName:newState.filterByName,page:0});
   }
@@ -195,8 +187,8 @@ class SongsUI extends React.Component<P,stateInt> {
             return a.rivalClearState - b.rivalClearState;
           case 14:
           case 15:
-            if(/\-/.test(aBpm)) aBpm = orderTitle === 14 ? aBpm.split("-")[1] : aBpm.split("-")[0];
-            if(/\-/.test(bBpm)) bBpm = orderTitle === 14 ? bBpm.split("-")[1] : bBpm.split("-")[0];
+            if(/-/.test(aBpm)) aBpm = orderTitle === 14 ? aBpm.split("-")[1] : aBpm.split("-")[0];
+            if(/-/.test(bBpm)) bBpm = orderTitle === 14 ? bBpm.split("-")[1] : bBpm.split("-")[0];
             return aBpm - bBpm;
           case 16:
             let aVer = aFull["textage"].replace(/\/.*?$/,"");
@@ -204,18 +196,18 @@ class SongsUI extends React.Component<P,stateInt> {
             return aVer - bVer;
         }
       }
+      return 0;
     });
     return orderMode === 0  ? res : res.reverse();
   }
 
-  // readonly修飾子が付いているデータに一時的な書き込みをするための措置
-  // (曲目フィルタのためにのみ使用し、stateには反映しない)
-  // アンチパターンなのでなんとかする
-  cloneState = () => JSON.parse(JSON.stringify(this.state))
+  clone = ()=>{
+    return new commonFunc().set(this.state).clone();
+  }
 
   handleModeChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
     if (typeof event.target.value !== "number") { return; }
-    let newState = this.cloneState();
+    let newState = this.clone();
     newState.mode = event.target.value;
     return this.setState({scoreData:this.songFilter(newState),mode:event.target.value,page:0});
   }
@@ -233,7 +225,7 @@ class SongsUI extends React.Component<P,stateInt> {
   }
 
   applyFilter = (state:{bpm:B,versions:number[]}):void=>{
-    let newState = this.cloneState();
+    let newState = this.clone();
     newState.bpm = state.bpm;
     newState.versions = state.versions;
     return this.setState({scoreData:this.songFilter(newState),bpm:state.bpm,versions:state.versions,page:0});
@@ -303,42 +295,7 @@ class SongsUI extends React.Component<P,stateInt> {
         <OrderControl
           orderTitles={orders}
           orderMode={orderMode} orderTitle={orderTitle} handleOrderModeChange={this.handleOrderModeChange} handleOrderTitleChange={this.handleOrderTitleChange}/>
-        <Grid container spacing={1} id="mainFilters" style={{margin:"5px 0"}}>
-          <Grid item xs={6}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend"><FormattedMessage id="Songs.filterByLevel"/></FormLabel>
-              <FormGroup row>
-                <FormControlLabel
-                  control={<Checkbox checked={options.level.some(t=> t === "11")} onChange={this.handleLevelChange("11")} value="11" />}
-                  label="☆11"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={options.level.some(t=> t === "12")} onChange={this.handleLevelChange("12")} value="12" />}
-                  label="☆12"
-                />
-              </FormGroup>
-            </FormControl>
-          </Grid>
-          <Grid item xs={6}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend"><FormattedMessage id="Songs.filterByDifficulty"/></FormLabel>
-              <FormGroup row>
-                <FormControlLabel
-                  control={<Checkbox checked={options.difficulty.some(t=> t === "0")} onChange={this.handleDiffChange("0")} value="hyper" />}
-                  label="H"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={options.difficulty.some(t=> t === "1")} onChange={this.handleDiffChange("1")} value="another" />}
-                  label="A"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={options.difficulty.some(t=> t === "2")} onChange={this.handleDiffChange("2")} value="leggendaria" />}
-                  label="†"
-                />
-              </FormGroup>
-            </FormControl>
-          </Grid>
-        </Grid>
+        <FilterByLevelAndDiff options={options} handleChange={this.handleChange}/>
 
         <Table
           page={page} handleChangePage={this.handleChangePage}

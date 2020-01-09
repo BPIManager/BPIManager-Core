@@ -6,11 +6,7 @@ import {songsDB} from "../../../../components/indexedDB";
 
 import { injectIntl } from "react-intl";
 import Grid from '@material-ui/core/Grid';
-import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import BackspaceIcon from '@material-ui/icons/Backspace';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
@@ -31,6 +27,8 @@ import Button from '@material-ui/core/Button';
 import SongsFilter, { B } from '../common/filter';
 import { bpmFilter,verArr } from '../common';
 import OrderControl from "../common/orders";
+import { commonFunc } from '../../../../components/common';
+import FilterByLevelAndDiff from '../../common/selector';
 
 interface stateInt {
   isLoading:boolean,
@@ -54,6 +52,8 @@ interface P{
   updateScoreData:()=>Promise<void>,
   intl:any,
 }
+
+const ranges = [{val:0,label:"全期間"},{val:1,label:"本日更新"},{val:2,label:"前日更新"},{val:3,label:"今週更新"},{val:4,label:"1ヶ月以上未更新"}]
 
 class SongsList extends React.Component<P,stateInt> {
 
@@ -112,12 +112,8 @@ class SongsList extends React.Component<P,stateInt> {
     return this.props.updateScoreData();
   }
 
-  handleLevelChange = (name:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
-    this.handleExec(name,e.target.checked,"level");
-  }
-
-  handleDiffChange = (name:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
-    this.handleExec(name,e.target.checked,"difficulty");
+  handleChange = (name:string,target:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
+    this.handleExec(name,e.target.checked,target);
   }
 
   handleExec = (name:string,checked:boolean,target:string)=>{
@@ -131,7 +127,7 @@ class SongsList extends React.Component<P,stateInt> {
   }
 
   handleInputChange = (e:React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>|null)=>{
-    let newState = this.cloneState();
+    let newState = this.clone();
     newState.filterByName = e ? e.target.value : "";
     return this.setState({scoreData:this.songFilter(newState),filterByName:newState.filterByName,page:0});
   }
@@ -224,17 +220,15 @@ class SongsList extends React.Component<P,stateInt> {
         case 4:
         return a.exScore - b.exScore;
         case 5:
-        const aMax = aFull["notes"] * 2;
-        const bMax = bFull["notes"] * 2;
-        return a.exScore / aMax - b.exScore / bMax;
+        return a.exScore / aFull["notes"] * 2 - b.exScore / bFull["notes"] * 2;
         case 6:
         return moment(a.updatedAt).diff(b.updatedAt);
         case 7:
         case 8:
         let aBpm = aFull["bpm"];
         let bBpm = bFull["bpm"];
-        if(/\-/.test(aBpm)) aBpm = orderTitle === 7 ? aBpm.split("-")[1] : aBpm.split("-")[0];
-        if(/\-/.test(bBpm)) bBpm = orderTitle === 7 ? bBpm.split("-")[1] : bBpm.split("-")[0];
+        if(/-/.test(aBpm)) aBpm = orderTitle === 7 ? aBpm.split("-")[1] : aBpm.split("-")[0];
+        if(/-/.test(bBpm)) bBpm = orderTitle === 7 ? bBpm.split("-")[1] : bBpm.split("-")[0];
         return aBpm - bBpm;
         case 9:
         let aVer = aFull["textage"].replace(/\/.*?$/,"");
@@ -247,20 +241,20 @@ class SongsList extends React.Component<P,stateInt> {
 
   handleModeChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
     if (typeof event.target.value !== "number") { return; }
-    let newState = this.cloneState();
+    let newState = this.clone();
     newState.mode = event.target.value;
     return this.setState({scoreData:this.songFilter(newState),mode:event.target.value,page:0});
   }
 
   handleRangeCange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
     if (typeof event.target.value !== "number") { return; }
-    let newState = this.cloneState();
+    let newState = this.clone();
     newState.range = event.target.value;
     return this.setState({scoreData:this.songFilter(newState),range:event.target.value,page:0});
   }
 
   applyFilter = (state:{bpm:B,versions:number[]}):void=>{
-    let newState = this.cloneState();
+    let newState = this.clone();
     newState.bpm = state.bpm;
     newState.versions = state.versions;
     return this.setState({scoreData:this.songFilter(newState),bpm:state.bpm,versions:state.versions,page:0});
@@ -268,10 +262,9 @@ class SongsList extends React.Component<P,stateInt> {
 
   handleToggleFilterScreen = ()=> this.setState({filterOpen:!this.state.filterOpen});
 
-  // readonly修飾子が付いているデータに一時的な書き込みをするための措置
-  // (曲目フィルタのためにのみ使用し、stateには反映しない)
-  // アンチパターンなのでなんとかする
-  cloneState = () => JSON.parse(JSON.stringify(this.state))
+  clone = ()=>{
+    return new commonFunc().set(this.state).clone();
+  }
 
   render(){
     const {formatMessage} = this.props.intl;
@@ -287,7 +280,7 @@ class SongsList extends React.Component<P,stateInt> {
       formatMessage({id:"Orders.MaxBPM"}),
       formatMessage({id:"Orders.MinBPM"}),
       formatMessage({id:"Orders.Version"}),
-    ]
+    ];
     if(isLoading){
       return (
         <Container className="loaderCentered">
@@ -307,11 +300,9 @@ class SongsList extends React.Component<P,stateInt> {
             </Button>
             <FormControl>
               <Select value={range} displayEmpty onChange={this.handleRangeCange}>
-                <MenuItem value={0}>全期間</MenuItem>
-                <MenuItem value={1}>本日更新分</MenuItem>
-                <MenuItem value={2}>前日更新分</MenuItem>
-                <MenuItem value={3}>今週更新分</MenuItem>
-                <MenuItem value={4}>1ヶ月以上未更新</MenuItem>
+                {ranges.map(item=>(
+                  <MenuItem value={item.val} key={item.val}>{item.label}</MenuItem>
+                ))}
               </Select>
             </FormControl>
           </div>
@@ -321,15 +312,9 @@ class SongsList extends React.Component<P,stateInt> {
             <FormControl style={{width:"100%"}}>
               <InputLabel><FormattedMessage id="Songs.mode"/></InputLabel>
               <Select value={mode} onChange={this.handleModeChange}>
-                <MenuItem value={0}><FormattedMessage id="Songs.mode0"/></MenuItem>
-                <MenuItem value={1}><FormattedMessage id="Songs.mode1"/></MenuItem>
-                <MenuItem value={2}><FormattedMessage id="Songs.mode2"/></MenuItem>
-                <MenuItem value={3}><FormattedMessage id="Songs.mode3"/></MenuItem>
-                <MenuItem value={4}><FormattedMessage id="Songs.mode4"/></MenuItem>
-                <MenuItem value={5}><FormattedMessage id="Songs.mode5"/></MenuItem>
-                <MenuItem value={6}><FormattedMessage id="Songs.mode6"/></MenuItem>
-                <MenuItem value={7}><FormattedMessage id="Songs.mode7"/></MenuItem>
-                <MenuItem value={8}><FormattedMessage id="Songs.mode8"/></MenuItem>
+                {[0,1,2,3,4,5,6,7,8].map(item=>(
+                  <MenuItem key={item} value={item}><FormattedMessage id={`Songs.mode${item}`}/></MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Grid>
@@ -356,42 +341,7 @@ class SongsList extends React.Component<P,stateInt> {
         <OrderControl
           orderTitles={orders}
           orderMode={orderMode} orderTitle={orderTitle} handleOrderModeChange={this.handleOrderModeChange} handleOrderTitleChange={this.handleOrderTitleChange}/>
-        <Grid container spacing={1} id="mainFilters" style={{margin:"5px 0"}}>
-          <Grid item xs={6}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend"><FormattedMessage id="Songs.filterByLevel"/></FormLabel>
-              <FormGroup row>
-                <FormControlLabel
-                  control={<Checkbox checked={options.level.some(t=> t === "11")} onChange={this.handleLevelChange("11")} value="11" />}
-                  label="☆11"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={options.level.some(t=> t === "12")} onChange={this.handleLevelChange("12")} value="12" />}
-                  label="☆12"
-                />
-              </FormGroup>
-            </FormControl>
-          </Grid>
-          <Grid item xs={6}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend"><FormattedMessage id="Songs.filterByDifficulty"/></FormLabel>
-              <FormGroup row>
-                <FormControlLabel
-                  control={<Checkbox checked={options.difficulty.some(t=> t === "0")} onChange={this.handleDiffChange("0")} value="hyper" />}
-                  label="H"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={options.difficulty.some(t=> t === "1")} onChange={this.handleDiffChange("1")} value="another" />}
-                  label="A"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={options.difficulty.some(t=> t === "2")} onChange={this.handleDiffChange("2")} value="leggendaria" />}
-                  label="†"
-                />
-              </FormGroup>
-            </FormControl>
-          </Grid>
-        </Grid>
+        <FilterByLevelAndDiff options={options} handleChange={this.handleChange}/>
 
         <SongsTable
           page={page} handleChangePage={this.handleChangePage}

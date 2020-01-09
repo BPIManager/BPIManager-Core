@@ -59,7 +59,7 @@ const ja = {
   "Details.FavButtonAdded":"Successfully added.",
   "Details.Graph":"Graph",
   "Details.Details":"Details",
-  "Details.Diffs":"Diffs",
+  "Details.Diffs":"Logs",
   "Details.ErrorIIDXInfo":"IIDXInfo is only available for level-12 songs.",
   "Common.Tweet":"Tweet",
   "SongDetail.SongDetailHead":"Song",

@@ -181,8 +181,7 @@ class MyBest extends React.Component<{},S> {
                                 {column.label}
                                 {i === sort &&
                                   <span>
-                                    { isDesc && <span>▼</span> }
-                                    { !isDesc && <span>▲</span> }
+                                    { isDesc ? "▼" : "▲" }
                                   </span>
                                 }
                                 {i !== sort && <span>△</span>}

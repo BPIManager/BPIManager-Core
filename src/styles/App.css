@@ -235,11 +235,6 @@ a.link:hover{
   text-align:center;
 }
 
-.MuiFormControlLabel-root{
-  margin-left:-12px !important;
-  margin-right:12px !important;
-}
-
 #__dark span.bodyNumber {
   text-shadow: 1px 1px 2px #000000;
 }

@@ -40,12 +40,16 @@ class ScatterGraph extends React.Component<{},S> {
     await this.updateScoreData();
   }
 
-  async updateScoreData(newData:{currentVersion:string,targetVersion:string,targetLevel:string,way:number} = {
-    currentVersion:this.state.currentVersion,
-    targetVersion:this.state.targetVersion,
-    targetLevel:this.state.targetLevel,
-    way:this.state.way
-  }){
+  default = ()=>{
+    return {
+      currentVersion:this.state.currentVersion,
+      targetVersion:this.state.targetVersion,
+      targetLevel:this.state.targetLevel,
+      way:this.state.way
+    }
+  }
+
+  async updateScoreData(newData:{currentVersion:string,targetVersion:string,targetLevel:string,way:number} = this.default()){
     const isSingle = _isSingle();
     let {currentVersion,targetVersion,targetLevel,way} = newData;
     const goalBPI = _goalBPI();
@@ -57,8 +61,11 @@ class ScatterGraph extends React.Component<{},S> {
       const current = currentVer[item];
       const last = targetVersion === "OBPI" ? goalBPI : lastVer[current.title + current.difficulty];
       if(!Number.isNaN(last)){
-        const m = way === 0 && last !== 0 ? Math.ceil( 1000 * current.currentBPI / last )  / 10  - 100 : way === 1 ? current.currentBPI - last : last;
-        scatterGraph.push({label:current.title + _prefix(current.difficulty) ,x:m ,y:current.currentBPI,last:last})
+        scatterGraph.push({
+          label:current.title + _prefix(current.difficulty),
+          x:way === 0 && last !== 0 ? Math.ceil( 1000 * current.currentBPI / last )  / 10  - 100 : way === 1 ? current.currentBPI - last : last,
+          y:current.currentBPI,
+          last:last})
       }
     }
     //BPI別集計
@@ -68,32 +75,12 @@ class ScatterGraph extends React.Component<{},S> {
     },newData));
   }
 
-  handleFromChange = async(event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):Promise<void> =>{
-    if (typeof event.target.value !== "string") return;
-    if(event.target.value === this.state.targetVersion) return;
+  handleChanger = (target:"currentVersion"|"targetVersion"|"targetLevel"|"way") => async(event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):Promise<void> =>{
+    if (typeof event.target.value !== ( target === "way" ? "number" : "string") ) return;
+    if(event.target.value === this.state[target]) return;
     this.setState({isLoading:true});
-    return this.updateScoreData({currentVersion:event.target.value,targetVersion:this.state.targetVersion,targetLevel:this.state.targetLevel,way:this.state.way});
+    return this.updateScoreData(Object.assign(this.default(),{[target]:event.target.value}));
   }
-
-  handleToChange = async(event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):Promise<void> =>{
-    if (typeof event.target.value !== "string") { return; }
-    if(event.target.value === this.state.currentVersion) return;
-    this.setState({isLoading:true});
-    return this.updateScoreData({currentVersion:this.state.currentVersion,targetVersion:event.target.value,targetLevel:this.state.targetLevel,way:this.state.way});
-  }
-
-  handleLevelChange = async(event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):Promise<void> =>{
-    if (typeof event.target.value !== "string") { return; }
-    this.setState({isLoading:true});
-    return this.updateScoreData({currentVersion:this.state.currentVersion,targetVersion:this.state.targetVersion,targetLevel:event.target.value,way:this.state.way});
-  }
-
-  handleWayChange = async(event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):Promise<void> =>{
-    if (typeof event.target.value !== "number") { return; }
-    this.setState({isLoading:true});
-    return this.updateScoreData({currentVersion:this.state.currentVersion,targetVersion:this.state.targetVersion,targetLevel:this.state.targetLevel,way:event.target.value});
-  }
-
 
   render(){
     const {isLoading,scatterGraph,currentVersion,targetVersion,targetLevel,way} = this.state;
@@ -121,7 +108,7 @@ class ScatterGraph extends React.Component<{},S> {
                 <Grid item xs={6} lg={3}>
                   <FormControl style={{width:"100%"}}>
                     <InputLabel>比較元</InputLabel>
-                    <Select value={currentVersion} onChange={this.handleFromChange}>
+                    <Select value={currentVersion} onChange={this.handleChanger("currentVersion")}>
                       <MenuItem value={"27"}>27 HEROIC VERSE</MenuItem>
                       <MenuItem value={"26"}>26 Rootage</MenuItem>
                     </Select>
@@ -130,7 +117,7 @@ class ScatterGraph extends React.Component<{},S> {
                 <Grid item xs={6} lg={3}>
                   <FormControl component="fieldset" style={{width:"100%"}}>
                     <InputLabel>比較先</InputLabel>
-                    <Select value={targetVersion} onChange={this.handleToChange}>
+                    <Select value={targetVersion} onChange={this.handleChanger("targetVersion")}>
                       <MenuItem value={"27"}>27 HEROIC VERSE</MenuItem>
                       <MenuItem value={"26"}>26 Rootage</MenuItem>
                       <MenuItem value={"OBPI"}>目標BPI</MenuItem>
@@ -140,7 +127,7 @@ class ScatterGraph extends React.Component<{},S> {
                 <Grid item xs={6} lg={3}>
                   <FormControl component="fieldset" style={{width:"100%"}}>
                     <InputLabel>レベル</InputLabel>
-                    <Select value={targetLevel} onChange={this.handleLevelChange}>
+                    <Select value={targetLevel} onChange={this.handleChanger("targetLevel")}>
                       <MenuItem value={"12"}>☆12</MenuItem>
                       <MenuItem value={"11"}>☆11</MenuItem>
                     </Select>
@@ -149,7 +136,7 @@ class ScatterGraph extends React.Component<{},S> {
                 <Grid item xs={6} lg={3}>
                   <FormControl component="fieldset" style={{width:"100%"}}>
                     <InputLabel>比較方法</InputLabel>
-                    <Select value={way} onChange={this.handleWayChange}>
+                    <Select value={way} onChange={this.handleChanger("way")}>
                       <MenuItem value={0}>上昇率</MenuItem>
                       <MenuItem value={1}>点数差</MenuItem>
                       <MenuItem value={2}>単純比較</MenuItem>

@@ -54,8 +54,6 @@ export default class Compare extends React.Component<P,S> {
     });
   }
 
-  cloneState = () => JSON.parse(JSON.stringify(this.state))
-
   handleChangePage = (_e:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number):void => this.props.handleChangePage(newPage);
 
   handleChangeRowsPerPage = (event:React.ChangeEvent<HTMLInputElement>):void => this.props.handleChangeRowsPerPage(event.target.value);
@@ -100,8 +98,7 @@ export default class Compare extends React.Component<P,S> {
                     {column.label}
                     {i === sort &&
                       <span>
-                        { isDesc && <span>▼</span> }
-                        { !isDesc && <span>▲</span> }
+                        { isDesc ? "▼" : "▲" }
                       </span>
                     }
                     {i !== sort && <span>△</span>}

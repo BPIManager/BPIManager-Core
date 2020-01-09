@@ -151,6 +151,7 @@ class RecentlyAdded extends React.Component<P,S> {
             avatar={
               <Avatar>
                 <img src={item.photoURL ? item.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
+                  alt={item.displayName}
                   onError={(e)=>(e.target as HTMLImageElement).src = 'https://files.poyashi.me/noimg.png'}/>
               </Avatar>
             }

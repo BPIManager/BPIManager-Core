@@ -8,9 +8,7 @@ import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 
 import {scoreData, songData} from "../../../../../types/data";
-import { _prefix, convertClearState } from "../../../../../components/songs/filter";
 import { diffColor } from "../../../songs/common";
-import _djRank from "../../../../../components/common/djRank";
 import { _currentViewComponents, _traditionalMode } from "../../../../../components/settings";
 import Details from "./modal";
 

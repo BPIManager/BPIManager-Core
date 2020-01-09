@@ -21,7 +21,7 @@ class SyncLoginScreen extends React.Component<{},{}> {
         <Divider style={{margin:"10px 0"}}/>
         <p style={{textAlign:"center"}}>-&nbsp;連携方法を選択&nbsp;-</p>
         <div style={{display:"block"}}>
-        <a href="#" onClick={()=>this.fbA.authWithTwitter()} style={{textDecoration:"none",display:"block",width:"100%"}}>
+        <a href="#twitter" onClick={()=>this.fbA.authWithTwitter()} style={{textDecoration:"none",display:"block",width:"100%"}}>
           <Button
             variant="outlined"
             color="secondary"
@@ -29,7 +29,7 @@ class SyncLoginScreen extends React.Component<{},{}> {
             Twitter
           </Button>
         </a>
-        <a href="#" onClick={()=>this.fbA.authWithGoogle()} style={{textDecoration:"none",display:"block",width:"100%",margin:"5px 0"}}>
+        <a href="#google" onClick={()=>this.fbA.authWithGoogle()} style={{textDecoration:"none",display:"block",width:"100%",margin:"5px 0"}}>
           <Button
             variant="outlined"
             color="secondary"

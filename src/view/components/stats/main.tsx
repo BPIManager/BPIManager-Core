@@ -6,7 +6,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import bpiCalcuator from '../../../components/bpi';
-import {_isSingle,_currentStore, _chartColor, _goalBPI} from "../../../components/settings";
+import {_isSingle,_currentStore, _chartColor} from "../../../components/settings";
 import moment from 'moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, BarChart} from 'recharts';

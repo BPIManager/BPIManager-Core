@@ -8,11 +8,7 @@ import BackspaceIcon from '@material-ui/icons/Backspace';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
-import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -24,6 +20,8 @@ import Button from '@material-ui/core/Button';
 import SongsFilter, { B } from '../common/filter';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { bpmFilter,verArr } from '../common';
+import { commonFunc } from '../../../../components/common';
+import FilterByLevelAndDiff from '../../common/selector';
 
 interface stateInt {
   filterByName:string,
@@ -87,19 +85,15 @@ export default class NotPlayList extends React.Component<P,stateInt> {
 
   handleChangePage = (_event:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number):void => this.setState({page:newPage});
 
+  handleChange = (name:string,target:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
+    this.handleExec(name,e.target.checked,target);
+  }
+
   updateScoreData(whenUpdated:boolean = false,willDeleteItem?:{title:string,difficulty:string}):Promise<void>{
     if(!whenUpdated || !willDeleteItem){
       return this.props.updateScoreData(false);
     }
     return this.props.updateScoreData(whenUpdated,willDeleteItem);
-  }
-
-  handleLevelChange = (name:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
-    this.handleExec(name,e.target.checked,"level");
-  }
-
-  handleDiffChange = (name:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
-    this.handleExec(name,e.target.checked,"difficulty");
   }
 
   handleExec = (name:string,checked:boolean,target:string)=>{
@@ -113,7 +107,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
   }
 
   handleInputChange = (e:React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>|null)=>{
-    let newState = this.cloneState();
+    let newState = this.clone();
     newState.filterByName = e ? e.target.value : "";
 
     return this.setState({songData:this.songFilter(newState),filterByName:newState.filterByName,page:0});
@@ -166,7 +160,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
   }
 
   applyFilter = (state:{bpm:B,versions:number[]}):void=>{
-    let newState = this.cloneState();
+    let newState = this.clone();
     newState.bpm = state.bpm;
     newState.versions = state.versions;
     return this.setState({songData:this.songFilter(newState),bpm:state.bpm,versions:state.versions,page:0});
@@ -174,10 +168,9 @@ export default class NotPlayList extends React.Component<P,stateInt> {
 
   handleToggleFilterScreen = ()=> this.setState({filterOpen:!this.state.filterOpen});
 
-  // readonly修飾子が付いているデータに一時的な書き込みをするための措置
-  // (曲目フィルタのためにのみ使用し、stateには反映しない)
-  // アンチパターンなのでなんとかする
-  cloneState = () => JSON.parse(JSON.stringify(this.state))
+  clone = ()=>{
+    return new commonFunc().set(this.state).clone();
+  }
 
   render(){
     const {filterByName,filterOpen,options,sort,isDesc,page,versions} = this.state;
@@ -195,7 +188,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
         <Grid container spacing={1} style={{margin:"5px 0"}}>
           <Grid item xs={12}>
             <FormControl component="fieldset" style={{width:"100%"}}>
-            <InputLabel htmlFor="standard-adornment-password"><FormattedMessage id="Songs.filterByName"/></InputLabel>
+            <InputLabel><FormattedMessage id="Songs.filterByName"/></InputLabel>
               <Input
                 style={{width:"100%"}}
                 placeholder={"(ex.)255"}
@@ -213,42 +206,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
             </FormControl>
           </Grid>
         </Grid>
-        <Grid container spacing={1} id="mainFilters" style={{margin:"5px 0"}}>
-          <Grid item xs={6}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend"><FormattedMessage id="Songs.filterByLevel"/></FormLabel>
-              <FormGroup row>
-                <FormControlLabel
-                  control={<Checkbox checked={options.level.some(t=> t === "11")} onChange={this.handleLevelChange("11")} value="11" />}
-                  label="☆11"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={options.level.some(t=> t === "12")} onChange={this.handleLevelChange("12")} value="12" />}
-                  label="☆12"
-                />
-              </FormGroup>
-            </FormControl>
-          </Grid>
-          <Grid item xs={6}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend"><FormattedMessage id="Songs.filterByDifficulty"/></FormLabel>
-              <FormGroup row>
-                <FormControlLabel
-                  control={<Checkbox checked={options.difficulty.some(t=> t === "0")} onChange={this.handleDiffChange("0")} value="hyper" />}
-                  label="H"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={options.difficulty.some(t=> t === "1")} onChange={this.handleDiffChange("1")} value="another" />}
-                  label="A"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={options.difficulty.some(t=> t === "2")} onChange={this.handleDiffChange("2")} value="leggendaria" />}
-                  label="†"
-                />
-              </FormGroup>
-            </FormControl>
-          </Grid>
-        </Grid>
+        <FilterByLevelAndDiff options={options} handleChange={this.handleChange}/>
 
         <SongsTable
           page={page} handleChangePage={this.handleChangePage}

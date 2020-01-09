@@ -334,6 +334,7 @@ export const importer = class extends storageWrapper{
       return Promise.all(this.scoresArray.map((item,i) =>{
         item.willModified ? this.sDB.setItem(item) : this.sDB.putItem(item);
         this.shDB._add(this.historyArray[i],true);
+        return true;
       }));
     }).catch((e)=>{
       console.log(e);
@@ -678,10 +679,6 @@ export const songsDB = class extends storageWrapper{
 }
 
 export const rivalListsDB = class extends storageWrapper{
-
-  constructor(){
-    super();
-  }
 
   async getAll():Promise<any>{
     try{

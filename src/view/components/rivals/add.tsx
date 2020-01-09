@@ -111,6 +111,7 @@ class RivalAdd extends React.Component<P,S> {
                 avatar={
                   <Avatar>
                     <img src={res.photoURL ? res.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
+                      alt={res.displayName}
                       onError={(e)=>(e.target as HTMLImageElement).src = 'https://files.poyashi.me/noimg.png'}/>
                   </Avatar>
                 }

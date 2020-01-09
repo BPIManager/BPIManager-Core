@@ -4,10 +4,6 @@ import {_isSingle, _goalBPI, _goalPercentage} from "../../components/settings";
 import Container from "@material-ui/core/Container";
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormLabel from '@material-ui/core/FormLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -15,8 +11,11 @@ import Typography from "@material-ui/core/Typography";
 import { FormattedMessage } from "react-intl";
 import CompareTable from "../components/compare/table";
 import bpiCalcuator from '../../components/bpi';
+import { commonFunc } from '../../components/common';
+import FilterByLevelAndDiff from '../components/common/selector';
 
 interface S {
+  [key: string]: any,
   isLoading:boolean,
   full:any[],
   filtered:any[],
@@ -65,16 +64,8 @@ export default class Compare extends React.Component<{},S> {
     this._mounted = false;
   }
 
-  handleLevelChange = (name:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
-    this.handleExec(name,e.target.checked,"level");
-  }
-
-  handleDiffChange = (name:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
-    this.handleExec(name,e.target.checked,"difficulty");
-  }
-
-  handlePMChange = (name:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
-    this.handleExec(name,e.target.checked,"pm");
+  handleSelectorChange = (name:string,target:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
+    this.handleExec(name,e.target.checked,target);
   }
 
   handleExec = (name:string,checked:boolean,target:string)=>{
@@ -96,26 +87,16 @@ export default class Compare extends React.Component<{},S> {
     this.setState({sort:newNum,isDesc:true});
   }
 
-  handleCompareFromChange = async (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):Promise<void> =>{
-    if (typeof event.target.value !== "string") { return; }
-    let newState = this.cloneState();
-    newState.compareFrom = event.target.value;
-    this.setState({compareFrom:event.target.value,isLoading:true,page:0});
-    return this.dataHandler(newState);
+  clone = ()=>{
+    return new commonFunc().set(this.state).clone();
   }
 
-  handleCompareToChange = async (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):Promise<void> =>{
-    if (typeof event.target.value !== "string") { return; }
-    let newState = this.cloneState();
-    newState.compareTo = event.target.value;
-    this.setState({compareTo:event.target.value,isLoading:true,page:0});
-    return this.dataHandler(newState);
-  }
-
-  handleDisplayModeChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):Promise<void> =>{
-    let newState = this.cloneState();
-    newState.displayMode = event.target.value;
-    this.setState({displayMode:event.target.value as string,isLoading:true,page:0});
+  handleChange = (target:"compareFrom"|"compareTo"|"displayMode") => async (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):Promise<void> =>{
+    const val = event.target.value;
+    if (typeof val !== "string") { return; }
+    let newState:S = this.clone();
+    newState[target] = val;
+    this.setState({[target]:val,isLoading:true,page:0});
     return this.dataHandler(newState);
   }
 
@@ -229,8 +210,6 @@ export default class Compare extends React.Component<{},S> {
     return isDesc ? sortedData.reverse() : sortedData;
   }
 
-  cloneState = () => JSON.parse(JSON.stringify(this.state))
-
   handleChangePage = (newPage:number):void => this.setState({page:newPage});
 
   handleChangeRowsPerPage = (value:string):void => this.setState({page:0,rowsPerPage:+value});
@@ -249,7 +228,7 @@ export default class Compare extends React.Component<{},S> {
           <Grid item xs={6}>
             <FormControl style={{width:"100%"}}>
               <InputLabel><FormattedMessage id="Compare.From"/></InputLabel>
-              <Select value={compareFrom} onChange={this.handleCompareFromChange}>
+              <Select value={compareFrom} onChange={this.handleChange("compareFrom")}>
                 <MenuItem value={"26"}>26 Rootage</MenuItem>
                 <MenuItem value={"27"}>27 HEROIC VERSE</MenuItem>
               </Select>
@@ -258,7 +237,7 @@ export default class Compare extends React.Component<{},S> {
           <Grid item xs={6}>
             <FormControl style={{width:"100%"}}>
               <InputLabel><FormattedMessage id="Compare.To"/></InputLabel>
-              <Select value={compareTo} onChange={this.handleCompareToChange}>
+              <Select value={compareTo} onChange={this.handleChange("compareTo")}>
                 <MenuItem value={"26"}>26 Rootage</MenuItem>
                 <MenuItem value={"27"}>27 HEROIC VERSE</MenuItem>
                 <MenuItem value={"WR"}>WORLD RECORD</MenuItem>
@@ -273,7 +252,7 @@ export default class Compare extends React.Component<{},S> {
           <Grid item xs={12}>
             <FormControl style={{width:"100%"}}>
               <InputLabel><FormattedMessage id="Compare.Display"/></InputLabel>
-              <Select value={displayMode} onChange={this.handleDisplayModeChange}>
+              <Select value={displayMode} onChange={this.handleChange("displayMode")}>
                 <MenuItem value={"exScore"}>EXスコア</MenuItem>
                 <MenuItem value={"bpi"}>BPI</MenuItem>
                 <MenuItem value={"percentage"}>パーセンテージ</MenuItem>
@@ -281,57 +260,7 @@ export default class Compare extends React.Component<{},S> {
             </FormControl>
           </Grid>
         </Grid>
-        <Grid container spacing={1} id="mainFilters" style={{margin:"5px 0"}}>
-          <Grid item xs={4}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend"><FormattedMessage id="Songs.filterByLevel"/></FormLabel>
-              <FormGroup row>
-                <FormControlLabel
-                  control={<Checkbox checked={options.level.some(t=> t === "11")} onChange={this.handleLevelChange("11")} value="11" />}
-                  label="☆11"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={options.level.some(t=> t === "12")} onChange={this.handleLevelChange("12")} value="12" />}
-                  label="☆12"
-                />
-              </FormGroup>
-            </FormControl>
-          </Grid>
-          <Grid item xs={5}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend"><FormattedMessage id="Songs.filterByDifficulty"/></FormLabel>
-              <FormGroup row>
-                <FormControlLabel
-                  control={<Checkbox checked={options.difficulty.some(t=> t === "0")} onChange={this.handleDiffChange("0")} value="hyper" />}
-                  label="H"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={options.difficulty.some(t=> t === "1")} onChange={this.handleDiffChange("1")} value="another" />}
-                  label="A"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={options.difficulty.some(t=> t === "2")} onChange={this.handleDiffChange("2")} value="leggendaria" />}
-                  label="†"
-                />
-              </FormGroup>
-            </FormControl>
-          </Grid>
-          <Grid item xs={3}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend"><FormattedMessage id="Compare.filterByPlusMinus"/></FormLabel>
-              <FormGroup row>
-                <FormControlLabel
-                  control={<Checkbox checked={options.pm.some(t=> t === "+")} onChange={this.handlePMChange("+")} value="+" />}
-                  label="+"
-                />
-                <FormControlLabel
-                  control={<Checkbox checked={options.pm.some(t=> t === "-")} onChange={this.handlePMChange("-")} value="-" />}
-                  label="-"
-                />
-              </FormGroup>
-            </FormControl>
-          </Grid>
-        </Grid>
+        <FilterByLevelAndDiff options={options} handleChange={this.handleSelectorChange} includePMButtons={true}/>
         <CompareTable full={this.sortedData()} isLoading={isLoading} page={page} rowsPerPage={rowsPerPage} sort={sort} isDesc={isDesc}
         changeSort={this.changeSort} displayMode={displayMode}
         handleChangeRowsPerPage={this.handleChangeRowsPerPage} handleChangePage={this.handleChangePage}/>

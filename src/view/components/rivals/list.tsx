@@ -9,7 +9,6 @@ import Paper from '@material-ui/core/Paper';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
 import RivalAdd from './add';
-import { _currentStore, _isSingle } from '../../../components/settings';
 import ShowSnackBar from '../snackBar';
 import { rivalListsDB } from '../../../components/indexedDB';
 import Container from '@material-ui/core/Container';
@@ -96,6 +95,7 @@ class RivalComponent extends React.Component<CP,{}> {
             <ListItemAvatar>
               <Avatar>
                 <img src={data.photoURL ? data.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
+                  alt={data.rivalName}
                   onError={(e)=>(e.target as HTMLImageElement).src = 'https://files.poyashi.me/noimg.png'}/>
               </Avatar>
             </ListItemAvatar>

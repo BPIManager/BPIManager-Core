@@ -2,7 +2,6 @@ import * as React from 'react';
 import { injectIntl } from 'react-intl';
 
 import Typography from '@material-ui/core/Typography';
-import { _currentStore, _isSingle } from '../../../components/settings';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
