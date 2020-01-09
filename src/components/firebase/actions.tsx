@@ -6,24 +6,27 @@ import firebase from "firebase";
 
 export default class fbActions{
 
-  authWithTwitter():void{
-    fb.auth().signInWithRedirect(twitter);
-    fb.auth().getRedirectResult().then(_result => {
-      return;
+  async authWithTwitter():Promise<any>{
+    return fb.auth().signInWithPopup(twitter).then(async(_result) => {
+      if(_result && _result.user && _result.additionalUserInfo){
+        await firestore.collection("users").doc(_result.user.uid).set({
+          photoURL:`https://twitter.com/${_result.additionalUserInfo.username}/profile_image?size=normal`
+        },{merge: true});
+      }
+      return _result;
     }).catch(error => {
       console.log(error);
+      return null;
     });
-    return;
   }
 
-  authWithGoogle():void{
-    fb.auth().signInWithRedirect(google);
-    fb.auth().getRedirectResult().then(_result => {
-      return;
+  async authWithGoogle():Promise<any>{
+    return fb.auth().signInWithPopup(google).then(_result => {
+      return _result;
     }).catch(error => {
       console.log(error);
+      return null;
     });
-    return;
   }
 
   auth():firebase.auth.Auth{

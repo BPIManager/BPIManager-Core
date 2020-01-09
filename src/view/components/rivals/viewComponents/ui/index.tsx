@@ -58,6 +58,7 @@ class SongsUI extends React.Component<P,stateInt> {
       options:{
         level:["11","12"],
         difficulty:["0","1","2"],
+        pm:["+","-"],
       },
       filterOpen:false,
       allSongsData:[],
@@ -128,10 +129,19 @@ class SongsUI extends React.Component<P,stateInt> {
 
     return this.props.full.filter((data)=>{
       const _f = f[data.title + _prefix(data["difficulty"])];
+      const pm:string[] = this.state.options.pm;
       if(!_f){return false;}
+      const evaluateGap = ()=>{
+        const plus = pm.indexOf("+") > -1;
+        const minus = pm.indexOf("-") > -1;
+        if(!plus && minus) return data.myEx - data.rivalEx <= 0;
+        if(plus && !minus) return data.myEx - data.rivalEx > 0;
+        return plus && minus ? true : false;
+      }
       return (
         bpmFilter(_f.bpm,b) &&
         evaluateVersion(_f.textage) &&
+        evaluateGap() &&
         newState["options"]["level"].some((item:string)=>{
           return item === data.difficultyLevel }) &&
         newState["options"]["difficulty"].some((item:number)=>{
@@ -295,7 +305,7 @@ class SongsUI extends React.Component<P,stateInt> {
         <OrderControl
           orderTitles={orders}
           orderMode={orderMode} orderTitle={orderTitle} handleOrderModeChange={this.handleOrderModeChange} handleOrderTitleChange={this.handleOrderTitleChange}/>
-        <FilterByLevelAndDiff options={options} handleChange={this.handleChange}/>
+        <FilterByLevelAndDiff options={options} handleChange={this.handleChange} includePMButtons={true}/>
 
         <Table
           page={page} handleChangePage={this.handleChangePage}

@@ -35,25 +35,26 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
     try{
       this.props.global.setMove(true);
       this.setState({isSaving:true});
+      let updated = 0, skipped = 0, errorOccured = 0;
       let errors = [];
       const isSingle:number = _isSingle();
       const currentStore:string = _currentStore();
+      const s = new scoresDB(isSingle,currentStore);
       const executor:importCSV = new importCSV(this.state.raw,isSingle,currentStore);
       const calc:bpiCalculator = new bpiCalculator();
       const exec:number = await executor.execute();
       const scores = [];
       const histories = [];
+      const result = executor.getResult(),resultHistory = executor.getResultHistory();
       if(!exec){
         throw new Error("CSVデータの形式が正しくありません");
       }
 
-      const result = executor.getResult(),resultHistory = executor.getResultHistory();
-      const s = new scoresDB(isSingle,currentStore);
-      let updated = 0, skipped = 0, errorOccured = 0;
       const all = await s.getAll().then(t=>t.reduce((result:any, current:any) => {
         result[current.title + current.difficulty] = current;
         return result;
       }, {}));
+
       for(let i = 0;i < result.length;++i){
         const calcData = await calc.calc(result[i]["title"],result[i]["difficulty"],result[i]["exScore"]);
         if(calcData.error && calcData.reason){
@@ -79,10 +80,13 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
         histories.push(Object.assign(resultHistory[i],{difficultyLevel:calcData.difficultyLevel},{currentBPI:calcData.bpi,exScore:resultHistory[i].exScore}));
         ++updated;
       }
+
       await new importer().setHistory(histories).setScores(scores).exec();
+
       this.props.global.setMove(false);
       errors.unshift(result.length + "件処理しました," + updated + "件更新しました," + skipped + "件スキップされました,"+ errorOccured + "件追加できませんでした");
       return this.setState({isSaving:false,raw:"",isSnackbarOpen:true,stateText:"Data.Success",errors:errors});
+
     }catch(e){
       console.log(e);
       this.props.global.setMove(false);
@@ -146,9 +150,9 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
         </Typography>
         <FormattedMessage id="Data.howToEdit"/>
         <ol>
-          <li><FormattedMessage id="Data.howToEdit1"/></li>
-          <li><FormattedMessage id="Data.howToEdit2"/></li>
-          <li><FormattedMessage id="Data.howToEdit3"/></li>
+          {[1,2,3].map(item=>(
+            <li key={item}><FormattedMessage id={`Data.howToEdit${item}`}/></li>
+          ))}
         </ol>
         <Divider variant="middle" style={{margin:"10px 0"}}/>
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>

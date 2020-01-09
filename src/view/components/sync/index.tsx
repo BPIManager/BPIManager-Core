@@ -32,6 +32,7 @@ class SyncIndex extends React.Component<{},S> {
 
   render(){
     const {isLoading,userData} = this.state;
+    
     if(isLoading){
       return (
         <Container className="loaderCentered">

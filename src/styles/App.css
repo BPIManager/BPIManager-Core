@@ -142,7 +142,7 @@ a.link:hover{
   padding:6px !important;
 }
 
-#songsVil #mainFilters legend.MuiFormLabel-root{
+legend.MuiFormLabel-root{
   transform: translate(0, 1.5px) scale(0.75);
   transform-origin: top left;
 }
