@@ -36,7 +36,7 @@ export default class importCSV {
           //Rootage以前のCSV判別
           mode = 1;
         }
-        for(let i = 0; i < lengthSum; ++i){
+        for(let i = 1; i < lengthSum; ++i){
           for(let j = 0; j < 3; ++j){
             let eachObjNum:number[] = [];
             let t:string = "";
@@ -52,7 +52,7 @@ export default class importCSV {
               }
               //ANOTHER
               if(j === 1){
-                if(Number(p[26]) > 10 || Number(p[27]) === 0){
+                if(Number(p[26]) <= 10 || Number(p[27]) === 0){
                   continue;
                 }
                 t = "another";
@@ -60,7 +60,7 @@ export default class importCSV {
               }
               //LEGGENDARIA
               if(j === 2){
-                if(Number(p[33]) > 10 || Number(p[34]) === 0){
+                if(Number(p[33]) <= 10 || Number(p[34]) === 0){
                   continue;
                 }
                 t = "leggendaria";
@@ -69,7 +69,7 @@ export default class importCSV {
             }else{
               //HYPER
               if(j === 0){
-                if(Number(p[12]) > 10 || Number(p[13]) === 0){
+                if(Number(p[12]) <= 10 || Number(p[13]) === 0){
                   continue;
                 }
                 t = "hyper";
@@ -77,7 +77,7 @@ export default class importCSV {
               }
               //ANOTHER
               if(j === 1){
-                if(Number(p[19]) > 10 || Number(p[20]) === 0){
+                if(Number(p[19]) <= 10 || Number(p[20]) === 0){
                   continue;
                 }
                 t = "another";
