@@ -45,7 +45,7 @@ export const _setCurrentViewComponents = (array:string[]):string[]=>{
   return array;
 }
 
-const defaultURL = "https://files.poyashi.me/json/songsWithDP.json";
+const defaultURL = "https://proxy.poyashi.me/?type=bpi";
 
 export const _currentDefinitionURL = ()=>{
   return localStorage.getItem("defURL") || defaultURL;

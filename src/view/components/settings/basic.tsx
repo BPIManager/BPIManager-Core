@@ -243,7 +243,8 @@ class Settings extends React.Component<P,S> {
                 <FormattedMessage id="Settings.currentVersion"/>{this.state.currentVersion}
               </Typography>
               <Typography variant="caption" display="block">
-                <FormattedMessage id="Settings.updateWarning"/>
+                <FormattedMessage id="Settings.updateWarning"/><br/>
+                <RefLink color="secondary" href="https://github.com/potakusan/bpim-score-repo">定義ファイルに誤りなどを発見した場合、GitHubにてプルリクエストを送信することができます。</RefLink>
               </Typography>
               <Typography variant="caption" display="block">
                 <RefLink component="a" onClick={this.toggleURLDialog} color="secondary" ><FormattedMessage id="Settings.defFileURLButton"/></RefLink>

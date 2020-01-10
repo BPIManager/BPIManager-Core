@@ -639,7 +639,7 @@ export const songsDB = class extends storageWrapper{
         dpLevel:item["dpLevel"],
         isFavorited:item["isFavorited"] || false,
         isCreated: item["isCreated"] || false,
-        coef:Number(this.validateCoef(item["coef"] || -1)),
+        coef:item["coef"] ? this.validateCoef(Number(item["coef"])) : -1,
         updatedAt: item["updatedAt"] || timeFormatter(0),
       })
     }catch(e){
