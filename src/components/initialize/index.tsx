@@ -3,6 +3,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import timeFormatter from "../common/timeFormatter";
 import {songsDB, scoresDB} from "../indexedDB";
 import WarningIcon from '@material-ui/icons/Warning';
+import { _currentDefinitionURL } from '../settings';
 
 export default class Initialize extends React.Component<{},{show:boolean,error:boolean,errorMessage:string,consoleMes:string}>{
   private songsDB = new songsDB();
@@ -36,7 +37,7 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
         return this.setState({show:false});
       }
       const now = timeFormatter(0);
-      const csv = await fetch("https://files.poyashi.me/json/songsWithDP.json?t=initialized").then(t=>t.json());
+      const csv = await fetch(_currentDefinitionURL()).then(t=>t.json());
       for(let i=0;i < csv.body.length;++i){
         await this.songsDB.setItem(Object.assign(csv["body"][i],{
           isFavorited:false,

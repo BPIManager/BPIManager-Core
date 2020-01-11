@@ -62,9 +62,7 @@ export default class bpiCalcuator{
 
   async calc(songTitle:string,difficulty:string,exScore:number):Promise<B>{
     try{
-      this.propData = this.isSingle === 1 ?
-      await this.songsDB.getOneItemIsSingle(songTitle,difficulty) :
-      await this.songsDB.getOneItemIsDouble(songTitle,difficulty);
+      this.propData = await this.songsDB.getOneItemIsSingle(songTitle,difficulty);
       if(!this.propData || !this.propData[0]){
         throw new Error("楽曲情報が見つかりませんでした");
       }
