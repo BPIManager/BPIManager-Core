@@ -14,7 +14,7 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import SongsTable from "./tablePlayed";
 import Input from '@material-ui/core/Input';
 
-import {scoreData} from "../../../../types/data";
+import {scoreData, songData} from "../../../../types/data";
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -34,7 +34,7 @@ interface stateInt {
   isLoading:boolean,
   filterByName:string,
   scoreData:scoreData[],
-  allSongsData:{[key:string]:any},
+  allSongsData:{[key:string]:songData},
   options:{[key:string]:string[]},
   mode:number,
   range:number,
@@ -89,7 +89,7 @@ class SongsList extends React.Component<P,stateInt> {
   handleChangePage = (_e:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number):void => this.setState({page:newPage});
 
   async componentDidMount(){
-    let allSongs:{[key:string]:string|number} = {};
+    let allSongs:{[key:string]:songData} = {};
     const allSongsRawData = await new songsDB().getAll(_isSingle());
     for(let i =0; i < allSongsRawData.length; ++i){
       const prefix:string = _prefixFromNum(allSongsRawData[i]["difficulty"]);
@@ -132,7 +132,7 @@ class SongsList extends React.Component<P,stateInt> {
     return this.setState({scoreData:this.songFilter(newState),filterByName:newState.filterByName,page:0});
   }
 
-  songFilter = (newState:{[s:string]:any} = this.state) =>{
+  songFilter = (newState:stateInt = this.state) =>{
     const diffs:string[] = ["hyper","another","leggendaria"];
     const m = newState.mode;
     const r = newState.range;
@@ -181,7 +181,7 @@ class SongsList extends React.Component<P,stateInt> {
         evaluateVersion(_f.textage) &&
         newState["options"]["level"].some((item:string)=>{
           return item === data.difficultyLevel }) &&
-        newState["options"]["difficulty"].some((item:number)=>{
+        newState["options"]["difficulty"].some((item:string)=>{
           return diffs[Number(item)] === data.difficulty} ) &&
         data.title.toLowerCase().indexOf(newState["filterByName"].toLowerCase()) > -1
       )
@@ -229,11 +229,11 @@ class SongsList extends React.Component<P,stateInt> {
         let bBpm = bFull["bpm"];
         if(/-/.test(aBpm)) aBpm = orderTitle === 7 ? aBpm.split("-")[1] : aBpm.split("-")[0];
         if(/-/.test(bBpm)) bBpm = orderTitle === 7 ? bBpm.split("-")[1] : bBpm.split("-")[0];
-        return aBpm - bBpm;
+        return Number(aBpm) - Number(bBpm);
         case 9:
         let aVer = aFull["textage"].replace(/\/.*?$/,"");
         let bVer = bFull["textage"].replace(/\/.*?$/,"");
-        return aVer - bVer;
+        return Number(aVer) - Number(bVer);
       }
     });
     return orderMode === 0  ? res : res.reverse();

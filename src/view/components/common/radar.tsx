@@ -12,6 +12,37 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import { _prefix } from "../../../components/songs/filter";
 
+export interface withRivalData{
+  title:string,
+  difficulty:string,
+  difficultyLevel:string,
+  myEx:number,
+  rivalEx:number,
+  myMissCount:number|undefined,
+  rivalMissCount:number|undefined,
+  myClearState:number,
+  rivalClearState:number,
+  myLastUpdate:string,
+  rivalLastUpdate:string,
+}
+
+interface D {
+  title:string,
+  difficulty:string,
+  exScore:number,
+  currentBPI:number
+}
+
+export interface radarData{
+  title: string,
+  TotalBPI: number,
+  rivalTotalBPI: number,
+  details:D[],
+  rivalDetails:D[],
+  ObjectiveBPI: number,
+  rank:number
+}
+
 export const songs:{[key:string]:[string,string][]} = {
   "NOTES":[
     ["Verflucht","leggendaria"],
@@ -84,7 +115,7 @@ export const songs:{[key:string]:[string,string][]} = {
   ]
 }
 
-export const getRadar = async(withRivalData:any = null):Promise<any>=>{
+export const getRadar = async(withRivalData:withRivalData[]|null = null):Promise<radarData[]>=>{
   const objective = _goalBPI(),isSingle = _isSingle(),currentStore = _currentStore();
   const db = new scoresDB(isSingle, currentStore);
   const fillArray = (p:number[],len:number)=>{
@@ -96,14 +127,14 @@ export const getRadar = async(withRivalData:any = null):Promise<any>=>{
     }
     return p;
   }
-  return await Object.keys(songs).reduce(async (obj:Promise<any>,title:string)=>{
+  return await Object.keys(songs).reduce(async (obj:Promise<radarData[]>,title:string)=>{
     const collection = await obj;
     const len = songs[title].length;
     const bpi = new bpiCalcuator();
     let pusher:number[] = [];
-    let details:any[] = [];
+    let details:D[] = [];
+    let rivalDetails:D[] = [];
     let rivalPusher:number[] = [];
-    let rivalDetails:any[] = [];
 
     for(let i = 0; i < len; ++i){
       const ind = await db.getItem(unescape(songs[title][i][0]),songs[title][i][1],currentStore,isSingle);
@@ -116,7 +147,7 @@ export const getRadar = async(withRivalData:any = null):Promise<any>=>{
       });
       if(withRivalData){
         let currentBPI = -15;
-        const rivalData = withRivalData.find((item:any)=>item.title === unescape(songs[title][i][0]) && item.difficulty === songs[title][i][1]);
+        const rivalData = withRivalData.find((item:withRivalData)=>item.title === unescape(songs[title][i][0]) && item.difficulty === songs[title][i][1]);
         if(rivalData){
           const res = await bpi.calc(rivalData.title,rivalData.difficulty,rivalData.rivalEx);
           currentBPI = !res.error ? res.bpi : -15
@@ -127,7 +158,7 @@ export const getRadar = async(withRivalData:any = null):Promise<any>=>{
           difficulty:songs[title][i][1],
           exScore:rivalData ? rivalData.rivalEx : 0,
           currentBPI:currentBPI
-        })
+        });
       }
     }
     fillArray(pusher,len);
@@ -143,11 +174,10 @@ export const getRadar = async(withRivalData:any = null):Promise<any>=>{
       title: title,
       TotalBPI: total,
       details:details,
-      rivalTotalBPI: rivalTotal || null,
+      rivalTotalBPI: rivalTotal,
       rivalDetails:rivalDetails,
       ObjectiveBPI: objective,
-      rank:bpi.rank(total,false) / bpi.getTotalKaidens() * 100,
-      fullMark: 100
+      rank:bpi.rank(total,false) / bpi.getTotalKaidens() * 100
     });
     return Promise.resolve(obj);
   },Promise.resolve([]));
@@ -156,13 +186,13 @@ export const getRadar = async(withRivalData:any = null):Promise<any>=>{
 export class Details extends React.Component<{
   closeModal:(key:string)=>void,
   withRival:boolean,
-  data:any,
+  data:radarData[],
   title:string,
 },{}> {
 
   render(){
     const {closeModal,withRival,data,title} = this.props;
-    const target = data.find((item:any)=>item.title === title);
+    const target = data.find((item:radarData)=>item.title === title);
     if(!target){
       return;
     }
@@ -181,14 +211,14 @@ export class Details extends React.Component<{
               </TableRow>
             </TableHead>
             <TableBody>
-              {target.details.map((item:any)=> {
-                const rival = withRival ? target.rivalDetails.find((rd:any)=>rd.title === item.title): {exScore:0,currentBPI:0};
+              {target.details && target.details.map((item:D)=> {
+                const rival = (withRival && target.rivalDetails) ? target.rivalDetails.find((rd:D)=>rd.title === item.title): {exScore:0,currentBPI:0};
                 return (
                 <TableRow key={item.title}>
                   <TableCell component="th" style={{width:"100%"}}>
                     {item.title}{_prefix(item.difficulty)}
                   </TableCell>
-                  {withRival && <TableCell align="right">{rival.exScore}<br/>BPI:{rival.currentBPI.toFixed(2)}</TableCell>}
+                  {(withRival && rival) && <TableCell align="right">{rival.exScore}<br/>BPI:{rival.currentBPI.toFixed(2)}</TableCell>}
                   <TableCell align="right">{item.exScore}<br/>BPI:{item.currentBPI.toFixed(2)}</TableCell>
                 </TableRow>
               )})}

@@ -35,7 +35,7 @@ interface P{
   isOpen:boolean,
   song:songData|null,
   score:scoreData|null,
-  handleOpen:(flag:boolean,row?:any,willDeleteItems?:any)=>void,
+  handleOpen:(flag:boolean,row?:any,willDeleteItems?:{title:string,difficulty:string}|null)=>void,
   willDelete?:boolean
 }
 
@@ -46,16 +46,21 @@ interface S{
   newClearState:number,
   newMissCount:number,
   showCharts:boolean,
-  chartData:any[],
+  chartData:chartData[],
   currentTab:number,
   anchorEl:null | HTMLElement,
   favorited:boolean,
   successSnack:boolean,
   errorSnack:boolean,
-  errorSnackMessage:string,
+  errorSnackMessage:string|undefined,
   graphLastUpdated:number,
   isSaving:boolean,
   showBody:boolean,
+}
+
+export interface chartData{
+  "name":string,
+  "EX SCORE":number
 }
 
 class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
@@ -89,8 +94,8 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
     return this.setState({showBody:!this.state.showBody});
   }
 
-  makeGraph = (newScore?:number):any[]=>{
-    let data:any[] = [],lastExScore = 0;
+  makeGraph = (newScore?:number):chartData[]=>{
+    let data:chartData[] = [],lastExScore = 0;
     const {song,score} = this.props;
     const dataInserter = (exScore:number,label:string):number=>{
       return data.push({
@@ -206,7 +211,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       this.setState({isSaving:true});
       const scores = new scoresDB(), scoreHist = new scoreHistoryDB();
       await scores.updateScore(score,{currentBPI:newBPI,exScore:newScore,clearState:newClearState,missCount:newMissCount});
-      if(!Number.isNaN(newBPI)) scoreHist.add(Object.assign(score, { difficultyLevel: song.difficultyLevel }), { currentBPI: newBPI, exScore: newScore });
+      if(!Number.isNaN(newBPI)) scoreHist._add(Object.assign(score, { difficultyLevel: song.difficultyLevel, currentBPI: newBPI, exScore: newScore }));
       this.props.handleOpen(true,null,willDelete ? {title:score.title,difficulty:score.difficulty} : null);
     }catch(e){
       return this.setState({errorSnack:true,errorSnackMessage:e});

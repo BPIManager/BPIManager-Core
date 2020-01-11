@@ -1,11 +1,11 @@
-import {scoreData} from "../../types/data";
+import {scoreData, historyData} from "../../types/data";
 import { convertClearState,convertLeggendariaStates } from "../songs/filter";
 
 export default class importCSV {
 
   rawData:string = "";
   result:scoreData[] = [];
-  resultHistory:any[] = [];
+  resultHistory:historyData[] = [];
 
   isSingle:number = 1;
   currentStore:string = "";
@@ -20,7 +20,7 @@ export default class importCSV {
     return this.result;
   }
 
-  getResultHistory():any[]{
+  getResultHistory():historyData[]{
     return this.resultHistory;
   }
 

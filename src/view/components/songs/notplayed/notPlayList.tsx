@@ -113,7 +113,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
     return this.setState({songData:this.songFilter(newState),filterByName:newState.filterByName,page:0});
   }
 
-  songFilter = (newState:{[s:string]:any} = this.state) =>{
+  songFilter = (newState:stateInt = this.state) =>{
     const v = newState.versions;
     const evaluateVersion = (song:string):boolean=>{
       const songVer = song.split("/")[0];
@@ -130,7 +130,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
         bpmFilter(data.bpm,b) &&
         newState["options"]["level"].some((item:string)=>{
           return item === data.difficultyLevel }) &&
-        newState["options"]["difficulty"].some((item:number)=>{
+        newState["options"]["difficulty"].some((item:string)=>{
           return diffs[Number(item)] === difficultyDiscriminator(data.difficulty)} ) &&
         data.title.toLowerCase().indexOf(newState["filterByName"].toLowerCase()) > -1
       )

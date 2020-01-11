@@ -46,8 +46,8 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
     }
   }
 
-  handleOpen = (updateFlag:boolean = false,row?:any,willDeleteItems?:{title:string,difficulty:string}):void=> {
-    if(updateFlag){this.props.updateScoreData(true, willDeleteItems);}
+  handleOpen = (updateFlag:boolean = false,row:songData|null,willDeleteItems:{title:string,difficulty:string}|null|undefined = {title:"",difficulty:""}):void=> {
+    if(updateFlag){this.props.updateScoreData(true, willDeleteItems || {title:"",difficulty:""});}
     const t = row ? {
       difficulty:difficultyDiscriminator(row.difficulty),
       title:row.title,
@@ -99,12 +99,12 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:any,i:number) => {
+              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:songData,i:number) => {
                 return (
                   <TableRow
                     onClick={()=>this.handleOpen(false,row)}
                     hover role="checkbox" tabIndex={-1} key={row.title + row.difficulty} className={ i % 2 ? "isOdd" : "isEven"}>
-                    {columns.map((column,j) => {
+                    {columns.map((column) => {
                       const d = difficultyDiscriminator(row.difficulty);
                       const prefix = d === "hyper" ? "(H)" : d === "leggendaria" ? "(†)" : "";
                       return (

@@ -4,16 +4,17 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import RivalLists from "./list";
 import RecentlyAdded from "./recent";
+import { rivalScoreData, rivalStoreData, DBRivalStoreData } from '../../../types/data';
 
 interface S {
   currentTab:number,
 }
 
 interface P{
-  showEachRival:(input:string)=>void
-  compareUser:(rivalMeta:any,rivalBody:any,last:any,arenaRank:string)=>void,
-  backToRecentPage:boolean,
-  last:any,
+  showEachRival:(rivalMeta:DBRivalStoreData)=>void
+  compareUser:(rivalMeta:rivalStoreData,rivalBody:rivalScoreData[],last:rivalStoreData,arenaRank:string)=>void,
+  backToRecentPage:number,
+  last:rivalStoreData|null,
   arenaRank:string,
 }
 
@@ -22,7 +23,7 @@ class RivalIndex extends React.Component<P,S> {
   constructor(props:P){
     super(props);
     this.state = {
-      currentTab:props.backToRecentPage ? 1 : 0,
+      currentTab:props.backToRecentPage,
     }
   }
 

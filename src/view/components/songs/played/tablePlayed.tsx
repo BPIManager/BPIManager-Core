@@ -29,7 +29,7 @@ const columns = [
 interface P{
   data:scoreData[],
   mode:number,
-  allSongsData:{[key:string]:any}
+  allSongsData:{[key:string]:songData}
   updateScoreData:()=>void,
   page:number,
   handleChangePage:(_e:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number)=>void
@@ -56,9 +56,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
     }
   }
 
-  private scoresDB = new scoresDB();
-
-  handleOpen = (updateFlag:boolean,row?:any,_willDeleteItems?:any):void=> {
+  handleOpen = (updateFlag:boolean,row?:scoreData|null):void=> {
     if(updateFlag){this.props.updateScoreData();}
     return this.setState({
       isOpen:!this.state.isOpen,
@@ -99,7 +97,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:any,i:number) => {
+              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:scoreData,i:number) => {
                 const prefix = row.difficulty === "hyper" ? "(H)" : row.difficulty === "leggendaria" ? "(†)" : "";
                 const f = this.props.allSongsData[row.title + prefix];
                 const max  = f["notes"] * 2;
@@ -113,11 +111,11 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                           {(mode < 6 && column.id === "currentBPI") && <span className={j >= 2 ? "bodyNumber" : ""}>{Number(row[column.id]).toFixed(2)}</span>}
                           {column.id !== "currentBPI" && <span className={j >= 2 ? "bodyNumber" : ""}>{row[column.id]}</span>}
                           {column.id === "title" && <span>{prefix}</span>}
-                          {(mode > 5 && column.id === "currentBPI") && bp(row.missCount)}
+                          {(mode > 5 && column.id === "currentBPI") && bp(row.missCount || NaN)}
                           <span className={i % 2 ? "plusOverlayScore isOddOverLayed" : "plusOverlayScore isEvenOverLayed"}>
                             {(j === 3) &&
                               <span>
-                                {lastVer && <LastVerComparison row={row} scoresDB={this.scoresDB} lastVer={lastVer} last={last} mode={mode}/>}
+                                {lastVer && <LastVerComparison row={row} lastVer={lastVer} last={last} mode={mode}/>}
                                 {(last && row.lastScore > -1 && mode === 0) &&
                                   <span>
                                     {row.exScore - row.lastScore >= 0 && <span>+</span>}
@@ -185,11 +183,14 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
   }
 }
 
-class LastVerComparison extends React.Component<{row:any,scoresDB:any,last:boolean,lastVer:boolean,mode:number},{diff:number}>{
+interface LP{row:scoreData,last:boolean,lastVer:boolean,mode:number};
+
+class LastVerComparison extends React.Component<LP,{diff:number}>{
 
   private _isMounted = false;
+  private scoresDB = new scoresDB();
 
-  constructor(props:{row:any,scoresDB:any,last:boolean,lastVer:boolean,mode:number}){
+  constructor(props:LP){
     super(props);
     this.state = {
       diff:NaN,
@@ -199,7 +200,7 @@ class LastVerComparison extends React.Component<{row:any,scoresDB:any,last:boole
   async componentDidMount(){
     this._isMounted = true;
     const {row} = this.props;
-    const t = await this.props.scoresDB.getItem(row.title,row.difficulty,String(Number((row.storedAt)) - 1),row.isSingle);
+    const t = await this.scoresDB.getItem(row.title,row.difficulty,String(Number((row.storedAt)) - 1),row.isSingle);
     if(!this._isMounted || !t || t.length === 0) return;
     return this.setState({diff: row.exScore - t[0]["exScore"]});
   }

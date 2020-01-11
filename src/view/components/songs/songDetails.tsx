@@ -12,6 +12,7 @@ import { lampCSVArray, getSongSuffixForIIDXInfo } from "../../../components/song
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
+import { verNameArr } from "./common";
 
 interface P{
   song:songData|null,
@@ -63,12 +64,10 @@ class SongDetails extends React.Component<P,{}> {
                 <TableCell>BPM</TableCell>
                 <TableCell>{song.bpm}</TableCell>
               </TableRow>
-              { score.version &&
-                <TableRow>
-                  <TableCell><FormattedMessage id="SongDetail.Version"/></TableCell>
-                  <TableCell>{score.version}</TableCell>
-                </TableRow>
-              }
+              <TableRow>
+                <TableCell><FormattedMessage id="SongDetail.Version"/></TableCell>
+                <TableCell>{verNameArr[Number(song["textage"].replace(/\/.*?$/,""))]}</TableCell>
+              </TableRow>
             </TableBody>
           </Table>
         </Paper>

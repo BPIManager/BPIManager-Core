@@ -3,11 +3,11 @@ import { songData } from "../../types/data";
 import { _traditionalMode,_isSingle } from "../settings";
 
 export interface B{
-  error:boolean,bpi:number,reason?:any,difficultyLevel?:string
+  error:boolean,bpi:number,reason?:string,difficultyLevel?:string
 }
 
 export default class bpiCalcuator{
-  private songsDB:any = new songsDB();
+  private songsDB = new songsDB();
   private isSingle: number;
   private totalKaidens: number;
   private propData:songData[]|null = null;

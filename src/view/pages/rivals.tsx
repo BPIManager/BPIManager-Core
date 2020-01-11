@@ -7,16 +7,18 @@ import RivalIndex from '../components/rivals';
 import Typography from '@material-ui/core/Typography';
 import { _currentStore, _isSingle } from '../../components/settings';
 import {Link as RefLink} from '@material-ui/core/';
+import { rivalScoreData, rivalStoreData, DBRivalStoreData } from '../../types/data';
 
 interface S {
   currentView:number
-  currentUser:any,
+  currentUser:string,
   message:string,
   showSnackBar:boolean,
-  rivalMeta?:any,
-  descendingRivalData?:any,
-  lastVisible:any,
+  rivalMeta:DBRivalStoreData|rivalStoreData|null,
+  descendingRivalData?:rivalScoreData[],
+  lastVisible:rivalStoreData|null,
   arenaRank:string,
+  recentView:number,
 }
 
 class Stats extends React.Component<{intl:any},S> {
@@ -25,21 +27,25 @@ class Stats extends React.Component<{intl:any},S> {
     super(props);
     this.state ={
       currentView:0,
-      currentUser:null,
+      currentUser:"",
       message:"",
       showSnackBar:false,
       lastVisible:null,
-      arenaRank:"すべて"
+      arenaRank:"すべて",
+      recentView:0,
+      rivalMeta:null,
     }
   }
 
-  showEachRival = (rivalData:string)=> this.setState({currentView:1,currentUser:rivalData,rivalMeta:null,descendingRivalData:null,});
-  compareUser = (rivalMeta:any,rivalBody:any,last:number,arenaRank:string)=> this.setState({lastVisible:last,currentView:2,rivalMeta:rivalMeta,descendingRivalData:rivalBody,arenaRank:arenaRank});
-  backToMainPage = ()=> this.setState({currentView:0,currentUser:null});
+  showEachRival = (rivalMeta:DBRivalStoreData)=> this.setState({recentView:0,currentView:1,currentUser:rivalMeta.uid,rivalMeta:rivalMeta,descendingRivalData:[],});
+  compareUser = (rivalMeta:rivalStoreData,rivalBody:rivalScoreData[],last:rivalStoreData,arenaRank:string)=> {
+    return this.setState({recentView:1,lastVisible:last,currentView:2,rivalMeta:rivalMeta,descendingRivalData:rivalBody,arenaRank:arenaRank});
+  }
+  backToMainPage = ()=> this.setState({currentView:0,currentUser:""});
   toggleSnack = (message:string = "ライバルを削除しました")=> this.setState({message:message,showSnackBar:!this.state.showSnackBar});
 
   render(){
-    const {currentView,currentUser,message,showSnackBar,rivalMeta,descendingRivalData,lastVisible,arenaRank} = this.state;
+    const {currentView,currentUser,message,showSnackBar,rivalMeta,descendingRivalData,lastVisible,arenaRank,recentView} = this.state;
     return (
       <Container className="commonLayout" id="stat" fixed>
         {currentView === 0 &&
@@ -53,9 +59,9 @@ class Stats extends React.Component<{intl:any},S> {
           </Typography>
         </div>
         }
-        {currentView === 0 && <RivalIndex showEachRival={this.showEachRival} compareUser={this.compareUser} backToRecentPage={!!this.state.rivalMeta} last={lastVisible} arenaRank={arenaRank}/>}
-        {currentView === 1 && <RivalView toggleSnack={this.toggleSnack} backToMainPage={this.backToMainPage} rivalData={currentUser}/>}
-        {currentView === 2 && <RivalView toggleSnack={this.toggleSnack} backToMainPage={this.backToMainPage} rivalData={rivalMeta.uid} rivalMeta={rivalMeta} descendingRivalData={descendingRivalData} isNotRival={true}/>}
+        {currentView === 0 && <RivalIndex showEachRival={this.showEachRival} compareUser={this.compareUser} backToRecentPage={recentView} last={lastVisible} arenaRank={arenaRank}/>}
+        {(rivalMeta && currentView === 1) && <RivalView toggleSnack={this.toggleSnack} backToMainPage={this.backToMainPage} rivalData={currentUser} rivalMeta={rivalMeta}/>}
+        {(rivalMeta && currentView === 2) && <RivalView toggleSnack={this.toggleSnack} backToMainPage={this.backToMainPage} rivalData={rivalMeta.uid} rivalMeta={rivalMeta} descendingRivalData={descendingRivalData} isNotRival={true}/>}
         <ShowSnackBar message={message} variant="success"
             handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>
       </Container>

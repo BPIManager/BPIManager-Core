@@ -4,7 +4,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Switch from '@material-ui/core/Switch';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { getRadar, Details } from '../../common/radar';
+import { getRadar, Details, radarData, withRivalData } from '../../common/radar';
 import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { _isSingle,_chartColor } from '../../../../components/settings';
@@ -23,17 +23,16 @@ interface S {
   sum11:number,
   sum12:number,
   percentage:boolean,
-  radar:any[]|null,
+  radar:radarData[],
   isLoading:boolean,
   radarDetail:string
 }
 
 interface P {
-  rivalData:any,
-  full:any[],
+  full:withRivalData[],
 }
 
-class RivalSettings extends React.Component<P,S> {
+class RivalStats extends React.Component<P,S> {
 
   constructor(props:P){
     super(props);
@@ -49,7 +48,7 @@ class RivalSettings extends React.Component<P,S> {
       sum11:0,
       sum12:0,
       percentage:true,
-      radar:null,
+      radar:[],
       radarDetail:""
     }
   }
@@ -74,7 +73,6 @@ class RivalSettings extends React.Component<P,S> {
         sum12++;
       }
     }
-    console.log(await getRadar(full))
     return this.setState({
       scoresAbout:scoresAbout,
       scoresByLevel11:scoresByLevel11,
@@ -241,4 +239,4 @@ class Graph extends React.Component<P2,{}>{
   }
 }
 
-export default RivalSettings;
+export default RivalStats;

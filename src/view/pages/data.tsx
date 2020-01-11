@@ -14,6 +14,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Link from '@material-ui/core/Link';
 import {Link as RLink} from "react-router-dom";
 import moment from "moment";
+import { scoreData } from '../../types/data';
 
 export default class Index extends React.Component<{global:any},{raw:string,isSnackbarOpen:boolean,stateText:string,errors:string[],isSaving:boolean,currentState:string,progress:number}> {
 
@@ -50,7 +51,7 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
       const result = executor.getResult(),resultHistory = executor.getResultHistory();
       const s = new scoresDB(isSingle,currentStore);
       let updated = 0, skipped = 0, errorOccured = 0;
-      const all = await s.getAll().then(t=>t.reduce((result:any, current:any) => {
+      const all = await s.getAll().then(t=>t.reduce((result:{[key:string]:scoreData}, current:scoreData) => {
         result[current.title + current.difficulty] = current;
         return result;
       }, {}));

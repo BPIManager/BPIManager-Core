@@ -1,7 +1,8 @@
 import { _prefix } from "../../../../components/songs/filter";
 import { B } from "./filter";
+import { scoreData, songData } from "../../../../types/data";
 
-export const diffColor = (i:number,clearState: any,alternative:number = 0):string=>{
+export const diffColor = (i:number,clearState: number,alternative:number = 0):string=>{
   if(i !== alternative){return "transparent";}
   switch (clearState){
     case 0 : return "#e0dede";
@@ -15,7 +16,7 @@ export const diffColor = (i:number,clearState: any,alternative:number = 0):strin
   }
 }
 
-export const behindScore = (row:any,allSongsData:{[key:string]:any},mode:number)=>{
+export const behindScore = (row:scoreData,allSongsData:{[key:string]:songData},mode:number)=>{
   try{
     const ghost = [1,2/3,7/9,8/9,17/18,1];
     const max = allSongsData[row.title + _prefix(row.difficulty)]["notes"] * 2;

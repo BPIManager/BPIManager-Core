@@ -10,7 +10,6 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import Table from "../table";
 import Input from '@material-ui/core/Input';
-import {scoreData} from "../../../../../types/data";
 import InputLabel from '@material-ui/core/InputLabel';
 import { _prefix, _prefixFromNum } from '../../../../../components/songs/filter';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -23,12 +22,14 @@ import { verArr, bpmFilter } from '../../../songs/common';
 import SongsFilter, { B } from '../../../songs/common/filter';
 import { commonFunc } from '../../../../../components/common';
 import FilterByLevelAndDiff from "../../../common/selector";
+import { withRivalData } from '../../../common/radar';
+import { songData } from '../../../../../types/data';
 
 interface stateInt {
   isLoading:boolean,
   filterByName:string,
-  scoreData:any[],
-  allSongsData:{[key:string]:any},
+  scoreData:withRivalData[],
+  allSongsData:{[key:string]:songData},
   options:{[key:string]:string[]},
   page:number,
   mode:number,
@@ -41,8 +42,7 @@ interface stateInt {
 
 interface P{
   type:number,
-  rivalData:any,
-  full:any[],
+  full:withRivalData[],
   intl:any,
 }
 
@@ -61,7 +61,7 @@ class SongsUI extends React.Component<P,stateInt> {
         pm:["+","-"],
       },
       filterOpen:false,
-      allSongsData:[],
+      allSongsData:{},
       page:0,
       orderTitle:2,
       orderMode:1,
@@ -78,8 +78,8 @@ class SongsUI extends React.Component<P,stateInt> {
   handleChangePage = (_e:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number):void => this.setState({page:newPage});
 
   async componentDidMount(){
-    let allSongs:{[key:string]:string|number} = {};
-    const allSongsRawData = await new songsDB().getAll(_isSingle());
+    let allSongs:{[key:string]:songData} = {};
+    const allSongsRawData:songData[] = await new songsDB().getAll(_isSingle());
     for(let i =0; i < allSongsRawData.length; ++i){
       const prefix:string = _prefixFromNum(allSongsRawData[i]["difficulty"]);
       allSongs[allSongsRawData[i]["title"] + prefix] = allSongsRawData[i];
@@ -113,7 +113,7 @@ class SongsUI extends React.Component<P,stateInt> {
     return this.setState({scoreData:this.songFilter(newState),filterByName:newState.filterByName,page:0});
   }
 
-  songFilter = (newState:{[s:string]:any} = this.state) =>{
+  songFilter = (newState:stateInt = this.state) =>{
     const diffs:string[] = ["hyper","another","leggendaria"];
     const v = newState.versions;
     const b = newState.bpm;
@@ -144,14 +144,14 @@ class SongsUI extends React.Component<P,stateInt> {
         evaluateGap() &&
         newState["options"]["level"].some((item:string)=>{
           return item === data.difficultyLevel }) &&
-        newState["options"]["difficulty"].some((item:number)=>{
+        newState["options"]["difficulty"].some((item:string)=>{
           return diffs[Number(item)] === data.difficulty} ) &&
         data.title.toLowerCase().indexOf(newState["filterByName"].toLowerCase()) > -1
       )
     })
   }
 
-  sortedData = ():scoreData[]=>{
+  sortedData = ():withRivalData[]=>{
     const {scoreData,orderMode,orderTitle,allSongsData} = this.state;
     const res = scoreData.sort((a,b)=> {
       const aFull = allSongsData[a.title + _prefix(a.difficulty)];
@@ -199,11 +199,11 @@ class SongsUI extends React.Component<P,stateInt> {
           case 15:
             if(/-/.test(aBpm)) aBpm = orderTitle === 14 ? aBpm.split("-")[1] : aBpm.split("-")[0];
             if(/-/.test(bBpm)) bBpm = orderTitle === 14 ? bBpm.split("-")[1] : bBpm.split("-")[0];
-            return aBpm - bBpm;
+            return Number(aBpm) - Number(bBpm);
           case 16:
             let aVer = aFull["textage"].replace(/\/.*?$/,"");
             let bVer = bFull["textage"].replace(/\/.*?$/,"");
-            return aVer - bVer;
+            return Number(aVer) - Number(bVer);
         }
       }
       return 0;

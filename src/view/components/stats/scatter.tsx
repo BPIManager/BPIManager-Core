@@ -12,9 +12,16 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 
+interface scatterGraph{
+  label:string,
+  x:number,
+  y:number,
+  last:number
+}
+
 interface S {
   isLoading:boolean,
-  scatterGraph:any[],
+  scatterGraph:scatterGraph[],
   currentVersion:string,
   targetVersion:string,
   targetLevel:string,
@@ -65,7 +72,8 @@ class ScatterGraph extends React.Component<{},S> {
           label:current.title + _prefix(current.difficulty),
           x:way === 0 && last !== 0 ? Math.ceil( 1000 * current.currentBPI / last )  / 10  - 100 : way === 1 ? current.currentBPI - last : last,
           y:current.currentBPI,
-          last:last})
+          last:last
+        })
       }
     }
     //BPI別集計

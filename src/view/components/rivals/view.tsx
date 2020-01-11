@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { injectIntl } from 'react-intl';
 
 import Typography from '@material-ui/core/Typography';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
@@ -12,24 +11,25 @@ import SongsUI from './viewComponents/ui';
 import Settings from './viewComponents/settings';
 import { scoresDB, rivalListsDB } from '../../../components/indexedDB';
 import RivalStats from './viewComponents/stats';
+import { scoreData, rivalScoreData, rivalStoreData, DBRivalStoreData } from '../../../types/data';
+import { withRivalData } from '../common/radar';
 
 interface S {
   isLoading:boolean,
   currentTab:number,
-  full:any[],
+  full:withRivalData[],
 }
 
 interface P {
-  intl:any,
-  rivalData:any,
+  rivalData:string,
   backToMainPage:()=>void
   toggleSnack:()=>void,
   isNotRival?:boolean,
-  rivalMeta?:any,
-  descendingRivalData?:any,
+  rivalMeta:rivalStoreData|DBRivalStoreData|null,
+  descendingRivalData?:rivalScoreData[],
 }
 
-class RivalLists extends React.Component<P,S> {
+class RivalView extends React.Component<P,S> {
 
   constructor(props:P){
     super(props);
@@ -47,17 +47,17 @@ class RivalLists extends React.Component<P,S> {
   loadRivalData = async()=>{
     this.setState({isLoading:true});
     const {rivalData} = this.props;
-    const allScores = (await new scoresDB().getAll()).reduce((groups:any,item)=>{
+    const allScores = (await new scoresDB().getAll()).reduce((groups:{[key:string]:scoreData},item:scoreData)=>{
       groups[item.title + item.difficulty] = item;
       return groups;
     },{});
-    const allRivalScores = (this.props.descendingRivalData || await new rivalListsDB().getAllScores(rivalData.uid)).reduce((groups:any,item:any)=>{
+    const allRivalScores = (this.props.descendingRivalData || await new rivalListsDB().getAllScores(rivalData)).reduce((groups:{[key:string]:rivalScoreData},item:rivalScoreData)=>{
       groups[item.title + item.difficulty] = item;
       return groups;
     },{});
     return this.setState({
       isLoading:false,
-      full:Object.keys(allRivalScores).reduce((groups:any,key:any)=>{
+      full:Object.keys(allRivalScores).reduce((groups:withRivalData[],key:string)=>{
         if(allScores[key]){
           const mine = allScores[key];
           const rival = allRivalScores[key];
@@ -86,7 +86,7 @@ class RivalLists extends React.Component<P,S> {
 
   render(){
     const {isLoading,currentTab,full} = this.state;
-    const {rivalData,backToMainPage,isNotRival,rivalMeta} = this.props;
+    const {backToMainPage,isNotRival,rivalMeta} = this.props;
     if(isLoading){
       return (
         <Container className="loaderCentered">
@@ -97,7 +97,7 @@ class RivalLists extends React.Component<P,S> {
       <div>
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
           <Button onClick={backToMainPage} style={{minWidth:"auto",padding:"6px 0px"}}><ArrowBackIcon/></Button>
-          &nbsp;{rivalMeta ? rivalMeta.displayName : rivalData.rivalName}
+          &nbsp;{rivalMeta && (isNotRival ? (rivalMeta as rivalStoreData).displayName : (rivalMeta as DBRivalStoreData).rivalName)}
         </Typography>
         <Tabs
           value={this.state.currentTab}
@@ -110,12 +110,12 @@ class RivalLists extends React.Component<P,S> {
           <Tab label="統計" />
           {!isNotRival && <Tab label="設定" />}
         </Tabs>
-        {currentTab === 0 && <SongsUI type={0} full={full} rivalData={rivalData}/>}
-        {currentTab === 1 && <RivalStats full={full} rivalData={rivalData}/>}
-        {(!isNotRival && currentTab === 2) && <Settings backToMainPage={this.props.backToMainPage} toggleSnack={this.props.toggleSnack} rivalData={rivalData}/>}
+        {currentTab === 0 && <SongsUI type={0} full={full}/>}
+        {currentTab === 1 && <RivalStats full={full}/>}
+        {(rivalMeta && !isNotRival && currentTab === 2) && <Settings backToMainPage={this.props.backToMainPage} toggleSnack={this.props.toggleSnack} rivalMeta={rivalMeta as DBRivalStoreData}/>}
       </div>
     );
   }
 }
 
-export default injectIntl(RivalLists);
+export default RivalView;

@@ -15,11 +15,17 @@ import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import TableBody from '@material-ui/core/TableBody';
 import TablePagination from '@material-ui/core/TablePagination';
+import { scoreData } from '../../../types/data';
+
+interface scoreByVersion{
+  name:string,
+  value:number,
+}
 
 interface S {
   isLoading:boolean,
-  scoreData:any[],
-  scoreByVersion:any[],
+  scoreData:scoreData[],
+  scoreByVersion:scoreByVersion[],
   targetLevel:string,
   sort:number,
   isDesc:boolean,
@@ -67,7 +73,7 @@ class MyBest extends React.Component<{},S> {
   }){
     const isSingle = _isSingle();
     let {targetLevel} = newData;
-    let scoreDataKeys:{[key:string]:any} = {};
+    let scoreDataKeys:{[key:string]:scoreData} = {};
     const data = (await new scoresDB(isSingle).getAllVersions()).filter(item=>item.difficultyLevel === targetLevel);
     for(let key in data){
       const d = data[key];
@@ -79,7 +85,7 @@ class MyBest extends React.Component<{},S> {
     let v:{[key:string]:number} = {};
     this.setState(Object.assign({
       isLoading:false,
-      scoreData:this.apply(Object.keys(scoreDataKeys).reduce((group:any[],item)=>{
+      scoreData:this.apply(Object.keys(scoreDataKeys).reduce((group:scoreData[],item)=>{
         group.push(scoreDataKeys[item]);
         if(v[scoreDataKeys[item]["storedAt"]]){
           v[scoreDataKeys[item]["storedAt"]]++;
@@ -88,7 +94,7 @@ class MyBest extends React.Component<{},S> {
         }
         return group;
       },[])),
-      scoreByVersion:Object.keys(v).reduce((group:any[],item:string)=>{
+      scoreByVersion:Object.keys(v).reduce((group:scoreByVersion[],item:string)=>{
         group.push({
           name:item,
           value:v[item]
@@ -190,7 +196,7 @@ class MyBest extends React.Component<{},S> {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {this.apply().slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:any,i:number) => {
+                          {this.apply().slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:scoreData,i:number) => {
                             const prefix = row.difficulty === "hyper" ? "(H)" : row.difficulty === "leggendaria" ? "(†)" : "";
                             return (
                               <TableRow

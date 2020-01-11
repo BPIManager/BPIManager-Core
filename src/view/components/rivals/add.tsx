@@ -28,7 +28,7 @@ interface S {
   uid:string,
   activated:boolean,
   processing:boolean,
-  res:any,
+  res:firebase.firestore.DocumentData|null,
   errorMessage:string,
 }
 
@@ -64,7 +64,7 @@ class RivalAdd extends React.Component<P,S> {
     this.setState({processing:true});
     const data = await this.fbStores.setDocName(this.state.uid).load();
     const {res} = this.state;
-    if(!data){
+    if(!data || !res){
       return this.setState({errorMessage:"該当ユーザーは当該バージョン/モードにおけるスコアを登録していません。",processing:false});
     }
     const putResult = await this.rivalListsDB.addUser({

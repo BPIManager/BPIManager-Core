@@ -11,6 +11,7 @@ import { _isSingle, _currentStore } from '../../../../components/settings';
 import { rivalListsDB } from '../../../../components/indexedDB';
 import Divider from '@material-ui/core/Divider';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import { DBRivalStoreData } from '../../../../types/data';
 
 interface S {
   isLoading1:boolean,
@@ -20,7 +21,7 @@ interface S {
 }
 
 interface P {
-  rivalData:any,
+  rivalMeta:DBRivalStoreData,
   toggleSnack:()=>void,
   backToMainPage:()=>void,
 }
@@ -46,18 +47,18 @@ class RivalSettings extends React.Component<P,S> {
   update = async()=>{
     try{
       this.setState({isLoading1:true});
-      const {rivalData} = this.props;
-      const res = await this.fbA.searchRivalByUid(rivalData.uid);
+      const {rivalMeta} = this.props;
+      const res = await this.fbA.searchRivalByUid(rivalMeta.uid);
       if(!res){
         throw new Error("対象ユーザーが見つかりませんでした");
       }
       if(res.displayName === ""){
         throw new Error("対象ユーザーはデータを非公開に設定しています");
       }
-      if(res.timeStamp === rivalData.updatedAt){
+      if(res.timeStamp === rivalMeta.updatedAt){
         throw new Error("すでに最新です");
       }
-      const data = await this.fbStores.setDocName(rivalData.uid).load();
+      const data = await this.fbStores.setDocName(rivalMeta.uid).load();
       if(!data){
         throw new Error("該当ユーザーは当該バージョン/モードにおけるスコアを登録していません。");
       }
@@ -67,7 +68,7 @@ class RivalSettings extends React.Component<P,S> {
         photoURL:res.photoURL,
         profile:res.profile,
         updatedAt:res.timeStamp,
-        lastUpdatedAt:rivalData.updatedAt,
+        lastUpdatedAt:rivalMeta.updatedAt,
         isSingle:_isSingle(),
         storedAt:_currentStore(),
       },data.scores);
@@ -82,7 +83,7 @@ class RivalSettings extends React.Component<P,S> {
 
   delete = async()=>{
     try{
-      const res = await this.rivalListsDB.removeUser(this.props.rivalData);
+      const res = await this.rivalListsDB.removeUser(this.props.rivalMeta);
       if(!res){
         throw new Error("削除に失敗しました");
       }
@@ -95,7 +96,7 @@ class RivalSettings extends React.Component<P,S> {
 
   render(){
     const {isLoading1,isLoading2,updateErrorMessage} = this.state;
-    const {rivalData} = this.props;
+    const {rivalMeta} = this.props;
     return (
       <Paper style={{padding:"15px"}}>
         <FormControl>
@@ -115,7 +116,7 @@ class RivalSettings extends React.Component<P,S> {
           </div>
           <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
             {updateErrorMessage && <span>{updateErrorMessage}<br/></span>}
-            最終更新: {rivalData.updatedAt}
+            最終更新: {rivalMeta.updatedAt}
           </Typography>
         </FormControl>
         <Divider style={{margin:"10px 0"}}/>

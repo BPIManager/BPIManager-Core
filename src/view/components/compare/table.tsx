@@ -12,6 +12,7 @@ import Container from "@material-ui/core/Container";
 import { scoreData, songData } from '../../../types/data';
 import { diffColor } from "../songs/common";
 import Tooltip from '@material-ui/core/Tooltip';
+import { compareData } from '../../../types/compare';
 
 interface S {
   isOpen:boolean,
@@ -21,7 +22,7 @@ interface S {
 
 interface P{
   isLoading:boolean,
-  full:any[],
+  full:compareData[],
   page:number,
   rowsPerPage:number,
   handleChangePage:(newPage:number)=>void,
@@ -43,7 +44,7 @@ export default class Compare extends React.Component<P,S> {
     }
   }
 
-  handleOpen = async(updateFlag:boolean,row?:any):Promise<void>=> {
+  handleOpen = async(updateFlag:boolean,row?:compareData|null):Promise<void>=> {
     if(updateFlag){
 
     }
@@ -109,7 +110,7 @@ export default class Compare extends React.Component<P,S> {
             </TableRow>
           </TableHead>
           <TableBody>
-            {full.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:any,i:number) => {
+            {full.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:compareData,i:number) => {
               return (
                 <TableRow
                   onClick={()=>this.handleOpen(false,row)}

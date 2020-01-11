@@ -6,11 +6,10 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
-
-import {scoreData, songData} from "../../../../../types/data";
 import { diffColor } from "../../../songs/common";
 import { _currentViewComponents, _traditionalMode } from "../../../../../components/settings";
 import Details from "./modal";
+import { withRivalData } from "../../../common/radar";
 
 const columns = [
   { id: "difficultyLevel", label: "☆"},
@@ -26,7 +25,7 @@ const columns = [
 ];
 
 interface P{
-  data:scoreData[],
+  data:withRivalData[],
   page:number,
   mode:number,
   handleChangePage:(_e:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number)=>void
@@ -35,8 +34,7 @@ interface P{
 interface S{
   rowsPerPage:number,
   isOpen:boolean,
-  currentSongData:songData | null,
-  currentScoreData:scoreData | null,
+  currentScoreData:withRivalData | null,
   components:string[]
 }
 
@@ -47,7 +45,6 @@ export default class ScoreTable extends React.Component<Readonly<P>,S>{
     this.state = {
       rowsPerPage : 10,
       isOpen:false,
-      currentSongData:null,
       currentScoreData:null,
       components:_currentViewComponents().split(","),
     }
@@ -62,7 +59,7 @@ export default class ScoreTable extends React.Component<Readonly<P>,S>{
     return this.state.components.indexOf(component) > -1;
   }
 
-  showDetails = (row:any)=>this.setState({currentScoreData:row,isOpen:!this.state.isOpen});
+  showDetails = (row:withRivalData|null)=>this.setState({currentScoreData:row,isOpen:!this.state.isOpen});
 
   render(){
     const {rowsPerPage,currentScoreData,isOpen} = this.state;
@@ -82,12 +79,12 @@ export default class ScoreTable extends React.Component<Readonly<P>,S>{
                 ))}
               </TableRow>
             </TableHead>
-              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:any,i:number) => {
+              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:withRivalData,i:number) => {
                 const prefix = row.difficulty === "hyper" ? "(H)" : row.difficulty === "leggendaria" ? "(†)" : "";
-                const a = mode === 0 ? row.rivalEx : mode === 1 ? row.rivalClearState : row.rivalMissCount;
-                const b = mode === 0 ? row.myEx : mode === 1 ? row.myClearState : row.myMissCount;
+                const a:number = mode === 0 ? row.rivalEx : mode === 1 ? row.rivalClearState : row.rivalMissCount as number;
+                const b:number = mode === 0 ? row.myEx : mode === 1 ? row.myClearState : row.myMissCount as number;
                 return (
-                <TableBody className="rival" key={row.title + row.prefix + i} onClick={()=>this.showDetails(row)}>
+                <TableBody className="rival" key={row.title + i} onClick={()=>this.showDetails(row)}>
                   <TableRow
                     hover role="checkbox" tabIndex={-1} className={ i % 2 ? "isOdd" : "isEven"}>
                     <TableCell

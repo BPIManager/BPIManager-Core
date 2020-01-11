@@ -13,12 +13,13 @@ import CompareTable from "../components/compare/table";
 import bpiCalcuator from '../../components/bpi';
 import { commonFunc } from '../../components/common';
 import FilterByLevelAndDiff from '../components/common/selector';
+import { compareData } from '../../types/compare';
 
 interface S {
   [key: string]: any,
   isLoading:boolean,
-  full:any[],
-  filtered:any[],
+  full:compareData[],
+  filtered:compareData[],
   sort:number,
   isDesc:boolean,
   options:{[key:string]:string[]},
@@ -87,7 +88,7 @@ export default class Compare extends React.Component<{},S> {
     this.setState({sort:newNum,isDesc:true});
   }
 
-  clone = ()=>{
+  clone = ():S=>{
     return new commonFunc().set(this.state).clone();
   }
 
@@ -100,7 +101,7 @@ export default class Compare extends React.Component<{},S> {
     return this.dataHandler(newState);
   }
 
-  filter = ():any[]=>{
+  filter = ():compareData[]=>{
     const {options,full} = this.state;
     const diffs:string[] = ["hyper","another","leggendaria"];
     return full.filter((data)=>
@@ -109,8 +110,8 @@ export default class Compare extends React.Component<{},S> {
     )
   }
 
-  async dataHandler(newState:any = this.state):Promise<void>{
-    let result:any[] = [];
+  async dataHandler(newState:S = this.state):Promise<void>{
+    let result:compareData[] = [];
     const f = newState.compareFrom;
     const t = newState.compareTo;
     const isSingle = _isSingle();
@@ -174,16 +175,16 @@ export default class Compare extends React.Component<{},S> {
         difficultyLevel:fData[i]["difficultyLevel"],
         exScore:displayMode === "exScore" ? fData[i]["exScore"] : percentage,
         compareData:tScore,
-        gap: (displayMode === "bpi" || displayMode === "percentage") ? gap.toFixed(2) : gap
+        gap: gap
       });
     }
     if(!this._mounted){return;}
     return this.setState({full:result,isLoading:false});
   }
 
-  sortedData = ():any[]=>{
+  sortedData = ():compareData[]=>{
     const {isDesc,sort} = this.state;
-    const sortedData:any[] = this.filter().sort((a,b)=>{
+    const sortedData:compareData[] = this.filter().sort((a,b)=>{
       switch(sort){
         case 0:
         return Number(b.difficultyLevel) - Number(a.difficultyLevel);
@@ -197,7 +198,7 @@ export default class Compare extends React.Component<{},S> {
         case 4:
           return b.gap - a.gap;
       }
-    }).filter((t:any)=>{
+    }).filter((t:compareData)=>{
       const pm:string[] = this.state.options.pm;
       if(pm.indexOf("+") === -1 && pm.indexOf("-") > -1){
         return t.gap <= 0;

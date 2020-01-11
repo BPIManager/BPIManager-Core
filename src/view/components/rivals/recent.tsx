@@ -20,10 +20,11 @@ import AddIcon from '@material-ui/icons/Add';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { rivalStoreData, rivalScoreData, DBRivalStoreData } from '../../../types/data';
 
 interface P {
-  compareUser:(rivalMeta:any,rivalBody:any,last:any,arenaRank:string)=>void,
-  last:any,
+  compareUser:(rivalMeta:rivalStoreData,rivalBody:rivalScoreData[],last:rivalStoreData,arenaRank:string)=>void,
+  last:rivalStoreData|null,
   arenaRank:string,
 }
 
@@ -32,7 +33,7 @@ interface S {
   uid:string,
   activated:boolean,
   processing:boolean,
-  res:any,
+  res:rivalStoreData[],
   showSnackBar:boolean,
   variant:"info" | "error" | "success" | "warning",
   message:string,
@@ -68,13 +69,13 @@ class RecentlyAdded extends React.Component<P,S> {
 
   async componentDidMount(){
     this.search(null,this.props.last);
-    this.setState({rivals:(await this.rivalListsDB.getAll()).reduce((groups:string[],item:any)=>{
+    this.setState({rivals:(await this.rivalListsDB.getAll()).reduce((groups:string[],item:DBRivalStoreData)=>{
       groups.push(item.uid);
       return groups;
     },[])})
   }
 
-  search = async(last = null,endAt = null,arenaRank = this.state.arenaRank):Promise<void>=>{
+  search = async(last:rivalStoreData|null = null,endAt:rivalStoreData|null = null,arenaRank = this.state.arenaRank):Promise<void>=>{
     this.setState({processing:true,isLoading:true,});
     const res = await this.fbA.recentUpdated(last,endAt,arenaRank);
     if(!res){
@@ -83,7 +84,7 @@ class RecentlyAdded extends React.Component<P,S> {
     return this.setState({activated:true,res:this.state.res.concat(res),processing:false,isLoading:false,});
   }
 
-  addUser = async(meta:any):Promise<void>=>{
+  addUser = async(meta:rivalStoreData):Promise<void>=>{
     this.setState({processing:true});
     const data = await this.fbStores.setDocName(meta.uid).load();
     if(!data){
@@ -106,13 +107,13 @@ class RecentlyAdded extends React.Component<P,S> {
     return this.toggleSnack("ライバルを追加しました","success");
   }
 
-  compareButton = async (meta:any)=>{
+  compareButton = async (meta:rivalStoreData)=>{
     const {res,arenaRank} = this.state;
     const data = await this.fbStores.setDocName(meta.uid).load();
     if(!data){
       return this.toggleSnack("該当ユーザーは当該バージョン/モードにおけるスコアを登録していません。","warning");
     }
-    this.props.compareUser(meta,data.scores,res ? res[res.length-1] : null,arenaRank);
+    this.props.compareUser(meta,data.scores,res[res.length-1],arenaRank);
   }
 
   next = ()=>{
@@ -144,7 +145,7 @@ class RecentlyAdded extends React.Component<P,S> {
         条件に該当するユーザーが見つかりませんでした。
         </p>
       </div>}
-      {res.map((item:any)=>
+      {res.map((item:rivalStoreData)=>
         (activated && <div key={item.uid}>
         <Card style={{margin:"10px 0"}}>
           <CardHeader

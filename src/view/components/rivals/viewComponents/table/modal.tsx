@@ -5,10 +5,11 @@ import { songsDB } from "../../../../../components/indexedDB";
 import bpiCalcuator from "../../../../../components/bpi";
 import { _isSingle } from "../../../../../components/settings";
 import { convertClearState } from "../../../../../components/songs/filter";
+import { withRivalData } from "../../../common/radar";
 
 interface P {
-  showDetails:(key:any)=>void,
-  currentScoreData:any,
+  showDetails:(key:withRivalData|null)=>void,
+  currentScoreData:withRivalData|null,
 }
 export default class Details extends React.Component<P,{
   songData: songData|null
@@ -66,9 +67,9 @@ export default class Details extends React.Component<P,{
       {title:"BPI",my:this.bpiCalc(currentScoreData.myEx),rival:this.bpiCalc(currentScoreData.rivalEx),isWin:currentScoreData.myEx - currentScoreData.rivalEx},
       {title:"％",my:this.percentage(currentScoreData.myEx),rival:this.percentage(currentScoreData.rivalEx),isWin:currentScoreData.myEx - currentScoreData.rivalEx},
       {title:"BP",
-      my:isNaN(currentScoreData.myMissCount) ? "-" :currentScoreData.myMissCount,
-      rival:isNaN(currentScoreData.rivalMissCount) ? "-" :currentScoreData.rivalMissCount,
-      isWin: currentScoreData.rivalMissCount - currentScoreData.myMissCount},
+      my:isNaN(currentScoreData.myMissCount || NaN) ? "-" :currentScoreData.myMissCount,
+      rival:isNaN(currentScoreData.rivalMissCount || NaN) ? "-" :currentScoreData.rivalMissCount,
+      isWin: (currentScoreData.rivalMissCount || 0) - (currentScoreData.myMissCount || 0)},
       {title:"ランプ",my:convertClearState(currentScoreData.myClearState,1,true),rival:convertClearState(currentScoreData.rivalClearState,1,true),isWin:currentScoreData.myClearState - currentScoreData.rivalClearState},
       {title:"最終更新",my:currentScoreData.myLastUpdate,rival:currentScoreData.rivalLastUpdate},
     ]

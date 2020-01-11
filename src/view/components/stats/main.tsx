@@ -13,20 +13,32 @@ import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, C
 import _withOrd from '../../../components/common/ord';
 import {Link as RefLink, Table, TableRow, TableCell, TableBody} from '@material-ui/core/';
 import { difficultyDiscriminator } from '../../../components/songs/filter';
-import { songData, scoreData } from '../../../types/data';
+import { songData, scoreData, historyData } from '../../../types/data';
 import { _DiscriminateRanksByNumber } from '../../../components/common/djRank';
-import { getRadar, Details } from '../common/radar';
+import { getRadar, Details, radarData } from '../common/radar';
+
+interface groupedArray {
+  "name":string|number,
+  "☆11":number,
+  "☆12":number,
+}
+
+interface perDate {
+  name:string,
+  sum:string,
+  avg:number
+}
 
 interface S {
   isLoading:boolean,
   totalBPI:number,
   totalRank:number,
-  perDate:{name:string,sum:string,avg:number}[],
-  groupedByLevel:any[],
-  groupedByDiff:any[],
-  radar:any[]|null,
-  groupedByDJRank:any[],
-  groupedByClearState:any[],
+  perDate:perDate[],
+  groupedByLevel:groupedArray[],
+  groupedByDiff:groupedArray[],
+  radar:radarData[],
+  groupedByDJRank:groupedArray[],
+  groupedByClearState:groupedArray[],
   radarDetail:string
 }
 
@@ -66,8 +78,7 @@ class Main extends React.Component<{intl:any},S> {
     const songFinder = (level:string,title:string,difficulty:string)=>(
       level === "12" ? twelves : elevens
     ).find(elm=>( elm.title === title && elm.difficulty === difficultyDiscriminator(difficulty) ) )
-    //[AAA,AA,A,B,C,D,E,F];
-    const songsByDJRank:any[] = [
+    const songsByDJRank:groupedArray[] = [
       {name:"F","☆11":0,"☆12":0},
       {name:"E","☆11":0,"☆12":0},
       {name:"D","☆11":0,"☆12":0},
@@ -77,23 +88,23 @@ class Main extends React.Component<{intl:any},S> {
       {name:"AA","☆11":0,"☆12":0},
       {name:"AAA","☆11":0,"☆12":0},
     ]
-    //[FAILED,ASSISTED,EASY,CLEAR,HARD,EXHARD,FC]
-    const songsByClearState:any[] = [
+    const songsByClearState:groupedArray[] = [
       {name:"FAILED","☆11":0,"☆12":0},
-      {name:"ASSIST","☆11":0,"☆12":0},
+      {name:"ASSISTED","☆11":0,"☆12":0},
       {name:"EASY","☆11":0,"☆12":0},
       {name:"CLEAR","☆11":0,"☆12":0},
       {name:"HARD","☆11":0,"☆12":0},
       {name:"EXHARD","☆11":0,"☆12":0},
-      {name:"FULLCOMBO","☆11":0,"☆12":0},
+      {name:"FC","☆11":0,"☆12":0},
     ];
 
-    await new songsDB().getAll(isSingle).then(t=>t.reduce((groups:any,item:songData) =>{
+    await new songsDB().getAll(isSingle).then(t=>t.reduce((groups:groupedArray,item:songData) =>{
       const score = songFinder(item["difficultyLevel"],item["title"],item["difficulty"]);
       if(score){
         const p = score.exScore / (item["notes"] * 2);
-        songsByDJRank[_DiscriminateRanksByNumber(p)]["☆" + item["difficultyLevel"]]++;
-        score.clearState < 7 && songsByClearState[score.clearState]["☆" + item["difficultyLevel"]]++;
+        const lev = "☆"+item["difficultyLevel"] as "☆11"|"☆12";
+        songsByDJRank[_DiscriminateRanksByNumber(p)][lev]++;
+        score.clearState < 7 && songsByClearState[score.clearState][lev]++;
       }
       return groups;
     },[]));
@@ -113,7 +124,7 @@ class Main extends React.Component<{intl:any},S> {
     const _bpi = new bpiCalcuator();
     Object.keys(allDiffs).map((item)=>{
       _bpi.allTwelvesLength = allDiffs[item].length;
-      _bpi.allTwelvesBPI = allDiffs[item].reduce((a:number[],val:any)=>{
+      _bpi.allTwelvesBPI = allDiffs[item].reduce((a:number[],val:historyData)=>{
         if(val.BPI){
           a.push(val.BPI);
         }
@@ -123,7 +134,7 @@ class Main extends React.Component<{intl:any},S> {
       eachDaySum.push({
         name : item,
         sum : allDiffs[item].length,
-        avg : avg ? avg : Math.round(allDiffs[item].reduce((a:any,c:any)=>{return {BPI:a.BPI + c.BPI}}).BPI / allDiffs[item].length * 100) / 100
+        avg : avg ? avg : Math.round(allDiffs[item].reduce((a:historyData,c:historyData)=>{return {BPI:a.BPI + c.BPI}}).BPI / allDiffs[item].length * 100) / 100
       });
       return 0;
     });
@@ -145,7 +156,7 @@ class Main extends React.Component<{intl:any},S> {
       totalRank:bpi.rank(totalBPI,false),
       perDate:eachDaySum.sort((a,b)=> moment(a.name).diff(b.name)).slice(-10),
       groupedByLevel:groupedByLevel,
-      radar: isSingle ? await getRadar() : null,
+      radar: isSingle ? await getRadar() : [],
       groupedByDJRank:songsByDJRank.reverse(),
       groupedByClearState:songsByClearState.reverse(),
     });
@@ -168,7 +179,6 @@ class Main extends React.Component<{intl:any},S> {
 
   render(){
     const {totalBPI,isLoading,perDate,totalRank,groupedByLevel,radar,groupedByDJRank,groupedByClearState,radarDetail} = this.state;
-    console.log(radar)
     const {formatMessage} = this.props.intl;
     const chartColor = _chartColor();
     if(isLoading){

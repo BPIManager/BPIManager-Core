@@ -3,11 +3,12 @@ import React from "react";
 import { scoreData, songData } from "../../../types/data";
 import {BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer, Label} from "recharts";
 import { _chartColor } from "../../../components/settings";
+import { chartData } from "./detailsScreen";
 
 interface P{
   song:songData|null,
   score:scoreData|null,
-  chartData:any[],
+  chartData:chartData[],
   graphLastUpdated:number,
   newScore:number,
 }

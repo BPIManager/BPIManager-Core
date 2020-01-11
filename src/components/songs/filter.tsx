@@ -8,6 +8,10 @@ export const simpleLampArray:string[] = [
   "F","AC","EC","CL","HC","EXH","FC","NONE"
 ];
 
+export const djRankArray:string[] = [
+  "F","E","D","C","B","A","AA","AAA"
+]
+
 export const convertClearState = (original:string|number,direction:number,simple:boolean = false):string|number=>{
   if(direction === 0){
     // csv to num

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { injectIntl } from 'react-intl';
 
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
@@ -13,18 +12,18 @@ import ShowSnackBar from '../snackBar';
 import { rivalListsDB } from '../../../components/indexedDB';
 import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { DBRivalStoreData } from '../../../types/data';
 
 interface S {
   isAddOpen:boolean,
   showSnackBar:boolean,
   isLoading:boolean,
-  rivals:any[],
+  rivals:DBRivalStoreData[],
   message:string,
 }
 
 interface P {
-  intl:any,
-  showEachRival: (input:string)=>void
+  showEachRival: (input:DBRivalStoreData)=>void
 }
 
 class RivalLists extends React.Component<P,S> {
@@ -67,7 +66,9 @@ class RivalLists extends React.Component<P,S> {
     return (
       <div>
         {rivals.length === 0 && <p>まだライバルがいません。</p>}
-        {rivals.map(item=><div key={item} onClick={()=>this.props.showEachRival(item)}><RivalComponent data={item}/></div>)}
+        {rivals.map(item=>(
+          <div key={item.uid} onClick={()=>this.props.showEachRival(item)}><RivalComponent data={item}/></div>)
+        )}
         <Fab onClick={this.handleToggleModal} color="secondary" aria-label="add" style={{position:"fixed","bottom":"5%","right":"3%"}}>
           <AddIcon />
         </Fab>
@@ -80,7 +81,7 @@ class RivalLists extends React.Component<P,S> {
 }
 
 interface CP {
-  data:any
+  data:DBRivalStoreData
 }
 
 class RivalComponent extends React.Component<CP,{}> {
@@ -107,4 +108,4 @@ class RivalComponent extends React.Component<CP,{}> {
   }
 }
 
-export default injectIntl(RivalLists);
+export default RivalLists;

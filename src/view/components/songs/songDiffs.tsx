@@ -1,6 +1,6 @@
 import React from "react";
 
-import { scoreData, songData } from "../../../types/data";
+import { scoreData, songData, historyData } from "../../../types/data";
 import Container from "@material-ui/core/Container";
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -14,6 +14,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import Table from "@material-ui/core/Table";
 import TableRow from "@material-ui/core/TableRow";
+import timeFormatter from "../../../components/common/timeFormatter";
 
 interface P{
   song:songData|null,
@@ -23,7 +24,7 @@ interface P{
 interface S{
   isLoading:boolean,
   current:number,
-  dataset:any[],
+  dataset:historyData[],
 }
 
 class SongDiffs extends React.Component<P,S> {
@@ -100,7 +101,7 @@ class SongDiffs extends React.Component<P,S> {
 export default SongDiffs;
 
 
-class DiffsTable extends React.Component<{scoreTable:any[],type:number},{}>{
+class DiffsTable extends React.Component<{scoreTable:historyData[],type:number},{}>{
 
   render(){
 
@@ -109,6 +110,7 @@ class DiffsTable extends React.Component<{scoreTable:any[],type:number},{}>{
       { id: "exScore", label: "EX" },
       { id: "BPI", label: "BPI" },
     ];
+    const {type} = this.props;
 
     return (
       <Table className="detailedDiffs">
@@ -125,14 +127,15 @@ class DiffsTable extends React.Component<{scoreTable:any[],type:number},{}>{
           </TableRow>
         </TableHead>
         <TableBody>
-          {this.props.scoreTable.map((row:any,i:number) => {
+          {this.props.scoreTable.map((row:historyData,i:number) => {
             return (
               <TableRow
                 hover role="checkbox" tabIndex={-1} key={row.title + row.difficulty + i} className={ i % 2 ? "isOdd" : "isEven"}>
                 {columns.map((column,_j) => {
                   return (
                     <TableCell key={column.id}>
-                      {row[column.id]}
+                      {(type === 0 && _j === 0) && timeFormatter(0,row[column.id])}
+                      {(type !== 0 || _j !== 0) && row[column.id]}
                     </TableCell>
                   );
                 })}

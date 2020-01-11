@@ -3,13 +3,14 @@ import timeFormatter from "../common/timeFormatter";
 import { scoresDB, scoreHistoryDB } from "../indexedDB";
 import platform from "platform";
 import firebase from "firebase";
+import { rivalStoreData } from "../../types/data";
 
 export default class fbActions{
 
-  async authWithTwitter():Promise<any>{
+  async authWithTwitter():Promise<firebase.auth.UserCredential|null>{
     return fb.auth().signInWithPopup(twitter).then(async(_result) => {
       if(_result && _result.user && _result.additionalUserInfo && _result.additionalUserInfo.profile){
-        const p = _result.additionalUserInfo.profile as any;
+        const p = _result.additionalUserInfo.profile as {profile_image_url_https:string};
         await firestore.collection("users").doc(_result.user.uid).set({
           photoURL:p.profile_image_url_https
         },{merge: true});
@@ -21,7 +22,7 @@ export default class fbActions{
     });
   }
 
-  async authWithGoogle():Promise<any>{
+  async authWithGoogle():Promise<firebase.auth.UserCredential|null>{
     return fb.auth().signInWithPopup(google).then(_result => {
       return _result;
     }).catch(error => {
@@ -149,7 +150,7 @@ export default class fbActions{
     }
   }
 
-  async recentUpdated(last:any,endAt:any,arenaRank:string){
+  async recentUpdated(last:rivalStoreData|null,endAt:rivalStoreData|null,arenaRank:string):Promise<rivalStoreData[]>{
     try{
       let query = firestore.collection("users").orderBy("serverTime", "desc");
       if(last){
@@ -166,19 +167,19 @@ export default class fbActions{
       }
       const res = await query.get();
       if(!res.empty && res.size >= 1){
-        return res.docs.reduce((groups:any[],item:firebase.firestore.QueryDocumentSnapshot)=>{
+        return res.docs.reduce((groups:rivalStoreData[],item:firebase.firestore.QueryDocumentSnapshot)=>{
           const body = item.data();
           if(body.displayName && body.displayName !== "" && body.serverTime){
-            groups.push(body);
+            groups.push(body as rivalStoreData);
           }
           return groups;
         },[]);
       }else{
-        return null;
+        return [];
       }
     }catch(e){
       console.log(e);
-      return null;
+      return [];
     }
   }
 
