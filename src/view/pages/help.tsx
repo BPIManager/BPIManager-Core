@@ -131,6 +131,32 @@ export default class Index extends React.Component<{},{}> {
               expandIcon={<ExpandMoreIcon />}
             >
               <Typography>
+                BPIについて
+              </Typography>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails>
+              <div>
+                BPIManagerでは、<RefLink color="secondary" href="http://norimiso.web.fc2.com/aboutBPI.html">norimiso様考案のBPI</RefLink>をもとに、定義を改変してIIDXの実力を推定しています。<br/>
+                具体的には、次のような変更を施しています。
+                <ul>
+                  <li>譜面ごとに、統計的に得られた譜面係数を設定し、当該値をBPI算出に使用</li>
+                  <li>一部楽曲については、上記譜面係数を補正</li>
+                </ul>
+                <RefLink color="secondary" href="https://gist.github.com/potakusan/30004f4c05e6887399e779afe0fac4e6">これらの値の算出については、こちらのページに詳細を記載しています</RefLink>。<br/><br/>
+                このように、BPIManagerは本来の定義から逸れた算出方法を用いています。<br/>
+                意図としては、BPI考案時に比して全国トップのインフレが進行し、スコアが過小評価される状況を改善するためです。<br/>
+                そのため、客観的指標として実ランキングデータを用いた計算式の補正を行うことを決定いたしました。<br/><br/>
+                なお、設定画面に「従来の計算方式を利用する」オプションを追加済みです。<br/>
+                お好みに合わせてお使いいただきますよう、お願いいたします。<br/><br/>
+                より良い評価方法に関するアイディアをお持ちの方は、ぜひともTwitter(@BPIManager)までお寄せいただければ幸甚です。
+              </div>
+            </ExpansionPanelDetails>
+          </ExpansionPanel>
+          <ExpansionPanel>
+            <ExpansionPanelSummary
+              expandIcon={<ExpandMoreIcon />}
+            >
+              <Typography>
                 <FormattedMessage id="Help.Contact"/>
               </Typography>
             </ExpansionPanelSummary>
@@ -168,8 +194,8 @@ export default class Index extends React.Component<{},{}> {
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <div>
-                material-ui : Copyright (c) 2014 Call-Em-All <a href="https://opensource.org/licenses/mit-license.php" target="_blank" rel="noreferrer noopener">The MIT License (MIT)</a><br/>
-                Dexie.js : Copyright (c) dfahlander <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noreferrer noopener">Apache License</a><br/>
+                material-ui : Copyright (c) 2014 Call-Em-All <RefLink color="secondary" href="https://opensource.org/licenses/mit-license.php" target="_blank" rel="noreferrer noopener">The MIT License (MIT)</RefLink><br/>
+                Dexie.js : Copyright (c) dfahlander <RefLink color="secondary" href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noreferrer noopener">Apache License</RefLink><br/>
                 fast-deep-equal : Copyright (c) epoberezkin MIT<br/>
                 firebase : Copyright (c) firebase Apache License<br/>
                 moment,moment-timezone : Copyright (c) JS Foundation and other contributors MIT<br/>
@@ -180,7 +206,7 @@ export default class Index extends React.Component<{},{}> {
                 react-intl : Copyright (c) Yahoo! BSD License<br/>
                 recharts : Copyright (c) recharts MIT<br/>
                 typescript : Copyright (c) Microsoft Apache License<br/>
-                unstated : Copyright (c) 2018-present James Kyle MIT<br/>
+                unstated : Copyright (c) 2018-present James Kyle MIT
               </div>
             </ExpansionPanelDetails>
           </ExpansionPanel>

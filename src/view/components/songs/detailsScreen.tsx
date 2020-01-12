@@ -262,17 +262,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
         <Toolbar/>
         <Paper>
           <Grid container spacing={3}>
-            <Grid item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0"}}>
-              <Typography component="h6" variant="h6" color="textSecondary">
-                BPI
-              </Typography>
-              <Typography component="h4" variant="h4" color="textPrimary">
-                {(score && Number.isNaN(newBPI) && !Number.isNaN(score.currentBPI)) && score.currentBPI}
-                {!Number.isNaN(newBPI) && newBPI}
-                {(Number.isNaN(score.currentBPI) && Number.isNaN(newBPI)) && <span>-</span>}
-              </Typography>
-            </Grid>
-            <Grid onClick={this.toggleShowBPI} item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0",cursor:"pointer"}}>
+            <Grid onClick={this.toggleShowBPI} item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0",cursor:"pointer",transform:"scale(0.75)"}}>
               <Tooltip title="プラス/マイナス表記の切り替え">
                 <div style={{textAlign:"center"}}>
                   <Typography component="h6" variant="h6" color="textSecondary">
@@ -285,6 +275,16 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
               </Tooltip>
             </Grid>
             <Grid item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0"}}>
+              <Typography component="h6" variant="h6" color="textSecondary">
+                BPI
+              </Typography>
+              <Typography component="h4" variant="h4" color="textPrimary">
+                {(score && Number.isNaN(newBPI) && !Number.isNaN(score.currentBPI)) && score.currentBPI}
+                {!Number.isNaN(newBPI) && newBPI}
+                {(Number.isNaN(score.currentBPI) && Number.isNaN(newBPI)) && <span>-</span>}
+              </Typography>
+            </Grid>
+            <Grid item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0",transform:"scale(0.75)"}}>
               <Typography component="h6" variant="h6" color="textSecondary">
                 RANK
               </Typography>
