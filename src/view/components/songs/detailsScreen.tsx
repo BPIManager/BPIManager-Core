@@ -262,7 +262,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
         <Toolbar/>
         <Paper>
           <Grid container spacing={3}>
-            <Grid onClick={this.toggleShowBPI} item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0",cursor:"pointer",transform:"scale(0.75)"}}>
+            <Grid onClick={this.toggleShowBPI} item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0",cursor:"pointer"}}>
               <Tooltip title="プラス/マイナス表記の切り替え">
                 <div style={{textAlign:"center"}}>
                   <Typography component="h6" variant="h6" color="textSecondary">
@@ -284,7 +284,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
                 {(Number.isNaN(score.currentBPI) && Number.isNaN(newBPI)) && <span>-</span>}
               </Typography>
             </Grid>
-            <Grid item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0",transform:"scale(0.75)"}}>
+            <Grid item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0"}}>
               <Typography component="h6" variant="h6" color="textSecondary">
                 RANK
               </Typography>
