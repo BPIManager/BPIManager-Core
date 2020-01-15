@@ -2,7 +2,7 @@ import fb, { twitter,firestore, google } from ".";
 import timeFormatter from "../common/timeFormatter";
 import { scoresDB, scoreHistoryDB } from "../indexedDB";
 import platform from "platform";
-import firebase from "firebase";
+import firebase from 'firebase/app';
 import { rivalStoreData } from "../../types/data";
 
 export default class fbActions{
