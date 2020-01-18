@@ -238,23 +238,6 @@ export default class Index extends React.Component<{},{}> {
               </div>
             </ExpansionPanelDetails>
           </ExpansionPanel>
-          <ExpansionPanel>
-            <ExpansionPanelSummary
-              expandIcon={<ExpandMoreIcon />}
-            >
-              <Typography>
-                <FormattedMessage id="Help.Donation"/>
-              </Typography>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
-              <div>
-                <FormattedMessage id="Help.H.1"/><br/>
-                <FormattedMessage id="Help.H.2"/><br/>
-                <FormattedMessage id="Help.H.3"/><br/>
-                <RefLink color="secondary" href="https://www.amazon.co.jp/dp/B004N3APGO/">Amazonギフト券の送信はこちらから</RefLink>
-              </div>
-            </ExpansionPanelDetails>
-          </ExpansionPanel>
         </Container>
       </div>
     );

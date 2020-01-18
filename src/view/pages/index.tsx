@@ -7,6 +7,7 @@ import { FormattedMessage } from "react-intl";
 import { Link } from 'react-router-dom';
 import {Link as RefLink, Card, CardContent} from '@material-ui/core/';
 import { _lang } from '../../components/settings';
+import Ad from "../../components/ad";
 const {LineShareButton,LineIcon,TwitterShareButton,TwitterIcon} = require('react-share');
 
 export default class Index extends React.Component<{},{}> {
@@ -36,7 +37,6 @@ export default class Index extends React.Component<{},{}> {
           <Typography component="h3" variant="h3" align="center" color="textPrimary" gutterBottom>
             <FormattedMessage id="Top.Title"/>
           </Typography>
-
           <Typography align="center" color="textSecondary" paragraph variant="caption">
             beta ver0.0.2.6<br/>
             last update: 2020/01/10 JST
@@ -88,12 +88,6 @@ export default class Index extends React.Component<{},{}> {
                     <span>バグ報告などは<RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>までお寄せください。<br/>
                   バージョンアップ情報も同アカウントにて発信しています。</span>
                   }
-                </Typography>
-                <Typography align="center" color="textSecondary" paragraph variant="caption">
-                  支援について<br/>
-                  <RefLink color="secondary" href="https://www.amazon.co.jp/dp/B004N3APGO/">Amazonギフト券による開発支援を受け付けています。</RefLink><br/>
-                  宛先「msqkn310@gmail.com」迄お願いします。<br/>
-                  (インフラ維持等に充当させていただきます)
                 </Typography>
               </Grid>
             </Grid>
