@@ -290,7 +290,7 @@ export const scoresDB = class extends storageWrapper{
     return await this.scores.where({title:title}).delete();
   }
 
-  async recalculateBPI(){
+  async recalculateBPI(updatedSongs:string[] = []){
     try{
       const self = this;
       this.setCalcClass();
@@ -299,6 +299,9 @@ export const scoresDB = class extends storageWrapper{
       for(let i =0; i < array.length; ++i){
         const t = array[i];
         if(!self.calculator){return;}
+        if(updatedSongs.length > 0 && updatedSongs.indexOf(t["title"] + difficultyParser(t["difficulty"],Number(t["isSingle"])) + t["isSingle"]) === -1){
+          continue;
+        }
         const bpi = await self.calculator.setIsSingle(t.isSingle).calc(t.title,difficultyParser(t.difficulty,t.isSingle),t.exScore);
         this.scores.where("[title+difficulty+storedAt+isSingle]").equals([t.title,t.difficulty,t.storedAt,t.isSingle]).modify(
           {currentBPI:!bpi.error ? bpi.bpi : -15}
@@ -512,7 +515,7 @@ export const scoreHistoryDB = class extends storageWrapper{
     }
   }
 
-  async recalculateBPI(){
+  async recalculateBPI(updatedSongs:string[] = []){
     try{
       const self = this;
       this.setCalcClass();
@@ -521,6 +524,9 @@ export const scoreHistoryDB = class extends storageWrapper{
       for(let i =0; i < array.length; ++i){
         const t = array[i];
         if(!self.calculator){return;}
+        if(updatedSongs.length > 0 && updatedSongs.indexOf(t["title"] + difficultyParser(t["difficulty"],Number(t["isSingle"])) + t["isSingle"]) === -1){
+          continue;
+        }
         const bpi = await self.calculator.setIsSingle(t.isSingle).calc(t.title,difficultyParser(t.difficulty,t.isSingle),t.exScore);
         this.scoreHistory.where("num").equals(t.num).modify(
           {BPI:!bpi.error ? bpi.bpi : -15}
@@ -572,14 +578,14 @@ export const songsDB = class extends storageWrapper{
     }
   }
 
-  async getAllTwelvesLength(isSingle:number = 1):Promise<number>{
+  async getAllTwelvesLength(isSingle:number = 1,diff = "12"):Promise<number>{
     try{
       const data = isSingle === 1 ?
         await this.songs.where("dpLevel").equals("0").toArray() :
         await this.songs.where("dpLevel").notEqual("0").toArray();
       let matched = 0;
       for(let i = 0; i < data.length; ++i){
-        if(data[i]["difficultyLevel"] === "12"){
+        if(data[i]["difficultyLevel"] === diff){
           matched++;
         }
       }

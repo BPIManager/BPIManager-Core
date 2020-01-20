@@ -73,10 +73,11 @@ class Settings extends React.Component<P,S> {
       this.setState({disableUpdateBtn:true,message:""});
       const sdb = new songsDB();
       const schDB = new scoreHistoryDB();
-      const reducer = (t:songData[])=>t.reduce((result:{[key:string]:songData}, current:songData) => {result[current.title + current.difficulty + current.dpLevel] = current;return result;}, {});
+      const reducer = (t:songData[])=>t.reduce((result:{[key:string]:songData}, current:songData) => {result[current.title + current.difficulty + (current["dpLevel"] === "0" ? "1" : "0")] = current;return result;}, {});
       const allSongs = await sdb.getAllWithAllPlayModes().then(t=>reducer(t));
       const url = _currentDefinitionURL();
       const res = await fetch(url).then(t=>t.json());
+      const updatedSongs:string[] = [];
       if(Number(res.requireVersion) > Number(config.versionNumber) ){
         end();
         return this.setState({disableUpdateBtn:false,message:"最新の定義データを導入するために本体を更新する必要があります:要求バージョン>="+ res.requireVersion });
@@ -88,10 +89,19 @@ class Settings extends React.Component<P,S> {
       const promiseProducer = ()=>{
         return res.body.map((t:songData) => {
           return new Promise(resolve=>{
-            const pfx = t["title"] + t["difficulty"] + t["dpLevel"];
+            const pfx = t["title"] + t["difficulty"] + (t["dpLevel"] === "0" ? "1" : "0");
             if(allSongs[pfx] && allSongs[pfx]["dpLevel"] === t["dpLevel"]){
               //既存曲
-              sdb.updateItem(t).then(()=>resolve());
+              if(
+                allSongs[pfx]["wr"] !== Number(t["wr"]) || allSongs[pfx]["avg"] !== Number(t["avg"]) ||
+                (t["coef"] && allSongs[pfx]["coef"] && allSongs[pfx]["coef"] !== t["coef"]) ||
+                allSongs[pfx]["bpm"] !== t["bpm"] || allSongs[pfx]["notes"] !== Number(t["notes"])
+              ){
+                updatedSongs.push(pfx);
+                sdb.updateItem(t).then(()=>resolve());
+              }else{
+                resolve();
+              }
             }else{
               //新曲
               sdb.setItem(t).then(()=>resolve());
@@ -102,8 +112,9 @@ class Settings extends React.Component<P,S> {
       await Promise.all(promiseProducer());
       const scDB = new scoresDB();
       scDB.setNewSongsDBRawData(reducer(res.body));
-      await scDB.recalculateBPI();
-      await schDB.recalculateBPI();
+      console.log("WillUpdated:",updatedSongs)
+      await scDB.recalculateBPI(updatedSongs);
+      await schDB.recalculateBPI(updatedSongs);
       localStorage.setItem("lastDefFileVer",res.version);
       this.setState({currentVersion:res.version,disableUpdateBtn:false,message:"更新完了"});
     }catch(e){
@@ -244,10 +255,10 @@ class Settings extends React.Component<P,S> {
               </Typography>
               <Typography variant="caption" display="block">
                 <FormattedMessage id="Settings.updateWarning"/><br/>
-                <RefLink color="secondary" href="https://github.com/potakusan/bpim-score-repo">定義ファイルに誤りなどを発見した場合、GitHubにてプルリクエストを送信することができます。</RefLink>
+                <RefLink component="a" onClick={this.toggleURLDialog} color="secondary" ><FormattedMessage id="Settings.defFileURLButton"/></RefLink>
               </Typography>
               <Typography variant="caption" display="block">
-                <RefLink component="a" onClick={this.toggleURLDialog} color="secondary" ><FormattedMessage id="Settings.defFileURLButton"/></RefLink>
+                <RefLink color="secondary" href="https://github.com/potakusan/bpim-score-repo">定義ファイルに誤りなどを発見した場合、GitHubにてプルリクエストを送信することができます。</RefLink>
               </Typography>
               {isURLDialogOpen && <URLDialog isDialogOpen={isURLDialogOpen} exec={this.changeDefinitionURL} close={this.toggleURLDialog}/>}
             </Paper>

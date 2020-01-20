@@ -80,7 +80,7 @@ const ja = {
   "Favorites.Title":"Favorites",
   "NotPlayed.Title":"Not Played yet",
   "Stats.title":"Statistics",
-  "Stats.TotalBPI":"Total BPI",
+  "Stats.TotalBPI":"COMPOSITE BPI",
   "Stats.EachDay":"Total and BPIs per day",
   "Stats.UpdatedSongs":"New records",
   "Stats.UpdatedSum":"The total of updated songs",

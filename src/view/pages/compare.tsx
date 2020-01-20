@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { scoresDB, songsDB } from '../../components/indexedDB';
-import {_isSingle, _goalBPI, _goalPercentage} from "../../components/settings";
+import {_isSingle, _goalBPI, _goalPercentage, _currentStore} from "../../components/settings";
 import Container from "@material-ui/core/Container";
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
@@ -14,6 +14,7 @@ import bpiCalcuator from '../../components/bpi';
 import { commonFunc } from '../../components/common';
 import FilterByLevelAndDiff from '../components/common/selector';
 import { compareData } from '../../types/compare';
+import { scoreData } from '../../types/data';
 
 interface S {
   [key: string]: any,
@@ -29,6 +30,8 @@ interface S {
   page:number,
   rowsPerPage:number,
   displayMode:string,
+  total12BPI:number,
+  total11BPI:number,
 }
 
 export default class Compare extends React.Component<{},S> {
@@ -53,11 +56,27 @@ export default class Compare extends React.Component<{},S> {
       page:0,
       rowsPerPage:10,
       displayMode:"exScore",
+      total12BPI:0,
+      total11BPI:0,
     }
   }
 
   async componentDidMount(){
     this._mounted = true;
+    const bpi12 = new bpiCalcuator(), bpi11 = new bpiCalcuator();
+    const isSingle = _isSingle();
+    const db = await new scoresDB(isSingle,_currentStore()).loadStore();
+    const bpiMapper = (t:scoreData[])=>t.map((item:scoreData)=>item.currentBPI);
+    const twelves = await db.getItemsBySongDifficulty("12");
+    bpi12.allTwelvesBPI = bpiMapper(twelves);
+    bpi12.allTwelvesLength = await new songsDB().getAllTwelvesLength(isSingle);
+    const elevens = await db.getItemsBySongDifficulty("11");
+    bpi11.allTwelvesBPI = bpiMapper(elevens);
+    bpi11.allTwelvesLength = await new songsDB().getAllTwelvesLength(isSingle,"11");
+    this.setState({
+      total12BPI:bpi12.totalBPI(),
+      total11BPI:bpi11.totalBPI()
+    });
     this.dataHandler();
   }
 
@@ -120,13 +139,11 @@ export default class Compare extends React.Component<{},S> {
     const calc = new bpiCalcuator();
     const fData = await scores.getSpecificVersionAll();
     const goalBPI = _goalBPI(), goalPerc = _goalPercentage();
-    const displayMode = this.state.displayMode;
+    const {total11BPI,total12BPI,displayMode} = this.state;
     for(let i =0; i < fData.length; ++i){
       let tScore = 0;
       const tData = await scores.getItem(fData[i]["title"],fData[i]["difficulty"],t,isSingle);
-      const songData = isSingle ?
-      await sdb.getOneItemIsSingle(fData[i]["title"],fData[i]["difficulty"]) :
-      await sdb.getOneItemIsDouble(fData[i]["title"],fData[i]["difficulty"]);
+      const songData = await sdb.getOneItemIsSingle(fData[i]["title"],fData[i]["difficulty"]);
       const max = songData[0]["notes"] * 2;
       calc.setData(songData[0]["notes"] * 2,songData[0]["avg"],songData[0]["wr"]);
       calc.setCoef(songData[0]["coef"] || -1);
@@ -134,7 +151,7 @@ export default class Compare extends React.Component<{},S> {
         return Math.ceil(exScore / max * 10000) / 100;
       }
       if(!tData || tData.length === 0){
-        if (t !== "BPI" && t !== "PERCENTAGE" && t !== "WR" && t !== "AVERAGE") continue;
+        if (t !== "BPI" && t !== "PERCENTAGE" && t !== "WR" && t !== "AVERAGE" && t !== "COMPOSITE") continue;
         tScore = 0;
       }else{
         tScore = displayMode === "exScore" ? tData[0]["exScore"] :
@@ -160,6 +177,12 @@ export default class Compare extends React.Component<{},S> {
         tScore = displayMode === "exScore" ? Math.ceil(songData[0]["notes"] * 2 * goalPerc / 100) :
         displayMode === "bpi" ? calc.setPropData(songData[0],Math.ceil(songData[0]["notes"] * 2 * goalPerc / 100),isSingle) :
         displayMode === "percentage" ? goalPerc : 0;
+      }
+      if(t === "COMPOSITE"){
+        const tb = songData[0]["difficultyLevel"] === "12" ? total12BPI : total11BPI;
+        tScore = displayMode === "exScore" ? calc.calcFromBPI(tb,true) :
+        displayMode === "bpi" ? tb :
+        displayMode === "percentage" ? percentager(calc.calcFromBPI(tb,true)) : 0;
       }
       const percentage = percentager(fData[i]["exScore"]);
       const gap = (Math.ceil(
@@ -241,10 +264,11 @@ export default class Compare extends React.Component<{},S> {
               <Select value={compareTo} onChange={this.handleChange("compareTo")}>
                 <MenuItem value={"26"}>26 Rootage</MenuItem>
                 <MenuItem value={"27"}>27 HEROIC VERSE</MenuItem>
-                <MenuItem value={"WR"}>WORLD RECORD</MenuItem>
-                <MenuItem value={"AVERAGE"}>KAIDEN AVERAGE</MenuItem>
                 <MenuItem value={"BPI"}>TARGET BPI</MenuItem>
                 <MenuItem value={"PERCENTAGE"}>TARGET PERCENTAGE</MenuItem>
+                <MenuItem value={"COMPOSITE"}>COMPOSITE BPI</MenuItem>
+                <MenuItem value={"WR"}>WORLD RECORD</MenuItem>
+                <MenuItem value={"AVERAGE"}>KAIDEN AVERAGE</MenuItem>
               </Select>
             </FormControl>
           </Grid>
