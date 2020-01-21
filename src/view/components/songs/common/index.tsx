@@ -1,5 +1,5 @@
 import { _prefix } from "../../../../components/songs/filter";
-import { B } from "./filter";
+import { B, BPIR } from "./filter";
 import { scoreData, songData } from "../../../../types/data";
 
 export const diffColor = (i:number,clearState: number,alternative:number = 0):string=>{
@@ -79,6 +79,14 @@ export const bpmFilter = (songBPM:string,b:B):boolean=>{
   }
   const num = Number(songBPM);//150
   if(b.min !== "" && b.max !== ""){ //最小BPM判定&最大BPM判定
+    return num >= b.min && num <= b.max;
+  }
+  return b.min !== "" ? num >= b.min : b.max !== "" ? num <= b.max : true;
+}
+
+export const bpiFilter = (songBPI:number,b:BPIR):boolean=>{
+  const num = Number(songBPI);
+  if(b.min !== "" && b.max !== ""){ //最小BPI判定&最大BPI判定
     return num >= b.min && num <= b.max;
   }
   return b.min !== "" ? num >= b.min : b.max !== "" ? num <= b.max : true;

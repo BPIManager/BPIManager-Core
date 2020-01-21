@@ -17,11 +17,13 @@ interface P {
   handleToggle:()=>void,
   applyFilter:(state:{bpm:B,versions:number[]})=>void,
   bpm:B,
+  bpi?:BPIR,
   versions:number[],
 }
 
 interface S {
   bpm:B,
+  bpi:BPIR|null,
   versions:number[]
 }
 
@@ -32,13 +34,19 @@ export interface B {
   soflan:boolean
 }
 
+export interface BPIR{
+  min:number|"",
+  max:number|"",
+}
+
 class SongsFilter extends React.Component<P,S> {
 
   constructor(props:P){
     super(props);
     this.state = {
       bpm:props.bpm,
-      versions:props.versions
+      versions:props.versions,
+      bpi:props.bpi || null
     }
   }
 
@@ -47,12 +55,13 @@ class SongsFilter extends React.Component<P,S> {
     return this.props.handleToggle();
   }
 
-  cloneState = ()=>{
-    return this.state.bpm;
+  cloneState = (target:"bpm"|"bpi" = "bpm")=>{
+    return this.state[target];
   }
 
   handleChkBox = (name:"soflan"|"noSoflan" = "soflan")=> (event: React.ChangeEvent<HTMLInputElement>)=>{
-    let bpm = this.cloneState();
+    let bpm:B = this.cloneState() as B;
+    if(!bpm){return;}
     bpm[name] = event.target.checked;
     return this.setState({
       bpm:bpm
@@ -71,11 +80,22 @@ class SongsFilter extends React.Component<P,S> {
   }
 
   handleInput = (name:"min"|"max" = "min")=> (event: React.ChangeEvent<HTMLInputElement>)=>{
-    let bpm = this.cloneState();
+    let bpm:B = this.cloneState() as B;
+    if(!bpm){return;}
     const val = Number(event.target.value);
     bpm[name] = val <= 0 ? "" : val;
     return this.setState({
       bpm:bpm
+    })
+  }
+
+  handleBPIInput = (name:"min"|"max" = "min")=> (event: React.ChangeEvent<HTMLInputElement>)=>{
+    let bpi:BPIR = this.cloneState("bpi") as BPIR;
+    if(!bpi){return;}
+    const val = Number(event.target.value);
+    bpi[name] = val;
+    return this.setState({
+      bpi:bpi
     })
   }
 
@@ -84,9 +104,9 @@ class SongsFilter extends React.Component<P,S> {
 
   render(){
     const {handleToggle} = this.props;
-    const {bpm,versions} = this.state;
+    const {bpm,versions,bpi} = this.state;
     return (
-      <Dialog open={true} onClose={handleToggle} aria-labelledby="form-dialog-title">
+      <Dialog open={true} onClose={handleToggle}>
         <DialogTitle>詳細フィルタ</DialogTitle>
         <DialogContent>
           <Typography component="h6" variant="h6">
@@ -146,7 +166,43 @@ class SongsFilter extends React.Component<P,S> {
             }
             label="ソフランあり"
           />
-          <Typography component="h6" variant="h6">
+          {bpi && <div>
+          <Typography component="h6" variant="h6" style={{marginTop:"5px"}}>
+            BPI
+          </Typography>
+          <Grid container>
+            <Grid item xs={6}>
+              <form noValidate autoComplete="off" style={{margin:"10px 6px 0"}}>
+                <TextField
+                  type="number"
+                  style={{width:"100%"}}
+                  label="BPI下限"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  value={bpi.min}
+                  onChange={this.handleBPIInput("min")}
+                />
+              </form>
+            </Grid>
+            <Grid item xs={6}>
+              <form noValidate autoComplete="off" style={{margin:"10px 6px 0"}}>
+                <TextField
+                  type="number"
+                  style={{width:"100%"}}
+                  label="BPI上限"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  value={bpi.max}
+                  onChange={this.handleBPIInput("max")}
+                />
+              </form>
+            </Grid>
+          </Grid>
+          </div>
+          }
+          <Typography component="h6" variant="h6" style={{marginTop:"5px"}}>
             Versions
           </Typography>
           <Button onClick={this.allUnselect} color="primary">

@@ -48,8 +48,7 @@ class BPIChart extends React.Component<P,{}> {
           <BarChart data={chartData} key={graphLastUpdated}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis stroke={chartColor} dataKey="name" />
-            <YAxis stroke={chartColor} domain={[0,max]} ticks={[Math.ceil(max * (6/9)),Math.ceil(max * (7/9)),Math.ceil(max * (8/9)),max]} width={40}>
-            </YAxis>
+            <YAxis stroke={chartColor} domain={[0,max]} ticks={[Math.ceil(max * (6/9)),Math.ceil(max * (7/9)),Math.ceil(max * (8/9)),max]} width={40}/>
             <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} contentStyle={{color:"#333"}} />
             <Bar dataKey="EX SCORE" isAnimationActive={false}>
               {

@@ -24,11 +24,12 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { _isSingle } from '../../../../components/settings';
 import moment from 'moment';
 import Button from '@material-ui/core/Button';
-import SongsFilter, { B } from '../common/filter';
-import { bpmFilter,verArr } from '../common';
+import SongsFilter, { B, BPIR } from '../common/filter';
+import { bpmFilter,bpiFilter,verArr } from '../common';
 import OrderControl from "../common/orders";
 import { commonFunc } from '../../../../components/common';
 import FilterByLevelAndDiff from '../../common/selector';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 interface stateInt {
   isLoading:boolean,
@@ -41,6 +42,7 @@ interface stateInt {
   page:number,
   filterOpen:boolean,
   bpm:B,
+  bpi:BPIR,
   orderTitle:number,
   orderMode:number,
   versions:number[]
@@ -55,11 +57,12 @@ interface P{
 
 const ranges = [{val:0,label:"全期間"},{val:1,label:"本日更新"},{val:2,label:"前日更新"},{val:3,label:"今週更新"},{val:4,label:"1ヶ月以上未更新"}]
 
-class SongsList extends React.Component<P,stateInt> {
+class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
 
-  constructor(props:P){
+  constructor(props:P&RouteComponentProps){
     super(props);
-
+    const search = new URLSearchParams(props.location.search);
+    const initialBPIRange = search.get("initialBPIRange");
     this.state = {
       isLoading:true,
       filterByName:"",
@@ -75,6 +78,10 @@ class SongsList extends React.Component<P,stateInt> {
         min:"",
         max:"",
         soflan:true,
+      },
+      bpi:{
+        min:initialBPIRange ? Number(initialBPIRange) : "",
+        max:initialBPIRange ? Number(initialBPIRange) + 10 : "",
       },
       range:0,
       page:0,
@@ -137,6 +144,7 @@ class SongsList extends React.Component<P,stateInt> {
     const m = newState.mode;
     const r = newState.range;
     const b = newState.bpm;
+    const bpir = newState.bpi;
     const v = newState.versions;
     const f = this.state.allSongsData;
 
@@ -176,6 +184,7 @@ class SongsList extends React.Component<P,stateInt> {
       const max = _f["notes"] * 2;
       return (
         bpmFilter(_f.bpm,b) &&
+        bpiFilter(data.currentBPI,bpir) &&
         evaluateRange(data) &&
         evaluateMode(data,max) &&
         evaluateVersion(_f.textage) &&
@@ -348,10 +357,10 @@ class SongsList extends React.Component<P,stateInt> {
           data={this.sortedData()} mode={mode}
           allSongsData={this.state.allSongsData}
           updateScoreData={this.updateScoreData}/>
-        {filterOpen && <SongsFilter versions={versions} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpm={this.state.bpm}/>}
+        {filterOpen && <SongsFilter versions={versions} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpi={this.state.bpi} bpm={this.state.bpm}/>}
       </Container>
     );
   }
 }
 
-export default injectIntl(SongsList);
+export default withRouter(injectIntl(SongsList));

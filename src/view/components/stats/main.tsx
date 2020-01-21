@@ -9,18 +9,25 @@ import bpiCalcuator from '../../../components/bpi';
 import {_isSingle,_currentStore, _chartColor} from "../../../components/settings";
 import moment from 'moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, BarChart} from 'recharts';
+import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, BarChart, ReferenceLine, Label} from 'recharts';
 import _withOrd from '../../../components/common/ord';
 import {Link as RefLink, Table, TableRow, TableCell, TableBody} from '@material-ui/core/';
 import { difficultyDiscriminator } from '../../../components/songs/filter';
 import { songData, scoreData, historyData } from '../../../types/data';
 import { _DiscriminateRanksByNumber } from '../../../components/common/djRank';
 import { getRadar, Details, radarData } from '../common/radar';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
+
+const ticker = [-20,-10,0,10,20,30,40,50,60,70,80,90,100];
 
 interface groupedArray {
   "name":string|number,
   "☆11":number,
   "☆12":number,
+}
+
+interface groupedByLevel extends groupedArray {
+  "name":number
 }
 
 interface perDate {
@@ -34,7 +41,7 @@ interface S {
   totalBPI:number,
   totalRank:number,
   perDate:perDate[],
-  groupedByLevel:groupedArray[],
+  groupedByLevel:groupedByLevel[],
   groupedByDiff:groupedArray[],
   radar:radarData[],
   groupedByDJRank:groupedArray[],
@@ -42,9 +49,9 @@ interface S {
   radarDetail:string
 }
 
-class Main extends React.Component<{intl:any},S> {
+class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
 
-  constructor(props:{intl:any}){
+  constructor(props:{intl:any}&RouteComponentProps){
     super(props);
     this.state ={
       isLoading:true,
@@ -139,7 +146,7 @@ class Main extends React.Component<{intl:any},S> {
       return 0;
     });
 
-    let bpis = [-20,-10,0,10,20,30,40,50,60,70,80,90,100];
+    let bpis = ticker;
     let groupedByLevel = [];
     for(let i = 0; i < bpis.length; ++i){
       let obj:{"name":number,"☆11":number,"☆12":number} = {"name":bpis[i],"☆11":0,"☆12":0};
@@ -175,7 +182,16 @@ class Main extends React.Component<{intl:any},S> {
     }, {});
   }
 
+  onClickByLevel = (data:any,_index:any)=>{
+    if(!data || !data.activeLabel){
+      return;
+    }
+    this.props.history.push("/songs?initialBPIRange=" + data.activeLabel);
+  }
+
   toggleRadarDetail = (title:string = "")=> this.setState({radarDetail:title});
+
+  xAxisTicker = ():number[]=> [...ticker,this.state.totalBPI].sort((a,b)=>a-b);
 
   render(){
     const {totalBPI,isLoading,perDate,totalRank,groupedByLevel,radar,groupedByDJRank,groupedByClearState,radarDetail} = this.state;
@@ -188,6 +204,7 @@ class Main extends React.Component<{intl:any},S> {
         </Container>
       );
     }
+
     return (
       <Container fixed style={{padding:0}}>
         <Grid container spacing={3}>
@@ -242,15 +259,17 @@ class Main extends React.Component<{intl:any},S> {
                   <ResponsiveContainer width="100%">
                     <LineChart
                       data={groupedByLevel}
+                      onClick={this.onClickByLevel}
                       margin={{
                         top: 5, right: 30, left: -30, bottom: 30,
                       }}
                       >
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" stroke={chartColor} />
+                        <XAxis type={"number"} dataKey="name" stroke={chartColor} ticks={this.xAxisTicker()} domain={[-20,100]}/>
                         <YAxis stroke={chartColor}/>
                         <Tooltip contentStyle={{color:"#333"}}/>
                         <Legend />
+                        <ReferenceLine x={totalBPI} stroke="#ffa0a0" isFront={true} />
                         <Line type="monotone" dataKey="☆11" stroke="#8884d8" activeDot={{ r: 8 }} />
                         <Line type="monotone" dataKey="☆12" stroke="#82ca9d" />
                       </LineChart>
@@ -318,8 +337,8 @@ class Main extends React.Component<{intl:any},S> {
                       >
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" stroke={chartColor} />
-                        <YAxis stroke={chartColor}/>
-                        <Tooltip contentStyle={{color:"#333"}}/>
+                        <YAxis stroke={chartColor} />
+                        <Tooltip contentStyle={{color:"#333"}} />
                         <Legend />
                         <Bar dataKey="☆12" fill="#82ca9d" />
                         <Bar dataKey="☆11" fill="#8884d8" />
@@ -364,4 +383,4 @@ class Main extends React.Component<{intl:any},S> {
   }
 }
 
-export default injectIntl(Main);
+export default withRouter(injectIntl(Main));

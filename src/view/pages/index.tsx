@@ -7,7 +7,6 @@ import { FormattedMessage } from "react-intl";
 import { Link } from 'react-router-dom';
 import {Link as RefLink, Card, CardContent} from '@material-ui/core/';
 import { _lang } from '../../components/settings';
-import Ad from "../../components/ad";
 const {LineShareButton,LineIcon,TwitterShareButton,TwitterIcon} = require('react-share');
 
 export default class Index extends React.Component<{},{}> {
@@ -38,7 +37,7 @@ export default class Index extends React.Component<{},{}> {
             <FormattedMessage id="Top.Title"/>
           </Typography>
           <Typography align="center" color="textSecondary" paragraph variant="caption">
-            beta ver0.0.2.7<br/>
+            beta ver0.0.2.8<br/>
             last update: 2020/01/21 JST
           </Typography>
           <AddToHomeScreenTicker/>
