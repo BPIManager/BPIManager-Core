@@ -11,7 +11,7 @@ import moment from 'moment';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, BarChart, ReferenceLine, Label} from 'recharts';
 import _withOrd from '../../../components/common/ord';
-import {Link as RefLink, Table, TableRow, TableCell, TableBody} from '@material-ui/core/';
+import {Link as RefLink, Table, TableRow, TableCell, TableBody, FormControlLabel, Switch, FormControl, RadioGroup, Radio, Divider, FormLabel} from '@material-ui/core/';
 import { difficultyDiscriminator } from '../../../components/songs/filter';
 import { songData, scoreData, historyData } from '../../../types/data';
 import { _DiscriminateRanksByNumber } from '../../../components/common/djRank';
@@ -32,7 +32,7 @@ interface groupedByLevel extends groupedArray {
 
 interface perDate {
   name:string,
-  sum:string,
+  sum:number,
   avg:number
 }
 
@@ -46,7 +46,8 @@ interface S {
   radar:radarData[],
   groupedByDJRank:groupedArray[],
   groupedByClearState:groupedArray[],
-  radarDetail:string
+  radarDetail:string,
+  targetLevel:number,
 }
 
 class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
@@ -64,6 +65,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
       groupedByDJRank:[],
       groupedByClearState:[],
       radarDetail:"",
+      targetLevel:12,
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
@@ -72,7 +74,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
     await this.updateScoreData();
   }
 
-  async updateScoreData(){
+  async updateScoreData(targetLevel = 12){
     const isSingle = _isSingle();
     const currentStore = _currentStore();
     const db = await new scoresDB(isSingle,currentStore).loadStore();
@@ -116,19 +118,29 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
       return groups;
     },[]));
 
-    bpi.allTwelvesBPI = bpiMapper(twelves);
-    bpi.allTwelvesLength = await new songsDB().getAllTwelvesLength(isSingle);
+    bpi.allTwelvesBPI = bpiMapper(targetLevel === 12 ? twelves : elevens);
+    bpi.allTwelvesLength = await new songsDB().getAllTwelvesLength(isSingle, String(targetLevel));
     //compare by date
-    const allDiffs = (await new scoreHistoryDB().getAll("12")).reduce((groups, item) => {
-      const date = moment(item.updatedAt).format("YYYY/MM/DD");
-      if (!groups[date]) {
-        groups[date] = [];
-      }
-      groups[date].push(item);
-      return groups;
-    }, {});
-    let eachDaySum:{name:string,sum:string,avg:number,}[] = [];
+    const sortByDate = (data:historyData[]):{[key:string]:historyData[]}=>{
+      return data.reduce((groups:{[key:string]:historyData[]}, item:historyData) => {
+        const date = moment(item.updatedAt).format("YYYY/MM/DD");
+        if (!groups[date]) {
+          groups[date] = [];
+        }
+        groups[date].push(item);
+        return groups;
+      }, {});
+    }
+    const allDiffs = sortByDate(await new scoreHistoryDB().getAll(String(targetLevel)))
+    let eachDaySum:{name:string,sum:number,avg:number,}[] = [];
     const _bpi = new bpiCalcuator();
+    const total = (item:historyData[]):number=>{
+      let t = 0;
+      item.map(item=>{
+        t += item.BPI;
+      });
+      return t;
+    }
     Object.keys(allDiffs).map((item)=>{
       _bpi.allTwelvesLength = allDiffs[item].length;
       _bpi.allTwelvesBPI = allDiffs[item].reduce((a:number[],val:historyData)=>{
@@ -141,7 +153,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
       eachDaySum.push({
         name : item,
         sum : allDiffs[item].length,
-        avg : avg ? avg : Math.round(allDiffs[item].reduce((a:historyData,c:historyData)=>{return {BPI:a.BPI + c.BPI}}).BPI / allDiffs[item].length * 100) / 100
+        avg : avg ? avg : Math.round(total(allDiffs[item]) / allDiffs[item].length * 100) / 100
       });
       return 0;
     });
@@ -193,20 +205,32 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
 
   xAxisTicker = ():number[]=> [...ticker,this.state.totalBPI].sort((a,b)=>a-b);
 
+  changeLevel = async (e:React.ChangeEvent<HTMLInputElement>,)=>{
+    if(typeof e.target.value === "string"){
+      const targetLevel = Number(e.target.value);
+      this.setState({targetLevel:targetLevel,isLoading:true});
+      await this.updateScoreData(targetLevel);
+    }
+  }
+
   render(){
-    const {totalBPI,isLoading,perDate,totalRank,groupedByLevel,radar,groupedByDJRank,groupedByClearState,radarDetail} = this.state;
+    const {totalBPI,isLoading,perDate,targetLevel,totalRank,groupedByLevel,radar,groupedByDJRank,groupedByClearState,radarDetail} = this.state;
     const {formatMessage} = this.props.intl;
     const chartColor = _chartColor();
     if(isLoading){
       return (
-        <Container className="loaderCentered">
-          <CircularProgress />
+        <Container fixed style={{padding:0}}>
+          <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel}/>
+          <Container className="loaderCentered">
+            <CircularProgress />
+          </Container>
         </Container>
       );
     }
 
     return (
       <Container fixed style={{padding:0}}>
+        <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel}/>
         <Grid container spacing={3}>
           <Grid item xs={12} md={3} lg={3}>
             <Paper style={{padding:"15px"}} className="responsiveTotalBPI">
@@ -248,6 +272,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
             </Paper>
           </Grid>
         </Grid>
+        <Divider style={{margin:"30px 0"}}/>
         <Grid container spacing={3}>
           <Grid item xs={12} md={12} lg={12}>
             <Paper style={{padding:"15px",height:270}}>
@@ -384,3 +409,33 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
 }
 
 export default withRouter(injectIntl(Main));
+
+class ChangeLevel extends React.Component<{targetLevel:number,changeLevel:(e:React.ChangeEvent<HTMLInputElement>)=>void,isLoading:boolean},{}>{
+
+  render(){
+    const {targetLevel,changeLevel,isLoading} = this.props;
+    return (
+      <div style={{display:"flex",justifyContent:"flex-end"}}>
+      <FormControl component="fieldset">
+        <FormLabel component="legend">表示対象</FormLabel>
+        <RadioGroup aria-label="position" name="position" value={targetLevel} onChange={changeLevel} row>
+          <FormControlLabel
+            value={11}
+            control={<Radio color="primary" />}
+            label="☆11"
+            labelPlacement="end"
+            disabled={isLoading}
+          />
+          <FormControlLabel
+            value={12}
+            control={<Radio color="primary" />}
+            label="☆12"
+            labelPlacement="end"
+            disabled={isLoading}
+          />
+        </RadioGroup>
+      </FormControl>
+    </div>
+    )
+  }
+}
