@@ -37,8 +37,8 @@ export default class Index extends React.Component<{},{}> {
             <FormattedMessage id="Top.Title"/>
           </Typography>
           <Typography align="center" color="textSecondary" paragraph variant="caption">
-            beta ver0.0.2.8<br/>
-            last update: 2020/01/21 JST
+            beta ver0.0.2.9<br/>
+            last update: 2020/01/23 JST
           </Typography>
           <AddToHomeScreenTicker/>
           <div>

@@ -9,7 +9,6 @@ export interface scoreDataOrigin{
   previousExScore?:number,
   missCount?:number|undefined,
   clearState:number,
-  lastPlayed?:string,
   storedAt:string,
   updatedAt:string,
   isSingle:number,

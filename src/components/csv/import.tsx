@@ -106,7 +106,6 @@ export default class importCSV {
               exScore:Number(p[eachObjNum[2]]),
               missCount:Number(p[eachObjNum[5]]),
               clearState:clearState,
-              lastPlayed:p[eachObjNum[8]],
               lastScore:-1,
               storedAt:self.currentStore,
               isSingle:self.isSingle,

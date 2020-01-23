@@ -63,6 +63,17 @@ const storageWrapper = class extends Dexie{
         delete item.version;
       });
     });
+    this.version(6).stores({
+      scores : "[title+difficulty+storedAt+isSingle],title,*difficulty,*difficultyLevel,currentBPI,exScore,missCount,clearState,storedAt,isSingle,updatedAt,lastScore",
+      songs : "&++num,title,*difficulty,*difficultyLevel,wr,avg,notes,bpm,textage,dpLevel,isCreated,isFavorited,[title+difficulty]",
+      rivals : "&[title+difficulty+storedAt+isSingle+rivalName],rivalName,title,*difficulty,*difficultyLevel,exScore,missCount,clearState,storedAt,isSingle,updatedAt",
+      rivalLists : "&uid,rivalName,lastUpdatedAt,updatedAt,[isSingle+storedAt],photoURL,profile",
+      scoreHistory : "&++num,[title+storedAt+difficulty+isSingle],[title+storedAt+difficulty+isSingle+updatedAt],title,difficulty,difficultyLevel,storedAt,exScore,BPI,isSingle,updatedAt"
+    }).upgrade(_tx => {
+      return this.scores.toCollection().modify((item:any)=>{
+        delete item.lastPlayed;
+      });
+    });
     this.scores = this.table("scores");
     this.scoreHistory = this.table("scoreHistory");
     this.songs = this.table("songs");
@@ -219,7 +230,6 @@ export const scoresDB = class extends storageWrapper{
         exScore:Number(item["exScore"]),
         missCount:Number(item["missCount"]),
         clearState:item["clearState"],
-        lastPlayed:item["lastPlayed"],
         lastScore:item["lastScore"],
         storedAt:item["storedAt"],
         isSingle:item["isSingle"],
@@ -241,7 +251,6 @@ export const scoresDB = class extends storageWrapper{
         exScore:Number(item["exScore"]),
         missCount:Number(item["missCount"]),
         clearState:item["clearState"],
-        lastPlayed:item["lastPlayed"],
         lastScore:item["lastScore"],
         storedAt:item["storedAt"],
         isSingle:item["isSingle"],
