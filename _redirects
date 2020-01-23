@@ -1,0 +1,6 @@
+[[redirects]]
+  from = "/user/static"
+  to = "/static"
+  status = 301
+  force = true
+  headers = {X-From = "Netlify"}
