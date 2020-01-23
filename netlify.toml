@@ -1,0 +1,9 @@
+[[redirects]]
+  from = "/user/static/js/*"
+  to = "/static/js/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/user/static/css/*"
+  to = "/static/css/:splat"
+  status = 301
