@@ -180,7 +180,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
       )
     }
     return (
-      <Container className="commonLayout" fixed>
+      <Container className="commonLayout" id="users" fixed>
         <Paper>
           <div style={{textAlign:"center",padding:"15px"}}>
             <Avatar alt={res.displayName} src={res.photoURL.replace("_normal","")}

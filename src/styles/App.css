@@ -359,3 +359,7 @@ legend.MuiFormLabel-root{
 #__light tr.MuiTableRow-root.rivalBody {
   background: #fbfbfb;
 }
+
+#__dark #users .MuiButton-outlinedPrimary{
+  color:#fff;
+}
