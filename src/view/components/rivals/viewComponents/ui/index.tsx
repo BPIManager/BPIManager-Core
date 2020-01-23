@@ -44,6 +44,7 @@ interface P{
   type:number,
   full:withRivalData[],
   intl:any,
+  showAllScore:boolean,
 }
 
 class SongsUI extends React.Component<P,stateInt> {
@@ -245,7 +246,7 @@ class SongsUI extends React.Component<P,stateInt> {
     const {formatMessage} = this.props.intl;
     const {isLoading,filterByName,options,orderMode,orderTitle,page,mode,filterOpen,versions} = this.state;
     const _my = formatMessage({id:"Orders.My"}), _rival = formatMessage({id:"Orders.Rival"});
-    const orders = [
+    let orders = [
       formatMessage({id:"Orders.Title"}),
       formatMessage({id:"Orders.Level"}),
       formatMessage({id:"Orders.Gap"}),
@@ -264,6 +265,9 @@ class SongsUI extends React.Component<P,stateInt> {
       formatMessage({id:"Orders.MinBPM"}),
       formatMessage({id:"Orders.Version"}),
     ]
+    if(this.props.showAllScore){
+      delete orders[10];
+    }
     if(isLoading){
       return (
         <Container className="loaderCentered">

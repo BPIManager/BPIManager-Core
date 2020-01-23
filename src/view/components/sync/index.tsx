@@ -27,7 +27,7 @@ class SyncIndex extends React.Component<{},S> {
   componentDidMount(){
     new fbActions().auth().onAuthStateChanged((user: any)=> {
       this.setState({userData:user,isLoading:false})
-  });
+    });
   }
 
   render(){

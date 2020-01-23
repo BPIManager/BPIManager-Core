@@ -155,7 +155,7 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
           データを同期
         </Typography>
-        <RLink to="/sync"><Link color="secondary" component="span">「Sync」</Link></RLink>から、端末に保管されているデータをクラウド上にアップロードすることができます。<br/>
+        <RLink to="/sync" style={{textDecoration:"none"}}><Link color="secondary" component="span">「Sync」</Link></RLink>から、端末に保管されているデータをクラウド上にアップロードすることができます。<br/>
         アップロードされたデータは他の端末と同期することが可能です。<br/>
         注意:端末内に保管されているデータは、ブラウザのキャッシュをクリアすると削除される場合があります(Google Chromeで「Cookieとサイトデータの削除」を実行した場合など)。<br/>
         定期的に本機能を用いてデータのバックアップを取ることをおすすめしています。

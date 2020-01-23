@@ -4,6 +4,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import RivalLists from "./list";
 import RecentlyAdded from "./recent";
+import You from "./you";
 import { rivalScoreData, rivalStoreData, DBRivalStoreData } from '../../../types/data';
 
 interface S {
@@ -44,9 +45,11 @@ class RivalIndex extends React.Component<P,S> {
         >
           <Tab label="一覧" />
           <Tab label="探す" />
+          <Tab label="あなた" />
         </Tabs>
         {currentTab === 0 && <RivalLists showEachRival={this.props.showEachRival}/>}
         {currentTab === 1 && <RecentlyAdded compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
+        {currentTab === 2 && <You/>}
       </div>
     );
   }

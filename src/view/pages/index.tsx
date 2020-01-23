@@ -7,6 +7,7 @@ import { FormattedMessage } from "react-intl";
 import { Link } from 'react-router-dom';
 import {Link as RefLink, Card, CardContent} from '@material-ui/core/';
 import { _lang } from '../../components/settings';
+import ShareButtons from '../components/common/shareButtons';
 const {LineShareButton,LineIcon,TwitterShareButton,TwitterIcon} = require('react-share');
 
 export default class Index extends React.Component<{},{}> {
@@ -57,18 +58,7 @@ export default class Index extends React.Component<{},{}> {
             <Typography align="center" color="textSecondary" variant="caption" paragraph>
               気に入ったらシェアお願いします!
             </Typography>
-            <Grid container spacing={1} justify="center">
-              <Grid item xs={2}>
-                <LineShareButton url={"https://bpi.poyashi.me"}>
-                    <LineIcon size={32} round />
-                </LineShareButton>
-              </Grid>
-              <Grid item xs={2}>
-                <TwitterShareButton url={"https://bpi.poyashi.me"} title={"BPIManagerを使っています:"}>
-                    <TwitterIcon size={32} round />
-                </TwitterShareButton>
-              </Grid>
-            </Grid>
+            <ShareButtons withTitle={true}/>
           </div>
           <div style={{marginTop:"15px"}}>
             <Grid container spacing={2} justify="center">

@@ -14,11 +14,13 @@ import MenuItem from '@material-ui/core/MenuItem';
 import timeFormatter from '../../../components/common/timeFormatter';
 import { scoresDB, scoreHistoryDB } from '../../../components/indexedDB';
 import TextField from '@material-ui/core/TextField';
-import {Link as RefLink} from '@material-ui/core/';
+import {Link} from '@material-ui/core/';
+import {Link as RefLink} from "react-router-dom";
 
 class SyncControlScreen extends React.Component<{userData:any},{
   isLoading:boolean,
   scoreData:any,
+  sentName:string,
   rivalData:any,
   myName:string,
   myProfile:string,
@@ -38,6 +40,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
       scoreData:null,
       rivalData:null,
       myName:"",
+      sentName:"",
       myProfile:"",
       arenaRank:"-",
       nameErrorMessage:[]
@@ -50,6 +53,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
       isLoading:false,
       scoreData: await this.fbLoader.load(),
       rivalData: t,
+      sentName: t && t.displayName ? t.displayName : "",
       myName: t && t.displayName ? t.displayName : "",
       myProfile: t && t.profile ? t.profile : "",
       arenaRank: t && t.arenaRank ? t.arenaRank : "-",
@@ -91,11 +95,11 @@ class SyncControlScreen extends React.Component<{userData:any},{
     }catch(e){
       alert("エラーが発生しました。:" + e);
     }
-    this.setState({nameErrorMessage:["設定を反映しました"],isLoading:false});
+    this.setState({nameErrorMessage:["設定を反映しました"],isLoading:false,sentName:this.state.myName});
   }
 
   render(){
-    const {isLoading,scoreData,nameErrorMessage,myName,myProfile,arenaRank} = this.state;
+    const {isLoading,scoreData,nameErrorMessage,myName,myProfile,arenaRank,sentName} = this.state;
     const nameError:boolean = myName.length !== 0 && (!/^[a-zA-Z0-9.]+$/g.test(myName) || myName.length > 16);
     const profError:boolean = myProfile.length > 140;
     return (
@@ -125,7 +129,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
         <p>
         フォームに名前を入力して送信することで、あなたのスコアデータを他の人に公開できます。<br/>
         これによって、他の人があなたをライバルとして登録することができます。<br/>
-        <RefLink color="secondary" href="https://gist.github.com/potakusan/08c5528d6c6a51d10aec6b6556723a80"  target="_blank" rel="noopener noreferrer">ライバル機能の詳細はこちら。</RefLink>
+        <Link color="secondary" href="https://gist.github.com/potakusan/08c5528d6c6a51d10aec6b6556723a80"  target="_blank" rel="noopener noreferrer">ライバル機能の詳細はこちら。</Link>
         </p>
         <TextField label="表示名を入力(最大16文字)"
           InputLabelProps={{
@@ -164,6 +168,13 @@ class SyncControlScreen extends React.Component<{userData:any},{
         <p>
           {nameErrorMessage.map((item:string)=><span>{item}<br/></span>)}
         </p>
+        {(!isLoading && sentName) &&
+          <p>
+            あなたのプロフィールURL:<br/>
+            <RefLink to={"/user/" + sentName} style={{textDecoration:"none"}}><Link color="secondary" component="span">https://bpi.poyashi.me/user/{sentName}</Link></RefLink><br/>
+            このリンクをシェアすると、他の人があなたのプロフィールやスコアを確認できます。(v0.0.3.0以上のみ)
+          </p>
+        }
         <Divider style={{margin:"10px 0"}}/>
         <Button
           variant="outlined"

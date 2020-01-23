@@ -27,6 +27,7 @@ interface P {
   isNotRival?:boolean,
   rivalMeta:rivalStoreData|DBRivalStoreData|null,
   descendingRivalData?:rivalScoreData[],
+  showAllScore:boolean,
 }
 
 class RivalView extends React.Component<P,S> {
@@ -46,7 +47,7 @@ class RivalView extends React.Component<P,S> {
 
   loadRivalData = async()=>{
     this.setState({isLoading:true});
-    const {rivalData} = this.props;
+    const {rivalData,showAllScore} = this.props;
     const allScores = (await new scoresDB().getAll()).reduce((groups:{[key:string]:scoreData},item:scoreData)=>{
       groups[item.title + item.difficulty] = item;
       return groups;
@@ -58,13 +59,18 @@ class RivalView extends React.Component<P,S> {
     return this.setState({
       isLoading:false,
       full:Object.keys(allRivalScores).reduce((groups:withRivalData[],key:string)=>{
-        if(allScores[key]){
-          const mine = allScores[key];
+        const mine = allScores[key] || {
+          exScore:0,
+          missCount:NaN,
+          clearState:7,
+          updatedAt:"-",
+        };
+        if(showAllScore || mine.exScore !== 0){
           const rival = allRivalScores[key];
           groups.push({
-            title:mine.title,
-            difficulty:mine.difficulty,
-            difficultyLevel:mine.difficultyLevel,
+            title:rival.title,
+            difficulty:rival.difficulty,
+            difficultyLevel:rival.difficultyLevel,
             myEx:mine.exScore,
             rivalEx:rival.exScore,
             myMissCount:mine.missCount,
@@ -86,7 +92,7 @@ class RivalView extends React.Component<P,S> {
 
   render(){
     const {isLoading,currentTab,full} = this.state;
-    const {backToMainPage,isNotRival,rivalMeta} = this.props;
+    const {backToMainPage,isNotRival,rivalMeta,showAllScore} = this.props;
     if(isLoading){
       return (
         <Container className="loaderCentered">
@@ -110,7 +116,7 @@ class RivalView extends React.Component<P,S> {
           <Tab label="統計" />
           {!isNotRival && <Tab label="設定" />}
         </Tabs>
-        {currentTab === 0 && <SongsUI type={0} full={full}/>}
+        {currentTab === 0 && <SongsUI showAllScore={showAllScore} type={0} full={full}/>}
         {currentTab === 1 && <RivalStats full={full}/>}
         {(rivalMeta && !isNotRival && currentTab === 2) && <Settings backToMainPage={this.props.backToMainPage} toggleSnack={this.props.toggleSnack} rivalMeta={rivalMeta as DBRivalStoreData}/>}
       </div>
