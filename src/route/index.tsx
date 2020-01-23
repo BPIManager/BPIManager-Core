@@ -31,7 +31,9 @@ import { _currentStore, _isSingle } from '../components/settings';
 export default class Router extends React.Component<{},{}> {
 
   async globalUpdateScore(uName:string){
-    await new fbActions().setColName(`${_currentStore()}_${_isSingle()}`).setDocName(uName).save();
+    const f = new fbActions();
+    const t = await f.setColName("users").setDocName(uName).load();
+    await f.setColName(`${_currentStore()}_${_isSingle()}`).setDocName(uName).save((t && t.displayName) ? t.displayName : "");
   }
 
   render(){
