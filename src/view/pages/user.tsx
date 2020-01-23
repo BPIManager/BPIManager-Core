@@ -19,7 +19,7 @@ import { rivalListsDB } from '../../components/indexedDB';
 import ShowSnackBar from '../components/snackBar';
 import RivalView from '../components/rivals/view';
 import { rivalScoreData } from '../../types/data';
-import {Link} from '@material-ui/core/';
+import {Link, Chip} from '@material-ui/core/';
 import {Link as RefLink} from "react-router-dom";
 
 interface S {
@@ -135,6 +135,27 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
     })
   }
 
+  color = (rank:string)=>{
+    switch(rank){
+      case "A1":
+      return "rgb(255, 89, 89)";
+      case "A2":
+      case "A3":
+      return "rgb(255, 141, 23)"
+      case "A4":
+      case "A5":
+      return "rgb(166, 23, 255)"
+      case "B1":
+      case "B2":
+      return "rgb(89, 117, 255)"
+      case "B3":
+      case "B4":
+      return "rgb(87, 94, 127)"
+      case "B5":
+      return "rgb(27, 28, 31)"
+    }
+  }
+
   render(){
     const {processing,add,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId} = this.state;
     const url = "https://bpi.poyashi.me/user/" + encodeURI(userName);
@@ -189,8 +210,8 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
             <Typography variant="h4">
               {res.displayName}
             </Typography>
+            {res.arenaRank !== "-" && <Chip size="small" style={{backgroundColor:this.color(res.arenaRank),color:"#fff",margin:"5px 0"}} label={res.arenaRank} />}
             <Typography variant="caption" component="p" gutterBottom style={{color:"#aaa",marginBottom:"10px"}}>
-              アリーナランク:{res.arenaRank}<br/>
               最終更新:{res.timeStamp}
             </Typography>
             <Typography variant="body1" gutterBottom>
