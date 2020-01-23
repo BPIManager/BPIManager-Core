@@ -19,6 +19,8 @@ import { rivalListsDB } from '../../components/indexedDB';
 import ShowSnackBar from '../components/snackBar';
 import RivalView from '../components/rivals/view';
 import { rivalScoreData } from '../../types/data';
+import {Link} from '@material-ui/core/';
+import {Link as RefLink} from "react-router-dom";
 
 interface S {
   userName:string,
@@ -29,6 +31,7 @@ interface S {
   showSnackBar:boolean,
   res:any,
   uid:string,
+  alternativeId:string,
   rivalData:rivalScoreData[],
 }
 
@@ -42,11 +45,12 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
     this.fbA.setColName("users");
     this.fbStores.setColName(`${_currentStore()}_${_isSingle()}`);
     this.state ={
-      userName:decodeURI((props.match.params as any).uid) || "",
+      userName:(props.match.params as any).uid || "",
       processing:true,
       add:false,
       currentView:0,
       message:"",
+      alternativeId:"",
       showSnackBar:false,
       res:null,
       uid:"",
@@ -55,7 +59,24 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
   }
 
   componentDidMount(){
-    this.search();
+    if(!this.state.userName){
+      new fbActions().auth().onAuthStateChanged(async (user: any)=> {
+        if(user){
+          const t = await this.fbA.setDocName(user.uid).load();
+          console.log(t);
+          this.setState({
+            alternativeId:(t && t.displayName) ? t.displayName : "",
+            processing:false,
+          });
+        }else{
+          this.setState({
+            processing:false,
+          })
+        }
+      });
+    }else{
+      this.search();
+    }
   }
 
   backToMainPage = ()=> this.setState({currentView:0});
@@ -115,7 +136,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
   }
 
   render(){
-    const {processing,add,userName,res,uid,message,showSnackBar,currentView,rivalData} = this.state;
+    const {processing,add,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId} = this.state;
     const url = "https://bpi.poyashi.me/user/" + encodeURI(userName);
     if(processing){
       return (
@@ -138,6 +159,13 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
               <Typography variant="body2" gutterBottom>
                 指定されたユーザーは見つかりませんでした
               </Typography>
+              {(!(this.props.match.params as any).uid && alternativeId) &&
+              <Typography variant="body2" gutterBottom>
+                あなたのプロフィールは<br/>
+                <RefLink to={"/user/" + alternativeId} style={{textDecoration:"none"}}><Link color="secondary" component="span">https://bpi.poyashi.me/user/{alternativeId}</Link></RefLink><br/>
+                から閲覧できます
+              </Typography>
+              }
             </div>
           </Paper>
         </Container>

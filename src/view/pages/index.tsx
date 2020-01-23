@@ -41,6 +41,14 @@ export default class Index extends React.Component<{},{}> {
             beta ver0.0.3.0<br/>
             last update: 2020/01/24 JST
           </Typography>
+          <Typography align="center" color="textSecondary" paragraph variant="caption">
+            {_lang() === "en" &&
+              <span>Check out <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink> for update information.</span>
+            }
+            {_lang() === "ja" &&
+              <span>バージョンアップ情報は<RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>にて配信中</span>
+            }
+          </Typography>
           <AddToHomeScreenTicker/>
           <div>
             <Grid container spacing={2} justify="center">
@@ -68,15 +76,6 @@ export default class Index extends React.Component<{},{}> {
                 </Typography>
                 <Typography align="center" color="textSecondary" paragraph variant="caption">
                   <FormattedMessage id="Index.notes2"/>
-                </Typography>
-                <Typography align="center" color="textSecondary" paragraph variant="caption">
-                  {_lang() === "en" &&
-                    <span>If you have encountered unintended behaviours or have opinions to make this tool much better, please contact <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>.</span>
-                  }
-                  {_lang() === "ja" &&
-                    <span>バグ報告などは<RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>までお寄せください。<br/>
-                  バージョンアップ情報も同アカウントにて発信しています。</span>
-                  }
                 </Typography>
               </Grid>
             </Grid>

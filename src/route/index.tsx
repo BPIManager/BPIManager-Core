@@ -48,6 +48,7 @@ export default class Router extends React.Component<{},{}> {
                 <Route path="/help" exact component={Help}/>
                 <Route path="/sync" exact component={SyncIndex}/>
                 <Route path="/rivals" exact component={Rivals}/>
+                <Route path="/user/" exact component={User}/>
                 <Route path="/user/:uid" exact component={User}/>
               </BrowserRouter>
             </IntlProvider>
