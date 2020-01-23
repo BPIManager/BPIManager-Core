@@ -106,7 +106,7 @@ export default class fbActions{
         console.log("too long error");
         return {error:true,date:null};
       }
-      if(displayName.length !== 0 && !/^[a-zA-Z0-9.]+$/g.test(displayName)){
+      if(displayName.length !== 0 && !/^[a-zA-Z0-9]+$/g.test(displayName)){
         console.log("invalid inputs error");
         return {error:true,date:null};
       }

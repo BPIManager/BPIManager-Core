@@ -100,7 +100,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
 
   render(){
     const {isLoading,scoreData,nameErrorMessage,myName,myProfile,arenaRank,sentName} = this.state;
-    const nameError:boolean = myName.length !== 0 && (!/^[a-zA-Z0-9.]+$/g.test(myName) || myName.length > 16);
+    const nameError:boolean = myName.length !== 0 && (!/^[a-zA-Z0-9]+$/g.test(myName) || myName.length > 16);
     const profError:boolean = myProfile.length > 140;
     return (
       <div>
