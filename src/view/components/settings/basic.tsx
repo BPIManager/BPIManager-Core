@@ -13,7 +13,7 @@ import { Subscribe } from 'unstated';
 import GlobalContainer from '../../../components/context/global';
 import Button from '@material-ui/core/Button';
 import UpdateIcon from '@material-ui/icons/Update';
-import { _currentVersion, _currentDefinitionURL, _setCurrentDefinitionURL } from '../../../components/settings';
+import { _currentVersion, _currentDefinitionURL, _setCurrentDefinitionURL, _setAutoSync, _autoSync } from '../../../components/settings';
 import { songsDB, scoresDB, scoreHistoryDB } from '../../../components/indexedDB';
 import { songData } from '../../../types/data';
 import Dialog from '@material-ui/core/Dialog';
@@ -35,7 +35,8 @@ interface S {
   message2:string,
   currentResetStore:string,
   isDialogOpen:boolean,
-  isURLDialogOpen:boolean
+  isURLDialogOpen:boolean,
+  autoSync:boolean,
 }
 
 interface P{
@@ -57,6 +58,7 @@ class Settings extends React.Component<P,S> {
       disableDeleteBtn:false,
       isDialogOpen:false,
       isURLDialogOpen:false,
+      autoSync:_autoSync(),
     }
   }
 
@@ -126,7 +128,7 @@ class Settings extends React.Component<P,S> {
   }
 
   render(){
-    const {isLoading,isURLDialogOpen,disableUpdateBtn,message} = this.state;
+    const {isLoading,isURLDialogOpen,disableUpdateBtn,message,autoSync} = this.state;
     if(isLoading){
       return (
         <Container className="loaderCentered">
@@ -182,6 +184,24 @@ class Settings extends React.Component<P,S> {
               </Typography>
               <Typography variant="caption" display="block">
                 <FormattedMessage id="Settings.inaccurateMes"/>
+              </Typography>
+              <Divider style={{margin:"10px 0"}}/>
+              <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
+                Auto-sync
+              </Typography>
+              <Switch
+                checked={autoSync}
+                onChange={(e:React.ChangeEvent<HTMLInputElement>,)=>{
+                  if(typeof e.target.checked === "boolean"){
+                    _setAutoSync(e.target.checked);
+                    return this.setState({autoSync:e.target.checked})
+                  }
+                }}
+              />
+              <Typography variant="caption" display="block">
+                CSVインポート時、自動でクラウドと同期します。<br/>
+                処理は非同期的に行われるため、インポート時間に影響はありません。<br/>
+                Syncにログインしていない場合、この設定は無視されます。
               </Typography>
               <Divider style={{margin:"10px 0"}}/>
               <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">

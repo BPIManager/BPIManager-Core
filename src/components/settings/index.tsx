@@ -55,6 +55,14 @@ export const _setCurrentDefinitionURL = (url:string = defaultURL)=>{
   return localStorage.setItem("defURL",url);
 }
 
+export const _autoSync = ()=>{
+  return localStorage.getItem("autoSync") ? true : false;
+}
+
+export const _setAutoSync = (isEnable:boolean)=>{
+  return isEnable ? localStorage.setItem("autoSync","true") : localStorage.removeItem("autoSync");
+}
+
 export const _setTraditionalMode = (newState:number = 0)=>{
   return localStorage.setItem("traditionalMode",String(newState));
 }

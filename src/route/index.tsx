@@ -24,7 +24,15 @@ import { Subscribe, Provider } from 'unstated';
 import SyncIndex from '../view/components/sync';
 
 //
+
+import fbActions from '../components/firebase/actions';
+import { _currentStore, _isSingle } from '../components/settings';
+
 export default class Router extends React.Component<{},{}> {
+
+  async globalUpdateScore(uName:string){
+    await new fbActions().setColName(`${_currentStore()}_${_isSingle()}`).setDocName(uName).save();
+  }
 
   render(){
     return (
@@ -38,7 +46,7 @@ export default class Router extends React.Component<{},{}> {
               <BrowserRouter>
                 <AppBar global={global}/>
                 <Route path="/" exact component={Index}/>
-                <Route path="/data" exact render={_props=><Data global={global}/>}/>
+                <Route path="/data" exact render={_props=><Data global={global} updateGlobal={this.globalUpdateScore}/>}/>
                 <Route path="/songs" exact component={Songs}/>
                 <Route path="/favorite" exact component={Favorite}/>
                 <Route path="/notPlayed" exact component={NotPlayed}/>

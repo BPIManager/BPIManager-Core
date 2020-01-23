@@ -5,7 +5,7 @@ import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import Divider from '@material-ui/core/Divider';
 import fbActions from '../../../components/firebase/actions';
 import Typography from '@material-ui/core/Typography';
-import { _currentStore, _isSingle } from '../../../components/settings';
+import { _currentStore, _isSingle, _autoSync } from '../../../components/settings';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -185,7 +185,8 @@ class SyncControlScreen extends React.Component<{userData:any},{
           Log out
         </Button>
         <Typography component="p" variant="caption" style={{textAlign:"right"}}>
-          current configures:[version:{_currentStore()}] [mode:{_isSingle() === 1 ? "Single Play" : "Double Play"}]
+          current configures:[version:{_currentStore()}] [mode:{_isSingle() === 1 ? "Single Play" : "Double Play"}] [autoSync:{_autoSync() ? "enabled" : "disabled"}]<br/>
+          userId: {this.props.userData.uid}
         </Typography>
       </div>
     );

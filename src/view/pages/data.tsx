@@ -10,15 +10,30 @@ import Snackbar from '@material-ui/core/Snackbar';
 import importCSV from "../../components/csv/import";
 import bpiCalculator from "../../components/bpi";
 import { _currentStore, _isSingle, _currentStoreWithFullName } from '../../components/settings';
+import { _autoSync } from '../../components/settings';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Link from '@material-ui/core/Link';
 import {Link as RLink} from "react-router-dom";
 import moment from "moment";
 import { scoreData } from '../../types/data';
+import fbActions from '../../components/firebase/actions';
+interface P{
+  global:any,
+  updateGlobal:(uid:string)=>void
+}
 
-export default class Index extends React.Component<{global:any},{raw:string,isSnackbarOpen:boolean,stateText:string,errors:string[],isSaving:boolean,currentState:string,progress:number}> {
+export default class Index extends React.Component<P,{
+  raw:string,
+  isSnackbarOpen:boolean,
+  stateText:string,
+  errors:string[],
+  isSaving:boolean,
+  currentState:string,
+  progress:number,
+  uid:string,
+}> {
 
-  constructor(props:{global:any}){
+  constructor(props:P){
     super(props);
     this.state = {
       raw: "",
@@ -28,12 +43,25 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
       isSaving:false,
       currentState:"",
       progress:0,
+      uid:""
     }
     this.execute = this.execute.bind(this);
   }
 
+  componentDidMount(){
+    new fbActions().auth().onAuthStateChanged(async (user: any)=> {
+      if(user){
+        console.log(user.uid);
+        this.setState({
+          uid:user.uid,
+        });
+      }
+    });
+  }
+
   async execute(){
     try{
+      const {uid} = this.state;
       this.props.global.setMove(true);
       this.setState({isSaving:true});
       let errors = [];
@@ -81,6 +109,10 @@ export default class Index extends React.Component<{global:any},{raw:string,isSn
         ++updated;
       }
       await new importer().setHistory(histories).setScores(scores).exec();
+      // if autosync is enabled && already logged in
+      if(_autoSync() && uid !== ""){
+        this.props.updateGlobal(uid);
+      }
       this.props.global.setMove(false);
       errors.unshift(result.length + "件処理しました," + updated + "件更新しました," + skipped + "件スキップされました,"+ errorOccured + "件追加できませんでした");
       return this.setState({isSaving:false,raw:"",isSnackbarOpen:true,stateText:"Data.Success",errors:errors});

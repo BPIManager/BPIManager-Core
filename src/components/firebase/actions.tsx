@@ -61,27 +61,39 @@ export default class fbActions{
   }
 
   async save(isRegisteredAs = ""){
-    try{
-      if(!this.name || !this.docName){return {error:true,date:null};}
-      await firestore.collection(this.name).doc(this.docName).set({
-        timeStamp: timeFormatter(3),
-        serverTime:this.time(),
-        type: this.type(),
-        scores: await new scoresDB().getAll(),
-        scoresHistory : await new scoreHistoryDB().getAllInSpecificVersion(),
-      });
-      console.log("signed as :"+isRegisteredAs);
-      if(isRegisteredAs !== ""){
-        await firestore.collection("users").doc(this.docName).update({
+    if(!this.name || !this.docName){return {error:true,date:null};}
+    console.log("writing",this.docName);
+    const self = this;
+    const docRef = firestore.collection(self.name).doc(self.docName);
+    const userRef = firestore.collection("users").doc(self.docName);
+    return firestore.runTransaction(async function(transaction) {
+      await transaction.get(docRef).then(async function(doc){
+        const newDoc = {
           timeStamp: timeFormatter(3),
-          serverTime:this.time(),
-        });
-      }
+          serverTime:self.time(),
+          type: self.type(),
+          scores: await new scoresDB().getAll(),
+          scoresHistory : await new scoreHistoryDB().getAllInSpecificVersion(),
+        };
+        if(doc){
+          transaction.update(docRef,newDoc);
+        }else{
+          transaction.set(docRef,newDoc);
+        }
+        console.log("signed as :"+isRegisteredAs);
+        if(isRegisteredAs !== ""){
+          transaction.update(userRef,{
+            timeStamp: timeFormatter(3),
+            serverTime:self.time(),
+          });
+        }
+      });
+    }).then(()=>{
       return {error:false,date:timeFormatter(3)};
-    }catch(e){
+    }).catch(e=>{
       console.log(e);
       return {error:true,date:null};
-    }
+    });
   }
 
   async load(){
