@@ -59,7 +59,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
 
   render(){
     const {processing,userName,res} = this.state;
-    const url = "https://bpi.poyashi.me/user/" + encodeURI(userName);
+    const url = "https://bpi.poyashi.me/u/" + encodeURI(userName);
     if(processing){
       return (
         <Container fixed style={{padding:0}}>
@@ -91,7 +91,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
       <Container className="commonLayout" fixed>
         <p style={{textAlign:"center",margin:"10px 0"}}>
           公開用URL<br/>
-          <RLink to={"/user/" + res.displayName} style={{textDecoration:"none"}}><Link color="secondary" component="span">{url}</Link></RLink>
+          <RLink to={"/u/" + res.displayName} style={{textDecoration:"none"}}><Link color="secondary" component="span">{url}</Link></RLink>
         </p>
         <ShareButtons withTitle={false} url={url}/>
         <Paper style={{marginTop:"10px"}}>

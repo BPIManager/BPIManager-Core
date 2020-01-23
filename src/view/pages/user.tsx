@@ -158,7 +158,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
 
   render(){
     const {processing,add,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId} = this.state;
-    const url = "https://bpi.poyashi.me/user/" + encodeURI(userName);
+    const url = "https://bpi.poyashi.me/u/" + encodeURI(userName);
     if(processing){
       return (
         <Container fixed style={{padding:0}}>
@@ -183,7 +183,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
               {(!(this.props.match.params as any).uid && alternativeId) &&
               <Typography variant="body2" gutterBottom>
                 あなたのプロフィールは<br/>
-                <RefLink to={"/user/" + alternativeId} style={{textDecoration:"none"}}><Link color="secondary" component="span">https://bpi.poyashi.me/user/{alternativeId}</Link></RefLink><br/>
+                <RefLink to={"/u/" + alternativeId} style={{textDecoration:"none"}}><Link color="secondary" component="span">https://bpi.poyashi.me/u/{alternativeId}</Link></RefLink><br/>
                 から閲覧できます
               </Typography>
               }

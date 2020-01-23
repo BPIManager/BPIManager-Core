@@ -171,7 +171,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
         {(!isLoading && sentName) &&
           <p>
             あなたのプロフィールURL:<br/>
-            <RefLink to={"/user/" + sentName} style={{textDecoration:"none"}}><Link color="secondary" component="span">https://bpi.poyashi.me/user/{sentName}</Link></RefLink><br/>
+            <RefLink to={"/u/" + sentName} style={{textDecoration:"none"}}><Link color="secondary" component="span">https://bpi.poyashi.me/u/{sentName}</Link></RefLink><br/>
             このリンクをシェアすると、他の人があなたのプロフィールやスコアを確認できます。(v0.0.3.0以上のみ)
           </p>
         }
