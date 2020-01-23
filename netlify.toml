@@ -1,9 +1,9 @@
 [[redirects]]
   from = "/user/static/js/*"
   to = "/static/js/:splat"
-  status = 301
+  status = 200
 
 [[redirects]]
   from = "/user/static/css/*"
   to = "/static/css/:splat"
-  status = 301
+  status = 200
