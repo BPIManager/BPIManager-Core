@@ -1,2 +1,3 @@
-http://bpi.poyashime/user/static/*  http://bpi.poyashime/static/:splat 301!
+http://bpi.poyashime/user/static/js/*  http://bpi.poyashime/static/js/:splat 301!
+http://bpi.poyashime/user/static/css/*  http://bpi.poyashime/static/css/:splat 301!
 http://bpi.poyashime/user/manifest.json  http://bpi.poyashime/manifest.json 301!
