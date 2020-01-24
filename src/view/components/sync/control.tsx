@@ -129,6 +129,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
         <p>
         フォームに名前を入力して送信することで、あなたのスコアデータを他の人に公開できます。<br/>
         これによって、他の人があなたをライバルとして登録することができます。<br/>
+        *「転送」からスコアデータを1回以上アップロード済みであることをご確認ください。<br/>
         <Link color="secondary" href="https://gist.github.com/potakusan/08c5528d6c6a51d10aec6b6556723a80"  target="_blank" rel="noopener noreferrer">ライバル機能の詳細はこちら。</Link>
         </p>
         <TextField label="表示名を入力(最大16文字)"
