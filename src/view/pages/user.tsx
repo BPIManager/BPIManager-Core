@@ -19,8 +19,11 @@ import { rivalListsDB } from '../../components/indexedDB';
 import ShowSnackBar from '../components/snackBar';
 import RivalView from '../components/rivals/view';
 import { rivalScoreData } from '../../types/data';
-import {Link, Chip} from '@material-ui/core/';
+import {Link, Chip, Divider} from '@material-ui/core/';
 import {Link as RefLink} from "react-router-dom";
+import ClearLampView from '../components/table/fromUserPage';
+import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
+import bpiCalcuator from '../../components/bpi';
 
 interface S {
   userName:string,
@@ -33,6 +36,7 @@ interface S {
   uid:string,
   alternativeId:string,
   rivalData:rivalScoreData[],
+  totalBPI:number,
 }
 
 class User extends React.Component<{intl:any}&RouteComponentProps,S> {
@@ -54,7 +58,8 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
       showSnackBar:false,
       res:null,
       uid:"",
-      rivalData:[]
+      rivalData:[],
+      totalBPI:NaN,
     }
   }
 
@@ -86,7 +91,22 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
     const {userName} = this.state;
     this.setState({processing:true});
     const res = await this.fbA.searchRival(userName);
-    return this.setState({userName:res ? userName : "", res:res,uid:res ? res.uid : "",processing:false});
+    if(res){
+      const data = await this.fbStores.setDocName(res.uid).load();
+      if(!data){
+        return this.setState({userName:userName,res:res,uid:res.uid,rivalData:[],processing:false});
+      }
+      const s = data.scores.filter((item:any)=>item.difficultyLevel === "12");
+      const b = new bpiCalcuator();
+      const sum:number[] = s.reduce((group:number[],item:any)=>{group.push(item.currentBPI); return group;},[]);
+      b.allTwelvesBPI = sum;
+      b.allTwelvesLength = s.length;
+
+      const totalBPI = b.totalBPI();
+      return this.setState({userName:userName,res:res,uid:res.uid,rivalData:data.scores || [],totalBPI:totalBPI,processing:false});
+    }else{
+      return this.setState({userName:"", res:null,uid:"",processing:false});
+    }
   }
 
   getIIDXId = (input:string)=>{
@@ -101,10 +121,10 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
 
   addUser = async():Promise<void>=>{
     this.setState({add:true});
-    const data = await this.fbStores.setDocName(this.state.uid).load();
-    const {res} = this.state;
-    if(!data || !res){
-      return this.setState({message:"該当ユーザーは当該バージョン/モードにおけるスコアを登録していません。",processing:false});
+    const {res,rivalData} = this.state;
+    if(rivalData.length === 0 || !res){
+      this.toggleSnack("該当ユーザーは当該バージョン/モードにおけるスコアを登録していません。");
+      return this.setState({add:false});
     }
     const putResult = await this.rivalListsDB.addUser({
       rivalName:res.displayName,
@@ -115,7 +135,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
       lastUpdatedAt:res.timeStamp,
       isSingle:_isSingle(),
       storedAt:_currentStore(),
-    },data.scores);
+    },rivalData);
     if(!putResult){
       return this.setState({message:"追加に失敗しました",add:false});
     }
@@ -123,15 +143,12 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
     return;
   }
 
-  view = async():Promise<void>=>{
-    const {uid} = this.state;
-    const data = await this.fbStores.setDocName(uid).load();
-    if(!data){
+  view = async(v:number):Promise<void>=>{
+    if(this.state.rivalData.length === 0){
       return this.toggleSnack("該当ユーザーは当該バージョン/モードにおけるスコアを登録していません。");
     }
     this.setState({
-      rivalData:data.scores,
-      currentView:1,
+      currentView:v,
     })
   }
 
@@ -157,7 +174,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
   }
 
   render(){
-    const {processing,add,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId} = this.state;
+    const {processing,add,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI} = this.state;
     const url = "https://bpi.poyashi.me/u/" + encodeURI(userName);
     if(processing){
       return (
@@ -200,6 +217,14 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
         </Container>
       )
     }
+    if(currentView === 2){
+      return (
+        <Container className="commonLayout" fixed>
+          <ClearLampView backToMainPage={this.backToMainPage}
+            name={res.displayName} data={rivalData}/>
+        </Container>
+      )
+    }
     return (
       <Container className="commonLayout" id="users" fixed>
         <Paper>
@@ -211,6 +236,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
               {res.displayName}
             </Typography>
             {res.arenaRank !== "-" && <Chip size="small" style={{backgroundColor:this.color(res.arenaRank),color:"#fff",margin:"5px 0"}} label={res.arenaRank} />}
+            <Chip size="small" style={{backgroundColor:"green",color:"#fff",margin:"0 0 0 5px"}} label={"総合BPI:" + String(Number.isNaN(totalBPI) ? "-" : totalBPI)} />
             <Typography variant="caption" component="p" gutterBottom style={{color:"#aaa",marginBottom:"10px"}}>
               最終更新:{res.timeStamp}
             </Typography>
@@ -219,12 +245,16 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
             </Typography>
           </div>
         </Paper>
-        <Button onClick={this.view} disabled={add || processing} startIcon={<ViewListIcon/>} variant="outlined" color="primary" fullWidth style={{margin:"10px 0 5px 0"}}>
+        <Button onClick={()=>this.view(1)} disabled={add || processing} startIcon={<ViewListIcon/>} variant="outlined" color="primary" fullWidth style={{margin:"10px 0 5px 0"}}>
           スコアを見る
+        </Button>
+        <Button onClick={()=>this.view(2)} disabled={add || processing} startIcon={<WbIncandescentIcon/>} variant="outlined" color="primary" fullWidth style={{margin:"0 0 5px 0"}}>
+          AAA達成表(beta)
         </Button>
         <Button onClick={this.addUser} disabled={add || processing} startIcon={<GroupAddIcon/>} variant="outlined" color="primary" fullWidth style={{margin:"0 0 5px 0"}}>
           ライバルに追加
         </Button>
+        {(this.getIIDXId(res.profile) !== "" || this.getTwitterName(res.profile) !== "") && <Divider style={{margin:"5px 0 10px 0"}}/>}
         {this.getIIDXId(res.profile) !== "" &&
           <form method="post" name="rivalSearch" action="https://p.eagate.573.jp/game/2dx/27/rival/rival_search.html#rivalsearch">
             <input type="hidden" name="iidxid" value={this.getIIDXId(res.profile)}/>
