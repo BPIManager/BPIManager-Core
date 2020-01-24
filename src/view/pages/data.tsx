@@ -7,7 +7,7 @@ import {scoresDB, importer} from "../../components/indexedDB";
 import TextField from '@material-ui/core/TextField';
 import Divider from '@material-ui/core/Divider';
 import Snackbar from '@material-ui/core/Snackbar';
-import importCSV from "../../components/csv/import";
+import importCSV from "../../components/import/csv";
 import bpiCalculator from "../../components/bpi";
 import { _currentStore, _isSingle, _currentStoreWithFullName } from '../../components/settings';
 import { _autoSync } from '../../components/settings';
@@ -17,6 +17,12 @@ import {Link as RLink} from "react-router-dom";
 import moment from "moment";
 import { scoreData } from '../../types/data';
 import fbActions from '../../components/firebase/actions';
+import importJSON from '../../components/import/json';
+import FormControl from '@material-ui/core/FormControl';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Radio from '@material-ui/core/Radio';
+
 interface P{
   global:any,
   updateGlobal:(uid:string)=>void
@@ -59,6 +65,19 @@ export default class Index extends React.Component<P,{
     });
   }
 
+  isJSON = (arg:any)=>{
+    arg = (typeof arg === "function") ? arg() : arg;
+    if (typeof arg  !== "string") {
+      return false;
+    }
+    try {
+      arg = (!JSON) ? eval("(" + arg + ")") : JSON.parse(arg);
+      return true;
+    } catch (e) {
+        return false;
+    }
+  }
+
   async execute(){
     try{
       const {uid} = this.state;
@@ -67,13 +86,15 @@ export default class Index extends React.Component<P,{
       let errors = [];
       const isSingle:number = _isSingle();
       const currentStore:string = _currentStore();
-      const executor:importCSV = new importCSV(this.state.raw,isSingle,currentStore);
+      const isJSON = this.isJSON(this.state.raw);
+      console.log(isJSON);
+      const executor:importJSON|importCSV = isJSON ? new importJSON(this.state.raw,isSingle,currentStore) : new importCSV(this.state.raw,isSingle,currentStore);
       const calc:bpiCalculator = new bpiCalculator();
       const exec:number = await executor.execute();
       const scores = [];
       const histories = [];
       if(!exec){
-        throw new Error("CSVデータの形式が正しくありません");
+        throw new Error("データの形式が正しくありません");
       }
 
       const result = executor.getResult(),resultHistory = executor.getResultHistory();
@@ -142,12 +163,9 @@ export default class Index extends React.Component<P,{
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
           <FormattedMessage id="Data.add"/>
         </Typography>
-        <FormattedMessage id="Data.infoBulk"/><br/>
-        <FormattedMessage id="Data.howToBulk1"/>
         <Link color="secondary" href={"https://p.eagate.573.jp/game/2dx/"+_currentStore()+"/djdata/score_download.html?style=" + spdp} target="_blank" rel="noopener noreferrer">
-          <FormattedMessage id="Data.CSVURL"/>
+          CSVダウンロードページへ
         </Link>
-        <FormattedMessage id="Data.howToBulk2"/>
         <TextField
           onChange={this.onChangeText}
           value={raw}
@@ -172,7 +190,10 @@ export default class Index extends React.Component<P,{
         </div>
         {errors && errors.map(item=><span key={item}>{item}<br/></span>)}
         <Divider variant="middle" style={{margin:"10px 0"}}/>
-        <FormattedMessage id="Data.notPremium1"/>
+        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
+          取り込み方
+        </Typography>
+        <Navigation/>
         <Divider variant="middle" style={{margin:"10px 0"}}/>
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
           <FormattedMessage id="Data.edit"/>
@@ -193,5 +214,84 @@ export default class Index extends React.Component<P,{
         定期的に本機能を用いてデータのバックアップを取ることをおすすめしています。
       </Container>
     );
+  }
+}
+
+
+class Navigation extends React.Component<{},{currentTab:number}>{
+
+  constructor(props:{}){
+    super(props);
+    this.state = {currentTab:0};
+  }
+
+  handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({currentTab:Number(e.target.value)});
+  };
+
+  render(){
+    const {currentTab} = this.state;
+    return (
+      <div>
+        <FormControl component="fieldset">
+          <RadioGroup aria-label="position" name="position" value={currentTab} onChange={this.handleChange} row>
+            <FormControlLabel
+              value={0}
+              control={<Radio color="primary" />}
+              label="CSV(プレミアム会員向け)"
+              labelPlacement="end"
+            />
+            <FormControlLabel
+              value={1}
+              control={<Radio color="primary" />}
+              label="ブックマークレット(非プレミアム会員向け)"
+              labelPlacement="end"
+            />
+          </RadioGroup>
+        </FormControl>
+        {currentTab === 0 && (
+          <div>
+            <ol>
+              <li>上記「CSVダウンロードページへ」へアクセスします。</li>
+              <li>テキストボックスにCSVデータが表示されますので、それをコピーします。</li>
+              <li>上記テキストボックスにコピーしたデータを貼り付けます。</li>
+              <li>「取り込み実行」ボタンをクリックします。</li>
+              <li>以上！</li>
+            </ol>
+          </div>
+        )}
+        {currentTab === 1 && (
+          <div>
+            <pre style={{background:"#eaeaea",padding:"15px",margin:"10px",wordBreak:"break-all",whiteSpace:"pre-line"}}>
+              &#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#58;&#40;&#102;&#117;&#110;&#99;&#116;&#105;&#111;&#110;&#40;&#41;&#32;&#123;&#32;&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#58;&#32;&#40;&#102;&#117;&#110;&#99;&#116;&#105;&#111;&#110;&#40;&#100;&#44;&#32;&#115;&#41;&#32;&#123;&#32;&#115;&#32;&#61;&#32;&#100;&#46;&#99;&#114;&#101;&#97;&#116;&#101;&#69;&#108;&#101;&#109;&#101;&#110;&#116;&#40;&#39;&#115;&#99;&#114;&#105;&#112;&#116;&#39;&#41;&#59;&#32;&#115;&#46;&#115;&#114;&#99;&#32;&#61;&#32;&#39;&#104;&#116;&#116;&#112;&#115;&#58;&#47;&#47;&#102;&#105;&#108;&#101;&#115;&#46;&#112;&#111;&#121;&#97;&#115;&#104;&#105;&#46;&#109;&#101;&#47;&#98;&#112;&#105;&#109;&#47;&#105;&#110;&#100;&#101;&#120;&#46;&#106;&#115;&#63;&#118;&#61;&#39;&#32;&#43;&#32;&#78;&#117;&#109;&#98;&#101;&#114;&#40;&#77;&#97;&#116;&#104;&#46;&#102;&#108;&#111;&#111;&#114;&#40;&#77;&#97;&#116;&#104;&#46;&#114;&#97;&#110;&#100;&#111;&#109;&#40;&#41;&#32;&#42;&#32;&#49;&#48;&#48;&#48;&#48;&#48;&#48;&#48;&#41;&#41;&#59;&#32;&#100;&#46;&#98;&#111;&#100;&#121;&#46;&#97;&#112;&#112;&#101;&#110;&#100;&#67;&#104;&#105;&#108;&#100;&#40;&#115;&#41;&#59;&#32;&#125;&#41;&#40;&#100;&#111;&#99;&#117;&#109;&#101;&#110;&#116;&#41;&#32;&#125;&#41;&#40;&#41;&#59;
+            </pre>
+            <p>
+              1.ブラウザに上記ブックマークレットを登録します。
+              <Link color="secondary" href="http://yomahigoto.blogspot.com/2017/10/androidchrome.html" target="_blank" rel="noopener noreferrer">登録方法はこちらのサイトを参照してください。</Link>
+            </p>
+            <p>
+              2.<Link color="secondary" href="https://p.eagate.573.jp/game/2dx/27/top/index.html" target="_blank" rel="noopener noreferrer">IIDX公式サイト</Link>
+              を開きます。
+            </p>
+            <p>
+              3.登録したブックマークレットを実行します。
+            </p>
+            <p>
+              <img src="https://files.poyashi.me/bpim/sample_completed.jpg" alt="完了画面" style={{display:"block",margin:"10px auto",width:"350px",maxWidth:"100%",border:"1px solid #ccc"}}/>
+              4.処理が完了したら、テキストボックスが画面に表示されます(上画像参照)ので、その中のテキストをコピーします。
+            </p>
+            <p>5.上記テキストボックスにコピーしたデータを貼り付けます。</p>
+            <p>6.「取り込み実行」ボタンをクリックします。</p>
+            <p>7.以上！</p>
+            <p>注意事項<br/>
+            IIDX公式サイトの仕様変更によりブックマークレットが機能しなくなるかもしれません。その場合はお問い合わせください。<br/>
+            ブックマークレットにより更新できる情報はEXスコアとクリアランプのみです。ミスカウントなどは集計されません。<br/>
+            更新日時は最終プレイ日時ではなく、取り込み日時となります。<br/>
+            ブックマークレットは現段階ではSPのみ対応しています。
+            </p>
+          </div>
+        )}
+      </div>
+    )
   }
 }

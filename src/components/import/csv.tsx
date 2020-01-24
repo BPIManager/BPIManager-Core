@@ -99,7 +99,6 @@ export default class importCSV {
             if(Number(p[eachObjNum[2]]) === 0) continue;
             result.push({
               title:name,
-              version:p[eachObjNum[0]],
               difficulty:difficulty,
               currentBPI:0,
               difficultyLevel:"-",

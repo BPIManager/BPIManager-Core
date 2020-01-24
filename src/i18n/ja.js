@@ -12,7 +12,7 @@ const ja = {
   "GlobalNav.Settings": "設定",
   "GlobalNav.Help": "説明書",
   "Index.heroText": "Web上でbeatmania IIDXのスコアを管理し、BPIとして可視化できます。",
-  "Index.importButton" : "CSVを取り込む",
+  "Index.importButton" : "データインポート",
   "Index.songsListButton" : "楽曲一覧",
   "Index.enqueteButton":"アンケートにご協力ください",
   "Index.helpButton" : "ヘルプを読む",
