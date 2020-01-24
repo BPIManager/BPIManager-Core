@@ -107,7 +107,8 @@ class SyncControlScreen extends React.Component<{userData:any},{
         <Typography component="h5" variant="h5">
           転送
         </Typography>
-        <FormattedMessage id="Sync.Control.message1"/>
+        <FormattedMessage id="Sync.Control.message1"/><br/>
+        <RefLink to={"/settings"} style={{textDecoration:"none"}}><Link color="secondary" component="span">設定</Link></RefLink>から「Auto-sync」を有効にすることで、CSV取り込み時自動で同期することができます。<br/>
         <Divider style={{margin:"10px 0"}}/>
         {isLoading && <p><FormattedMessage id="Sync.Control.processing"/></p>}
         {(!isLoading && scoreData === null) && <p><FormattedMessage id="Sync.Control.nodata"/></p>}
