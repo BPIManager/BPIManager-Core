@@ -28,6 +28,7 @@ import { FormattedMessage } from "react-intl";
 import PeopleIcon from '@material-ui/icons/People';
 import Slide from "@material-ui/core/Slide";
 import ShowSnackBar from "../snackBar";
+import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
 
 function HideOnScroll(props:HideOnScrollProps) {
   const { children, window } = props;
@@ -109,6 +110,11 @@ class GlobalHeader extends React.Component<{global:any} & HideOnScrollProps,{isO
         to:"/sync",
         id:"GlobalNav.Sync",
         icon:<SwapVerticalCircleIcon />
+      },
+      {
+        to:"/AAATable",
+        id:"GlobalNav.AAATable",
+        icon:<WbIncandescentIcon />
       },
       {
         to:"/settings",

@@ -9,6 +9,7 @@ const ja = {
   "GlobalNav.compare": "Compare",
   "GlobalNav.Sync":"Sync",
   "GlobalNav.Rivals":"Rivals",
+  "GlobalNav.AAATable":"AAA Table",
   "GlobalNav.Settings": "Settings",
   "GlobalNav.Help": "Help",
   "Index.heroText": "Easily manage your beatmania IIDX scores and visualize them as BPI, in Web.",

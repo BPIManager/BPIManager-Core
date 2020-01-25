@@ -1,7 +1,9 @@
-export interface CLBody {"title":string,"difficulty":string,"bpi":number,"objectiveBPI"?:number};
+interface CLOrigin {"title":string,"difficulty":string,"bpi":number};
+export interface CLBody extends CLOrigin{"currentBPI":number,"exScore":number};
 export interface CLInt {[key:string]:CLBody[]};
+export interface CLOrigInt {[key:string]:CLOrigin[]};
 
-export const AAADifficulty:CLInt = {
+export const AAADifficulty:CLOrigInt = {
 	"0": [{
 		"title": "L.F.O",
 		"difficulty": "another",
@@ -1336,7 +1338,12 @@ export const AAADifficulty:CLInt = {
 		"difficulty": "another",
 		"bpi": 47.64
 	}],
-	"50+": [{
+	"50": [
+	{
+		"title": "Mare Nectaris",
+		"difficulty": "another",
+		"bpi": 56.17
+	},{
 		"title": "ICARUS",
 		"difficulty": "leggendaria",
 		"bpi": 53.1
@@ -1344,11 +1351,6 @@ export const AAADifficulty:CLInt = {
 		"title": "X-DEN",
 		"difficulty": "another",
 		"bpi": 50.28
-	},
-	{
-		"title": "Mare Nectaris",
-		"difficulty": "another",
-		"bpi": 56.17
 	}],
 	"-5": [{
 		"title": "Rampage",

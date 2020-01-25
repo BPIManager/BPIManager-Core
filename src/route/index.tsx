@@ -12,6 +12,7 @@ import Compare from "../view/pages/compare";
 import Help from "../view/pages/help";
 import Rivals from "../view/pages/rivals";
 import User from "../view/pages/user";
+import AAATable from "../view/pages/AAATable";
 import {BrowserRouter, Route} from "react-router-dom";
 
 
@@ -58,6 +59,7 @@ export default class Router extends React.Component<{},{}> {
                 <Route path="/help" exact component={Help}/>
                 <Route path="/sync" exact component={SyncIndex}/>
                 <Route path="/rivals" exact component={Rivals}/>
+                <Route path="/AAATable" exact component={AAATable}/>
                 <Route path="/u/" exact component={User}/>
                 <Route path="/u/:uid" exact component={User}/>
               </BrowserRouter>
