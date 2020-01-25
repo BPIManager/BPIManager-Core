@@ -4,6 +4,7 @@ import { scoresDB, scoreHistoryDB } from "../indexedDB";
 import platform from "platform";
 import firebase from 'firebase/app';
 import { rivalStoreData } from "../../types/data";
+import bpiCalcuator from '../bpi';
 
 export default class fbActions{
 
@@ -64,6 +65,7 @@ export default class fbActions{
     if(!this.name || !this.docName){return {error:true,date:null};}
     console.log("writing",this.docName);
     const self = this;
+    const s = await new scoresDB().getAll();
     const docRef = firestore.collection(self.name).doc(self.docName);
     const userRef = firestore.collection("users").doc(self.docName);
     return firestore.runTransaction(async function(transaction) {
@@ -72,7 +74,7 @@ export default class fbActions{
           timeStamp: timeFormatter(3),
           serverTime:self.time(),
           type: self.type(),
-          scores: await new scoresDB().getAll(),
+          scores: s,
           scoresHistory : await new scoreHistoryDB().getAllInSpecificVersion(),
         };
         if(doc){
@@ -82,9 +84,14 @@ export default class fbActions{
         }
         console.log("signed as :"+isRegisteredAs);
         if(isRegisteredAs !== ""){
+          const bpi = new bpiCalcuator();
+          const _s = s.filter(item=>item.difficultyLevel === "12");
+          bpi.allTwelvesBPI = _s.reduce((group:number[],item:any)=>{group.push(item.currentBPI); return group;},[]);
+          bpi.allTwelvesLength = _s.length;
           transaction.update(userRef,{
             timeStamp: timeFormatter(3),
             serverTime:self.time(),
+            totalBPI:bpi.totalBPI(),
           });
         }
       });
