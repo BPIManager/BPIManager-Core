@@ -21,11 +21,15 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { rivalStoreData, rivalScoreData, DBRivalStoreData } from '../../../types/data';
+import {Chip} from '@material-ui/core/';
+import {arenaRankColor} from '../../../components/common';
+import {Link} from 'react-router-dom';
 
 interface P {
   compareUser:(rivalMeta:rivalStoreData,rivalBody:rivalScoreData[],last:rivalStoreData,arenaRank:string)=>void,
   last:rivalStoreData|null,
   arenaRank:string,
+  recommended:boolean,
 }
 
 interface S {
@@ -76,8 +80,9 @@ class RecentlyAdded extends React.Component<P,S> {
   }
 
   search = async(last:rivalStoreData|null = null,endAt:rivalStoreData|null = null,arenaRank = this.state.arenaRank):Promise<void>=>{
+    const {recommended} = this.props;
     this.setState({processing:true,isLoading:true,});
-    const res = await this.fbA.recentUpdated(last,endAt,arenaRank);
+    const res = await this.fbA.recentUpdated(last,endAt,arenaRank,recommended);
     if(!res){
       return this.toggleSnack("該当ページが見つかりませんでした。","warning")
     }
@@ -127,8 +132,10 @@ class RecentlyAdded extends React.Component<P,S> {
 
   render(){
     const {isLoading,showSnackBar,activated,res,rivals,processing,message,variant,arenaRank} = this.state;
+    const {recommended} = this.props;
     return (
       <div>
+      {!recommended &&
       <FormControl style={{minWidth:"150px",float:"right"}}>
         <InputLabel>最高アリーナランク</InputLabel>
         <Select value={arenaRank} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
@@ -139,6 +146,7 @@ class RecentlyAdded extends React.Component<P,S> {
           {["すべて","A1","A2","A3","A4","A5","B1","B2","B3","B4","B5"].map(item=><MenuItem value={item} key={item}>{item}</MenuItem>)}
         </Select>
       </FormControl>
+      }
       <div className="clearBoth" style={{marginTop:"5px"}}/>
       {(activated && res.length === 0) && <div>
         <p>
@@ -150,14 +158,19 @@ class RecentlyAdded extends React.Component<P,S> {
         <Card style={{margin:"10px 0"}}>
           <CardHeader
             avatar={
-              <Avatar>
-                <img src={item.photoURL ? item.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
-                  alt={item.displayName}
-                  onError={(e)=>(e.target as HTMLImageElement).src = 'https://files.poyashi.me/noimg.png'}/>
-              </Avatar>
+              <Link to={"/u/" + item.displayName}>
+                <Avatar>
+                  <img src={item.photoURL ? item.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
+                    alt={item.displayName}
+                    onError={(e)=>(e.target as HTMLImageElement).src = 'https://files.poyashi.me/noimg.png'}/>
+                  </Avatar>
+              </Link>
             }
             title={item.displayName}
-            subheader={"最終更新:" + item.timeStamp + " / " + (item.arenaRank || "-")}
+            subheader={<span>
+            <Chip size="small" style={{backgroundColor:arenaRankColor(item.arenaRank),color:"#fff",margin:"5px 0"}} label={item.arenaRank || "-"} />
+            {item.totalBPI && <Chip size="small" style={{backgroundColor:"green",color:"#fff",margin:"0 0 0 5px"}} label={"総合BPI:" + item.totalBPI} />}
+            </span>}
           />
           <CardContent>
             <Typography variant="body2" color="textSecondary" component="p">
@@ -189,6 +202,7 @@ class RecentlyAdded extends React.Component<P,S> {
           <CircularProgress />
         </Container>
       </div>}
+      {!recommended &&
       <Grid container>
         <Grid item xs={12}>
           <Button disabled={processing} onClick={this.next} variant="contained" color="secondary" fullWidth>
@@ -196,6 +210,7 @@ class RecentlyAdded extends React.Component<P,S> {
           </Button>
         </Grid>
       </Grid>
+      }
       <ShowSnackBar message={message} variant={variant}
           handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>
       </div>

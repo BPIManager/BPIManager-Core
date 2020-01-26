@@ -10,11 +10,14 @@ import fbActions from '../../../components/firebase/actions';
 import ShareButtons from '../common/shareButtons';
 import WarningIcon from '@material-ui/icons/Warning';
 import Link from '@material-ui/core/Link';
+import {Chip} from '@material-ui/core/';
+import {arenaRankColor,getTotalBPI} from "../../../components/common/";
 
 interface S {
   userName:string,
   processing:boolean,
   res:any,
+  totalBPI:number,
 }
 
 class User extends React.Component<{intl:any}&RouteComponentProps,S> {
@@ -26,6 +29,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
     this.state ={
       userName:"",
       processing:true,
+      totalBPI:NaN,
       res:null,
     }
   }
@@ -37,6 +41,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
         this.setState({
           res:t || null,
           userName:(t && t.displayName) ? t.displayName : "",
+          totalBPI:await this.getTotalBPI(),
           processing:false,
         });
       }else{
@@ -57,8 +62,12 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
     return match ? match[0].replace(/@/g,"") : "";
   }
 
+  getTotalBPI = async()=>{
+    return await getTotalBPI();
+  }
+
   render(){
-    const {processing,userName,res} = this.state;
+    const {processing,userName,res,totalBPI} = this.state;
     const url = "https://bpi.poyashi.me/u/" + encodeURI(userName);
     if(processing){
       return (
@@ -102,10 +111,8 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
             <Typography variant="h4">
               {res.displayName}
             </Typography>
-            <Typography variant="caption" component="p" gutterBottom style={{color:"#aaa",marginBottom:"10px"}}>
-              アリーナランク:{res.arenaRank}<br/>
-              最終更新:{res.timeStamp}
-            </Typography>
+              <Chip size="small" style={{backgroundColor:arenaRankColor(res.arenaRank),color:"#fff",margin:"5px 0"}} label={res.arenaRank || "-"} />
+              <Chip size="small" style={{backgroundColor:"green",color:"#fff",margin:"0 0 0 5px"}} label={"総合BPI:" + totalBPI} />
             <Typography variant="body1" gutterBottom>
               {res.profile}
             </Typography>

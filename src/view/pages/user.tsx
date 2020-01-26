@@ -24,6 +24,7 @@ import {Link as RefLink} from "react-router-dom";
 import ClearLampView from '../components/table/fromUserPage';
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
 import bpiCalcuator from '../../components/bpi';
+import {arenaRankColor} from '../../components/common';
 
 interface S {
   userName:string,
@@ -153,24 +154,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
   }
 
   color = (rank:string)=>{
-    switch(rank){
-      case "A1":
-      return "rgb(255, 89, 89)";
-      case "A2":
-      case "A3":
-      return "rgb(255, 141, 23)"
-      case "A4":
-      case "A5":
-      return "rgb(166, 23, 255)"
-      case "B1":
-      case "B2":
-      return "rgb(89, 117, 255)"
-      case "B3":
-      case "B4":
-      return "rgb(87, 94, 127)"
-      case "B5":
-      return "rgb(27, 28, 31)"
-    }
+    return arenaRankColor(rank);
   }
 
   render(){
@@ -235,7 +219,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
             <Typography variant="h4">
               {res.displayName}
             </Typography>
-            {res.arenaRank !== "-" && <Chip size="small" style={{backgroundColor:this.color(res.arenaRank),color:"#fff",margin:"5px 0"}} label={res.arenaRank} />}
+            <Chip size="small" style={{backgroundColor:this.color(res.arenaRank),color:"#fff",margin:"5px 0"}} label={res.arenaRank || "-"} />
             <Chip size="small" style={{backgroundColor:"green",color:"#fff",margin:"0 0 0 5px"}} label={"総合BPI:" + String(Number.isNaN(totalBPI) ? "-" : totalBPI)} />
             <Typography variant="caption" component="p" gutterBottom style={{color:"#aaa",marginBottom:"10px"}}>
               最終更新:{res.timeStamp}

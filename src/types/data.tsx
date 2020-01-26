@@ -58,7 +58,8 @@ export interface rivalStoreData{
   displayName:string,
   profile:string,
   photoURL:string,
-  arenaRank:string
+  arenaRank:string,
+  totalBPI?:string
 }
 
 export interface DBRivalStoreData{

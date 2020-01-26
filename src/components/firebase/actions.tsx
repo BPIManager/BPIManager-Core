@@ -5,6 +5,7 @@ import platform from "platform";
 import firebase from 'firebase/app';
 import { rivalStoreData } from "../../types/data";
 import bpiCalcuator from '../bpi';
+import {getTotalBPI} from '../common';
 
 export default class fbActions{
 
@@ -169,20 +170,29 @@ export default class fbActions{
     }
   }
 
-  async recentUpdated(last:rivalStoreData|null,endAt:rivalStoreData|null,arenaRank:string):Promise<rivalStoreData[]>{
+  async recentUpdated(last:rivalStoreData|null,endAt:rivalStoreData|null,arenaRank:string,recommended:boolean):Promise<rivalStoreData[]>{
     try{
-      let query = firestore.collection("users").orderBy("serverTime", "desc");
-      if(last){
-        query = query.startAfter(last.serverTime);
+      let query:firebase.firestore.Query = firestore.collection("users").orderBy("serverTime", "desc");
+      if(!recommended){
+        if(arenaRank !== "すべて"){
+          query = query.where("arenaRank","==",arenaRank);
+        }
+        if(last){
+          query = query.startAfter(last.serverTime);
+        }
+        if(endAt){
+          query = query.endAt(endAt.serverTime);
+        }
+        if(!endAt){
+          query = query.limit(10);
+        }
       }
-      if(endAt){
-        query = query.endAt(endAt.serverTime);
-      }
-      if(arenaRank !== "すべて"){
-        query = query.where("arenaRank","==",arenaRank);
-      }
-      if(!endAt){
-        query = query.limit(10);
+      if(recommended){
+        query = firestore.collection("users").orderBy("totalBPI", "desc");
+        const total = await getTotalBPI();
+        query = query.where("totalBPI",">=",total - 10);
+        query = query.where("totalBPI","<=",total + 10);
+        query = query.limit(20);
       }
       const res = await query.get();
       if(!res.empty && res.size >= 1){

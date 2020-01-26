@@ -44,12 +44,14 @@ class RivalIndex extends React.Component<P,S> {
           style={{margin:"5px 0"}}
         >
           <Tab label="一覧" />
-          <Tab label="探す" />
+          <Tab label="おすすめ" />
+          <Tab label="最近更新" />
           <Tab label="あなた" />
         </Tabs>
         {currentTab === 0 && <RivalLists showEachRival={this.props.showEachRival}/>}
-        {currentTab === 1 && <RecentlyAdded compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
-        {currentTab === 2 && <You/>}
+        {currentTab === 1 && <RecentlyAdded recommended={true} compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
+        {currentTab === 2 && <RecentlyAdded recommended={false} compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
+        {currentTab === 3 && <You/>}
       </div>
     );
   }

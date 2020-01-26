@@ -38,8 +38,8 @@ export default class Index extends React.Component<{},{}> {
             <FormattedMessage id="Top.Title"/>
           </Typography>
           <Typography align="center" color="textSecondary" paragraph variant="caption">
-            beta ver0.0.3.1<br/>
-            last update: 2020/01/25 JST
+            beta ver0.0.3.2<br/>
+            last update: 2020/01/27 JST
           </Typography>
           <Typography align="center" color="textSecondary" paragraph variant="caption">
             {_lang() === "en" &&
