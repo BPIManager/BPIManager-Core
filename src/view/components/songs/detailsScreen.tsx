@@ -12,6 +12,7 @@ import { _prefixFromNum, getSongSuffixForIIDXInfo } from "../../../components/so
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
 import TextField from "@material-ui/core/TextField";
+import Container from "@material-ui/core/Container";
 import { FormattedMessage, injectIntl } from "react-intl";
 import Paper from "@material-ui/core/Paper";
 import bpiCalcuator, { B } from "../../../components/bpi";
@@ -30,6 +31,8 @@ import { UnregisterCallback } from "history";
 import TabPanel from "./common/tabPanel";
 import { _currentTheme,isEnableTweetButton } from "../../../components/settings";
 import _djRank from "../../../components/common/djRank";
+import {rivalListsDB} from "../../../components/indexedDB";
+import SongRivals from "./songRivals";
 
 interface P{
   isOpen:boolean,
@@ -56,6 +59,8 @@ interface S{
   graphLastUpdated:number,
   isSaving:boolean,
   showBody:boolean,
+  hasRival:boolean,
+  isLoading:boolean,
 }
 
 export interface chartData{
@@ -72,6 +77,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
     super(props);
     this.state = {
       isError:false,
+      isLoading:true,
       newScore: NaN,
       newBPI:NaN,
       newClearState:-1,
@@ -87,7 +93,14 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       graphLastUpdated:new Date().getTime(),
       isSaving:false,
       showBody:false,
+      hasRival:false,
     }
+  }
+
+  async componentDidMount(){
+    const r = new rivalListsDB();
+    const hasRivals = await r.getAll();
+    this.setState({hasRival:hasRivals.length > 0,isLoading:false,});
   }
 
   toggleShowBPI = ():void=>{
@@ -234,9 +247,15 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
   render(){
     const {formatMessage} = this.props.intl;
     const {isOpen,handleOpen,song,score} = this.props;
-    const {isSaving,newScore,newBPI,newClearState,newMissCount,showCharts,chartData,currentTab,anchorEl,favorited,successSnack,errorSnack,errorSnackMessage} = this.state;
+    const {isSaving,isLoading,newScore,newBPI,newClearState,newMissCount,showCharts,chartData,currentTab,anchorEl,favorited,successSnack,errorSnack,errorSnackMessage,hasRival} = this.state;
     if(!song || !score){
       return (null);
+    }
+    if(isLoading){
+      return (
+        <Container className="loaderCentered">
+          <CircularProgress />
+        </Container>);
     }
     const detectStarIconColor = favorited ? "#ffd700" : "#c3c3c3";
     return (
@@ -340,13 +359,16 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
         </Paper>
         <Tabs
           value={currentTab}
-          variant="fullWidth"
           indicatorColor="primary"
           textColor="primary"
-          onChange={this.handleTabChange}>
+          onChange={this.handleTabChange}
+          variant="scrollable"
+          className={hasRival ? "scrollableSpacebetween sc4Items" : "scrollableSpacebetween sc3Items"}
+          scrollButtons="off">
           <Tab label={<FormattedMessage id="Details.Graph"/>} />
           <Tab label={<FormattedMessage id="Details.Details"/>} />
           <Tab label={<FormattedMessage id="Details.Diffs"/>} />
+          {hasRival && <Tab label={<FormattedMessage id="Details.Rivals"/>} />}
         </Tabs>
         <TabPanel value={currentTab} index={0}>
           {showCharts &&
@@ -364,6 +386,9 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
         </TabPanel>
         <TabPanel value={currentTab} index={2}>
           <SongDiffs song={song} score={score}/>
+        </TabPanel>
+        <TabPanel value={currentTab} index={3}>
+          <SongRivals song={song} score={score}/>
         </TabPanel>
         <ShowSnackBar message={errorSnackMessage} variant="warning"
             handleClose={this.toggleErrorSnack} open={errorSnack} autoHideDuration={3000}/>

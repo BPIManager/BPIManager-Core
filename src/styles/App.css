@@ -53,7 +53,8 @@
 }
 
 th.MuiTableCell-root.MuiTableCell-head:first-child,
-td.MuiTableCell-root.MuiTableCell-body:first-child {
+td.MuiTableCell-root.MuiTableCell-body:first-child,
+.forceWith th.MuiTableCell-root.MuiTableCell-head {
     padding: 20px 5px !important;
     text-align: center;
     width:35px;
@@ -362,4 +363,22 @@ legend.MuiFormLabel-root{
 
 #__dark #users .MuiButton-outlinedPrimary{
   color:#fff;
+}
+
+.scrollableSpacebetween button{
+  width:25% !important;
+}
+
+@media screen and (max-width:324px){
+  .scrollableSpacebetween button{
+    width:27% !important;
+  }
+}
+
+.sc3Items button{
+  width:33.3% !important;
+}
+
+.scrollableSpacebetween .MuiTabs-flexContainer{
+  justify-content:space-between;
 }

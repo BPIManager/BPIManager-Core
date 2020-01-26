@@ -61,6 +61,7 @@ const ja = {
   "Details.Graph":"グラフ",
   "Details.Details":"詳細",
   "Details.Diffs":"ログ",
+  "Details.Rivals":"ライバル",
   "Details.ErrorIIDXInfo":"IIDXInfoは☆12楽曲でのみ利用できます。",
   "Common.Tweet":"ツイート",
   "SongDetail.SongDetailHead":"楽曲",

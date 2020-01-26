@@ -5,6 +5,7 @@ import {_currentStore,_isSingle} from "../settings";
 import moment from "moment";
 import {difficultyDiscriminator, difficultyParser} from "../songs/filter";
 import bpiCalcuator from "../bpi";
+import {noimg} from "../common/"
 
 const storageWrapper = class extends Dexie{
   target: string = "scores";
@@ -733,6 +734,27 @@ export const rivalListsDB = class extends storageWrapper{
       return this.rivals.where({rivalName:uid,isSingle:_isSingle(),storedAt:_currentStore()}).toArray();
     }catch(e){
       return [];
+    }
+  }
+
+  async getAllScoresWithTitle(title:string,difficulty:string):Promise<rivalScoreData[]>{
+    try{
+      return this.rivals.where({isSingle:_isSingle(),storedAt:_currentStore(),title:title,difficulty:difficulty}).toArray();
+    }catch(e){
+      return [];
+    }
+  }
+
+  async getDisplayData(uid:string):Promise<{name:string,icon:string}>{
+    try{
+      const t = await this.rivalLists.where({uid:uid}).toArray();
+      if(t.length > 0){
+        return {name:t[0]["rivalName"],icon:t[0]["photoURL"]};
+      }else{
+        return {name:"UNKNOWN",icon:noimg};
+      }
+    }catch(e){
+      return {name:"UNKNOWN",icon:noimg};
     }
   }
 

@@ -49,3 +49,5 @@ export const getTotalBPI = async():Promise<number>=>{
 
   return bpi.totalBPI();
 }
+
+export const noimg = "https://files.poyashi.me/noimg.png"
