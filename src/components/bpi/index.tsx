@@ -28,6 +28,12 @@ export default class bpiCalcuator{
     this.totalKaidens = this.isSingle ? 2645 : 612;
   }
 
+  setTraditionalMode(s:number){
+    this.traditionalMode = s;
+    this.powCoef = this.traditionalMode === 1 ? 1.5 : 1.175;
+    return;
+  }
+
   setCoef(coef:number = 1.175){
     if(this.traditionalMode === 1){
       this.powCoef = 1.5;

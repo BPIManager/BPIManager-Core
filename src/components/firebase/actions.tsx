@@ -86,6 +86,7 @@ export default class fbActions{
         console.log("signed as :"+isRegisteredAs);
         if(isRegisteredAs !== ""){
           const bpi = new bpiCalcuator();
+          bpi.setTraditionalMode(0);
           const _s = s.filter(item=>item.difficultyLevel === "12");
           bpi.allTwelvesBPI = _s.reduce((group:number[],item:any)=>{group.push(item.currentBPI); return group;},[]);
           bpi.allTwelvesLength = _s.length;

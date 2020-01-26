@@ -39,6 +39,7 @@ export const arenaRankColor = (rank:string)=>{
 
 export const getTotalBPI = async():Promise<number>=>{
   const bpi = new bpiCalcuator();
+  bpi.setTraditionalMode(0);
   const db = await new scoresDB(_isSingle(),_currentStore()).loadStore();
   const twelves = await db.getItemsBySongDifficulty("12");
   const bpiMapper = (t:scoreData[])=>t.map((item:scoreData)=>item.currentBPI);
