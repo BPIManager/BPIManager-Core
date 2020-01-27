@@ -81,7 +81,7 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
       },
       bpi:{
         min:initialBPIRange ? Number(initialBPIRange) : "",
-        max:initialBPIRange ? Number(initialBPIRange) + 10 : "",
+        max:initialBPIRange && initialBPIRange !== "100" ? Number(initialBPIRange) + 10 : "",
       },
       range:0,
       page:0,

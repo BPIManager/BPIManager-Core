@@ -191,8 +191,10 @@ export default class fbActions{
       if(recommended){
         query = firestore.collection("users").orderBy("totalBPI", "desc");
         const total = await getTotalBPI();
-        query = query.where("totalBPI",">=",total - 10);
-        query = query.where("totalBPI","<=",total + 10);
+        const downLimit = total > 60 ? 50 : total - 10;
+        const upLimit = total > 50 ? 100 : total + 10;
+        query = query.where("totalBPI",">=",downLimit);
+        query = query.where("totalBPI","<=",upLimit);
         query = query.limit(20);
       }
       const res = await query.get();

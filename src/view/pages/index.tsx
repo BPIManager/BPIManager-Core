@@ -8,7 +8,6 @@ import { Link } from 'react-router-dom';
 import {Link as RefLink, Card, CardContent} from '@material-ui/core/';
 import { _lang } from '../../components/settings';
 import ShareButtons from '../components/common/shareButtons';
-const {LineShareButton,LineIcon,TwitterShareButton,TwitterIcon} = require('react-share');
 
 export default class Index extends React.Component<{},{}> {
 

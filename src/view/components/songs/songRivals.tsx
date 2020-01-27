@@ -1,6 +1,6 @@
 import React from "react";
 
-import { scoreData, songData, historyData } from "../../../types/data";
+import { scoreData, songData } from "../../../types/data";
 import Container from "@material-ui/core/Container";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import {rivalListsDB} from "../../../components/indexedDB";
@@ -11,7 +11,6 @@ import Table from "@material-ui/core/Table";
 import TableRow from "@material-ui/core/TableRow";
 import {difficultyDiscriminator} from "../../../components/songs/filter";
 import bpiCalcuator from "../../../components/bpi";
-import Avatar from "@material-ui/core/Avatar";
 
 interface P{
   song:songData|null,

@@ -13,7 +13,7 @@ interface S {
 
 interface P{
   showEachRival:(rivalMeta:DBRivalStoreData)=>void
-  compareUser:(rivalMeta:rivalStoreData,rivalBody:rivalScoreData[],last:rivalStoreData,arenaRank:string)=>void,
+  compareUser:(rivalMeta:rivalStoreData,rivalBody:rivalScoreData[],last:rivalStoreData,arenaRank:string,currentPage:number)=>void,
   backToRecentPage:number,
   last:rivalStoreData|null,
   arenaRank:string,

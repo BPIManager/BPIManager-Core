@@ -38,8 +38,8 @@ class Stats extends React.Component<{intl:any},S> {
   }
 
   showEachRival = (rivalMeta:DBRivalStoreData)=> this.setState({recentView:0,currentView:1,currentUser:rivalMeta.uid,rivalMeta:rivalMeta,descendingRivalData:[],});
-  compareUser = (rivalMeta:rivalStoreData,rivalBody:rivalScoreData[],last:rivalStoreData,arenaRank:string)=> {
-    return this.setState({recentView:1,lastVisible:last,currentView:2,rivalMeta:rivalMeta,descendingRivalData:rivalBody,arenaRank:arenaRank});
+  compareUser = (rivalMeta:rivalStoreData,rivalBody:rivalScoreData[],last:rivalStoreData,arenaRank:string,currentPage:number)=> {
+    return this.setState({recentView:currentPage,lastVisible:currentPage === 2 ? last : null,currentView:2,rivalMeta:rivalMeta,descendingRivalData:rivalBody,arenaRank:arenaRank});
   }
   backToMainPage = ()=> this.setState({currentView:0,currentUser:""});
   toggleSnack = (message:string = "ライバルを削除しました")=> this.setState({message:message,showSnackBar:!this.state.showSnackBar});

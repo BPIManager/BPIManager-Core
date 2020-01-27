@@ -26,7 +26,7 @@ import {arenaRankColor} from '../../../components/common';
 import {Link} from 'react-router-dom';
 
 interface P {
-  compareUser:(rivalMeta:rivalStoreData,rivalBody:rivalScoreData[],last:rivalStoreData,arenaRank:string)=>void,
+  compareUser:(rivalMeta:rivalStoreData,rivalBody:rivalScoreData[],last:rivalStoreData,arenaRank:string,currentPage:number)=>void,
   last:rivalStoreData|null,
   arenaRank:string,
   recommended:boolean,
@@ -114,11 +114,12 @@ class RecentlyAdded extends React.Component<P,S> {
 
   compareButton = async (meta:rivalStoreData)=>{
     const {res,arenaRank} = this.state;
+    const {recommended} = this.props;
     const data = await this.fbStores.setDocName(meta.uid).load();
     if(!data){
       return this.toggleSnack("該当ユーザーは当該バージョン/モードにおけるスコアを登録していません。","warning");
     }
-    this.props.compareUser(meta,data.scores,res[res.length-1],arenaRank);
+    this.props.compareUser(meta,data.scores,res[res.length-1],arenaRank,recommended ? 1 : 2);
   }
 
   next = ()=>{
