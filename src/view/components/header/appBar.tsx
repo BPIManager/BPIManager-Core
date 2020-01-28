@@ -14,7 +14,7 @@ import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import HomeIcon from "@material-ui/icons/Home";
+import {Link as RefLink} from '@material-ui/core/';
 import LibraryMusicIcon from "@material-ui/icons/LibraryMusic";
 import TrendingUpIcon from "@material-ui/icons/TrendingUp";
 import SettingsIcon from "@material-ui/icons/Settings";
@@ -29,6 +29,7 @@ import PeopleIcon from '@material-ui/icons/People';
 import Slide from "@material-ui/core/Slide";
 import ShowSnackBar from "../snackBar";
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
+import { config } from "../../../config";
 
 function HideOnScroll(props:HideOnScrollProps) {
   const { children, window } = props;
@@ -66,11 +67,6 @@ class GlobalHeader extends React.Component<{global:any} & HideOnScrollProps,{isO
   render(){
     const {isOpen} = this.state;
     const navBar = [
-      {
-        to:"/",
-        id:"GlobalNav.Home",
-        icon:<HomeIcon />
-      },
       {
         to:"/data",
         id:"GlobalNav.Data",
@@ -162,6 +158,11 @@ class GlobalHeader extends React.Component<{global:any} & HideOnScrollProps,{isO
             })}
           </List>
           <Divider />
+          <Typography align="center" variant="caption" style={{margin:"8px 0"}}>
+            {config.versionString}<br/>
+            {config.lastUpdate}<br/>
+            <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>
+          </Typography>
         </Drawer>
         <ShowSnackBar message={"実行中の処理があるため続行できません"} variant="warning"
             handleClose={this.toggleErrorSnack} open={this.state.errorSnack} autoHideDuration={3000}/>

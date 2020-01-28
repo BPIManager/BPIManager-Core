@@ -5,18 +5,21 @@ import { injectIntl } from 'react-intl';
 import Paper from '@material-ui/core/Paper';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
-import { _currentViewComponents, _setCurrentViewComponents,isEnableTweetButton,setEnableTweetButton } from '../../../components/settings';
+import { _currentViewComponents, _setCurrentViewComponents,isEnableTweetButton,setEnableTweetButton, _currentDefaultPage, _setDefaultPage } from '../../../components/settings';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormLabel from '@material-ui/core/FormLabel';
 import Divider from '@material-ui/core/Divider';
 import Switch from '@material-ui/core/Switch';
+import InputLabel from '@material-ui/core/InputLabel';
+import { Select, MenuItem } from '@material-ui/core';
 
 interface S {
   isLoading:boolean,
   currentVersion:string[],
   isEnableTweetButton:boolean,
+  defaultPage:string,
 }
 
 interface P{
@@ -31,7 +34,8 @@ class Settings extends React.Component<P,S> {
     this.state ={
       isLoading:false,
       currentVersion:_currentViewComponents().split(","),
-      isEnableTweetButton:isEnableTweetButton()
+      isEnableTweetButton:isEnableTweetButton(),
+      defaultPage: _currentDefaultPage()
     }
   }
 
@@ -50,7 +54,7 @@ class Settings extends React.Component<P,S> {
   }
 
   render(){
-    const {isLoading,isEnableTweetButton} = this.state;
+    const {isLoading,isEnableTweetButton,defaultPage} = this.state;
     if(isLoading){
       return (
         <Container className="loaderCentered">
@@ -61,6 +65,24 @@ class Settings extends React.Component<P,S> {
     return (
       <Container fixed style={{padding:0}}>
         <Paper style={{padding:"15px"}}>
+          <FormControl>
+            <InputLabel>初期表示</InputLabel>
+            <Select value={defaultPage} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+              if(typeof e.target.value === "string"){
+                _setDefaultPage(e.target.value)
+                return this.setState({defaultPage:e.target.value})
+              }
+            }}>
+              <MenuItem value="home">ホーム</MenuItem>
+              <MenuItem value="data">データ</MenuItem>
+              <MenuItem value="favorite">お気に入り楽曲</MenuItem>
+              <MenuItem value="songs">楽曲一覧</MenuItem>
+            </Select>
+          </FormControl>
+          <Typography variant="caption" display="block">
+            BPIManager起動直後に表示する画面を選択します。
+          </Typography>
+          <Divider style={{margin:"10px 0"}}/>
           <FormControl fullWidth>
             <FormLabel component="legend">楽曲リスト/補助表示</FormLabel>
             <FormGroup>

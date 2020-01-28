@@ -34,6 +34,14 @@ export const _currentBPIDefinition = ()=>{
   return Number(localStorage.getItem("BPIDefinition")) || 1;
 }
 
+export const _currentDefaultPage = ()=>{
+  return localStorage.getItem("defaultPage") || "home";
+}
+
+export const _setDefaultPage = (url:string = defaultURL)=>{
+  return localStorage.setItem("defaultPage",url);
+}
+
 export const _traditionalMode = ()=>{
   return Number(localStorage.getItem("traditionalMode")) || 0;
 }
