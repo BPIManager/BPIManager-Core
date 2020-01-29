@@ -7,3 +7,8 @@
   from = "/u/static/css/*"
   to = "/static/css/:splat"
   status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
