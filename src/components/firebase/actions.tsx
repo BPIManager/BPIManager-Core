@@ -9,26 +9,33 @@ import {getTotalBPI} from '../common';
 
 export default class fbActions{
 
-  async authWithTwitter():Promise<firebase.auth.UserCredential|null>{
-    return fb.auth().signInWithPopup(twitter).then(async(_result) => {
+  async authWithTwitter():Promise<void>{
+    fb.auth().signInWithRedirect(twitter);
+  }
+
+  async authWithGoogle():Promise<void>{
+    return fb.auth().signInWithRedirect(google);
+  }
+
+  async updateProfileIcon():Promise<firebase.auth.UserCredential|null>{
+    return fb.auth().getRedirectResult().then(async function(_result) {
+      console.log(_result);
       if(_result && _result.user && _result.additionalUserInfo && _result.additionalUserInfo.profile){
-        const p = _result.additionalUserInfo.profile as {profile_image_url_https:string};
+        const pid = _result.additionalUserInfo.providerId;
+        let p = "";
+        if(pid === "google.com"){
+          p = (_result.additionalUserInfo.profile as {picture:string}).picture;
+        }else if(pid === "twitter.com"){
+          p = (_result.additionalUserInfo.profile as {profile_image_url_https:string}).profile_image_url_https;
+        }
         await firestore.collection("users").doc(_result.user.uid).set({
-          photoURL:p.profile_image_url_https
+          photoURL:p
         },{merge: true});
       }
       return _result;
     }).catch(error => {
       console.log(error);
-      return null;
-    });
-  }
-
-  async authWithGoogle():Promise<firebase.auth.UserCredential|null>{
-    return fb.auth().signInWithPopup(google).then(_result => {
-      return _result;
-    }).catch(error => {
-      console.log(error);
+      alert(error.message ? error.message : error);
       return null;
     });
   }

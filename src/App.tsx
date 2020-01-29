@@ -6,7 +6,6 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Dark from './themes/dark';
 import Light from './themes/light';
-import ReloadModal from './view/components/update';
 import { Provider, Subscribe } from 'unstated';
 import GlobalContainer from './components/context/global';
 
@@ -24,7 +23,6 @@ export default function App() {
               <div id={global.state.theme === "dark" ? "__dark" : "__light"}>
                 <Router/>
               </div>
-              <ReloadModal />
             </ThemeProvider>)
         }}
       </Subscribe>

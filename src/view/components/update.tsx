@@ -7,25 +7,20 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 
-export default class ReloadModal extends Component {
+export default class ReloadModal extends Component<{registration: ServiceWorkerRegistration},{show:boolean}> {
   state = {
-    show: false
-  };
-  componentDidMount() {
-    window.addEventListener("newContentAvailable", () => {
-      this.setState({
-        show: true
-      });
-    });
-  }
-
-  onUpdate = () => {
-    window.location.reload(true);
+    show: !!this.props.registration.waiting
   };
 
   handleClose = () =>{
     this.setState({show:false});
   }
+
+  handleUpdate = () => {
+    this.props.registration.waiting && this.props.registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+    this.handleClose();
+    window.location.reload();
+  };
 
   render() {
     const {show} = this.state;
@@ -48,7 +43,7 @@ export default class ReloadModal extends Component {
           <Button onClick={this.handleClose} color="primary">
             無視
           </Button>
-          <Button onClick={this.onUpdate} color="primary" autoFocus>
+          <Button onClick={this.handleUpdate} color="primary" autoFocus>
             更新
           </Button>
         </DialogActions>

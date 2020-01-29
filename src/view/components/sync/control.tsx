@@ -49,6 +49,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
 
   async componentDidMount(){
     const t = await this.fbA.load();
+    this.fbLoader.updateProfileIcon();
     this.setState({
       isLoading:false,
       scoreData: await this.fbLoader.load(),
@@ -88,6 +89,9 @@ class SyncControlScreen extends React.Component<{userData:any},{
   sendName = async()=>{
     this.setState({isLoading:true,nameErrorMessage:[]});
     try{
+      if(this.state.myName && this.state.scoreData === null){
+        return this.setState({nameErrorMessage:["エラーが発生しました。次のような理由が挙げられます:"],isLoading:false});
+      }
       const res = await this.fbA.saveName(this.state.myName,this.state.myProfile,this.props.userData.photoURL,this.state.arenaRank);
       if(res.error){
         return this.setState({nameErrorMessage:["エラーが発生しました。次のような理由が挙げられます:","名前に使用できない文字列が含まれている、すでに使用されている名前である、アクセス権限がない"],isLoading:false});
@@ -168,13 +172,14 @@ class SyncControlScreen extends React.Component<{userData:any},{
           送信
         </Button>
         <p>
-          {nameErrorMessage.map((item:string)=><span>{item}<br/></span>)}
+          {nameErrorMessage.map((item:string)=><span key={item}>{item}<br/></span>)}
+          {(scoreData === null && myName) && <span style={{color:"#ff0000"}}>スコアデータが送信されていません。「転送」→「アップロード」よりスコアデータを送信してください。</span>}
         </p>
         {(!isLoading && sentName) &&
           <p>
             あなたのプロフィールURL:<br/>
             <RefLink to={"/u/" + sentName} style={{textDecoration:"none"}}><Link color="secondary" component="span">https://bpi.poyashi.me/u/{sentName}</Link></RefLink><br/>
-            このリンクをシェアすると、他の人があなたのプロフィールやスコアを確認できます。(v0.0.3.0以上のみ)
+            このリンクをシェアすると、他の人があなたのプロフィールやスコアを確認できます。
           </p>
         }
         <Divider style={{margin:"10px 0"}}/>
