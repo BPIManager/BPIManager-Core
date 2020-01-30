@@ -161,7 +161,8 @@ class GlobalHeader extends React.Component<{global:any} & HideOnScrollProps,{isO
           <Typography align="center" variant="caption" style={{margin:"8px 0"}}>
             {config.versionString}<br/>
             {config.lastUpdate}<br/>
-            <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>
+            <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink><br/>
+            <RefLink color="secondary" href="https://forms.gle/yVCa8sP2ndEQNaxg8">アンケートにご協力下さい </RefLink>
           </Typography>
         </Drawer>
         <ShowSnackBar message={"実行中の処理があるため続行できません"} variant="warning"
