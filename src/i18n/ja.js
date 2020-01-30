@@ -10,6 +10,7 @@ const ja = {
   "GlobalNav.Rivals":"ライバル",
   "GlobalNav.compare": "データ比較",
   "GlobalNav.AAATable":"AAA達成表",
+  "GlobalNav.Tools":"ツール集",
   "GlobalNav.Settings": "設定",
   "GlobalNav.Help": "説明書",
   "Index.heroText": "Web上でbeatmania IIDXのスコアを管理し、BPIとして可視化できます。",

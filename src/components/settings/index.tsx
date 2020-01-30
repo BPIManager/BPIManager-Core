@@ -92,3 +92,11 @@ export const _currentStoreWithFullName = ()=>{
 export const _chartColor = ()=>{
   return _currentTheme() === "dark" ? "#eee" : "#333"
 }
+
+export const _currentGreenPreference = ()=>{
+  return Number(localStorage.getItem("greenPreference")) || 0;
+}
+
+export const _setGreenPreference = (item:string)=>{
+  return localStorage.setItem("greenPreference",item);
+}

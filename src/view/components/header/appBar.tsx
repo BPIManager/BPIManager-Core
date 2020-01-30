@@ -6,8 +6,8 @@ import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import useScrollTrigger from "@material-ui/core/useScrollTrigger";
-import Link from '@material-ui/core/Link';
-
+import {Link} from 'react-router-dom';
+import BallotIcon from '@material-ui/icons/Ballot';
 import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
 import Divider from "@material-ui/core/Divider";
@@ -113,6 +113,11 @@ class GlobalHeader extends React.Component<{global:any} & HideOnScrollProps,{isO
         icon:<WbIncandescentIcon />
       },
       {
+        to:"/tools",
+        id:"GlobalNav.Tools",
+        icon:<BallotIcon />
+      },
+      {
         to:"/settings",
         id:"GlobalNav.Settings",
         icon:<SettingsIcon />
@@ -148,12 +153,12 @@ class GlobalHeader extends React.Component<{global:any} & HideOnScrollProps,{isO
           <List style={{width:"230px"}}>
             {navBar.map(item=>{
               return (
-                <Link key={item.id} component={RLink} to={item.to} underline="none" color="textPrimary" onClick={this.toggleNav}>
+                <RefLink key={item.id} component={RLink} to={item.to} underline="none" color="textPrimary" onClick={this.toggleNav}>
                   <ListItem button>
                     <ListItemIcon>{item.icon}</ListItemIcon>
                     <ListItemText primary={<FormattedMessage id={item.id}/>} />
                   </ListItem>
-                </Link>
+                </RefLink>
               )
             })}
           </List>
@@ -162,7 +167,10 @@ class GlobalHeader extends React.Component<{global:any} & HideOnScrollProps,{isO
             {config.versionString}<br/>
             {config.lastUpdate}<br/>
             <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink><br/>
-            <RefLink color="secondary" href="https://forms.gle/yVCa8sP2ndEQNaxg8">アンケートにご協力下さい </RefLink>
+            <RefLink color="secondary" href="https://forms.gle/yVCa8sP2ndEQNaxg8">アンケートにご協力下さい </RefLink><br/>
+            <RefLink underline="none" color="textPrimary" to="/" component={RLink} onClick={this.toggleNav}>
+              Home
+            </RefLink>
           </Typography>
         </Drawer>
         <ShowSnackBar message={"実行中の処理があるため続行できません"} variant="warning"

@@ -61,6 +61,19 @@ export default class bpiCalcuator{
     }
   }
 
+  setManual(wr:number,avg:number,notes:number,ex:number,coef:number):number{
+    try{
+      this.s = ex;
+      this.k = avg;
+      this.z = wr;
+      this.m = notes * 2;
+      this.powCoef = coef;
+      return this.exec();
+    }catch(e){
+      return -15;
+    }
+  }
+
   setIsSingle(isSingle:number = 1){
     this.isSingle = isSingle;
     return this;
