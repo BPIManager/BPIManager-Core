@@ -85,7 +85,7 @@ export default class fbActions{
           scores: s,
           scoresHistory : await new scoreHistoryDB().getAllInSpecificVersion(),
         };
-        if(doc){
+        if(doc.exists){
           transaction.update(docRef,newDoc);
         }else{
           transaction.set(docRef,newDoc);
@@ -116,6 +116,7 @@ export default class fbActions{
     try{
       if(!this.name){return {error:true,data:null}}
       const res = await firestore.collection(this.name).doc(this.docName).get();
+      console.log(res);
       if(res.exists){
         return res.data();
       }else{
