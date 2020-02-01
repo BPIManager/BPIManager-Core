@@ -442,3 +442,11 @@ legend.MuiFormLabel-root{
 #__dark .indexGridsContainer{
   background:#333;
 }
+
+.MuiBackdrop-root{
+  z-index:9999 !important;
+}
+
+.MuiDrawer-root .MuiBackdrop-root{
+  z-index:-1 !important;
+}

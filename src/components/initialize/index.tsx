@@ -3,6 +3,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import timeFormatter from "../common/timeFormatter";
 import {songsDB, scoresDB} from "../indexedDB";
 import WarningIcon from '@material-ui/icons/Warning';
+import Backdrop from "@material-ui/core/Backdrop";
 import { _currentDefinitionURL } from '../settings';
 
 export default class Initialize extends React.Component<{},{show:boolean,error:boolean,errorMessage:string,consoleMes:string}>{
@@ -60,24 +61,24 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
       return (null);
     }
     if(this.state.error){
-      return (<div id="overlayLayout">
+      return (<Backdrop open>
         <div>
           <WarningIcon/>
         </div>
         <div>
           <p>{this.state.errorMessage}</p>
         </div>
-      </div>);
+      </Backdrop>);
     }
     return (
-      <div id="overlayLayout">
+      <Backdrop open style={{flexDirection:"column"}}>
         <div>
           <CircularProgress/>
         </div>
         <div>
           <p style={{textAlign:"center"}}>{this.state.consoleMes}<br/>Please wait...</p>
         </div>
-      </div>
+      </Backdrop>
     );
   }
 

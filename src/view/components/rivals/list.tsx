@@ -15,6 +15,7 @@ import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { DBRivalStoreData } from '../../../types/data';
 import { updateRivalScore } from "../../../components/rivals";
+import Backdrop from "@material-ui/core/Backdrop";
 import moment from "moment";
 import timeFormatter,{timeCompare} from "../../../components/common/timeFormatter";
 
@@ -24,6 +25,7 @@ interface S {
   isLoading:boolean,
   rivals:DBRivalStoreData[],
   message:string,
+  bulkUpdate:boolean,
 }
 
 interface P {
@@ -39,6 +41,7 @@ class RivalLists extends React.Component<P,S> {
     super(props);
     this.state = {
       isAddOpen:false,
+      bulkUpdate:false,
       showSnackBar:false,
       isLoading:true,
       rivals:[],
@@ -54,6 +57,7 @@ class RivalLists extends React.Component<P,S> {
     this.setState({isLoading:true});
     return this.setState({
       isLoading:false,
+      bulkUpdate:false,
       rivals:await this.rivalListsDB.getAll()
     });
   }
@@ -66,7 +70,7 @@ class RivalLists extends React.Component<P,S> {
     if(timeDiff < 60){
       return this.toggleSnack(updateMinuteError);
     }
-    this.setState({isLoading:true});
+    this.setState({bulkUpdate:true});
     for(let i = 0; i < rivals.length; ++i){
       const t = await updateRivalScore(rivals[i]);
       if(t === "") updated++;
@@ -80,7 +84,7 @@ class RivalLists extends React.Component<P,S> {
   toggleSnack = (message:string = "ライバルを追加しました")=> this.setState({message:message,showSnackBar:!this.state.showSnackBar});
 
   render(){
-    const {isAddOpen,showSnackBar,rivals,isLoading,message} = this.state;
+    const {isAddOpen,showSnackBar,rivals,isLoading,message,bulkUpdate} = this.state;
     if(isLoading){
       return (
         <Container className="loaderCentered">
@@ -91,6 +95,9 @@ class RivalLists extends React.Component<P,S> {
       <div>
         <div style={{display:"flex",justifyContent:"flex-end"}}>
           <Button color="secondary" variant="outlined" onClick={this.update}>一括更新</Button>
+          <Backdrop open={bulkUpdate}>
+            <CircularProgress color="inherit" />
+          </Backdrop>
         </div>
         {rivals.length === 0 && <p>まだライバルがいません。</p>}
         {rivals.map(item=>(
