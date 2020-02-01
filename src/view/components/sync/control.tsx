@@ -112,7 +112,13 @@ class SyncControlScreen extends React.Component<{userData:any},{
           転送
         </Typography>
         <FormattedMessage id="Sync.Control.message1"/><br/>
-        <RefLink to={"/settings"} style={{textDecoration:"none"}}><Link color="secondary" component="span">設定</Link></RefLink>から「Auto-sync」を有効にすることで、CSV取り込み時自動で同期することができます。<br/>
+        <FormattedMessage id="Sync.Autosync0"/>
+        <RefLink to={"/settings"} style={{textDecoration:"none"}}>
+          <Link color="secondary" component="span">
+            <FormattedMessage id="GlobalNav.Settings"/>
+          </Link>
+        </RefLink>
+        <FormattedMessage id="Sync.Autosync"/><br/>
         <Divider style={{margin:"10px 0"}}/>
         {isLoading && <p><FormattedMessage id="Sync.Control.processing"/></p>}
         {(!isLoading && scoreData === null) && <p><FormattedMessage id="Sync.Control.nodata"/></p>}
@@ -132,10 +138,8 @@ class SyncControlScreen extends React.Component<{userData:any},{
           公開設定
         </Typography>
         <p>
-        フォームに名前を入力して送信することで、あなたのスコアデータを他の人に公開できます。<br/>
-        これによって、他の人があなたをライバルとして登録することができます。<br/>
-        *「転送」からスコアデータを1回以上アップロード済みであることをご確認ください。<br/>
-        <Link color="secondary" href="https://gist.github.com/potakusan/08c5528d6c6a51d10aec6b6556723a80"  target="_blank" rel="noopener noreferrer">ライバル機能の詳細はこちら。</Link>
+        <FormattedMessage id="Sync.Public0"/><br/>
+        <Link color="secondary" href="https://gist.github.com/potakusan/08c5528d6c6a51d10aec6b6556723a80"  target="_blank" rel="noopener noreferrer"><FormattedMessage id="Sync.Public2"/></Link>
         </p>
         <TextField label="表示名を入力(最大16文字)"
           InputLabelProps={{
@@ -193,7 +197,8 @@ class SyncControlScreen extends React.Component<{userData:any},{
         </Button>
         <Typography component="p" variant="caption" style={{textAlign:"right"}}>
           current configures:[version:{_currentStore()}] [mode:{_isSingle() === 1 ? "Single Play" : "Double Play"}] [autoSync:{_autoSync() ? "enabled" : "disabled"}]<br/>
-          userId: {this.props.userData.uid}
+          userId: {this.props.userData.uid}<br/>
+          <RefLink to="/help" style={{textDecoration:"none"}}><Link color="secondary" component="span">免責事項・利用について</Link></RefLink>
         </Typography>
       </div>
     );

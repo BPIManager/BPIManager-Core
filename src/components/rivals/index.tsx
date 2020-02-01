@@ -8,6 +8,8 @@ export const updateRivalScore = async (rivalMeta:DBRivalStoreData):Promise<strin
   const fbA:fbActions = new fbActions();
   const fbStores:fbActions = new fbActions();
   const rdb = new rivalListsDB();
+  fbA.setColName("users");
+  fbStores.setColName(`${_currentStore()}_${_isSingle()}`);
 
   try{
     const res = await fbA.searchRivalByUid(rivalMeta.uid);
@@ -22,7 +24,7 @@ export const updateRivalScore = async (rivalMeta:DBRivalStoreData):Promise<strin
       throw new Error("すでに最新です");
     }
     const data = await fbStores.setDocName(rivalMeta.uid).load();
-    if(!data){
+    if(!data || data.error){
       throw new Error("該当ユーザーは当該バージョン/モードにおけるスコアを登録していません。");
     }
     const putResult = await rdb.addUser({

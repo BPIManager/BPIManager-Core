@@ -53,10 +53,6 @@ class Stats extends React.Component<{intl:any},S> {
           <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
             <FormattedMessage id="GlobalNav.Rivals"/>
           </Typography>
-          <Typography component="p" variant="body2">
-            <RefLink color="secondary" href="https://gist.github.com/potakusan/08c5528d6c6a51d10aec6b6556723a80"  target="_blank" rel="noopener noreferrer">ライバル機能の詳細はこちら</RefLink>。<br/>
-            現在の設定:[version:{_currentStore()}] [mode:{_isSingle() === 1 ? "SP" : "DP"}]
-          </Typography>
         </div>
         }
         {currentView === 0 && <RivalIndex showEachRival={this.showEachRival} compareUser={this.compareUser} backToRecentPage={recentView} last={lastVisible} arenaRank={arenaRank}/>}

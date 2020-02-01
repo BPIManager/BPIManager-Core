@@ -141,8 +141,7 @@ import {Link as RefLink} from '@material-ui/core/';
       "title":"Help.Disclaimer",
       "body":
         <div>
-          <FormattedMessage id="Help.G"/>
-          <Divider style={{margin:"10px 0"}}/>
+          <FormattedMessage id="Help.G"/><br/>
           <FormattedMessage id="Help.G.2"/><br/>
           <FormattedMessage id="Help.G.3"/><br/>
           <FormattedMessage id="Help.G.4"/><br/>
@@ -154,6 +153,8 @@ import {Link as RefLink} from '@material-ui/core/';
           <FormattedMessage id="Help.G.10"/><br/>
           <FormattedMessage id="Help.G.11"/><br/>
           <FormattedMessage id="Help.G.12"/><br/>
+          <FormattedMessage id="Help.G.13"/><br/>
+          <FormattedMessage id="Help.G.14"/><br/>
         </div>
     }
   ]
