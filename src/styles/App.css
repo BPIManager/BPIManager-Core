@@ -447,6 +447,6 @@ legend.MuiFormLabel-root{
   z-index:9999 !important;
 }
 
-.MuiDrawer-root .MuiBackdrop-root{
+.MuiDrawer-root .MuiBackdrop-root, .MuiDialog-root .MuiBackdrop-root{
   z-index:-1 !important;
 }
