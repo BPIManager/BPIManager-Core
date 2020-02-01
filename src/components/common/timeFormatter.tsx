@@ -15,4 +15,8 @@ const timeFormatter = (type = 0,date = new Date()):string =>{
   return "";
 }
 
+export const timeCompare = (from:moment.Moment,to:moment.Moment) =>{
+  return from.diff(to,"seconds");
+}
+
 export default timeFormatter;
