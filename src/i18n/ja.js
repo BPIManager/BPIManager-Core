@@ -1,7 +1,7 @@
 const ja = {
   "Top.Title": "BPIManager",
   "GlobalNav.Home": "ホーム",
-  "GlobalNav.Data": "データ",
+  "GlobalNav.Data": "データ取り込み",
   "GlobalNav.FavoriteSongs": "お気に入り楽曲",
   "GlobalNav.SongList": "楽曲一覧",
   "GlobalNav.unregisteredSongs": "未プレイ楽曲",
@@ -12,7 +12,7 @@ const ja = {
   "GlobalNav.AAATable":"AAA達成表",
   "GlobalNav.Tools":"ツール集",
   "GlobalNav.Settings": "設定",
-  "GlobalNav.Help": "説明書",
+  "GlobalNav.Help": "説明書き",
   "Index.heroText": "Web上でbeatmania IIDXのスコアを管理し、BPIとして可視化できます。",
   "Index.importButton" : "データインポート",
   "Index.songsListButton" : "楽曲一覧",

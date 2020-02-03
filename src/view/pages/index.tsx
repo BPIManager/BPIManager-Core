@@ -11,6 +11,10 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import LanguageIcon from '@material-ui/icons/Language';
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import PhonelinkSetupIcon from '@material-ui/icons/PhonelinkSetup';
+import SaveAltIcon from '@material-ui/icons/SaveAlt';
+import LibraryMusicIcon from '@material-ui/icons/LibraryMusic';
+import HelpIcon from '@material-ui/icons/Help';
+import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 
 class Index extends React.Component<RouteComponentProps,{}> {
 
@@ -46,7 +50,7 @@ class AddToHomeScreenTicker extends React.Component<{},{show:boolean}>{
   render(){
     if(!this.state.show) return null;
     return (
-      <Grid xs={12} sm={12} item className="indexGridsContainer fullWidth" style={{marginBottom:"30px"}}>
+      <Grid xs={12} sm={12} item className="indexGridsContainer fullWidth" style={{marginBottom:"10px"}}>
         <div className="indexGrids">
           <PhonelinkSetupIcon className="indexGridsIcon"/>
           <Typography component="h5" variant="h5" color="textPrimary" paragraph>
@@ -79,6 +83,23 @@ class IfNotOnTheHomeScreen extends React.Component<{},{show:boolean}>{
 
   render(){
     const {show} = this.state;
+    const navBar = [
+      {
+        to:"/data",
+        id:"GlobalNav.Data",
+        icon:<SaveAltIcon />
+      },
+      {
+        to:"/songs",
+        id:"GlobalNav.SongList",
+        icon:<LibraryMusicIcon />
+      },
+      {
+        to:"/help",
+        id:"GlobalNav.Help",
+        icon:<HelpIcon />
+      }
+    ]
     //if(this.state.show) return null;
     return (
       <div className="heroLayout">
@@ -110,7 +131,7 @@ class IfNotOnTheHomeScreen extends React.Component<{},{show:boolean}>{
         <AddToHomeScreenTicker/>
         {show && <div>
         <Container fixed>
-          <div style={{marginTop:"15px"}}>
+          <div style={{marginTop:"25px"}}>
             <Grid container spacing={4} justify="space-between">
               <Grid xs={12} sm={4} item className="indexGridsContainer">
                 <div className="indexGrids">
@@ -165,21 +186,36 @@ class IfNotOnTheHomeScreen extends React.Component<{},{show:boolean}>{
             </Grid>
           </div>
         </Container>
-        <Container>
-          <div style={{marginTop:"20px"}}>
-            <Grid container spacing={2} justify="center">
-              <Grid item>
-                <Typography align="center" color="textSecondary" paragraph variant="caption">
-                  <FormattedMessage id="Index.notes1"/>
-                </Typography>
-                <Typography align="center" color="textSecondary" paragraph variant="caption">
-                  <FormattedMessage id="Index.notes2"/>
-                </Typography>
-              </Grid>
-            </Grid>
-          </div>
-        </Container>
       </div>}
+      {show && <div style={{width:"85%",margin:"25px auto 5px auto"}}>
+        {navBar.map(item=>(
+          <Link to={item.to} key={item.id} style={{textDecoration:"none"}}>
+            <Button variant="outlined" color="secondary" fullWidth style={{margin:"5px"}}
+              startIcon={item.icon}>
+              <FormattedMessage id={item.id}/>
+            </Button>
+          </Link>
+        ))}
+        <Button variant="outlined" color="secondary" fullWidth style={{margin:"5px"}}
+          onClick={()=>window.open("https://docs.google.com/forms/d/e/1FAIpQLSfhJkZZp5K1ChbE5RH-f0hOIkGvGX-7tYCZMxzVlsHVAtZ6eg/viewform?usp=sf_link")}
+          startIcon={<QuestionAnswerIcon/>}>
+          アンケートにご協力ください！
+        </Button>
+      </div>}
+      <Container>
+        <div style={{marginTop:"20px"}}>
+          <Grid container spacing={2} justify="center">
+            <Grid item>
+              <Typography align="center" color="textSecondary" paragraph variant="caption">
+                <FormattedMessage id="Index.notes1"/>
+              </Typography>
+              <Typography align="center" color="textSecondary" paragraph variant="caption">
+                <FormattedMessage id="Index.notes2"/>
+              </Typography>
+            </Grid>
+          </Grid>
+        </div>
+      </Container>
       </div>
     )
   }

@@ -18,7 +18,7 @@ import {Link as RefLink} from '@material-ui/core/';
 import LibraryMusicIcon from "@material-ui/icons/LibraryMusic";
 import TrendingUpIcon from "@material-ui/icons/TrendingUp";
 import SettingsIcon from "@material-ui/icons/Settings";
-import StorageIcon from "@material-ui/icons/Storage";
+import SaveAltIcon from "@material-ui/icons/SaveAlt";
 import BorderColorIcon from '@material-ui/icons/BorderColor';
 import StarIcon from '@material-ui/icons/Star';
 import FilterNoneIcon from '@material-ui/icons/FilterNone';
@@ -70,7 +70,7 @@ class GlobalHeader extends React.Component<{global:any} & HideOnScrollProps,{isO
       {
         to:"/data",
         id:"GlobalNav.Data",
-        icon:<StorageIcon />
+        icon:<SaveAltIcon />
       },
       {
         to:"/favorite",

@@ -1,7 +1,7 @@
 const ja = {
   "Top.Title": "BPIManager",
   "GlobalNav.Home": "Home",
-  "GlobalNav.Data": "Data",
+  "GlobalNav.Data": "Import Data",
   "GlobalNav.FavoriteSongs": "Favorite Songs",
   "GlobalNav.SongList": "Songs",
   "GlobalNav.unregisteredSongs": "Not played yet",

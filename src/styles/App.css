@@ -381,7 +381,7 @@ th.MuiTableCell-root.MuiTableCell-head:first-child{
 }
 
 .heroTitle{
-  margin:100px auto;
+  margin:64px auto 10px auto;
 }
 
 .indexGridsContainer{
