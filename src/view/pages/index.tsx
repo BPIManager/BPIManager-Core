@@ -187,7 +187,7 @@ class IfNotOnTheHomeScreen extends React.Component<{},{show:boolean}>{
           </div>
         </Container>
       </div>}
-      {show && <div style={{width:"85%",margin:"25px auto 5px auto"}}>
+      {!show && <div style={{width:"85%",margin:"25px auto 5px auto"}}>
         {navBar.map(item=>(
           <Link to={item.to} key={item.id} style={{textDecoration:"none"}}>
             <Button variant="outlined" color="secondary" fullWidth style={{margin:"5px"}}
