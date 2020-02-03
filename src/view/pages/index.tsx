@@ -82,12 +82,15 @@ class IfNotOnTheHomeScreen extends React.Component<{},{show:boolean}>{
         <Container className="heroTitle">
           <Grid container spacing={4} style={{justifyContent:"center",alignItems:"center"}}>
             <Grid item xs={12} sm={3}>
-              <img src="https://bpi.poyashi.me/images/icons/icon-192x192.png" style={{margin:"0 auto",display:"block",borderRadius:"8%",maxWidth:"120px"}} alt="BPIManager"/>
+              <img src="https://files.poyashi.me/bpim/icon.png" style={{margin:"0 auto",display:"block",borderRadius:"8%",maxWidth:"120px"}} alt="BPIManager"/>
             </Grid>
             <Grid item xs={12} sm={4} md={5}>
               <div className="mdCentered">
                 <Typography component="h4" variant="h4" color="textPrimary" gutterBottom>
                   <FormattedMessage id="Top.Title"/>
+                </Typography>
+                <Typography component="h6" variant="body1" color="textPrimary" gutterBottom>
+                  The score management tool for IIDX
                 </Typography>
                 <Typography color="textSecondary" paragraph variant="caption">
                   {_lang() === "en" &&

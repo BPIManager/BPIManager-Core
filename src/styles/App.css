@@ -82,7 +82,9 @@ th.MuiTableCell-root.MuiTableCell-head{
   background:#ececec !important;
 }
 
-#__dark .MuiTableBody-root > tr:hover,#__dark .MuiTableBody-root > tr:hover .plusOverlayScore,#__dark .MuiTableBody-root > tr:hover .plusOverlayScoreBottom{
+#__dark .MuiTableBody-root > tr:hover,
+#__dark .MuiTableBody-root > tr:hover .plusOverlayScore,
+#__dark .MuiTableBody-root > tr:hover .plusOverlayScoreBottom{
   background:#313131 !important;
 }
 
@@ -98,12 +100,13 @@ th.MuiTableCell-root.MuiTableCell-head{
 #__light .isOdd{
   background:#f7f7f7;
 }
-#__dark .isOdd{
-  background:#4a4a4a;
+
+#__dark .isOdd,#__dark .isOddOverLayed{
+  background:#272727;
 }
 
-#__dark .isEven{
-  background:#424242;
+#__dark .isEven,#__dark .isEvenOverLayed{
+  background:#1f1f1f;
 }
 
 #__light .isEvenOverLayed{
@@ -114,19 +117,11 @@ th.MuiTableCell-root.MuiTableCell-head{
   background:#f7f7f77;
 }
 
-#__dark .isEvenOverLayed{
-  background:#424242;
-}
-
-#__dark .isOddOverLayed{
-  background:#4a4a4a;
-}
-
-#__dark div#songsVil .MuiTableRow-root .MuiTableCell-body:first-child{
+#__dark div#songsVil .MuiTableRow-root .MuiTableCell-body:first-child,#__deepsea div#songsVil .MuiTableRow-root .MuiTableCell-body:first-child{
   color:#333;
 }
 
-#__dark #_notPlayed .MuiTableRow-root .MuiTableCell-body:first-child{
+#__dark #_notPlayed .MuiTableRow-root .MuiTableCell-body:first-child,#__deepsea #_notPlayed .MuiTableRow-root .MuiTableCell-body:first-child{
   color:#fff !important;
 }
 
@@ -160,6 +155,15 @@ legend.MuiFormLabel-root{
 
 #detailedScreen .MuiGrid-root.MuiGrid-container{
   justify-content: space-between;
+}
+
+.deepSeaDetailedScreen .MuiTab-textColorPrimary.Mui-selected{
+  color:#fff !important;
+}
+
+#__deepsea .MuiButton-outlined.filterButton{
+  color:#fff;
+  border:1px solid #737373;
 }
 
 .loaderCentered{
@@ -294,7 +298,6 @@ legend.MuiFormLabel-root{
   color:#c50000;
 }
 
-
 #__dark #songsVil .traditionalMode .MuiTableBody-root .MuiTableCell-root:nth-child(3){
   color:#ffdbdb;
 }
@@ -314,6 +317,9 @@ legend.MuiFormLabel-root{
 
 .MuiCheckbox-colorPrimary.Mui-checked{
   color:#949494 !important;
+}
+th.MuiTableCell-root.MuiTableCell-head:first-child{
+  padding:10px 5px !important;
 }
 
 .detailModalTableRow th.MuiTableCell-root.MuiTableCell-head:first-child{
@@ -422,7 +428,6 @@ legend.MuiFormLabel-root{
 }
 
 .indexGrids .indexGridsIcon, .indexGrids h5{
-  color:#45818e;
   font-size:33px;
 }
 
@@ -449,4 +454,8 @@ legend.MuiFormLabel-root{
 
 .MuiDrawer-root .MuiBackdrop-root, .MuiDialog-root .MuiBackdrop-root{
   z-index:-1 !important;
+}
+
+div#root > div > .MuiContainer-root{
+  padding:0 20px !important;
 }

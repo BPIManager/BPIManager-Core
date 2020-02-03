@@ -12,7 +12,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import {_setGreenPreference,_currentGreenPreference} from "../../../components/settings/";
+import {_setGreenPreference,_currentGreenPreference, buttonTextColor} from "../../../components/settings/";
 import {songData} from "../../../types/data";
 import {songsDB} from "../../../components/indexedDB";
 import {_prefixFromNum} from "../../../components/songs/filter";
@@ -87,8 +87,10 @@ class Cont extends React.Component<{},S> {
       <Container fixed style={{padding:0}}>
         <Paper style={{padding:"15px"}}>
           <ButtonGroup fullWidth color="primary"  variant="outlined">
-            <Button onClick={this.dialogToggle}>曲名検索</Button>
-            <Button onClick={this.switchNum}>前後入れ替え</Button>
+            <Button onClick={this.dialogToggle}
+            style={{color:buttonTextColor()}}>曲名検索</Button>
+            <Button onClick={this.switchNum}
+            style={{color:buttonTextColor()}}>前後入れ替え</Button>
           </ButtonGroup>
           <TextField
             label="変化前BPM"

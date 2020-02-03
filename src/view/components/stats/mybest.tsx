@@ -151,7 +151,7 @@ class MyBest extends React.Component<{},S> {
       <Container style={{padding:0}} fixed>
         <Grid container spacing={3}>
           <Grid item xs={12} md={12} lg={12}>
-              <Grid container spacing={1} style={{margin:"5px 0"}}>
+              <Grid container spacing={1} style={{margin:"5px -4px"}}>
                 <Grid item xs={12} lg={12}>
                   <FormControl component="fieldset" style={{width:"100%"}}>
                     <InputLabel>レベル</InputLabel>

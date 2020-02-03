@@ -165,6 +165,7 @@ class Settings extends React.Component<P,S> {
                 }}>
                   <MenuItem value="light">Light</MenuItem>
                   <MenuItem value="dark">Dark</MenuItem>
+                  <MenuItem value="deepsea">Deep Sea</MenuItem>
                 </Select>
               </FormControl>
               <Divider style={{margin:"10px 0"}}/>

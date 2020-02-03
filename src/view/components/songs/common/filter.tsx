@@ -12,6 +12,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
+import { buttonTextColor } from '../../../../components/settings';
 
 interface P {
   handleToggle:()=>void,
@@ -205,10 +206,10 @@ class SongsFilter extends React.Component<P,S> {
           <Typography component="h6" variant="h6" style={{marginTop:"5px"}}>
             Versions
           </Typography>
-          <Button onClick={this.allUnselect} color="primary">
+          <Button onClick={this.allUnselect} color="primary" style={{color:buttonTextColor()}}>
             すべて選択解除
           </Button>
-          <Button onClick={this.allSelect} color="primary">
+          <Button onClick={this.allSelect} color="primary" style={{color:buttonTextColor()}}>
             すべて選択
           </Button>
           <Divider/>

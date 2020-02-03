@@ -2,7 +2,7 @@ import React from "react";
 
 import { scoreData, songData } from "../../../types/data";
 import {BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer, Label} from "recharts";
-import { _chartColor } from "../../../components/settings";
+import { _chartColor,_chartBarColor } from "../../../components/settings";
 import { chartData } from "./detailsScreen";
 
 interface P{
@@ -53,7 +53,7 @@ class BPIChart extends React.Component<P,{}> {
             <Bar dataKey="EX SCORE" isAnimationActive={false}>
               {
                 chartData.map((item) => {
-                  const color = item.name === "YOU" ? "#e75d00" : "#8884d8";
+                  const color = _chartBarColor(item.name);
                   return <Cell key={item.name} fill={color} />;
                 })
               }

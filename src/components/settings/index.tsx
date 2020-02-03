@@ -1,5 +1,5 @@
 export const _isSingle = ()=>{
-    return !localStorage.getItem("isSingle") || localStorage.getItem("isSingle") === "1" || localStorage.getItem("isSingle") === "true" ? 1 : 0;
+  return !localStorage.getItem("isSingle") || localStorage.getItem("isSingle") === "1" || localStorage.getItem("isSingle") === "true" ? 1 : 0;
 }
 
 export const _currentStore = ()=>{
@@ -90,7 +90,47 @@ export const _currentStoreWithFullName = ()=>{
 }
 
 export const _chartColor = ()=>{
-  return _currentTheme() === "dark" ? "#eee" : "#333"
+  const c = _currentTheme();
+  if(c === "dark" || c === "deepsea"){
+    return "#eee";
+  }
+  if(c === "light"){
+    return "#333";
+  }
+
+}
+
+export const _chartBarColor = (name:string)=>{
+  const c = _currentTheme();
+  if(c === "light"){
+    if(name === "YOU"){
+      return "#BF4C0A"
+    }else{
+      return "#D9AFA0";
+    }
+  }
+  if(c === "dark"){
+    if(name === "YOU"){
+      return "#BF4C0A"
+    }else{
+      return "#aaa";
+    }
+  }
+  if(c === "deepsea"){
+    if(name === "YOU"){
+      return "#1490ff"
+    }else{
+      return "#6D808C";
+    }
+  }
+}
+
+export const buttonTextColor = ()=>{
+  const c = _currentTheme();
+  if(c !== "light"){
+    return "#fff";
+  }
+  return "#222";
 }
 
 export const _currentGreenPreference = ()=>{
