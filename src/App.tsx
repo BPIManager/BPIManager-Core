@@ -28,6 +28,7 @@ export default function App() {
             </ThemeProvider>)
         }}
       </Subscribe>
+      <div className="SW-update-dialog"></div>
     </Provider>
   );
 

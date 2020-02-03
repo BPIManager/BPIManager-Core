@@ -1,11 +1,10 @@
 import { Component } from "react";
 import React from "react";
-import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogActions from "@material-ui/core/DialogActions";
+import Container from "@material-ui/core/Container";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 export default class ReloadModal extends Component<{registration: ServiceWorkerRegistration},{show:boolean}> {
   state = {
@@ -16,8 +15,14 @@ export default class ReloadModal extends Component<{registration: ServiceWorkerR
     this.setState({show:false});
   }
 
+  componentDidMount(){
+    if((this.props.registration && this.props.registration.waiting)){
+      this.handleUpdate();
+    }
+  }
+
   handleUpdate = () => {
-    this.props.registration.waiting && this.props.registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+    (this.props.registration && this.props.registration.waiting) && this.props.registration.waiting.postMessage({ type: 'SKIP_WAITING' });
     this.handleClose();
     window.location.reload();
   };
@@ -32,21 +37,13 @@ export default class ReloadModal extends Component<{registration: ServiceWorkerR
       <Dialog
         open={show}
       >
-        <DialogTitle id="alert-dialog-title">{"アプリケーションの更新"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title"></DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            アプリケーションの更新データがあります。<br/>
-            今すぐ更新しますか？
-          </DialogContentText>
+          <Container className="loaderCentered" style={{flexDirection:"column"}}>
+            <CircularProgress />
+            <p style={{marginTop:"15px"}}>アプリケーションの更新中...</p>
+          </Container>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={this.handleClose} color="primary">
-            無視
-          </Button>
-          <Button onClick={this.handleUpdate} color="primary" autoFocus>
-            更新
-          </Button>
-        </DialogActions>
       </Dialog>
     </div>
     );
