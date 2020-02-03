@@ -168,6 +168,9 @@ class Settings extends React.Component<P,S> {
                   <MenuItem value="deepsea">Deep Sea</MenuItem>
                 </Select>
               </FormControl>
+              <Typography variant="caption" display="block">
+                Light / Dark / Deep Seaの3種類からお選びいただけます。
+              </Typography>
               <Divider style={{margin:"10px 0"}}/>
               <FormControl>
                 <InputLabel><FormattedMessage id="Settings.dataStore"/></InputLabel>
