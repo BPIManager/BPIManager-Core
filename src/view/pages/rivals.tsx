@@ -46,7 +46,7 @@ class Stats extends React.Component<{intl:any},S> {
   render(){
     const {currentView,currentUser,message,showSnackBar,rivalMeta,descendingRivalData,lastVisible,arenaRank,recentView} = this.state;
     return (
-      <Container className="commonLayout" id="stat" fixed>
+      <Container className="commonLayout" fixed>
         {currentView === 0 &&
         <div>
           <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>

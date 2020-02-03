@@ -48,22 +48,23 @@ export default class Router extends React.Component<{},{}> {
               messages={global.state.lang === "ja" ? ja : en}
             >
               <BrowserRouter>
-                <AppBar global={global}/>
-                <Route path="/" exact component={Index}/>
-                <Route path="/data" exact render={_props=><Data global={global} updateGlobal={this.globalUpdateScore}/>}/>
-                <Route path="/songs" exact component={Songs}/>
-                <Route path="/favorite" exact component={Favorite}/>
-                <Route path="/notPlayed" exact component={NotPlayed}/>
-                <Route path="/stats" exact component={Stats}/>
-                <Route path="/compare" exact component={Compare}/>
-                <Route path="/settings" exact render={_props=><Settings global={global}/>}/>
-                <Route path="/help" exact component={Help}/>
-                <Route path="/sync" exact component={SyncIndex}/>
-                <Route path="/rivals" exact component={Rivals}/>
-                <Route path="/AAATable" exact component={AAATable}/>
-                <Route path="/tools" exact component={Tools}/>
-                <Route path="/u/" exact component={User}/>
-                <Route path="/u/:uid" exact component={User}/>
+                <AppBar global={global}>
+                  <Route path="/" exact component={Index}/>
+                  <Route path="/data" exact render={_props=><Data global={global} updateGlobal={this.globalUpdateScore}/>}/>
+                  <Route path="/songs" exact component={Songs}/>
+                  <Route path="/favorite" exact component={Favorite}/>
+                  <Route path="/notPlayed" exact component={NotPlayed}/>
+                  <Route path="/stats" exact component={Stats}/>
+                  <Route path="/compare" exact component={Compare}/>
+                  <Route path="/settings" exact render={_props=><Settings global={global}/>}/>
+                  <Route path="/help" exact component={Help}/>
+                  <Route path="/sync" exact component={SyncIndex}/>
+                  <Route path="/rivals" exact component={Rivals}/>
+                  <Route path="/AAATable" exact component={AAATable}/>
+                  <Route path="/tools" exact component={Tools}/>
+                  <Route path="/u/" exact component={User}/>
+                  <Route path="/u/:uid" exact component={User}/>
+                </AppBar>
               </BrowserRouter>
             </IntlProvider>
           )}}
