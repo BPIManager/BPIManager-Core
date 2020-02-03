@@ -243,13 +243,13 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
           <form method="post" name="rivalSearch" action="https://p.eagate.573.jp/game/2dx/27/rival/rival_search.html#rivalsearch">
             <input type="hidden" name="iidxid" value={this.getIIDXId(res.profile)}/>
             <input type="hidden" name="mode" value="1"/>
-            <Button startIcon={<ExitToAppIcon/>} variant="outlined" color="primary" fullWidth type="submit" style={{margin:"0 0 5px 0"}}>
+            <Button startIcon={<ExitToAppIcon/>} variant="outlined" color="secondary" fullWidth type="submit" style={{margin:"0 0 5px 0"}}>
               eAMUSEMENT
             </Button>
           </form>
         }
         {this.getTwitterName(res.profile) !== "" &&
-          <Button startIcon={<TwitterIcon/>} variant="outlined" color="primary" fullWidth type="submit" href={`https://twitter.com/${this.getTwitterName(res.profile)}`}>
+          <Button startIcon={<TwitterIcon/>} variant="outlined" color="secondary" fullWidth type="submit" href={`https://twitter.com/${this.getTwitterName(res.profile)}`}>
             Twitter
           </Button>
         }
