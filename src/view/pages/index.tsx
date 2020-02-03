@@ -68,14 +68,17 @@ class IfNotOnTheHomeScreen extends React.Component<{},{show:boolean}>{
     super(props);
     const isStandAloneIn_iOS = () =>("standalone" in window.navigator) && (window.navigator["standalone"]);
     const isStandAloneInAndroid = ()=>window.matchMedia('(display-mode: standalone)').matches;
+    const isPC = ()=> navigator.userAgent.indexOf('iPhone') === -1 && navigator.userAgent.indexOf('iPod') === -1 && navigator.userAgent.indexOf('Android') === -1;
+
     const regEx = (ua:RegExp)=> ua.test(window.navigator.userAgent.toLowerCase());
 
     this.state = {
-      show:(regEx(/iphone|ipad|ipod/) && !isStandAloneIn_iOS()) ? true : (regEx(/android/) && !isStandAloneInAndroid()) ? true : false
+      show:isPC() ? true : (regEx(/iphone|ipad|ipod/) && !isStandAloneIn_iOS()) ? true : (regEx(/android/) && !isStandAloneInAndroid()) ? true : false
     }
   }
 
   render(){
+    const {show} = this.state;
     //if(this.state.show) return null;
     return (
       <div className="heroLayout">
@@ -90,7 +93,7 @@ class IfNotOnTheHomeScreen extends React.Component<{},{show:boolean}>{
                   <FormattedMessage id="Top.Title"/>
                 </Typography>
                 <Typography component="h6" variant="body1" color="textPrimary" gutterBottom>
-                  The score management tool for IIDX
+                  The score management tool for IIDXers
                 </Typography>
                 <Typography color="textSecondary" paragraph variant="caption">
                   {_lang() === "en" &&
@@ -105,6 +108,7 @@ class IfNotOnTheHomeScreen extends React.Component<{},{show:boolean}>{
           </Grid>
         </Container>
         <AddToHomeScreenTicker/>
+        {show && <div>
         <Container fixed>
           <div style={{marginTop:"15px"}}>
             <Grid container spacing={4} justify="space-between">
@@ -175,6 +179,7 @@ class IfNotOnTheHomeScreen extends React.Component<{},{show:boolean}>{
             </Grid>
           </div>
         </Container>
+      </div>}
       </div>
     )
   }
