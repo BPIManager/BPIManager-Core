@@ -6,7 +6,7 @@ import WarningIcon from '@material-ui/icons/Warning';
 import Backdrop from "@material-ui/core/Backdrop";
 import { _currentDefinitionURL } from '../settings';
 
-export default class Initialize extends React.Component<{},{show:boolean,error:boolean,errorMessage:string,consoleMes:string}>{
+export default class Initialize extends React.Component<{},{show:boolean,error:boolean,errorMessage:string,consoleMes:string,p:number}>{
   private songsDB = new songsDB();
   private scoresDB = new scoresDB();
 
@@ -15,8 +15,9 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
     this.state = {
       show : true,
       error:false,
-      consoleMes:"Loading essential components...",
-      errorMessage:""
+      consoleMes:"必須情報を読み込んでいます",
+      errorMessage:"",
+      p:0,
     }
   }
 
@@ -28,7 +29,6 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
 
   async componentDidMount(){
     try{
-
       // Close the world bug fix 2019/11/11 & 2019/12/08
         this.songsDB.removeItem("Close the World feat. a☆ru");
         this.scoresDB.removeSpecificItemAtAllStores("Close the World feat. a☆ru");
@@ -39,14 +39,15 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
       }
       const now = timeFormatter(0);
       const csv = await fetch(_currentDefinitionURL()).then(t=>t.json());
+      let p = [];
       for(let i=0;i < csv.body.length;++i){
-        await this.songsDB.setItem(Object.assign(csv["body"][i],{
+        p.push(Object.assign(csv["body"][i],{
           isFavorited:false,
           isCreated:false,
           updatedAt:now,
         }));
-        this.wait(3);
       }
+      await this.songsDB.bulkAdd(p);
       localStorage.setItem("isSingle","1");
       localStorage.setItem("lastDefFileVer",csv.version);
       return this.setState({show:false});
@@ -76,10 +77,19 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
           <CircularProgress/>
         </div>
         <div>
-          <p style={{textAlign:"center"}}>{this.state.consoleMes}<br/>Please wait...</p>
+          <p style={{textAlign:"center"}}>{this.state.consoleMes}<br/>Please wait.</p>
         </div>
       </Backdrop>
     );
   }
 
 }
+
+/*
+
+const s = Math.round((i / csv.body.length) * 100);
+const {p} = this.state;
+if(s === (p + 5)){
+  this.setState({p:s});
+}
+*/

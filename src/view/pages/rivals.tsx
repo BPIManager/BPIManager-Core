@@ -6,7 +6,6 @@ import ShowSnackBar from '../components/snackBar';
 import RivalIndex from '../components/rivals';
 import Typography from '@material-ui/core/Typography';
 import { _currentStore, _isSingle } from '../../components/settings';
-import {Link as RefLink} from '@material-ui/core/';
 import { rivalScoreData, rivalStoreData, DBRivalStoreData } from '../../types/data';
 
 interface S {

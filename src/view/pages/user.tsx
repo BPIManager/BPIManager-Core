@@ -229,13 +229,13 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
             </Typography>
           </div>
         </Paper>
-        <Button onClick={()=>this.view(1)} disabled={add || processing} startIcon={<ViewListIcon/>} variant="outlined" color="primary" fullWidth style={{margin:"10px 0 5px 0"}}>
+        <Button onClick={()=>this.view(1)} disabled={add || processing} startIcon={<ViewListIcon/>} variant="outlined" color="secondary" fullWidth style={{margin:"10px 0 5px 0"}}>
           スコアを見る
         </Button>
-        <Button onClick={()=>this.view(2)} disabled={add || processing} startIcon={<WbIncandescentIcon/>} variant="outlined" color="primary" fullWidth style={{margin:"0 0 5px 0"}}>
+        <Button onClick={()=>this.view(2)} disabled={add || processing} startIcon={<WbIncandescentIcon/>} variant="outlined" color="secondary" fullWidth style={{margin:"0 0 5px 0"}}>
           AAA達成表
         </Button>
-        <Button onClick={this.addUser} disabled={add || processing} startIcon={<GroupAddIcon/>} variant="outlined" color="primary" fullWidth style={{margin:"0 0 5px 0"}}>
+        <Button onClick={this.addUser} disabled={add || processing} startIcon={<GroupAddIcon/>} variant="outlined" color="secondary" fullWidth style={{margin:"0 0 5px 0"}}>
           ライバルに追加
         </Button>
         {(this.getIIDXId(res.profile) !== "" || this.getTwitterName(res.profile) !== "") && <Divider style={{margin:"5px 0 10px 0"}}/>}

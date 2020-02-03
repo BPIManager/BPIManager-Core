@@ -373,6 +373,7 @@ export const importer = class extends storageWrapper{
           return item.willModified ? this.sDB.setItem(item) : this.sDB.putItem(item);
         }),
       ]);
+      
     }).catch((e)=>{
       console.log(e);
       return null;
@@ -715,6 +716,15 @@ export const songsDB = class extends storageWrapper{
       console.error(e);
       return 1;
     }
+  }
+
+  async bulkAdd(obj:any):Promise<any>{
+    return await this.transaction('rw', this.songs , async () => {
+      return Promise.all(obj.map((item:any)=>this.setItem(item)));
+    }).catch((e)=>{
+      console.log(e);
+      return null;
+    });
   }
 
 }
