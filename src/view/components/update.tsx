@@ -21,9 +21,15 @@ export default class ReloadModal extends Component<{registration: ServiceWorkerR
     }
   }
 
-  handleUpdate = () => {
+  wait = (msec:number)=>{
+    return new Promise((resolve, _reject) => {
+    setTimeout(resolve, msec);
+    });
+  }
+
+  handleUpdate = async() => {
     (this.props.registration && this.props.registration.waiting) && this.props.registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-    this.handleClose();
+    await this.wait(1000);
     window.location.reload();
   };
 
