@@ -152,4 +152,10 @@ export default class bpiCalcuator{
 
     return sum > 0 ? res : -res;
   }
+
+  setSongs(s:any):number{
+    this.allTwelvesBPI = s;
+    this.allTwelvesLength = s.length;
+    return this.totalBPI();
+  }
 }

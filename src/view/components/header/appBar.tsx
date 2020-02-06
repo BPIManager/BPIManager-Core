@@ -32,7 +32,7 @@ import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
 import { withStyles } from '@material-ui/core/styles';
 import { config } from "../../../config";
 
-const drawerWidth = 230;
+const drawerWidth = 231;
 const styles = (theme:any) => ({
   root: {
     display: 'flex',

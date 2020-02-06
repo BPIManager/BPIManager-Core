@@ -19,7 +19,6 @@ export default class fbActions{
 
   async updateProfileIcon():Promise<firebase.auth.UserCredential|null>{
     return fb.auth().getRedirectResult().then(async function(_result) {
-      console.log(_result);
       if(_result && _result.user && _result.additionalUserInfo && _result.additionalUserInfo.profile){
         const pid = _result.additionalUserInfo.providerId;
         let p = "";
@@ -92,15 +91,10 @@ export default class fbActions{
         }
         console.log("signed as :"+isRegisteredAs);
         if(isRegisteredAs !== ""){
-          const bpi = new bpiCalcuator();
-          bpi.setTraditionalMode(0);
-          const _s = s.filter(item=>item.difficultyLevel === "12");
-          bpi.allTwelvesBPI = _s.reduce((group:number[],item:any)=>{group.push(item.currentBPI); return group;},[]);
-          bpi.allTwelvesLength = _s.length;
           transaction.update(userRef,{
             timeStamp: timeFormatter(3),
             serverTime:self.time(),
-            totalBPI:bpi.totalBPI(),
+            totalBPI:await self.totalBPI(),
           });
         }
       });
@@ -112,11 +106,20 @@ export default class fbActions{
     });
   }
 
+  async totalBPI():Promise<number>{
+    const bpi = new bpiCalcuator();
+    const s = await new scoresDB().getAll();
+    bpi.setTraditionalMode(0);
+    const _s = s.filter(item=>item.difficultyLevel === "12");
+    bpi.allTwelvesBPI = _s.reduce((group:number[],item:any)=>{group.push(item.currentBPI); return group;},[]);
+    bpi.allTwelvesLength = _s.length;
+    return bpi.totalBPI();
+  }
+
   async load(){
     try{
       if(!this.name){return {error:true,data:null}}
       const res = await firestore.collection(this.name).doc(this.docName).get();
-      console.log(res);
       if(res.exists){
         return res.data();
       }else{
@@ -154,7 +157,8 @@ export default class fbActions{
           displayName:displayName,
           profile:profile,
           photoURL:photoURL,
-          arenaRank:arenaRank
+          arenaRank:arenaRank,
+          totalBPI:await this.totalBPI(),
         });
       }
       return {error:false,date:timeFormatter(3)};

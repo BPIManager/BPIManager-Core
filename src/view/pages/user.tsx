@@ -18,7 +18,7 @@ import ShareButtons from '../components/common/shareButtons';
 import { rivalListsDB } from '../../components/indexedDB';
 import ShowSnackBar from '../components/snackBar';
 import RivalView from '../components/rivals/view';
-import { rivalScoreData } from '../../types/data';
+import { rivalScoreData, scoreData } from '../../types/data';
 import {Link, Chip, Divider} from '@material-ui/core/';
 import {Link as RefLink} from "react-router-dom";
 import ClearLampView from '../components/table/fromUserPage';
@@ -97,14 +97,15 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
       if(!data){
         return this.setState({userName:userName,res:res,uid:res.uid,rivalData:[],processing:false});
       }
-      const s = data.scores.filter((item:any)=>item.difficultyLevel === "12");
-      const b = new bpiCalcuator();
-      const sum:number[] = s.reduce((group:number[],item:any)=>{group.push(item.currentBPI); return group;},[]);
-      b.allTwelvesBPI = sum;
-      b.allTwelvesLength = s.length;
-
-      const totalBPI = b.totalBPI();
-      return this.setState({userName:userName,res:res,uid:res.uid,rivalData:data.scores || [],totalBPI:totalBPI,processing:false});
+      const totalBPI = ():number=>{
+        const s = data.scores.filter((item:any)=>item.difficultyLevel === "12");
+        const b = new bpiCalcuator();
+        return b.setSongs(s.reduce((sum:number[],item:scoreData)=>{
+          sum.push(item.currentBPI);
+          return sum;
+        },[]));
+      }
+      return this.setState({userName:userName,res:res,uid:res.uid,rivalData:data.scores || [],totalBPI:data.totalBPI || totalBPI(),processing:false});
     }else{
       return this.setState({userName:"", res:null,uid:"",processing:false});
     }

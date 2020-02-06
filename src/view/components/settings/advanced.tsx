@@ -20,6 +20,7 @@ import { scoresDB, scoreHistoryDB, songsDB, rivalListsDB } from '../../../compon
 import Divider from '@material-ui/core/Divider';
 import { Switch } from '@material-ui/core';
 import CachedIcon from '@material-ui/icons/Cached';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 interface S {
   isLoading:boolean,
@@ -34,6 +35,8 @@ interface S {
   traditionalMode:number,
   initialT:number,
   recalculating:boolean,
+  quota:number,
+  usage:number,
 }
 
 interface P{
@@ -58,7 +61,21 @@ class Settings extends React.Component<P,S> {
       traditionalMode:_traditionalMode(),
       initialT:_traditionalMode(),
       recalculating:false,
+      quota:0,
+      usage:0,
     }
+  }
+
+  componentDidMount(){
+    const self = this;
+    navigator.storage.estimate().then(function(estimate) {
+      if(estimate.quota && estimate.usage){
+        self.setState({
+          quota:estimate.quota,
+          usage:estimate.usage,
+        })
+      }
+    });
   }
 
   deleteDef = async()=>{
@@ -99,8 +116,28 @@ class Settings extends React.Component<P,S> {
     }
   }
 
+  persistency = ()=>{
+    if(navigator.storage && navigator.storage.persist){
+      navigator.storage.persisted().then(persistent=>{
+        if(!persistent){
+          navigator.storage.persist().then(granted=>{
+            if(granted){
+              alert("ストレージ永続化が許可されました");
+            }else{
+              alert("ストレージ永続化は許可されません。");
+            }
+          })
+        }else{
+          alert("すでに永続化が許可されています");
+        }
+      })
+    }else{
+      alert("お使いの端末では本機能をご利用いただけません。");
+    }
+  }
+
   render(){
-    const {isLoading,isDialogOpen,message2,currentResetStore,disableDeleteBtn,traditionalMode,recalculating,initialT} = this.state;
+    const {isLoading,isDialogOpen,message2,currentResetStore,disableDeleteBtn,traditionalMode,recalculating,initialT,usage,quota} = this.state;
     if(isLoading){
       return (
         <Container className="loaderCentered">
@@ -134,6 +171,30 @@ class Settings extends React.Component<P,S> {
             disabled={traditionalMode === initialT}
             startIcon={<CachedIcon />}>
             適用
+          </Button>
+          <Divider style={{margin:"10px 0"}}/>
+          <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
+            ストレージ占有率
+          </Typography>
+          {(usage === 0 && quota === 0) && <p>お使いの端末ではサポートされていない機能です。</p>}
+          {(usage || quota) && <div>
+            <LinearProgress
+              variant="determinate"
+              color="secondary"
+              style={{margin:"15px 0"}}
+              value={(usage / quota) * 100}
+            />
+            <p style={{textAlign:"center"}}>{usage} / {quota} ({((usage / quota) * 100).toFixed(5)}%)</p>
+          </div>}
+          <Typography variant="caption" display="block">
+            ストレージ使用の永続化を許可しておらず、ストレージが上限まで使用された場合、古いデータから自動的にデータが削除されます。<br/>
+            データの削除を防ぐために、ライバルスコアの削除などをお試しください。
+          </Typography>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={this.persistency}>
+            永続化リクエスト
           </Button>
           <Divider style={{margin:"10px 0"}}/>
           <FormControl>

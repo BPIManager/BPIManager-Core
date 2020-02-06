@@ -117,9 +117,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
       }
       return groups;
     },[]));
-
-    bpi.allTwelvesBPI = bpiMapper(targetLevel === 12 ? twelves : elevens);
-    bpi.allTwelvesLength = await new songsDB().getAllTwelvesLength(isSingle, String(targetLevel));
+    const at = bpiMapper(targetLevel === 12 ? twelves : elevens);
     //compare by date
     const sortByDate = (data:historyData[]):{[key:string]:historyData[]}=>{
       return data.reduce((groups:{[key:string]:historyData[]}, item:historyData) => {
@@ -142,13 +140,14 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
       return t;
     }
     Object.keys(allDiffs).map((item)=>{
-      _bpi.allTwelvesLength = allDiffs[item].length;
-      _bpi.allTwelvesBPI = allDiffs[item].reduce((a:number[],val:historyData)=>{
+      const p = allDiffs[item].reduce((a:number[],val:historyData)=>{
         if(val.BPI){
           a.push(val.BPI);
         }
         return a;
       },[]);
+      _bpi.allTwelvesLength = p.length;
+      _bpi.allTwelvesBPI = p;
       const avg = _bpi.totalBPI();
       eachDaySum.push({
         name : item,
@@ -167,7 +166,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
       groupedByLevel.push(obj);
     }
 
-    const totalBPI = bpi.totalBPI();
+    const totalBPI = bpi.setSongs(at);
     //BPI別集計
     this.setState({
       isLoading:false,
