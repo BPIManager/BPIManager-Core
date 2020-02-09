@@ -17,6 +17,10 @@ export default class fbActions{
     return fb.auth().signInWithRedirect(google);
   }
 
+  authInfo():firebase.User|null{
+    return fb.auth().currentUser;
+  }
+
   async updateProfileIcon():Promise<firebase.auth.UserCredential|null>{
     return fb.auth().getRedirectResult().then(async function(_result) {
       if(_result && _result.user && _result.additionalUserInfo && _result.additionalUserInfo.profile){
@@ -200,9 +204,9 @@ export default class fbActions{
           query = query.limit(10);
         }
       }
+      const total = await getTotalBPI();
       if(recommended){
         query = firestore.collection("users").orderBy("totalBPI", "desc");
-        const total = await getTotalBPI();
         const downLimit = total > 60 ? 50 : total - 5;
         const upLimit = total > 50 ? 100 : total + 5;
         query = query.where("totalBPI",">=",downLimit);
@@ -211,13 +215,17 @@ export default class fbActions{
       }
       const res = await query.get();
       if(!res.empty && res.size >= 1){
-        return res.docs.reduce((groups:rivalStoreData[],item:firebase.firestore.QueryDocumentSnapshot)=>{
+        const uid = this.authInfo();
+        const d = res.docs.reduce((groups:rivalStoreData[],item:firebase.firestore.QueryDocumentSnapshot)=>{
           const body = item.data();
-          if(body.displayName && body.displayName !== "" && body.serverTime){
+          if(body.displayName && body.displayName !== "" && body.serverTime && (uid && body.uid !== uid.uid)){
             groups.push(body as rivalStoreData);
           }
           return groups;
         },[]);
+        return recommended ? d.sort((a,b)=>{
+          return Math.abs(total - (Number(a.totalBPI) || -15)) - Math.abs(total - (Number(b.totalBPI) || -15))
+        }) : d;
       }else{
         return [];
       }
