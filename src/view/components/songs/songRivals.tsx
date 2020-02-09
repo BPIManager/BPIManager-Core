@@ -11,6 +11,7 @@ import Table from "@material-ui/core/Table";
 import TableRow from "@material-ui/core/TableRow";
 import {difficultyDiscriminator} from "../../../components/songs/filter";
 import bpiCalcuator from "../../../components/bpi";
+import fbActions from "../../../components/firebase/actions";
 
 interface P{
   song:songData|null,
@@ -65,9 +66,10 @@ class SongRivals extends React.Component<P,S> {
         BPI:bpi.setPropData(song,item.exScore,item.isSingle)
       });
     }
+    console.log(new fbActions().currentIcon())
     list.push({
       rivalName:"あなた",
-      icon:"",
+      icon:new fbActions().currentIcon(),
       exScore:score.exScore,
       BPI:score.currentBPI
     })

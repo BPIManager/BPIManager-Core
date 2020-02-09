@@ -68,14 +68,16 @@ class Settings extends React.Component<P,S> {
 
   componentDidMount(){
     const self = this;
-    navigator.storage.estimate().then(function(estimate) {
-      if(estimate.quota && estimate.usage){
-        self.setState({
-          quota:estimate.quota,
-          usage:estimate.usage,
-        })
-      }
-    });
+    if(navigator.storage && navigator.storage.estimate){
+      navigator.storage.estimate().then(function(estimate) {
+        if(estimate.quota && estimate.usage){
+          self.setState({
+            quota:estimate.quota,
+            usage:estimate.usage,
+          })
+        }
+      });
+    }
   }
 
   deleteDef = async()=>{

@@ -21,10 +21,20 @@ export default class fbActions{
     return fb.auth().currentUser;
   }
 
+  currentIcon():string{
+    const t = fb.auth().currentUser;
+    if(t){
+      return t.photoURL || "";
+    }else{
+      return "";
+    }
+  }
+
   async updateProfileIcon():Promise<firebase.auth.UserCredential|null>{
     return fb.auth().getRedirectResult().then(async function(_result) {
       if(_result && _result.user && _result.additionalUserInfo && _result.additionalUserInfo.profile){
         const pid = _result.additionalUserInfo.providerId;
+        const t = fb.auth().currentUser;
         let p = "";
         if(pid === "google.com"){
           p = (_result.additionalUserInfo.profile as {picture:string}).picture;
@@ -34,6 +44,11 @@ export default class fbActions{
         await firestore.collection("users").doc(_result.user.uid).set({
           photoURL:p
         },{merge: true});
+        if(t){
+          await t.updateProfile({
+            photoURL:p
+          });
+        }
       }
       return _result;
     }).catch(error => {
