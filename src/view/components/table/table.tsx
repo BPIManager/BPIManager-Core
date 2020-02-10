@@ -3,8 +3,6 @@ import * as React from 'react';
 import { rivalScoreData,scoreData } from '../../../types/data';
 import { AAADifficulty, CLInt, CLBody } from '../../../components/aaaDiff/data';
 import Grid from '@material-ui/core/Grid';
-import Container from '@material-ui/core/Container';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
@@ -12,6 +10,7 @@ import FormLabel from '@material-ui/core/FormLabel';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button'
+import Loader from '../common/loader';
 
 interface S {
   [key:string]:any,
@@ -111,6 +110,7 @@ class AAATable extends React.Component<P,S> {
           exScore:NaN
         });
       }
+      return 0;
     });
     return result;
   }
@@ -145,10 +145,7 @@ class AAATable extends React.Component<P,S> {
 
   render(){
     if(this.props.data.length === 0){
-      return (
-        <Container className="loaderCentered">
-          <CircularProgress />
-        </Container>);
+      return (<Loader/>);
     }
     const {result,checks,pm,showChecks} = this.state;
     return (

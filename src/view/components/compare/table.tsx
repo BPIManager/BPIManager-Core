@@ -7,12 +7,11 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import DetailedSongInformation from "../../components/songs/detailsScreen";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Container from "@material-ui/core/Container";
 import { scoreData, songData } from '../../../types/data';
 import { diffColor } from "../songs/common";
 import Tooltip from '@material-ui/core/Tooltip';
 import { compareData } from '../../../types/compare';
+import Loader from '../common/loader';
 
 interface S {
   isOpen:boolean,
@@ -76,11 +75,7 @@ export default class Compare extends React.Component<P,S> {
       }
     ];
     if(isLoading){
-      return (
-        <Container className="loaderCentered">
-          <CircularProgress />
-        </Container>
-      );
+      return (<Loader/>);
     }
     return (
     <Paper style={{width:"100%",overflowX:"auto"}}>

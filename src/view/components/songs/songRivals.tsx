@@ -12,6 +12,8 @@ import TableRow from "@material-ui/core/TableRow";
 import {difficultyDiscriminator} from "../../../components/songs/filter";
 import bpiCalcuator from "../../../components/bpi";
 import fbActions from "../../../components/firebase/actions";
+import { alternativeImg } from "../../../components/common";
+import Loader from "../common/loader";
 
 interface P{
   song:songData|null,
@@ -66,7 +68,6 @@ class SongRivals extends React.Component<P,S> {
         BPI:bpi.setPropData(song,item.exScore,item.isSingle)
       });
     }
-    console.log(new fbActions().currentIcon())
     list.push({
       rivalName:"あなた",
       icon:new fbActions().currentIcon(),
@@ -90,7 +91,7 @@ class SongRivals extends React.Component<P,S> {
       <div>
         <Container>
           {
-            isLoading && <div style={{display:"flex",justifyContent:"center",marginTop:"30px"}}><CircularProgress/></div>
+            isLoading && <Loader/>
           }
           {
             !isLoading && <DiffsTable scoreTable={dataset} yourEx={yourEx}/>
@@ -138,7 +139,7 @@ class DiffsTable extends React.Component<{scoreTable:datasets[],yourEx:number},{
                       {column.id === "icon" &&
                         <img src={row.icon ? row.icon : "noimage"} style={{width:"40px",height:"40px",borderRadius:"100%"}}
                           alt={row.rivalName}
-                          onError={(e)=>(e.target as HTMLImageElement).src = 'https://files.poyashi.me/noimg.png'}/>
+                          onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(row.rivalName)}/>
                       }
                       {column.id !== "icon"  && row[column.id]}
                       {column.id === "exScore" &&

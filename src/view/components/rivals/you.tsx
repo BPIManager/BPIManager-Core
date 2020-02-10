@@ -4,14 +4,14 @@ import { injectIntl } from 'react-intl';
 import Typography from '@material-ui/core/Typography';
 import { RouteComponentProps, withRouter, Link as RLink } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Avatar from '@material-ui/core/Avatar';
 import fbActions from '../../../components/firebase/actions';
 import ShareButtons from '../common/shareButtons';
 import WarningIcon from '@material-ui/icons/Warning';
 import Link from '@material-ui/core/Link';
 import {Chip} from '@material-ui/core/';
-import {arenaRankColor,getTotalBPI} from "../../../components/common/";
+import {arenaRankColor,getTotalBPI, alternativeImg} from "../../../components/common/";
+import Loader from '../common/loader';
 
 interface S {
   userName:string,
@@ -53,7 +53,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
   }
 
   getIIDXId = (input:string)=>{
-    const match = input.match(/\d{4}(\-|)\d{4}/);
+    const match = input.match(/\d{4}(-|)\d{4}/);
     return match ? match[0].replace(/[^\d]/g,"") : "";
   }
 
@@ -70,13 +70,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
     const {processing,userName,res,totalBPI} = this.state;
     const url = "https://bpi.poyashi.me/u/" + encodeURI(userName);
     if(processing){
-      return (
-        <Container fixed style={{padding:0}}>
-          <Container className="loaderCentered">
-            <CircularProgress />
-          </Container>
-        </Container>
-      )
+      return (<Loader/>);
     }
     if(!userName){
       return (
@@ -106,7 +100,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
         <Paper style={{marginTop:"10px"}}>
           <div style={{textAlign:"center",padding:"15px"}}>
             <Avatar alt={res.displayName} src={res.photoURL.replace("_normal","")}
-              onError={(e)=>(e.target as HTMLImageElement).src = 'https://files.poyashi.me/noimg.png'}
+              onError={(e)=>(e.target as HTMLImageElement).src =  alternativeImg(res.displayName)}
               style={{width:"150px",height:"150px",border:"1px solid #ccc",margin:"15px auto"}} />
             <Typography variant="h4">
               {res.displayName}
@@ -118,7 +112,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
             </Typography>
           </div>
         </Paper>
-        <img src={`https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=${url}`} style={{margin:"10px auto",display:"block",border:"1px solid #ccc"}}/>
+        <img src={`https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=${url}`} alt="ライバルに追加" style={{margin:"10px auto",display:"block",border:"1px solid #ccc"}}/>
       </Container>
     );
   }

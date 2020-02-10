@@ -25,6 +25,7 @@ import Switch from '@material-ui/core/Switch';
 import { config } from '../../../config';
 import TextField from '@material-ui/core/TextField';
 import {Link as RefLink} from '@material-ui/core/';
+import Loader from '../common/loader';
 
 interface S {
   isLoading:boolean,
@@ -130,11 +131,7 @@ class Settings extends React.Component<P,S> {
   render(){
     const {isLoading,isURLDialogOpen,disableUpdateBtn,message,autoSync} = this.state;
     if(isLoading){
-      return (
-        <Container className="loaderCentered">
-          <CircularProgress />
-        </Container>
-      );
+      return (<Loader/>);
     }
     return (
       <Subscribe to={[GlobalContainer]}>

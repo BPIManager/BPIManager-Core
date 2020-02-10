@@ -17,10 +17,6 @@ interface P{
 
 class ClearLampView extends React.Component<P,S> {
 
-  constructor(props:P){
-    super(props);
-  }
-
   handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
     this.setState({currentTab:newValue});
   };

@@ -3,7 +3,6 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import { injectIntl } from 'react-intl';
 import Paper from '@material-ui/core/Paper';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
 import { _currentViewComponents, _setCurrentViewComponents,isEnableTweetButton,setEnableTweetButton, _currentDefaultPage, _setDefaultPage } from '../../../components/settings';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -14,6 +13,7 @@ import Divider from '@material-ui/core/Divider';
 import Switch from '@material-ui/core/Switch';
 import InputLabel from '@material-ui/core/InputLabel';
 import { Select, MenuItem } from '@material-ui/core';
+import Loader from '../common/loader';
 
 interface S {
   isLoading:boolean,
@@ -56,11 +56,7 @@ class Settings extends React.Component<P,S> {
   render(){
     const {isLoading,isEnableTweetButton,defaultPage} = this.state;
     if(isLoading){
-      return (
-        <Container className="loaderCentered">
-          <CircularProgress />
-        </Container>
-      );
+      return (<Loader/>);
     }
     return (
       <Container fixed style={{padding:0}}>

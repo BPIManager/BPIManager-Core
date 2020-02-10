@@ -201,7 +201,7 @@ const ja = {
   "Sync.Control.message2":"データベースのアクセス上限に達している場合、データを読み込み/書き込みできないことがあります。",
   "Sync.Control.processing":"現在処理中です",
   "Sync.Control.nodata":"まだ保存済みのデータはありません。",
-  "Sync.Control.lastupdate":"最終更新日",
+  "Sync.Control.lastupdate":"最終更新データ",
   "Sync.Login.needLogin":"ログインしてください",
   "Sync.Login.description":"連携データはユーザー識別のためだけに使用され、勝手に新たな投稿を作成したり、ユーザー設定を変更することはありません。",
   "Sync.Login.note1":"*Firebase無料版を利用しているため、全ユーザーで1日あたり読み取り5万回、書き込み2万回の制限を共有しています。",

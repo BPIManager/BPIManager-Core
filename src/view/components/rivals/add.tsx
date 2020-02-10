@@ -16,6 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import { _currentStore, _isSingle } from '../../../components/settings';
 import { rivalListsDB } from '../../../components/indexedDB';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import { alternativeImg } from '../../../components/common';
 
 interface P {
   handleToggle:()=>void,
@@ -112,7 +113,7 @@ class RivalAdd extends React.Component<P,S> {
                   <Avatar>
                     <img src={res.photoURL ? res.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
                       alt={res.displayName}
-                      onError={(e)=>(e.target as HTMLImageElement).src = 'https://files.poyashi.me/noimg.png'}/>
+                      onError={(e)=>(e.target as HTMLImageElement).src =  alternativeImg(res.displayName)}/>
                   </Avatar>
                 }
                 title={res.displayName}

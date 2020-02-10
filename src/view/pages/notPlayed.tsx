@@ -3,9 +3,8 @@ import { scoresDB, songsDB } from '../../components/indexedDB';
 import { songData } from '../../types/data';
 import { difficultyDiscriminator } from '../../components/songs/filter';
 import { _isSingle,_currentStore } from '../../components/settings';
-import Container from '@material-ui/core/Container';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import NotPlayList from '../components/songs/notplayed/notPlayList';
+import Loader from '../components/common/loader';
 
 interface S {
   full:songData[]
@@ -53,10 +52,7 @@ export default class NotPlayed extends React.Component<{},S> {
 
   render(){
     if(this.state.full.length === 0){
-      return (
-        <Container className="loaderCentered">
-          <CircularProgress />
-        </Container>);
+      return (<Loader/>);
     }
     return (
       <div id="_notPlayed">

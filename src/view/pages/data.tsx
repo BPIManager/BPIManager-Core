@@ -22,6 +22,8 @@ import FormControl from '@material-ui/core/FormControl';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio from '@material-ui/core/Radio';
+import Paper from '@material-ui/core/Paper';
+import Alert from '@material-ui/lab/Alert/Alert';
 
 interface P{
   global:any,
@@ -71,7 +73,7 @@ export default class Index extends React.Component<P,{
       return false;
     }
     try {
-      arg = (!JSON) ? eval("(" + arg + ")") : JSON.parse(arg);
+      arg = (!JSON) ? false : JSON.parse(arg);
       return true;
     } catch (e) {
         return false;
@@ -87,7 +89,6 @@ export default class Index extends React.Component<P,{
       const isSingle:number = _isSingle();
       const currentStore:string = _currentStore();
       const isJSON = this.isJSON(this.state.raw);
-      console.log(isJSON);
       const executor:importJSON|importCSV = isJSON ? new importJSON(this.state.raw,isSingle,currentStore) : new importCSV(this.state.raw,isSingle,currentStore);
       const calc:bpiCalculator = new bpiCalculator();
       const exec:number = await executor.execute();
@@ -152,66 +153,74 @@ export default class Index extends React.Component<P,{
     const {raw,isSnackbarOpen,stateText,errors,isSaving} = this.state;
     return (
       <Container className="commonLayout" fixed>
-        <Snackbar
-          open={isSnackbarOpen}
-          onClose={this.handleClose}
-          ContentProps={{
-            'aria-describedby': 'message-id',
-          }}
-          message={<span id="message-id"><FormattedMessage id={stateText}/></span>}
-        />
-        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
-          <FormattedMessage id="Data.add"/>
-        </Typography>
-        <Link color="secondary" href={"https://p.eagate.573.jp/game/2dx/"+_currentStore()+"/djdata/score_download.html?style=" + spdp} target="_blank" rel="noopener noreferrer">
-          CSVダウンロードページへ
-        </Link>
-        <TextField
-          onChange={this.onChangeText}
-          value={raw}
-          style={{width:"100%"}}
-          label="Paste here"
-          margin="dense"
-          variant="outlined"
-          multiline
-          rowsMax="4"/>
-        <div style={{position:"relative"}}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={this.execute}
-            disabled={isSaving}
-            style={{width:"100%",margin:"5px 0"}}>
-            <FormattedMessage id="Data.Execute"/>
-            (->{_currentStoreWithFullName() }&nbsp;/&nbsp;
-            {_isSingle() === 1 ? "SP" : "DP"})
-          </Button>
-          {isSaving && <CircularProgress size={24} style={{color:"#777",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
-        </div>
-        {errors && errors.map(item=><span key={item}>{item}<br/></span>)}
-        <Divider variant="middle" style={{margin:"10px 0"}}/>
-        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
-          取り込み方
-        </Typography>
-        <Navigation/>
-        <Divider variant="middle" style={{margin:"10px 0"}}/>
-        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
-          データを同期
-        </Typography>
-        <RLink to="/sync" style={{textDecoration:"none"}}><Link color="secondary" component="span">「Sync」</Link></RLink>から、端末に保管されているデータをクラウド上にアップロードすることができます。<br/>
-        アップロードされたデータは他の端末と同期することが可能です。<br/>
-        注意:端末内に保管されているデータは、ブラウザのキャッシュをクリアすると削除される場合があります(Google Chromeで「Cookieとサイトデータの削除」を実行した場合など)。<br/>
-        定期的に本機能を用いてデータのバックアップを取ることをおすすめしています。
-        <Divider variant="middle" style={{margin:"10px 0"}}/>
-        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
-          <FormattedMessage id="Data.edit"/>
-        </Typography>
-        <FormattedMessage id="Data.howToEdit"/>
-        <ol>
-          <li><FormattedMessage id="Data.howToEdit1"/></li>
-          <li><FormattedMessage id="Data.howToEdit2"/></li>
-          <li><FormattedMessage id="Data.howToEdit3"/></li>
-        </ol>
+        <Paper style={{padding:"15px"}}>
+          <Snackbar
+            open={isSnackbarOpen}
+            onClose={this.handleClose}
+            ContentProps={{
+              'aria-describedby': 'message-id',
+            }}
+            message={<span id="message-id"><FormattedMessage id={stateText}/></span>}
+          />
+          <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
+            <FormattedMessage id="Data.add"/>
+          </Typography>
+          <Link color="secondary" href={"https://p.eagate.573.jp/game/2dx/"+_currentStore()+"/djdata/score_download.html?style=" + spdp} target="_blank" rel="noopener noreferrer">
+            CSVダウンロードはこちら
+          </Link>
+          <TextField
+            onChange={this.onChangeText}
+            value={raw}
+            style={{width:"100%"}}
+            label="Paste here"
+            margin="dense"
+            variant="outlined"
+            multiline
+            rowsMax="4"/>
+            <div style={{position:"relative"}}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={this.execute}
+                disabled={isSaving}
+                style={{width:"100%",margin:"5px 0"}}>
+                  <FormattedMessage id="Data.Execute"/><br/>
+                  (->{_currentStoreWithFullName() }&nbsp;/&nbsp;
+                  {_isSingle() === 1 ? "SP" : "DP"})
+              </Button>
+              {isSaving && <CircularProgress size={24} style={{color:"#777",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
+            </div>
+            {errors.length > 0 &&
+              <Alert severity="info" style={{margin:"8px 0"}}>
+                {errors.map(item=><span key={item}>{item}<br/></span>)}
+              </Alert>
+            }
+        </Paper>
+        <Paper style={{padding:"15px",margin:"10px 0 0 0"}}>
+            <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
+              取り込み方
+            </Typography>
+            <Navigation/>
+        </Paper>
+        <Paper style={{padding:"15px",margin:"10px 0 0 0"}}>
+            <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
+              データを同期
+            </Typography>
+            <RLink to="/sync" style={{textDecoration:"none"}}><Link color="secondary" component="span">「Sync」</Link></RLink>から、端末に保管されているデータをクラウド上にアップロードすることができます。<br/>
+            アップロードされたデータは他の端末と同期することが可能です。<br/>
+            注意:端末内に保管されているデータは、ブラウザのキャッシュをクリアすると削除される場合があります(Google Chromeで「Cookieとサイトデータの削除」を実行した場合など)。<br/>
+            定期的に本機能を用いてデータのバックアップを取ることをおすすめしています。
+            <Divider variant="middle" style={{margin:"10px 0"}}/>
+            <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
+              <FormattedMessage id="Data.edit"/>
+            </Typography>
+            <FormattedMessage id="Data.howToEdit"/>
+            <ol>
+              <li><FormattedMessage id="Data.howToEdit1"/></li>
+              <li><FormattedMessage id="Data.howToEdit2"/></li>
+              <li><FormattedMessage id="Data.howToEdit3"/></li>
+            </ol>
+        </Paper>
       </Container>
     );
   }

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import { scoresDB } from '../../components/indexedDB';
 import { scoreData } from '../../types/data';
 import ClearLampTable from '../components/table/table';
 import {_isSingle,_currentStore} from '../../components/settings/';
+import Loader from '../components/common/loader';
 
 interface S {
   data:any[],
@@ -32,13 +32,7 @@ class Stats extends React.Component<{intl:any},S> {
   render(){
     const {data,isLoading} = this.state;
     if(isLoading){
-      return (
-        <Container fixed style={{padding:0}}>
-          <Container className="loaderCentered">
-            <CircularProgress />
-          </Container>
-        </Container>
-      )
+      return (<Loader/>);
     }
     return (
       <Container className="commonLayout" fixed>

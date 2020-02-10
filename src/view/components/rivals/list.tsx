@@ -11,13 +11,14 @@ import Button from '@material-ui/core/Button';
 import RivalAdd from './add';
 import ShowSnackBar from '../snackBar';
 import { rivalListsDB } from '../../../components/indexedDB';
-import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { DBRivalStoreData } from '../../../types/data';
 import { updateRivalScore } from "../../../components/rivals";
 import Backdrop from "@material-ui/core/Backdrop";
 import moment from "moment";
 import timeFormatter,{timeCompare} from "../../../components/common/timeFormatter";
+import Loader from '../common/loader';
+import { alternativeImg } from '../../../components/common';
 
 interface S {
   isAddOpen:boolean,
@@ -86,10 +87,7 @@ class RivalLists extends React.Component<P,S> {
   render(){
     const {isAddOpen,showSnackBar,rivals,isLoading,message,bulkUpdate} = this.state;
     if(isLoading){
-      return (
-        <Container className="loaderCentered">
-          <CircularProgress />
-        </Container>);
+      return (<Loader/>);
     }
     return (
       <div>
@@ -131,7 +129,7 @@ class RivalComponent extends React.Component<CP,{}> {
               <Avatar>
                 <img src={data.photoURL ? data.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
                   alt={data.rivalName}
-                  onError={(e)=>(e.target as HTMLImageElement).src = 'https://files.poyashi.me/noimg.png'}/>
+                  onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(data.rivalName)}/>
               </Avatar>
             </ListItemAvatar>
             <ListItemText primary={data.rivalName} secondary={text} />

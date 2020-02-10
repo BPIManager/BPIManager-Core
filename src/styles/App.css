@@ -459,3 +459,15 @@ th.MuiTableCell-root.MuiTableCell-head:first-child{
 div#root > div > .MuiContainer-root{
   padding:0 20px !important;
 }
+
+/*
+.bottomedActionButtons{
+  padding:0 !important;
+}
+
+.bottomedActionButtons button{
+  border-top-right-radius: 0px !important;
+  border-top-left-radius: 0px !important;
+}
+
+*/

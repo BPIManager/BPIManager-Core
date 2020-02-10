@@ -51,3 +51,47 @@ export const getTotalBPI = async():Promise<number>=>{
 }
 
 export const noimg = "https://files.poyashi.me/noimg.png"
+export const alternativeImg = (input:string) => {
+  const namebased = ()=>{
+    switch(input[0].toLowerCase()){
+      case "a":
+      case "k":
+      case "u":
+      return "frogideas";
+      case "b":
+      case "l":
+      return "sugarsweets";
+      case "c":
+      case "m":
+      case "v":
+      return "berrypie";
+      case "d":
+      case "n":
+      case "w":
+      return "heatwave";
+      case "e":
+      case "o":
+      return "daisygarden";
+      case "f":
+      case "p":
+      case "x":
+      return "seascape";
+      case "g":
+      case "q":
+      case "y":
+      return "summerwarmth";
+      case "h":
+      case "r":
+      return "bythepool";
+      case "i":
+      case "s":
+      case "z":
+      default:
+      return "duskfalling"
+      case "j":
+      case "t":
+      return "base";
+    }
+  }
+  return "http://tinygraphs.com/squares/"+ input +"?theme=" + namebased() + "&numcolors=3&size=220&fmt=svg";
+}

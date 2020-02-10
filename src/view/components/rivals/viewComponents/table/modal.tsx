@@ -1,11 +1,12 @@
 import React from "react";
-import { Dialog, DialogTitle, DialogContent, Table, TableHead, TableRow, TableCell, TableBody, Container, CircularProgress } from "@material-ui/core";
+import { Dialog, DialogTitle, DialogContent, Table, TableHead, TableRow, TableCell, TableBody} from "@material-ui/core";
 import { songData } from "../../../../../types/data";
 import { songsDB } from "../../../../../components/indexedDB";
 import bpiCalcuator from "../../../../../components/bpi";
 import { _isSingle } from "../../../../../components/settings";
 import { convertClearState } from "../../../../../components/songs/filter";
 import { withRivalData } from "../../../common/radar";
+import Loader from "../../../common/loader";
 
 interface P {
   showDetails:(key:withRivalData|null)=>void,
@@ -103,11 +104,7 @@ export default class Details extends React.Component<P,{
             </TableBody>
           </Table>
         }
-        {!songData &&
-          <Container className="loaderCentered">
-            <CircularProgress />
-          </Container>
-        }
+        {!songData && <Loader/>}
         </DialogContent>
       </Dialog>
     );

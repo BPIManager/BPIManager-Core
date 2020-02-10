@@ -20,7 +20,6 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { _prefix, _prefixFromNum } from '../../../../components/songs/filter';
 import equal from 'fast-deep-equal'
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { _isSingle } from '../../../../components/settings';
 import moment from 'moment';
 import Button from '@material-ui/core/Button';
@@ -30,6 +29,7 @@ import OrderControl from "../common/orders";
 import { commonFunc } from '../../../../components/common';
 import FilterByLevelAndDiff from '../../common/selector';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
+import Loader from '../../common/loader';
 
 interface stateInt {
   isLoading:boolean,
@@ -291,10 +291,7 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
       formatMessage({id:"Orders.Version"}),
     ];
     if(isLoading){
-      return (
-        <Container className="loaderCentered">
-          <CircularProgress />
-        </Container>);
+      return (<Loader/>);
     }
     return (
       <Container className="commonLayout" fixed id="songsVil">

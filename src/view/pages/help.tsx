@@ -129,6 +129,9 @@ import {Link as RefLink} from '@material-ui/core/';
           recharts : Copyright (c) recharts MIT<br/>
           typescript : Copyright (c) Microsoft Apache License<br/>
           unstated : Copyright (c) 2018-present James Kyle MIT
+          <Divider style={{margin:"10px 0"}}/>
+          Services used in BPIManager:<br/>
+          <RefLink color="secondary" href="https://www.tinygraphs.com/">TinyGraphs</RefLink>
         </div>
     },
     {

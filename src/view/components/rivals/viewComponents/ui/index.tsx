@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
 import { FormattedMessage, injectIntl } from "react-intl";
 import { songsDB } from "../../../../../components/indexedDB";
 
@@ -12,7 +11,6 @@ import Table from "../table";
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import { _prefix, _prefixFromNum } from '../../../../../components/songs/filter';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { _isSingle } from '../../../../../components/settings';
 import moment from 'moment';
 import OrderControl from "../../../songs/common/orders";
@@ -24,6 +22,7 @@ import { commonFunc } from '../../../../../components/common';
 import FilterByLevelAndDiff from "../../../common/selector";
 import { withRivalData } from '../../../common/radar';
 import { songData } from '../../../../../types/data';
+import Loader from '../../../common/loader';
 
 interface stateInt {
   isLoading:boolean,
@@ -269,10 +268,7 @@ class SongsUI extends React.Component<P,stateInt> {
       delete orders[10];
     }
     if(isLoading){
-      return (
-        <Container className="loaderCentered">
-          <CircularProgress />
-        </Container>);
+      return (<Loader/>);
     }
     return (
       <div>

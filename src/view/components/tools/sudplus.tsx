@@ -11,7 +11,6 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import {_setGreenPreference,_currentGreenPreference, buttonTextColor} from "../../../components/settings/";
 import {songData} from "../../../types/data";
 import {songsDB} from "../../../components/indexedDB";
@@ -19,6 +18,7 @@ import {_prefixFromNum} from "../../../components/songs/filter";
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import Loader from '../common/loader';
 
 interface S {
   [key:string]:any,
@@ -168,7 +168,7 @@ class SongSearchDialog extends React.Component<UP,{value:string,isLoading:boolea
 
   async componentDidMount(){
     const db = new songsDB();
-    const allItems = (await db.getAll()).filter((item:songData)=>/\-/.test(item.bpm));
+    const allItems = (await db.getAll()).filter((item:songData)=>/-/.test(item.bpm));
     return this.setState({fullset:allItems,display:allItems,isLoading:false});
   }
 
@@ -186,11 +186,7 @@ class SongSearchDialog extends React.Component<UP,{value:string,isLoading:boolea
           onClose={this.handleClose}>
           <DialogTitle>楽曲検索</DialogTitle>
           <DialogContent>
-          {isLoading &&
-            <Container className="loaderCentered">
-              <CircularProgress />
-            </Container>
-          }
+          {isLoading && <Loader/>}
           {!isLoading &&
             <div>
               <TextField

@@ -4,7 +4,6 @@ import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import {_isSingle,} from "../../../components/settings";
-import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
@@ -16,6 +15,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableBody from '@material-ui/core/TableBody';
 import TablePagination from '@material-ui/core/TablePagination';
 import { scoreData } from '../../../types/data';
+import Loader from '../common/loader';
 
 interface scoreByVersion{
   name:string,
@@ -163,9 +163,7 @@ class MyBest extends React.Component<{},S> {
                 </Grid>
               </Grid>
               {isLoading &&
-                <Container className="loaderCentered">
-                  <CircularProgress />
-                </Container>
+                <Loader/>
               }
               {!isLoading && <div>
                 {scoreData.length === 0 && <p>表示するデータが見つかりません。</p>}

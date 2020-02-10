@@ -18,12 +18,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import CheckIcon from '@material-ui/icons/Check';
 import AddIcon from '@material-ui/icons/Add';
 import VisibilityIcon from '@material-ui/icons/Visibility';
-import Container from '@material-ui/core/Container';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { rivalStoreData, rivalScoreData, DBRivalStoreData } from '../../../types/data';
-import {Chip} from '@material-ui/core/';
-import {arenaRankColor} from '../../../components/common';
+import {Chip, CardActions, ButtonGroup} from '@material-ui/core/';
+import {arenaRankColor, alternativeImg} from '../../../components/common';
 import {Link} from 'react-router-dom';
+import Loader from '../common/loader';
 
 interface P {
   compareUser:(rivalMeta:rivalStoreData,rivalBody:rivalScoreData[],last:rivalStoreData,arenaRank:string,currentPage:number)=>void,
@@ -163,8 +162,8 @@ class RecentlyAdded extends React.Component<P,S> {
                 <Avatar>
                   <img src={item.photoURL ? item.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
                     alt={item.displayName}
-                    onError={(e)=>(e.target as HTMLImageElement).src = 'https://files.poyashi.me/noimg.png'}/>
-                  </Avatar>
+                    onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(item.displayName)}/>
+                </Avatar>
               </Link>
             }
             title={item.displayName}
@@ -177,32 +176,31 @@ class RecentlyAdded extends React.Component<P,S> {
             <Typography variant="body2" color="textSecondary" component="p">
               {item.profile}
             </Typography>
-            {rivals.indexOf(item.uid) === -1 &&
-              <Button disabled={processing} onClick={()=>this.addUser(item)} variant="outlined" color="secondary" style={{float:"right"}}>
-                <AddIcon/>
-                追加
-              </Button>
-            }
-            {rivals.indexOf(item.uid) > -1 &&
-              <Button disabled={processing} variant="outlined" style={{float:"right",border:"1px solid rgba(255, 0, 0, 0.35)",color:"#ff4d4d"}}>
-                <CheckIcon/>
-                ライバルです
-              </Button>
-            }
-            <Button disabled={processing} onClick={()=>this.compareButton(item)} variant="outlined" color="secondary" style={{float:"right",margin:"0px 5px"}}>
-              <VisibilityIcon/>
-              比較
-            </Button>
-            <div className="clearBoth"/>
           </CardContent>
+          <CardActions className="bottomedActionButtons">
+            <ButtonGroup color="secondary" variant="outlined" fullWidth>
+              {rivals.indexOf(item.uid) === -1 &&
+                <Button disabled={processing} onClick={()=>this.addUser(item)}>
+                  <AddIcon/>
+                  追加
+                </Button>
+              }
+              {rivals.indexOf(item.uid) > -1 &&
+                <Button disabled={true}>
+                  <CheckIcon/>
+                  ライバルです
+                </Button>
+              }
+              <Button disabled={processing} onClick={()=>this.compareButton(item)}>
+                <VisibilityIcon/>
+                比較
+              </Button>
+            </ButtonGroup>
+          </CardActions>
         </Card>
       </div>
       ))}
-      {isLoading && <div>
-        <Container className="loaderCentered" style={{height:"66px"}}>
-          <CircularProgress />
-        </Container>
-      </div>}
+      {isLoading && <Loader/>}
       {!recommended &&
       <Grid container>
         <Grid item xs={12}>

@@ -8,7 +8,6 @@ import Paper from '@material-ui/core/Paper';
 import bpiCalcuator from '../../../components/bpi';
 import {_isSingle,_currentStore, _chartColor} from "../../../components/settings";
 import moment from 'moment';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, BarChart, ReferenceLine} from 'recharts';
 import _withOrd from '../../../components/common/ord';
 import {Link as RefLink, Table, TableRow, TableCell, TableBody, FormControlLabel, FormControl, RadioGroup, Radio, Divider, FormLabel} from '@material-ui/core/';
@@ -17,6 +16,7 @@ import { songData, scoreData, historyData } from '../../../types/data';
 import { _DiscriminateRanksByNumber } from '../../../components/common/djRank';
 import { getRadar, Details, radarData } from '../common/radar';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
+import Loader from '../common/loader';
 
 const ticker = [-20,-10,0,10,20,30,40,50,60,70,80,90,100];
 
@@ -133,10 +133,10 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
     let eachDaySum:{name:string,sum:number,avg:number,}[] = [];
     const _bpi = new bpiCalcuator();
     const total = (item:historyData[]):number=>{
-      let t = 0;
-      item.map(item=>{
-        t += item.BPI;
-      });
+      let t = item.reduce((sum:number,item:historyData)=>{
+        sum += item.BPI;
+        return sum;
+      },0);
       return t;
     }
     Object.keys(allDiffs).map((item)=>{
@@ -220,9 +220,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
       return (
         <Container fixed style={{padding:0}}>
           <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel}/>
-          <Container className="loaderCentered">
-            <CircularProgress />
-          </Container>
+          <Loader/>
         </Container>
       );
     }

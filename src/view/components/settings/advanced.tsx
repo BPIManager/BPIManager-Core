@@ -21,6 +21,7 @@ import Divider from '@material-ui/core/Divider';
 import { Switch } from '@material-ui/core';
 import CachedIcon from '@material-ui/icons/Cached';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Loader from '../common/loader';
 
 interface S {
   isLoading:boolean,
@@ -141,11 +142,7 @@ class Settings extends React.Component<P,S> {
   render(){
     const {isLoading,isDialogOpen,message2,currentResetStore,disableDeleteBtn,traditionalMode,recalculating,initialT,usage,quota} = this.state;
     if(isLoading){
-      return (
-        <Container className="loaderCentered">
-          <CircularProgress />
-        </Container>
-      );
+      return (<Loader/>);
     }
     return (
       <Container fixed style={{padding:0}}>

@@ -5,12 +5,11 @@ import Typography from '@material-ui/core/Typography';
 import Switch from '@material-ui/core/Switch';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { getRadar, Details, radarData, withRivalData } from '../../common/radar';
-import Container from '@material-ui/core/Container';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { _isSingle,_chartColor } from '../../../../components/settings';
 import Grid from '@material-ui/core/Grid';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, PolarRadiusAxis } from 'recharts';
 import {Link as RefLink, Table, TableBody, TableRow, TableCell, TableHead} from '@material-ui/core/';
+import Loader from '../../common/loader';
 
 interface S {
   scoresAbout:number[],
@@ -94,10 +93,7 @@ class RivalStats extends React.Component<P,S> {
     const {radar,isLoading,scoresAbout,scoresByLevel11,scoresByLevel12,clearAbout,clearByLevel11,clearByLevel12,sum,sum11,sum12,percentage,radarDetail} = this.state;
     const chartColor = _chartColor();
     if(isLoading){
-      return (
-        <Container className="loaderCentered">
-          <CircularProgress />
-        </Container>);
+      return (<Loader/>);
     }
     return (
       <div>

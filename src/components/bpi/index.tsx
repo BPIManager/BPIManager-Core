@@ -83,7 +83,7 @@ export default class bpiCalcuator{
     try{
       this.propData = await this.songsDB.getOneItemIsSingle(songTitle,difficulty);
       if(!this.propData || !this.propData[0]){
-        throw new Error("楽曲情報が見つかりませんでした");
+        throw new Error("未対応楽曲です");
       }
       this.s = exScore;
       this.k = this.propData[0]["avg"];

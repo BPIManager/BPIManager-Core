@@ -2,8 +2,7 @@ import * as React from 'react';
 import SongsList from '../components/songs/played/songsList';
 import { scoresDB } from '../../components/indexedDB';
 import { scoreData } from '../../types/data';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Container from '@material-ui/core/Container';
+import Loader from '../components/common/loader';
 
 interface S {
   full:scoreData[]
@@ -30,9 +29,7 @@ export default class Songs extends React.Component<{},S> {
 
   render(){
     if(!this.state.full){
-      return (<Container className="loaderCentered">
-        <CircularProgress />
-      </Container>);
+      return (<Loader/>);
     }
     return (
       <div>

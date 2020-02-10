@@ -2,8 +2,6 @@ import * as React from 'react';
 
 import Typography from '@material-ui/core/Typography';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import Container from '@material-ui/core/Container';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -13,6 +11,7 @@ import { scoresDB, rivalListsDB } from '../../../components/indexedDB';
 import RivalStats from './viewComponents/stats';
 import { scoreData, rivalScoreData, rivalStoreData, DBRivalStoreData } from '../../../types/data';
 import { withRivalData } from '../common/radar';
+import Loader from '../common/loader';
 
 interface S {
   isLoading:boolean,
@@ -94,10 +93,7 @@ class RivalView extends React.Component<P,S> {
     const {isLoading,currentTab,full} = this.state;
     const {backToMainPage,isNotRival,rivalMeta,showAllScore} = this.props;
     if(isLoading){
-      return (
-        <Container className="loaderCentered">
-          <CircularProgress />
-        </Container>);
+      return (<Loader/>);
     }
     return (
       <div>

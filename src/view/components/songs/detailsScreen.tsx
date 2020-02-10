@@ -12,7 +12,6 @@ import { _prefixFromNum, getSongSuffixForIIDXInfo } from "../../../components/so
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
 import TextField from "@material-ui/core/TextField";
-import Container from "@material-ui/core/Container";
 import { FormattedMessage, injectIntl } from "react-intl";
 import Paper from "@material-ui/core/Paper";
 import bpiCalcuator, { B } from "../../../components/bpi";
@@ -33,6 +32,7 @@ import { _currentTheme,isEnableTweetButton } from "../../../components/settings"
 import _djRank from "../../../components/common/djRank";
 import {rivalListsDB} from "../../../components/indexedDB";
 import SongRivals from "./songRivals";
+import Loader from "../common/loader";
 
 interface P{
   isOpen:boolean,
@@ -252,10 +252,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       return (null);
     }
     if(isLoading){
-      return (
-        <Container className="loaderCentered">
-          <CircularProgress />
-        </Container>);
+      return (<Loader/>);
     }
     const detectStarIconColor = favorited ? "#ffd700" : "#c3c3c3";
     const c = _currentTheme();

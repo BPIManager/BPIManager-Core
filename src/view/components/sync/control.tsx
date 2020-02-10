@@ -16,6 +16,7 @@ import { scoresDB, scoreHistoryDB } from '../../../components/indexedDB';
 import TextField from '@material-ui/core/TextField';
 import {Link} from '@material-ui/core/';
 import {Link as RefLink} from "react-router-dom";
+import Alert from '@material-ui/lab/Alert';
 
 class SyncControlScreen extends React.Component<{userData:any},{
   isLoading:boolean,
@@ -120,9 +121,25 @@ class SyncControlScreen extends React.Component<{userData:any},{
         </RefLink>
         <FormattedMessage id="Sync.Autosync"/><br/>
         <Divider style={{margin:"10px 0"}}/>
-        {isLoading && <p><FormattedMessage id="Sync.Control.processing"/></p>}
-        {(!isLoading && scoreData === null) && <p><FormattedMessage id="Sync.Control.nodata"/></p>}
-        {(!isLoading && scoreData !== null) && <p><FormattedMessage id="Sync.Control.lastupdate"/>:{scoreData.timeStamp} {scoreData.type ? scoreData.type : "undefined"}から</p>}
+        <div style={{margin:"15px 0"}}>
+          {isLoading && (
+            <Alert severity="warning" icon={false}>
+              <FormattedMessage id="Sync.Control.processing"/>
+            </Alert>
+          )}
+          {(!isLoading && scoreData === null) && (
+            <Alert severity="error">
+              <FormattedMessage id="Sync.Control.nodata"/>
+            </Alert>
+          )}
+          {(!isLoading && scoreData !== null) && (
+            <Alert severity="info" icon={false}>
+              <FormattedMessage id="Sync.Control.lastupdate"/><br/>
+              Date: {scoreData.timeStamp}<br/>
+              From: {scoreData.type ? scoreData.type : "undefined"}
+            </Alert>
+          )}
+        </div>
         <ButtonGroup fullWidth color="secondary">
           <Button
             onClick={this.upload}
@@ -175,10 +192,12 @@ class SyncControlScreen extends React.Component<{userData:any},{
           disabled={isLoading}>
           送信
         </Button>
-        <p>
-          {nameErrorMessage.map((item:string)=><span key={item}>{item}<br/></span>)}
-          {(scoreData === null && myName) && <span style={{color:"#ff0000"}}>スコアデータが送信されていません。「転送」→「アップロード」よりスコアデータを送信してください。</span>}
-        </p>
+        {(nameErrorMessage.length > 0 || (scoreData === null && myName)) &&
+          <Alert severity="error" style={{margin:"8px 0"}}>
+            {nameErrorMessage.map((item:string)=><span key={item}>{item}<br/></span>)}
+            {(scoreData === null && myName) && <span style={{color:"#ff0000"}}>スコアデータが送信されていません。「転送」→「アップロード」よりスコアデータを送信してください。</span>}
+          </Alert>
+        }
         {(!isLoading && sentName) &&
           <p>
             あなたのプロフィールURL:<br/>

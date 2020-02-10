@@ -7,7 +7,6 @@ import { _currentStore, _isSingle } from '../../components/settings';
 import fbActions from '../../components/firebase/actions';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import GroupAddIcon from '@material-ui/icons/GroupAdd';
@@ -24,7 +23,8 @@ import {Link as RefLink} from "react-router-dom";
 import ClearLampView from '../components/table/fromUserPage';
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
 import bpiCalcuator from '../../components/bpi';
-import {arenaRankColor} from '../../components/common';
+import {arenaRankColor, alternativeImg} from '../../components/common';
+import Loader from '../components/common/loader';
 
 interface S {
   userName:string,
@@ -112,7 +112,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
   }
 
   getIIDXId = (input:string)=>{
-    const match = input.match(/\d{4}(\-|)\d{4}/);
+    const match = input.match(/\d{4}(-|)\d{4}/);
     return match ? match[0].replace(/[^\d]/g,"") : "";
   }
 
@@ -162,13 +162,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
     const {processing,add,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI} = this.state;
     const url = "https://bpi.poyashi.me/u/" + encodeURI(userName);
     if(processing){
-      return (
-        <Container fixed style={{padding:0}}>
-          <Container className="loaderCentered">
-            <CircularProgress />
-          </Container>
-        </Container>
-      )
+      return (<Loader/>);
     }
     if(!userName){
       return (
@@ -214,9 +208,11 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
       <Container className="commonLayout" id="users" fixed>
         <Paper>
           <div style={{textAlign:"center",padding:"15px"}}>
-            <Avatar alt={res.displayName} src={res.photoURL.replace("_normal","")}
-              onError={(e)=>(e.target as HTMLImageElement).src = 'https://files.poyashi.me/noimg.png'}
-              style={{width:"150px",height:"150px",border:"1px solid #ccc",margin:"15px auto"}} />
+            <Avatar style={{width:"150px",height:"150px",border:"1px solid #ccc",margin:"15px auto"}}>
+              <img src={res.photoURL ? res.photoURL.replace("_normal","") : "noimage"}
+                alt={res.displayName}
+                onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(res.displayName)}/>
+            </Avatar>
             <Typography variant="h4">
               {res.displayName}
             </Typography>
@@ -254,7 +250,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
             Twitter
           </Button>
         }
-        <img src={`https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=${url}`} style={{margin:"10px auto",display:"block",border:"1px solid #ccc"}}/>
+        <img src={`https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=${url}`} alt="ライバルに追加" style={{margin:"10px auto",display:"block",border:"1px solid #ccc"}}/>
         <ShareButtons withTitle={false} url={url}/>
         <ShowSnackBar message={message} variant={message === "ライバルを追加しました" ? "success" : "error"}
             handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>
