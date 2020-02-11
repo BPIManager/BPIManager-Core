@@ -113,7 +113,9 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
         const p = score.exScore / (item["notes"] * 2);
         const lev = "☆"+item["difficultyLevel"] as "☆11"|"☆12";
         songsByDJRank[_DiscriminateRanksByNumber(p)][lev]++;
-        score.clearState < 7 && songsByClearState[score.clearState][lev]++;
+        if(score.clearState > 0){
+          score.clearState < 7 && songsByClearState[score.clearState][lev]++;
+        }
       }
       return groups;
     },[]));
