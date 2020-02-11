@@ -18,7 +18,7 @@ import { rivalListsDB } from '../../components/indexedDB';
 import ShowSnackBar from '../components/snackBar';
 import RivalView from '../components/rivals/view';
 import { rivalScoreData, scoreData } from '../../types/data';
-import {Link, Chip, Divider} from '@material-ui/core/';
+import {Link, Chip, Divider, Grid} from '@material-ui/core/';
 import {Link as RefLink} from "react-router-dom";
 import ClearLampView from '../components/table/fromUserPage';
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
@@ -209,7 +209,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
         <Paper>
           <div style={{textAlign:"center",padding:"15px"}}>
             <Avatar style={{width:"150px",height:"150px",border:"1px solid #ccc",margin:"15px auto"}}>
-              <img src={res.photoURL ? res.photoURL.replace("_normal","") : "noimage"}
+              <img src={res.photoURL ? res.photoURL.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
                 alt={res.displayName}
                 onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(res.displayName)}/>
             </Avatar>
@@ -226,15 +226,23 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
             </Typography>
           </div>
         </Paper>
-        <Button onClick={()=>this.view(1)} disabled={add || processing} startIcon={<ViewListIcon/>} variant="outlined" color="secondary" fullWidth style={{margin:"10px 0 5px 0"}}>
-          スコアを見る
-        </Button>
-        <Button onClick={()=>this.view(2)} disabled={add || processing} startIcon={<WbIncandescentIcon/>} variant="outlined" color="secondary" fullWidth style={{margin:"0 0 5px 0"}}>
-          AAA達成表
-        </Button>
-        <Button onClick={this.addUser} disabled={add || processing} startIcon={<GroupAddIcon/>} variant="outlined" color="secondary" fullWidth style={{margin:"0 0 5px 0"}}>
-          ライバルに追加
-        </Button>
+        <Grid container spacing={1} style={{marginTop:"4px",marginBottom:"4px"}}>
+          <Grid item xs={12} md={4}>
+            <Button onClick={()=>this.view(1)} disabled={add || processing} startIcon={<ViewListIcon/>} variant="outlined" color="secondary" fullWidth>
+              スコアを見る
+            </Button>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Button onClick={()=>this.view(2)} disabled={add || processing} startIcon={<WbIncandescentIcon/>} variant="outlined" color="secondary" fullWidth>
+              AAA達成表
+            </Button>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Button onClick={this.addUser} disabled={add || processing} startIcon={<GroupAddIcon/>} variant="outlined" color="secondary" fullWidth>
+              ライバルに追加
+            </Button>
+          </Grid>
+        </Grid>
         {(this.getIIDXId(res.profile) !== "" || this.getTwitterName(res.profile) !== "") && <Divider style={{margin:"5px 0 10px 0"}}/>}
         {this.getIIDXId(res.profile) !== "" &&
           <form method="post" name="rivalSearch" action="https://p.eagate.573.jp/game/2dx/27/rival/rival_search.html#rivalsearch">
