@@ -2,18 +2,14 @@ import React from "react";
 
 import { scoreData, songData } from "../../../types/data";
 import Container from "@material-ui/core/Container";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import {rivalListsDB} from "../../../components/indexedDB";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import Table from "@material-ui/core/Table";
 import TableRow from "@material-ui/core/TableRow";
-import {difficultyDiscriminator} from "../../../components/songs/filter";
-import bpiCalcuator from "../../../components/bpi";
-import fbActions from "../../../components/firebase/actions";
 import { alternativeImg } from "../../../components/common";
 import Loader from "../common/loader";
+import { datasets, rivalShow } from "../../../components/rivals/letters";
 
 interface P{
   song:songData|null,
@@ -24,13 +20,6 @@ interface S{
   isLoading:boolean,
   dataset:datasets[],
   yourEx:number,
-}
-
-interface datasets{
-  rivalName:string,
-  icon:string,
-  exScore:number,
-  BPI:number,
 }
 
 class SongRivals extends React.Component<P,S> {
@@ -53,29 +42,8 @@ class SongRivals extends React.Component<P,S> {
     if(!song || !score){
       return;
     }
-    const bpi = new bpiCalcuator();
-    if(!song){return};
-    const s = new rivalListsDB();
-    const rivals = await s.getAllScoresWithTitle(song.title,difficultyDiscriminator(song.difficulty));
-    let list:datasets[] = [];
-    for(let i=0;i < rivals.length; ++i){
-      const item = rivals[i];
-      const data = await s.getDisplayData(item.rivalName);
-      list.push({
-        rivalName:data.name,
-        icon:data.icon,
-        exScore:item.exScore,
-        BPI:bpi.setPropData(song,item.exScore,item.isSingle)
-      });
-    }
-    list.push({
-      rivalName:"あなた",
-      icon:new fbActions().currentIcon(),
-      exScore:score.exScore,
-      BPI:score.currentBPI
-    })
     return this.setState({
-      dataset:list.sort((a,b)=>b.exScore - a.exScore),
+      dataset:await rivalShow(song,score),
       isLoading:false,
       yourEx:score.exScore,
     })
@@ -104,7 +72,7 @@ class SongRivals extends React.Component<P,S> {
 
 export default SongRivals;
 
-class DiffsTable extends React.Component<{scoreTable:datasets[],yourEx:number},{}>{
+export class DiffsTable extends React.Component<{scoreTable:datasets[],yourEx:number},{}>{
 
   render(){
 

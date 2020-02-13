@@ -373,7 +373,7 @@ export const importer = class extends storageWrapper{
           return item.willModified ? this.sDB.setItem(item) : this.sDB.putItem(item);
         }),
       ]);
-      
+
     }).catch((e)=>{
       console.log(e);
       return null;
@@ -734,6 +734,14 @@ export const rivalListsDB = class extends storageWrapper{
   async getAll():Promise<DBRivalStoreData[]>{
     try{
       return this.rivalLists.where("[isSingle+storedAt]").equals([_isSingle(),_currentStore()]).toArray();
+    }catch(e){
+      return [];
+    }
+  }
+
+  async getAllUserScores():Promise<rivalScoreData[]>{
+    try{
+      return this.rivals.where({isSingle:_isSingle(),storedAt:_currentStore()}).toArray();
     }catch(e){
       return [];
     }

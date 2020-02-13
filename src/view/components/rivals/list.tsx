@@ -19,6 +19,10 @@ import moment from "moment";
 import timeFormatter,{timeCompare} from "../../../components/common/timeFormatter";
 import Loader from '../common/loader';
 import { alternativeImg } from '../../../components/common';
+import Alert from '@material-ui/lab/Alert/Alert';
+import Grid from '@material-ui/core/Grid';
+import RecentActorsIcon from '@material-ui/icons/RecentActors';
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
 
 interface S {
   isAddOpen:boolean,
@@ -30,7 +34,8 @@ interface S {
 }
 
 interface P {
-  showEachRival: (input:DBRivalStoreData)=>void
+  showEachRival: (input:DBRivalStoreData)=>void,
+  changeTab: (_ev:any,input:number)=>void
 }
 
 const updateMinuteError = "一括更新機能は1分あたり1回までご利用いただけます。";
@@ -92,15 +97,33 @@ class RivalLists extends React.Component<P,S> {
     return (
       <div>
         <div style={{display:"flex",justifyContent:"flex-end"}}>
-          <Button color="secondary" variant="outlined" onClick={this.update}>一括更新</Button>
+          <Button color="secondary" variant="outlined" onClick={this.update} style={{marginBottom:"10px"}}>一括更新</Button>
           <Backdrop open={bulkUpdate}>
             <CircularProgress color="inherit" />
           </Backdrop>
         </div>
-        {rivals.length === 0 && <p>まだライバルがいません。</p>}
+        {rivals.length === 0 && (
+          <Alert severity="warning">
+            まだライバルがいません。
+          </Alert>
+        )}
         {rivals.map(item=>(
           <div key={item.uid} onClick={()=>this.props.showEachRival(item)}><RivalComponent data={item}/></div>)
         )}
+        <Grid container spacing={1} style={{marginTop:"4px",marginBottom:"4px"}}>
+          <Grid item xs={12} sm={6} style={{paddingTop:"8px"}}>
+            <Button color="secondary" variant="outlined" fullWidth onClick={()=>this.props.changeTab(null,2)}>
+              <PersonAddIcon/>
+              おすすめユーザーを見る
+            </Button>
+          </Grid>
+          <Grid item xs={12} sm={6} style={{paddingTop:"8px"}}>
+            <Button color="secondary" variant="outlined" fullWidth onClick={()=>this.props.changeTab(null,3)}>
+              <RecentActorsIcon/>
+              最近更新したユーザー
+            </Button>
+          </Grid>
+        </Grid>
         <Fab onClick={this.handleToggleModal} color="secondary" aria-label="add" style={{position:"fixed","bottom":"5%","right":"3%"}}>
           <AddIcon />
         </Fab>

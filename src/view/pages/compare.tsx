@@ -44,7 +44,7 @@ export default class Compare extends React.Component<{},S> {
       full:[],
       filtered:[],
       sort:4,
-      isDesc:false,
+      isDesc:true,
       options:{
         level:["11","12"],
         difficulty:["0","1","2"],
@@ -231,7 +231,7 @@ export default class Compare extends React.Component<{},S> {
       }
       return pm.indexOf("+") > -1 && pm.indexOf("-") > -1 ? true : false;
     });
-    return isDesc ? sortedData.reverse() : sortedData;
+    return !isDesc ? sortedData.reverse() : sortedData;
   }
 
   handleChangePage = (newPage:number):void => this.setState({page:newPage});

@@ -118,7 +118,7 @@ class RecentlyAdded extends React.Component<P,S> {
     if(!data){
       return this.toggleSnack("該当ユーザーは当該バージョン/モードにおけるスコアを登録していません。","warning");
     }
-    this.props.compareUser(meta,data.scores,res[res.length-1],arenaRank,recommended ? 1 : 2);
+    this.props.compareUser(meta,data.scores,res[res.length-1],arenaRank,recommended ? 2 : 3);
   }
 
   next = ()=>{

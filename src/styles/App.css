@@ -249,9 +249,15 @@ legend.MuiFormLabel-root{
 }
 
 @media (min-width: 360px){
+  /*
   .MuiContainer-fixed {
-    max-width: 100% !important;
+    max-width: 95% !important;
   }
+
+  .MuiContainer-root{
+    padding:5px !important;
+  }
+  */
 }
 
 .MuiTypography-h4{
@@ -471,3 +477,15 @@ div#root > div > .MuiContainer-root{
 }
 
 */
+
+.innerContainer{
+  padding: 5px 0 !important;
+}
+
+.innerContainer .MuiTableCell-root{
+  padding:5px 2px 5px 2px !important;
+}
+
+.MuiCheckbox-root{
+  padding:5px !important;
+}
