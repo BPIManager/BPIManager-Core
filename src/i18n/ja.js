@@ -91,7 +91,7 @@ const ja = {
   "Stats.LethalWeapon":"武器曲",
   "Stats.PossibleToGetBetter":"伸びそうな曲",
   "Stats.Distribution":"レベル別BPI分布",
-  "Stats.DistributionByBPM":"BPM帯別BPI",
+  "Stats.DistributionByBPM":"BPM帯別総合BPI",
   "Stats.DistributionOfDJRank":"DJランク",
   "Stats.DistributionOfClearState":"クリアタイプ",
   "Compare.Title":"データ比較",

@@ -4,7 +4,7 @@ import { difficultyParser } from "../songs/filter";
 import { _isSingle } from "../settings";
 import bpiCalcuator from "../bpi";
 
-type T = "SOFLAN"|"-139"|"140-159"|"160-179"|"180-199"|"200+"
+type T = "SOF"|"~139"|"~159"|"~179"|"~199"|"200~"
 
 interface songs{[key:string]:T};
 interface scores{[key:string]:scoreData};
@@ -12,48 +12,48 @@ export type distBPMI = {"name":T,"value":number}
 
 const bpmFilter = (bpm:string):T=>{
   if(bpm.indexOf("-") > -1){
-    return "SOFLAN";
+    return "SOF";
   }
   const bnum = Number(bpm);
   switch(true){
     case bnum < 140:
-    return "-139";
+    return "~139";
     case (bnum >= 140 && bnum < 160):
-    return "140-159";
+    return "~159";
     case (bnum >= 160 && bnum < 180):
-    return "160-179";
+    return "~179";
     case (bnum >= 180 && bnum < 200):
-    return "180-199";
+    return "~199";
     case (bnum >= 200):
     default:
-    return "200+";
+    return "200~";
   }
 }
 
 export const bpmDist = async(difficulty:"11"|"12" = "12"):Promise<distBPMI[]>=>{
   let distByBPM:{[key in T]:number[]} = {
-    "-139":[],
-    "140-159":[],
-    "160-179":[],
-    "180-199":[],
-    "200+":[],
-    "SOFLAN":[],
+    "~139":[],
+    "~159":[],
+    "~179":[],
+    "~199":[],
+    "200~":[],
+    "SOF":[],
   }
   let numDistByBPM = {
-    "-139":0,
-    "140-159":0,
-    "160-179":0,
-    "180-199":0,
-    "200+":0,
-    "SOFLAN":0,
+    "~139":0,
+    "~159":0,
+    "~179":0,
+    "~199":0,
+    "200~":0,
+    "SOF":0,
   }
   let result:{[key in T]:number} = {
-    "-139":-15,
-    "140-159":-15,
-    "160-179":-15,
-    "180-199":-15,
-    "200+":-15,
-    "SOFLAN":-15,
+    "~139":-15,
+    "~159":-15,
+    "~179":-15,
+    "~199":-15,
+    "200~":-15,
+    "SOF":-15,
   }
   const isSingle = _isSingle();
   const sdb = new songsDB();
