@@ -581,6 +581,16 @@ export const songsDB = class extends storageWrapper{
     }
   }
 
+  async getSongsNum(level = "12"){
+    try{
+      return this.getAll(_isSingle()).then(result=>{
+        return result.filter((item:songData)=>item.difficultyLevel === level).length;
+      })
+    }catch(e){
+      return 1;
+    }
+  }
+
   async getAllWithAllPlayModes():Promise<any>{
     try{
       return await this.songs.toCollection().toArray();

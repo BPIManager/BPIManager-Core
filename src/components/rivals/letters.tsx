@@ -50,6 +50,7 @@ export const loader = async()=>{
         title:item.title,
         difficulty:item.difficulty,
         difficultyLevel:item.difficultyLevel,
+        updatedAt:item.updatedAt,
     }
     if(rivals[p]){
       rivals[p].map((rItem:rivalScoreData)=>{

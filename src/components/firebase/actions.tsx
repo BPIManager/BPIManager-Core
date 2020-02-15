@@ -1,6 +1,6 @@
 import fb, { twitter,firestore, google } from ".";
 import timeFormatter from "../common/timeFormatter";
-import { scoresDB, scoreHistoryDB } from "../indexedDB";
+import { scoresDB, scoreHistoryDB, songsDB } from "../indexedDB";
 import platform from "platform";
 import firebase from 'firebase/app';
 import { rivalStoreData } from "../../types/data";
@@ -131,7 +131,7 @@ export default class fbActions{
     bpi.setTraditionalMode(0);
     const _s = s.filter(item=>item.difficultyLevel === "12");
     bpi.allTwelvesBPI = _s.reduce((group:number[],item:any)=>{group.push(item.currentBPI); return group;},[]);
-    bpi.allTwelvesLength = _s.length;
+    bpi.allTwelvesLength = await new songsDB().getSongsNum("12");
     return bpi.totalBPI();
   }
 

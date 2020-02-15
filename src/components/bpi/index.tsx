@@ -153,9 +153,9 @@ export default class bpiCalcuator{
     return sum > 0 ? res : -res;
   }
 
-  setSongs(s:any):number{
+  setSongs(s:any,sum:number = NaN):number{
     this.allTwelvesBPI = s;
-    this.allTwelvesLength = s.length;
+    this.allTwelvesLength = !Number.isNaN(sum) ? sum : s.length;
     return this.totalBPI();
   }
 }

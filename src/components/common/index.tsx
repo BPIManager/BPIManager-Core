@@ -1,5 +1,5 @@
 import bpiCalcuator from "../bpi";
-import {scoresDB} from "../indexedDB";
+import {scoresDB, songsDB} from "../indexedDB";
 import {scoreData} from "../../types/data";
 import {_isSingle,_currentStore} from "../settings";
 
@@ -36,7 +36,6 @@ export const arenaRankColor = (rank:string)=>{
   }
 }
 
-
 export const getTotalBPI = async():Promise<number>=>{
   const bpi = new bpiCalcuator();
   bpi.setTraditionalMode(0);
@@ -45,7 +44,7 @@ export const getTotalBPI = async():Promise<number>=>{
   const bpiMapper = (t:scoreData[])=>t.map((item:scoreData)=>item.currentBPI);
 
   bpi.allTwelvesBPI = bpiMapper(twelves);
-  bpi.allTwelvesLength = twelves.length;
+  bpi.allTwelvesLength = await new songsDB().getSongsNum("12");
 
   return bpi.totalBPI();
 }

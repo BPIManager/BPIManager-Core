@@ -17,6 +17,7 @@ import { _DiscriminateRanksByNumber } from '../../../components/common/djRank';
 import { getRadar, Details, radarData } from '../common/radar';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '../common/loader';
+import { bpmDist, distBPMI } from '../../../components/stats/bpmDist';
 
 const ticker = [-20,-10,0,10,20,30,40,50,60,70,80,90,100];
 
@@ -43,6 +44,7 @@ interface S {
   perDate:perDate[],
   groupedByLevel:groupedByLevel[],
   groupedByDiff:groupedArray[],
+  groupedByBPM:distBPMI[],
   radar:radarData[],
   groupedByDJRank:groupedArray[],
   groupedByClearState:groupedArray[],
@@ -61,6 +63,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
       perDate:[],
       groupedByLevel:[],
       groupedByDiff:[],
+      groupedByBPM:[],
       radar:[],
       groupedByDJRank:[],
       groupedByClearState:[],
@@ -120,6 +123,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
       return groups;
     },[]));
     const at = bpiMapper(targetLevel === 12 ? twelves : elevens);
+    const songsNum = await new songsDB().getSongsNum(String(targetLevel));
     //compare by date
     const sortByDate = (data:historyData[]):{[key:string]:historyData[]}=>{
       return data.reduce((groups:{[key:string]:historyData[]}, item:historyData) => {
@@ -168,7 +172,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
       groupedByLevel.push(obj);
     }
 
-    const totalBPI = bpi.setSongs(at);
+    const totalBPI = bpi.setSongs(at,songsNum);
     //BPI別集計
     this.setState({
       isLoading:false,
@@ -176,6 +180,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
       totalRank:bpi.rank(totalBPI,false),
       perDate:eachDaySum.sort((a,b)=> moment(a.name).diff(b.name)).slice(-10),
       groupedByLevel:groupedByLevel,
+      groupedByBPM:await bpmDist(String(targetLevel) as "11"|"12"),
       radar: isSingle ? await getRadar() : [],
       groupedByDJRank:songsByDJRank.reverse(),
       groupedByClearState:songsByClearState.reverse(),
@@ -215,7 +220,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
   }
 
   render(){
-    const {totalBPI,isLoading,perDate,targetLevel,totalRank,groupedByLevel,radar,groupedByDJRank,groupedByClearState,radarDetail} = this.state;
+    const {totalBPI,isLoading,perDate,targetLevel,groupedByBPM,totalRank,groupedByLevel,radar,groupedByDJRank,groupedByClearState,radarDetail} = this.state;
     const {formatMessage} = this.props.intl;
     const chartColor = _chartColor();
     if(isLoading){
@@ -268,6 +273,34 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
                 </div>
               }
               {perDate.length === 0 && <p>No data found.</p>}
+            </Paper>
+          </Grid>
+        </Grid>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={12} lg={12}>
+            <Paper style={{padding:"15px",height:270}}>
+              <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
+                <FormattedMessage id="Stats.DistributionByBPM"/>
+              </Typography>
+              {(groupedByBPM.length > 0) &&
+                <div style={{width:"95%",height:"100%",margin:"5px auto"}}>
+                  <ResponsiveContainer width="100%">
+                    <BarChart
+                      layout="vertical"
+                      data={groupedByBPM}
+                      margin={{
+                      top: 5, right: 30, left: -30, bottom: 30,
+                      }}
+                    >
+                      <XAxis stroke={chartColor} type="number" />
+                      <YAxis stroke={chartColor} type="category" dataKey="name" />
+                      <Tooltip contentStyle={{color:"#333"}}/>
+                      <Bar dataKey="value" fill="#8884d8" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              }
+              {groupedByLevel.length === 0 && <p>No data found.</p>}
             </Paper>
           </Grid>
         </Grid>

@@ -92,6 +92,7 @@ const ja = {
   "Stats.Average":"Average BPI",
   "Stats.PossibleToGetBetter":"Songs Possible to Get better",
   "Stats.Distribution":"BPI Distributions by Lv.",
+  "Stats.DistributionByBPM":"Composite BPI distributed per BPM",
   "Compare.Title":"Compare",
   "Compare.From":"Data source",
   "Compare.To":"Compare with",

@@ -21,6 +21,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { _isSingle } from '../../../components/settings';
 import Container from '@material-ui/core/Container';
 import OrderControl from "../songs/common/orders";
+import moment from 'moment';
 
 interface P{
 
@@ -51,7 +52,7 @@ class RivalChallengeLetters extends React.Component<P,stateInt> {
       scoreData:[],
       allSongsData:[],
       full:[],
-      orderTitle:0,
+      orderTitle:5,
       orderMode:1,
       options:{
         level:["11","12"],
@@ -165,6 +166,8 @@ class RivalChallengeLetters extends React.Component<P,stateInt> {
         case 0:
         default:
           return a.win - b.win;
+        case 5:
+          return moment(a.updatedAt).diff(b.updatedAt);
       }
     });
     if(orderTitle === 0){
@@ -195,6 +198,7 @@ class RivalChallengeLetters extends React.Component<P,stateInt> {
       "敗北数",
       "曲名",
       "レベル",
+      "最終更新日時",
     ];
     return (
       <Container fixed className="innerContainer">
