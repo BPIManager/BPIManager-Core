@@ -57,10 +57,11 @@ const styles = (theme:any) => ({
   },
   drawerPaper: {
     width: drawerWidth,
+    overflowX:"hidden" as "hidden",
   },
   content: {
     flexGrow: 1,
-    paddingTop: theme.spacing.unit * 7,
+    paddingTop: theme.spacing(7),
   },
 });
 

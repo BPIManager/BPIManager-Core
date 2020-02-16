@@ -5,7 +5,7 @@ import { songsDB } from "../../../../../components/indexedDB";
 import bpiCalcuator from "../../../../../components/bpi";
 import { _isSingle } from "../../../../../components/settings";
 import { convertClearState } from "../../../../../components/songs/filter";
-import { withRivalData } from "../../../common/radar";
+import { withRivalData } from "../../../../../components/stats/radar";
 import Loader from "../../../common/loader";
 
 interface P {

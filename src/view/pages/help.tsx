@@ -82,7 +82,13 @@ import {Link as RefLink} from '@material-ui/core/';
       "title":"Help.AboutBPI",
       "body":
         <div>
-          BPIManagerでは、<RefLink color="secondary" href="http://norimiso.web.fc2.com/aboutBPI.html">norimiso様考案のBPI</RefLink>をもとに、定義を改変してIIDXの実力を推定しています。<br/>
+          <Typography variant="h6">BPIとは？</Typography>
+          BPIとは、<RefLink color="secondary" href="http://norimiso.web.fc2.com/aboutBPI.html">norimiso様が考案された</RefLink>、beatmaniaIIDXのスコア力を数値として表現する公式です。<br/>
+          皆伝平均を0、全国歴代1位を100として、あなたの実力を示します。<br/>
+          BPIに関する詳細は上記ウェブサイトをご確認ください。
+          <Divider style={{margin:"5px 0"}}/>
+          <Typography variant="h6">BPI計算式の改変について</Typography>
+          BPIManagerでは、<RefLink color="secondary" href="http://norimiso.web.fc2.com/aboutBPI.html">こちらのページの記述</RefLink>を基準とした上で、定義を改変してIIDXの実力を推定しています。<br/>
           具体的には、次のような変更を施しています。
           <ul>
             <li>譜面ごとに、統計的に得られた譜面係数を設定し、当該値をBPI算出に使用</li>
@@ -110,7 +116,8 @@ import {Link as RefLink} from '@material-ui/core/';
           <Divider style={{margin:"10px 0"}}/>
           <FormattedMessage id="Help.F.2"/><br/>
           <FormattedMessage id="Help.F.3"/><br/>
-          <FormattedMessage id="Help.F.4"/>
+          <FormattedMessage id="Help.F.4"/><br/>
+          *iPhone 5,iPhone SEでは一部画面のレイアウトに崩れが生じる場合があります
         </div>
     },{
       "title":"Help.Licenses",

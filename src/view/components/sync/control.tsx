@@ -14,7 +14,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import timeFormatter from '../../../components/common/timeFormatter';
 import { scoresDB, scoreHistoryDB } from '../../../components/indexedDB';
 import TextField from '@material-ui/core/TextField';
-import {Link} from '@material-ui/core/';
+import {Link, CircularProgress} from '@material-ui/core/';
 import {Link as RefLink} from "react-router-dom";
 import Alert from '@material-ui/lab/Alert';
 
@@ -123,7 +123,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
         <Divider style={{margin:"10px 0"}}/>
         <div style={{margin:"15px 0"}}>
           {isLoading && (
-            <Alert severity="warning" icon={false}>
+            <Alert severity="warning" icon={<CircularProgress color="secondary" />}>
               <FormattedMessage id="Sync.Control.processing"/>
             </Alert>
           )}
@@ -155,8 +155,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
           公開設定
         </Typography>
         <p>
-        <FormattedMessage id="Sync.Public0"/><br/>
-        <Link color="secondary" href="https://gist.github.com/potakusan/08c5528d6c6a51d10aec6b6556723a80"  target="_blank" rel="noopener noreferrer"><FormattedMessage id="Sync.Public2"/></Link>
+        <FormattedMessage id="Sync.Public0"/>
         </p>
         <TextField label="表示名を入力(最大16文字)"
           InputLabelProps={{

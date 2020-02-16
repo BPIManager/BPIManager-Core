@@ -1,6 +1,6 @@
-import { _goalBPI, _isSingle, _currentStore } from "../../../components/settings";
-import { scoresDB } from "../../../components/indexedDB";
-import bpiCalcuator from "../../../components/bpi";
+import { _goalBPI, _isSingle, _currentStore } from "../settings";
+import { scoresDB } from "../indexedDB";
+import bpiCalcuator from "../bpi";
 import React from "react";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -10,7 +10,7 @@ import TableBody from "@material-ui/core/TableBody";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
-import { _prefix } from "../../../components/songs/filter";
+import { _prefix } from "../songs/filter";
 
 export interface withRivalData{
   title:string,

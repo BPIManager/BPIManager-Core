@@ -20,7 +20,7 @@ import { verArr, bpmFilter } from '../../../songs/common';
 import SongsFilter, { B } from '../../../songs/common/filter';
 import { commonFunc } from '../../../../../components/common';
 import FilterByLevelAndDiff from "../../../common/selector";
-import { withRivalData } from '../../../common/radar';
+import { withRivalData } from '../../../../../components/stats/radar';
 import { songData } from '../../../../../types/data';
 import Loader from '../../../common/loader';
 

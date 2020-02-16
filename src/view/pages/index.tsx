@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 import { FormattedMessage } from "react-intl";
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import {Link as RefLink} from '@material-ui/core/';
-import { _lang, _currentDefaultPage } from '../../components/settings';
+import { _lang, _currentVersion } from '../../components/settings';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import LanguageIcon from '@material-ui/icons/Language';
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
@@ -15,15 +15,9 @@ import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import LibraryMusicIcon from '@material-ui/icons/LibraryMusic';
 import HelpIcon from '@material-ui/icons/Help';
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
+import Alert from '@material-ui/lab/Alert/Alert';
 
 class Index extends React.Component<RouteComponentProps,{}> {
-
-  componentDidMount(){
-    const def = _currentDefaultPage();
-    if(def !== "home"){
-        this.props.history.replace(def);
-    }
-  }
 
   render(){
     return (
@@ -66,7 +60,12 @@ class AddToHomeScreenTicker extends React.Component<{},{show:boolean}>{
   }
 }
 
-class IfNotOnTheHomeScreen extends React.Component<{},{show:boolean}>{
+class IfNotOnTheHomeScreen extends React.Component<{},{
+  show:boolean,
+  showUpdate:boolean,
+  latestVersion:string,
+  updateInfo:string,
+}>{
 
   constructor(props:{}){
     super(props);
@@ -77,12 +76,32 @@ class IfNotOnTheHomeScreen extends React.Component<{},{show:boolean}>{
     const regEx = (ua:RegExp)=> ua.test(window.navigator.userAgent.toLowerCase());
 
     this.state = {
-      show:isPC() ? true : (regEx(/iphone|ipad|ipod/) && !isStandAloneIn_iOS()) ? true : (regEx(/android/) && !isStandAloneInAndroid()) ? true : false
+      show:isPC() ? true : (regEx(/iphone|ipad|ipod/) && !isStandAloneIn_iOS()) ? true : (regEx(/android/) && !isStandAloneInAndroid()) ? true : false,
+      showUpdate:false,
+      latestVersion:"",
+      updateInfo:"",
+    }
+  }
+
+  async componentDidMount(){
+    try{
+      const versions = await fetch("https://proxy.poyashi.me/?type=bpiVersion");
+      const data = await versions.json();
+      const currentVersion = _currentVersion();
+      if(data.version !== currentVersion){
+        this.setState({
+          showUpdate:true,
+          latestVersion:data.version,
+          updateInfo:data.updateInfo,
+        });
+      }
+    }catch(e){
+      console.log(e);
     }
   }
 
   render(){
-    const {show} = this.state;
+    const {show,showUpdate,latestVersion,updateInfo} = this.state;
     const navBar = [
       {
         to:"/data",
@@ -100,7 +119,6 @@ class IfNotOnTheHomeScreen extends React.Component<{},{show:boolean}>{
         icon:<HelpIcon />
       }
     ]
-    //if(this.state.show) return null;
     return (
       <div className="heroLayout">
         <Container className="heroTitle">
@@ -127,6 +145,16 @@ class IfNotOnTheHomeScreen extends React.Component<{},{show:boolean}>{
               </div>
             </Grid>
           </Grid>
+          {showUpdate && (
+            <Alert variant="outlined" severity="info"
+              action={
+                <Button color="inherit" size="small" onClick={()=>window.open(updateInfo)}>
+                  詳細
+                </Button>
+              }>
+              最新の楽曲データを利用可能です({latestVersion})。<br/>設定からアップデートしてください。
+            </Alert>
+          )}
         </Container>
         <AddToHomeScreenTicker/>
         {show && <div>

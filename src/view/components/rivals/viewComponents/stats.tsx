@@ -4,7 +4,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Switch from '@material-ui/core/Switch';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { getRadar, Details, radarData, withRivalData } from '../../common/radar';
+import { getRadar, Details, radarData, withRivalData } from '../../../../components/stats/radar';
 import { _isSingle,_chartColor } from '../../../../components/settings';
 import Grid from '@material-ui/core/Grid';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, PolarRadiusAxis } from 'recharts';

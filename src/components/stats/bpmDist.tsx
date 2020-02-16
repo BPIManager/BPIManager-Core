@@ -8,7 +8,7 @@ type T = "SOF"|"~139"|"~159"|"~179"|"~199"|"200~"
 
 interface songs{[key:string]:T};
 interface scores{[key:string]:scoreData};
-export type distBPMI = {"name":T,"value":number}
+export type distBPMI = {"name":T,"BPI":number}
 
 const bpmFilter = (bpm:string):T=>{
   if(bpm.indexOf("-") > -1){
@@ -71,11 +71,12 @@ export const bpmDist = async(difficulty:"11"|"12" = "12"):Promise<distBPMI[]>=>{
   Object.keys(distByBPM).map((item:string)=>{
     const bpi = new bpiCalcuator();
     result[item as T] = bpi.setSongs(distByBPM[item as T],numDistByBPM[item as T]);
+    return 0;
   });
   return Object.keys(result).reduce((groups:distBPMI[],item:string)=>{
     groups.push({
       "name":(item as T),
-      "value":result[item as T],
+      "BPI":result[item as T],
     })
     return groups;
   },[]);

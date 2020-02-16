@@ -10,7 +10,7 @@ import Settings from './viewComponents/settings';
 import { scoresDB, rivalListsDB } from '../../../components/indexedDB';
 import RivalStats from './viewComponents/stats';
 import { scoreData, rivalScoreData, rivalStoreData, DBRivalStoreData } from '../../../types/data';
-import { withRivalData } from '../common/radar';
+import { withRivalData } from '../../../components/stats/radar';
 import Loader from '../common/loader';
 
 interface S {

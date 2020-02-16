@@ -1,6 +1,5 @@
 *{
   font-family: "Roboto", "Helvetica", "Hiragino Kaku Gothic ProN","メイリオ", sans-serif !important;
-  font-weight: 500 !important;
 }
 
 .App {
@@ -249,7 +248,7 @@ legend.MuiFormLabel-root{
 }
 
 @media (min-width: 360px){
-  .MuiContainer-fixed {
+  main > .MuiContainer-fixed {
     max-width: 95% !important;
   }
 

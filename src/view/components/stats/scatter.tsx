@@ -11,6 +11,8 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Loader from '../common/loader';
+import Alert from '@material-ui/lab/Alert';
+import AlertTitle from '@material-ui/lab/AlertTitle';
 
 interface scatterGraph{
   label:string,
@@ -128,7 +130,6 @@ class ScatterGraph extends React.Component<{},S> {
                     <Select value={targetVersion} onChange={this.handleChanger("targetVersion")}>
                       <MenuItem value={"27"}>27 HEROIC VERSE</MenuItem>
                       <MenuItem value={"26"}>26 Rootage</MenuItem>
-                      <MenuItem value={"OBPI"}>目標BPI</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
@@ -165,7 +166,7 @@ class ScatterGraph extends React.Component<{},S> {
                           <XAxis type="number" dataKey="x" name="前作比較" unit={way === 0 ? "％" : ""} stroke={chartColor} />
                           <YAxis type="number" dataKey="y" name="今作BPI" unit="" stroke={chartColor} />
                           <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} />
-                        <Scatter name="A school" data={scatterGraph} fill="#8884d8" />
+                        <Scatter data={scatterGraph} fill="#8884d8" />
                       </ScatterChart>
                     </ResponsiveContainer>
                   </div>
@@ -177,6 +178,14 @@ class ScatterGraph extends React.Component<{},S> {
             </Paper>
           </Grid>
         </Grid>
+
+        <Alert severity="info" style={{margin:"10px 0"}}>
+          <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>分布機能について</AlertTitle>
+          <p>
+            これはバージョン間で楽曲スコアがどれだけ伸びたかを視覚化する機能です。<br/>
+            前作に比べ、大幅に上達したのか、あまり上達していないのか、はたまた下手になっているのか、といった判断を、他の楽曲の上昇率と比較し相対的に判断することを目的として搭載されています。
+          </p>
+        </Alert>
       </Container>
     );
   }

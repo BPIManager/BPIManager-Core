@@ -9,7 +9,7 @@ import TableRow from "@material-ui/core/TableRow";
 import { diffColor } from "../../../songs/common";
 import { _currentViewComponents, _traditionalMode } from "../../../../../components/settings";
 import Details from "./modal";
-import { withRivalData } from "../../../common/radar";
+import { withRivalData } from "../../../../../components/stats/radar";
 
 const columns = [
   { id: "difficultyLevel", label: "☆"},

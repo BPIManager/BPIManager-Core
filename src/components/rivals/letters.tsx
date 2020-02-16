@@ -28,16 +28,9 @@ const loadRivalScore = async():Promise<rivalScoreObject>=>{
   },{});
 }
 
-/*
-const rivalNum = async():Promise<number>=>{
-  return (await new rivalListsDB().getAll()).length;
-}
-*/
-
 export const loader = async()=>{
   const local = await loadLocalScore();
   const rivals = await loadRivalScore();
-  //const num = await rivalNum();
   let scoreObj:any[] = [];
   local.map((item:scoreData)=>{
     const p = item.title + item.difficulty;
@@ -62,7 +55,7 @@ export const loader = async()=>{
         }
         return 0;
       });
-      const rate = Number(obj["win"] / (obj["lose"] + obj["win"]) * 100); //* (rivals[p].length / num);
+      const rate = Number(obj["win"] / (obj["lose"] + obj["win"]) * 100);
       obj["rate"] = Math.round(Number.isNaN(rate) ? 0 : rate);
       scoreObj.push(obj);
     }
@@ -72,18 +65,19 @@ export const loader = async()=>{
 }
 
 export const rivalShow = async(song:songData,score:scoreData|{exScore:number,currentBPI:number}):Promise<datasets[]>=>{
-  const bpi = new bpiCalcuator();
-  const s = new rivalListsDB();
-  const rivals = await s.getAllScoresWithTitle(song.title,difficultyDiscriminator(song.difficulty));
   let list:datasets[] = [];
+
+  const listsDB = new rivalListsDB();
+
+  const rivals = await listsDB.getAllScoresWithTitle(song.title,difficultyDiscriminator(song.difficulty));
   for(let i=0;i < rivals.length; ++i){
     const item = rivals[i];
-    const data = await s.getDisplayData(item.rivalName);
+    const data = await listsDB.getDisplayData(item.rivalName);
     list.push({
       rivalName:data.name,
       icon:data.icon,
       exScore:item.exScore,
-      BPI:bpi.setPropData(song,item.exScore,item.isSingle)
+      BPI:new bpiCalcuator().setPropData(song,item.exScore,item.isSingle)
     });
   }
   list.push({
