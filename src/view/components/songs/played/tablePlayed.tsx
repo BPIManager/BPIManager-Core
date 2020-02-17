@@ -106,6 +106,8 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                     onClick={()=>this.handleOpen(false,row)}
                     hover role="checkbox" tabIndex={-1} key={row.title + row.prefix + i} className={ i % 2 ? "isOdd" : "isEven"}>
                     {columns.map((column,j) => {
+                      if(Number.isNaN(row.currentBPI)) return (null);
+                      
                       return (
                         <TableCell key={column.id + prefix} style={{backgroundColor : diffColor(j,row.clearState),position:"relative"}} >
                           {(mode < 6 && column.id === "currentBPI") && <span className={j >= 2 ? "bodyNumber" : ""}>{Number(row[column.id]).toFixed(2)}</span>}
