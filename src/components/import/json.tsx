@@ -45,7 +45,7 @@ export default class importJSON {
             difficulty:p.difficulty,
             currentBPI:0,
             difficultyLevel:"-",
-            exScore:p.score,
+            exScore:Number(p.score),
             missCount:NaN,
             clearState:p.clear,
             lastScore:-1,

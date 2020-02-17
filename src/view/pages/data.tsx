@@ -114,7 +114,7 @@ export default class Index extends React.Component<P,{
           continue;
         }
         const item = all[result[i]["title"] + result[i]["difficulty"]];
-        if(item && ((item["exScore"] >= result[i]["exScore"] && item["clearState"] === result[i]["clearState"]) || moment(result[i]["updatedAt"]).diff(item["updatedAt"],"seconds") <= 0)){
+        if(item && ((item["exScore"] === 0 || Number.isNaN(item["exScore"])) || (item["exScore"] >= result[i]["exScore"] && item["clearState"] === result[i]["clearState"]) || moment(result[i]["updatedAt"]).diff(item["updatedAt"],"seconds") <= 0)){
           ++skipped;
           continue;
         }
