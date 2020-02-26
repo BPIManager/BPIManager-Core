@@ -482,3 +482,7 @@ div#root > div > .MuiContainer-root{
 .MuiCheckbox-root{
   padding:5px !important;
 }
+
+.MuiFormControlLabel-root{
+  margin-right:14px !important;
+}

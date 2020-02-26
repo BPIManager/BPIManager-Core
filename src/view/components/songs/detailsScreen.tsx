@@ -17,12 +17,12 @@ import Paper from "@material-ui/core/Paper";
 import bpiCalcuator, { B } from "../../../components/bpi";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import StarIcon from '@material-ui/icons/Star';
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import {songsDB,scoresDB,scoreHistoryDB} from "../../../components/indexedDB";
+import YouTubeIcon from '@material-ui/icons/YouTube';
+import ThumbsUpDownIcon from '@material-ui/icons/ThumbsUpDown';
+import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
+import {scoresDB,scoreHistoryDB} from "../../../components/indexedDB";
 import ShowSnackBar from "../snackBar";
-import {Tooltip as TooltipMUI, Button, CircularProgress, Tooltip, Fab} from '@material-ui/core';
+import {Button, CircularProgress, Tooltip, Fab, List, ListItem, SwipeableDrawer, ListItemIcon, ListItemText, ListSubheader} from '@material-ui/core';
 import BPIChart from "./bpiChart";
 import SongDetails from "./songDetails";
 import SongDiffs from "./songDiffs";
@@ -33,6 +33,11 @@ import _djRank from "../../../components/common/djRank";
 import {rivalListsDB} from "../../../components/indexedDB";
 import SongRivals from "./songRivals";
 import Loader from "../common/loader";
+import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
+import favLists from "./common/lists";
+import { DBLists } from "../../../types/lists";
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
 
 interface P{
   isOpen:boolean,
@@ -51,8 +56,10 @@ interface S{
   showCharts:boolean,
   chartData:chartData[],
   currentTab:number,
-  anchorEl:null | HTMLElement,
-  favorited:boolean,
+  openShareMenu:boolean,
+  openListsMenu:boolean,
+  justFavorited:boolean,
+  justSelectedList:string,
   successSnack:boolean,
   errorSnack:boolean,
   errorSnackMessage:string|undefined,
@@ -61,6 +68,8 @@ interface S{
   showBody:boolean,
   hasRival:boolean,
   isLoading:boolean,
+  allLists:{title:string,num:number,description:string}[],
+  allSavedLists:number[]
 }
 
 export interface chartData{
@@ -84,9 +93,11 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       newMissCount:-1,
       showCharts : true,
       chartData:this.makeGraph().reverse(),
-      favorited:props.song ? props.song.isFavorited : false,
+      justFavorited:false,
+      justSelectedList:"",
       currentTab:0,
-      anchorEl:null,
+      openShareMenu:false,
+      openListsMenu:false,
       successSnack:false,
       errorSnack:false,
       errorSnackMessage:"",
@@ -94,13 +105,18 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       isSaving:false,
       showBody:false,
       hasRival:false,
+      allLists:[],
+      allSavedLists:[]
     }
   }
 
   async componentDidMount(){
     const r = new rivalListsDB();
     const hasRivals = await r.getAll();
-    this.setState({hasRival:hasRivals.length > 0,isLoading:false,});
+    this.setState({
+      hasRival:hasRivals.length > 0,
+      isLoading:false,
+    });
   }
 
   toggleShowBPI = ():void=>{
@@ -159,7 +175,52 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
 
   handleTabChange = (_e:React.ChangeEvent<{}>, newValue:number)=> this.setState({currentTab:newValue});
 
-  toggleMenu = (e?: React.MouseEvent<HTMLButtonElement>)=> this.setState({anchorEl: e ? e.currentTarget : null });
+  toggleMenu = (willOpen:boolean = false)=>{
+    this.setState({openShareMenu: willOpen });
+  }
+
+  toggleListsMenu = async(willOpen:boolean = false)=>{
+    if(willOpen){
+      const f = new favLists();
+      const title = this.props.song ? this.props.song.title : "";
+      const difficulty = this.props.song ? this.props.song.difficulty : "";
+      const p = await f.loadLists();
+      const q = await f.loadSavedLists(title,difficulty);
+      this.setState({
+        allLists:p.reduce((groups:{title:string,num:number,description:string}[],item:DBLists)=>{
+          groups.push({title:item.title,num:item.num,description:item.description});
+          return groups;
+        },[]),
+        allSavedLists:q.reduce((groups:number[],item:any)=>{
+          groups.push(item.listedOn);
+          return groups;
+        },[]),
+        isLoading:false,
+      });
+    }
+    this.setState({openListsMenu: willOpen });
+  }
+
+  toggleFavLists = async (target:{title:string,num:number},willAdd:boolean)=>{
+    try{
+      const {allSavedLists} = this.state;
+      const title = this.props.song ? this.props.song.title : "";
+      const difficulty = this.props.song ? this.props.song.difficulty : "";
+      const res = await new favLists().toggleLists(title,difficulty,target.num,willAdd);
+      if(res){
+        this.toggleListsMenu(false);
+        this.toggleSuccessSnack();
+        return this.setState({
+          justFavorited:willAdd,
+          justSelectedList:target.title,
+          allSavedLists:willAdd ? allSavedLists.concat(target.num) : allSavedLists.filter((item:number)=> item !== target.num)
+        });
+      }
+    }catch(e){
+      console.log(e);
+      alert("追加に失敗しました");
+    }
+  }
 
   jumpWeb = (type:number):void =>{
     if(!this.props.song){return;}
@@ -168,7 +229,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
         window.open("http://textage.cc/score/" + this.props.song.textage);
       break;
       case 1:
-        window.open("https://www.youtube.com/results?search_query=" + this.props.song.title + "+IIDX");
+        window.open("https://www.youtube.com/results?search_query=" + this.props.song.title.replace(/-/g,"") + "+IIDX");
       break;
       case 2:
         if(this.props.song.difficultyLevel !== "12"){
@@ -190,25 +251,6 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       break;
     }
     return this.toggleMenu();
-  }
-
-  toggleFavorited = async():Promise<void>=>{
-    try{
-      const {favorited} = this.state;
-      const {song} = this.props;
-      const db = new songsDB();
-      if(!song){
-        throw new Error();
-      }
-      await db.toggleFavorite(song.title,song.difficulty,!favorited);
-      this.toggleSuccessSnack();
-      return this.setState({
-        favorited:!favorited
-      });
-    }catch(e){
-      console.log(e);
-      return;
-    }
   }
 
   toggleSuccessSnack = ()=>this.setState({successSnack:!this.state.successSnack});
@@ -247,14 +289,13 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
   render(){
     const {formatMessage} = this.props.intl;
     const {isOpen,handleOpen,song,score} = this.props;
-    const {isSaving,isLoading,newScore,newBPI,newClearState,newMissCount,showCharts,chartData,currentTab,anchorEl,favorited,successSnack,errorSnack,errorSnackMessage,hasRival} = this.state;
+    const {isSaving,isLoading,newScore,newBPI,newClearState,newMissCount,showCharts,chartData,currentTab,justSelectedList,openListsMenu,openShareMenu,justFavorited,allLists,allSavedLists,successSnack,errorSnack,errorSnackMessage,hasRival} = this.state;
     if(!song || !score){
       return (null);
     }
     if(isLoading){
       return (<Loader/>);
     }
-    const detectStarIconColor = favorited ? "#ffd700" : "#c3c3c3";
     const c = _currentTheme();
     return (
       <Dialog id="detailedScreen" className={c === "dark" ? "darkDetailedScreen" : c === "light" ? "lightDetailedScreen" : "deepSeaDetailedScreen"} fullScreen open={isOpen} onClose={handleOpen} style={{overflowX:"hidden",width:"100%"}}>
@@ -313,7 +354,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
           </Grid>
           <Divider/>
           <Grid container>
-            <Grid item xs={8}>
+            <Grid item xs={9}>
               <form noValidate autoComplete="off" style={{margin:"10px 6px 0"}}>
                 <TextField
                   type="number"
@@ -326,32 +367,71 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
             </Grid>
             <Grid item xs={1} style={{display:"flex",alignItems:"center",justifyContent:"flex-end"}}>
               <div style={{margin:"10px 6px 0"}}>
-                <TooltipMUI title={<FormattedMessage id={favorited ? "Details.FavButtonRemove" : "Details.FavButton"}/>} aria-label="add">
-                  <StarIcon style={{fontSize:"35px",color:detectStarIconColor,position:"relative",top:"3px"}}
-                    onClick={this.toggleFavorited}/>
-                </TooltipMUI>
+                <IconButton style={{margin:"10px 6px 0"}}
+                  aria-haspopup="true"
+                  onClick={()=>this.toggleListsMenu(true)}>
+                    <PlaylistAddCheckIcon/>
+                  </IconButton>
+                  <SwipeableDrawer
+                    anchor="bottom"
+                    open={openListsMenu}
+                    onClose={()=>this.toggleListsMenu(false)}
+                    onOpen={()=>this.toggleListsMenu(true)}
+                    >
+                      <List
+                        subheader={
+                          <ListSubheader component="div" id="nested-list-subheader">
+                            楽曲のリスト管理
+                          </ListSubheader>
+                      }>
+                        {allLists.map((item:{title:string,num:number,description:string})=>{
+                          const alreadyExists = allSavedLists.indexOf(item.num) > -1;
+                          return (
+                          <ListItem button onClick={()=>this.toggleFavLists(item,!alreadyExists)} key={item.num}>
+                            <ListItemIcon>{alreadyExists ? <CheckBoxIcon/> : <CheckBoxOutlineBlankIcon/>}</ListItemIcon>
+                            <ListItemText primary={item.title} secondary={item.description}/>
+                          </ListItem>
+                        )})}
+                      </List>
+                  </SwipeableDrawer>
               </div>
               <ShowSnackBar
                 message={
-                  favorited ? formatMessage({id:"Details.FavButtonAdded"}) : formatMessage({id:"Details.FavButtonRemoved"})}
-                variant="success" handleClose={this.toggleSuccessSnack} open={successSnack} autoHideDuration={1000}/>
+                  (justFavorited ? formatMessage({id:"Details.FavButtonAdded"}) : formatMessage({id:"Details.FavButtonRemoved"})) +  ":" + justSelectedList}
+                variant="success" handleClose={this.toggleSuccessSnack} open={successSnack} autoHideDuration={3000}/>
             </Grid>
             <Grid item xs={1} style={{display:"flex",alignItems:"center",justifyContent:"flex-end"}}>
-              <IconButton style={{margin:"10px 6px 0"}}
+              <IconButton style={{margin:"10px 6px 0",position:"relative",top:"5px"}}
                 aria-haspopup="true"
-                onClick={this.toggleMenu}>
+                onClick={()=>this.toggleMenu(true)}>
                   <MoreVertIcon />
               </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={()=>this.toggleMenu()}
+              <SwipeableDrawer
+                anchor="bottom"
+                open={openShareMenu}
+                onClose={()=>this.toggleMenu(false)}
+                onOpen={()=>this.toggleMenu(true)}
                 >
-                  <MenuItem onClick={()=>this.jumpWeb(0)}>TexTage</MenuItem>
-                  <MenuItem onClick={()=>this.jumpWeb(1)}>YouTube</MenuItem>
-                  <MenuItem onClick={()=>this.jumpWeb(2)}>IIDX.info</MenuItem>
-                </Menu>
+                  <List>
+                    <ListItem button onClick={()=>this.jumpWeb(0)}>
+                      <ListItemIcon><FormatListBulletedIcon/></ListItemIcon>
+                      <ListItemText primary="TexTage" secondary="TexTageでこの楽曲の譜面を確認します"/>
+                    </ListItem>
+                    <ListItem button onClick={()=>this.jumpWeb(1)}>
+                      <ListItemIcon><YouTubeIcon/></ListItemIcon>
+                      <ListItemText primary="YouTube" secondary="YouTubeでこの楽曲の動画を検索します"/>
+                    </ListItem>
+                    <ListItem button onClick={()=>this.jumpWeb(2)}>
+                      <ListItemIcon><ThumbsUpDownIcon/></ListItemIcon>
+                      <ListItemText primary="IIDX.info" secondary="この楽曲のランキングをIIDX.infoで確認します"/>
+                    </ListItem>
+                    <Divider style={{margin:"10px 0"}}/>
+                    <ListItem button onClick={()=>this.jumpWeb(3)}>
+                      <ListItemIcon><TwitterIcon/></ListItemIcon>
+                      <ListItemText primary="この楽曲をツイート" secondary="スコアの伸びや現在のBPIなどをツイートします"/>
+                    </ListItem>
+                  </List>
+              </SwipeableDrawer>
             </Grid>
           </Grid>
         </Paper>

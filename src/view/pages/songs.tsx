@@ -33,7 +33,7 @@ export default class Songs extends React.Component<{},S> {
     }
     return (
       <div>
-        <SongsList title="Songs.title" full={this.state.full} updateScoreData={this.updateScoreData}/>
+        <SongsList isFav={false} title="Songs.title" full={this.state.full} updateScoreData={this.updateScoreData}/>
       </div>
     );
   }

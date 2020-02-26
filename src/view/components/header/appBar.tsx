@@ -108,7 +108,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         icon:<SaveAltIcon />
       },
       {
-        to:"/favorite",
+        to:"/lists",
         id:"GlobalNav.FavoriteSongs",
         icon:<StarIcon />
       },

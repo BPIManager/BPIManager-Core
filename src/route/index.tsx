@@ -4,7 +4,8 @@ import { IntlProvider } from 'react-intl'
 import Index from "../view/pages";
 import Data from "../view/pages/data";
 import Songs from "../view/pages/songs";
-import Favorite from "../view/pages/favorites";
+import ListsBody from "../view/pages/lists/listBody";
+import Lists from "../view/pages/lists";
 import NotPlayed from "../view/pages/notPlayed";
 import Stats from "../view/pages/stats";
 import Settings from "../view/pages/settings";
@@ -52,7 +53,8 @@ export default class Router extends React.Component<{},{}> {
                   <Route path="/" exact component={Index}/>
                   <Route path="/data" exact render={_props=><Data global={global} updateGlobal={this.globalUpdateScore}/>}/>
                   <Route path="/songs" exact component={Songs}/>
-                  <Route path="/favorite" exact component={Favorite}/>
+                  <Route path="/lists" exact component={Lists}/>
+                  <Route path="/lists/:listTitle" exact component={ListsBody}/>
                   <Route path="/notPlayed" exact component={NotPlayed}/>
                   <Route path="/stats" exact component={Stats}/>
                   <Route path="/compare" exact component={Compare}/>

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import timeFormatter from "../common/timeFormatter";
-import {songsDB, scoresDB} from "../indexedDB";
+import {songsDB, scoresDB, favsDB, scoreHistoryDB} from "../indexedDB";
 import WarningIcon from '@material-ui/icons/Warning';
 import Backdrop from "@material-ui/core/Backdrop";
 import { _currentDefinitionURL } from '../settings';
@@ -9,6 +9,7 @@ import { _currentDefinitionURL } from '../settings';
 export default class Initialize extends React.Component<{},{show:boolean,error:boolean,errorMessage:string,consoleMes:string,p:number}>{
   private songsDB = new songsDB();
   private scoresDB = new scoresDB();
+  private scoreHistoryDB = new scoreHistoryDB();
 
   constructor(props:Object){
     super(props);
@@ -33,8 +34,10 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
         this.songsDB.removeItem("Close the World feat. a☆ru");
         this.scoresDB.removeSpecificItemAtAllStores("Close the World feat. a☆ru");
       //
+
       const songsAvailable:string[] = await this.songsDB.getAll();
       await this.scoresDB.removeNaNItems();
+      await this.scoreHistoryDB.removeNaNItems();
       if(songsAvailable.length > 0){
         return this.setState({show:false});
       }
@@ -48,6 +51,7 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
           updatedAt:now,
         }));
       }
+      new favsDB().addList("お気に入り","デフォルトのリスト");
       await this.songsDB.bulkAdd(p);
       localStorage.setItem("isSingle","1");
       localStorage.setItem("lastDefFileVer",csv.version);

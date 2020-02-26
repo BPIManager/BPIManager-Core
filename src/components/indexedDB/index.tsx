@@ -6,6 +6,7 @@ import moment from "moment";
 import {difficultyDiscriminator, difficultyParser} from "../songs/filter";
 import bpiCalcuator from "../bpi";
 import {noimg} from "../common/"
+import { DBLists } from "../../types/lists";
 
 const storageWrapper = class extends Dexie{
   target: string = "scores";
@@ -15,6 +16,8 @@ const storageWrapper = class extends Dexie{
   protected scoreHistory: Dexie.Table<historyData, number>;
   protected rivals:Dexie.Table<rivalScoreData, (string|number)[]>;
   protected rivalLists: Dexie.Table<DBRivalStoreData, string>;
+  protected favLists: Dexie.Table<any, string>;
+  protected favSongs: Dexie.Table<any, string>;
   protected calculator:bpiCalcuator|null = null;
 
   constructor(){
@@ -75,11 +78,43 @@ const storageWrapper = class extends Dexie{
         delete item.lastPlayed;
       });
     });
+    this.version(8).stores({
+      scores : "[title+difficulty+storedAt+isSingle],title,*difficulty,*difficultyLevel,currentBPI,exScore,missCount,clearState,storedAt,isSingle,updatedAt,lastScore",
+      songs : "&++num,title,*difficulty,*difficultyLevel,wr,avg,notes,bpm,textage,dpLevel,[title+difficulty]",
+      rivals : "&[title+difficulty+storedAt+isSingle+rivalName],rivalName,title,*difficulty,*difficultyLevel,exScore,missCount,clearState,storedAt,isSingle,updatedAt",
+      rivalLists : "&uid,rivalName,lastUpdatedAt,updatedAt,[isSingle+storedAt],photoURL,profile",
+      scoreHistory : "&++num,[title+storedAt+difficulty+isSingle],[title+storedAt+difficulty+isSingle+updatedAt],title,difficulty,difficultyLevel,storedAt,exScore,BPI,isSingle,updatedAt",
+      favLists : "&num,title,length,description,updatedAt",
+      favSongs : "&[title+difficulty+listedOn],[title+difficulty],listedOn",
+    }).upgrade(async(_tx) => {
+      const songs = (await this.songs.toArray()).filter((item)=>item.isFavorited === true);
+      this.favLists.add({
+        "title":"お気に入り",
+        "description":"デフォルトのリスト",
+        "length":songs.length,
+        "num":new Date().getTime(),
+        "updatedAt":timeFormatter(3),
+      });
+      for(let i = 0;i < songs.length; ++i){
+        const song = songs[i];
+        this.favSongs.add({
+          "title":song.title,
+          "difficulty":song.difficulty,
+          "listedOn":0
+        });
+      }
+      this.songs.toCollection().modify((item:any)=>{
+        delete item.isCreated;
+        delete item.isFavorited;
+      });
+    });
     this.scores = this.table("scores");
     this.scoreHistory = this.table("scoreHistory");
     this.songs = this.table("songs");
     this.rivals = this.table("rivals");
     this.rivalLists = this.table("rivalLists");
+    this.favLists = this.table("favLists");
+    this.favSongs = this.table("favSongs");
   }
 
   protected newSongs:{[key:string]:songData} = {};
@@ -99,6 +134,150 @@ const storageWrapper = class extends Dexie{
       return 0;
     }
     return this.calculator.setPropData(t,s,i);
+  }
+
+}
+
+export const favsDB = class extends storageWrapper{
+
+  async getAllLists():Promise<DBLists[]>{
+    try{
+      return await this.favLists.toArray();
+    }catch(e){
+      console.error(e);
+      return [];
+    }
+  }
+
+  async getListFromNum(num:number):Promise<DBLists|null>{
+    try{
+      const t = await this.favLists.where({num:num}).toArray();
+      if(t.length > 0){
+        return t[0];
+      }else{
+        return null;
+      }
+    }catch(e){
+      console.error(e);
+      return null;
+    }
+  }
+
+  async addList(title:string = "new list",description:string = ""){
+    try{
+      return this.favLists.add({
+        "num":new Date().getTime(),
+        "title":title,
+        "description":description,
+        "length":0,
+        "updatedAt":timeFormatter(3),
+      });
+    }catch(e){
+      console.log(e);
+      return "";
+    }
+  }
+
+  async setListLength(targetNum:number,willInc:boolean){
+    try{
+      const len = await this.getListLen(targetNum);
+      if(len === -1){
+        throw new Error();
+      }
+      await this.favLists.where("num").equals(targetNum).modify({
+        "length":willInc ? len + 1 : len - 1,
+        "updatedAt":timeFormatter(3),
+      });
+      return true;
+    }catch(e){
+      console.log(e);
+      return false;
+    }
+  }
+
+  async getListsFromSong(title:string,difficulty:string){
+    try{
+      return this.favSongs.where("[title+difficulty]").equals([title,difficulty]).toArray();
+    }catch(e){
+      return [];
+    }
+  }
+
+  async removeList(target:number){
+    try{
+      await this.favLists.where({num:target}).delete();
+      await this.favSongs.where("listedOn").equals(target).delete();
+    }catch(e){
+      return;
+    }
+  }
+
+  async getListNumber(title:string):Promise<number>{
+    try{
+      const list = (await this.favLists.where("title").equals(title).toArray());
+      if(list.length > 0){
+        return list[0].num
+      }else{
+        throw new Error()
+      }
+    }catch(e){
+      return -1;
+    }
+  }
+
+  async getListLen(targetNum:number):Promise<number>{
+    try{
+      const list = (await this.favLists.where("num").equals(targetNum).toArray());
+      if(list.length > 0){
+        return list[0].length
+      }else{
+        throw new Error()
+      }
+    }catch(e){
+      return -1;
+    }
+  }
+
+  async getListSum():Promise<number>{
+    try{
+      return (await this.favLists.toArray()).length;
+    }catch(e){
+      return -1;
+    }
+  }
+
+  async getAllItemsInAList(num:number):Promise<any[]>{
+    try{
+      return await this.favSongs.where({listedOn:num}).toArray();
+    }catch(e){
+      return [];
+    }
+  }
+
+  async addItemToList(title:string,difficulty:string,target:number){
+    try{
+      return this.favSongs.add({
+        "title":title,
+        "difficulty":difficulty,
+        "listedOn":target,
+      });
+    }catch(e){
+      console.log(e);
+      return;
+    }
+  }
+
+  async removeItemFromList(title:string,difficulty:string,target:number){
+    try{
+      return this.favSongs.where({
+        "title":title,
+        "difficulty":difficulty,
+        "listedOn":target,
+      }).delete();
+    }catch(e){
+      console.log(e);
+      return;
+    }
   }
 
 }
@@ -436,6 +615,10 @@ export const scoreHistoryDB = class extends storageWrapper{
       console.error(e);
       return false;
     }
+  }
+
+  async removeNaNItems():Promise<number>{
+    return await this.scoreHistory.where({storedAt:_currentStore(),BPI:NaN}).delete();
   }
 
   async check(item:scoreData):Promise<{willUpdate:boolean,lastScore:number}>{

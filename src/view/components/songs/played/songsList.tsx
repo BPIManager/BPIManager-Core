@@ -3,6 +3,7 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import { FormattedMessage } from "react-intl";
 import {songsDB} from "../../../../components/indexedDB";
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import { injectIntl } from "react-intl";
 import Grid from '@material-ui/core/Grid';
@@ -53,6 +54,7 @@ interface P{
   full:scoreData[],
   updateScoreData:()=>Promise<void>,
   intl:any,
+  isFav:boolean
 }
 
 const ranges = [{val:0,label:"全期間"},{val:1,label:"本日更新"},{val:2,label:"前日更新"},{val:3,label:"今週更新"},{val:4,label:"1ヶ月以上未更新"}]
@@ -277,6 +279,7 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
 
   render(){
     const {formatMessage} = this.props.intl;
+    const {isFav} = this.props;
     const {isLoading,filterByName,options,orderMode,orderTitle,mode,range,page,filterOpen,versions} = this.state;
     const orders = [
       formatMessage({id:"Orders.Title"}),
@@ -297,7 +300,13 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
       <Container className="commonLayout" fixed id="songsVil">
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom
           style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <FormattedMessage id={this.props.title}/>
+          <div>
+            {isFav &&
+              <Button onClick={()=>this.props.history.push("/lists")} style={{minWidth:"auto",padding:"6px 0px"}}><ArrowBackIcon/></Button>
+            }
+            {isFav && this.props.title}
+            {!isFav && <FormattedMessage id={this.props.title}/>}
+          </div>
           <div style={{display:"flex"}}>
             <Button
               className="filterButton"
