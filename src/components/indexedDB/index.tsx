@@ -178,6 +178,19 @@ export const favsDB = class extends storageWrapper{
     }
   }
 
+  async editList(target:number,title:string = "new list",description:string = ""){
+    try{
+      return this.favLists.where({num:target}).modify({
+        "title":title,
+        "description":description,
+        "updatedAt":timeFormatter(3),
+      });
+    }catch(e){
+      console.log(e);
+      return "";
+    }
+  }
+
   async setListLength(targetNum:number,willInc:boolean){
     try{
       const len = await this.getListLen(targetNum);

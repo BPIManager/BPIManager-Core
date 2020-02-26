@@ -67,7 +67,11 @@ class ListAdd extends React.Component<P,S> {
       if(!name){
         return this.setState({processing:false,errorMessage:"リスト名が入力されていません"});
       }
-      await new favsDB().addList(name,description);
+      if(this.props.target && !this.props.isCreating){
+        await new favsDB().editList(this.props.target,name,description);
+      }else{
+        await new favsDB().addList(name,description);
+      }
     }
     this.props.toggleSnack();
     this.props.handleToggle(true);
