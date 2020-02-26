@@ -92,7 +92,7 @@ const storageWrapper = class extends Dexie{
         "title":"お気に入り",
         "description":"デフォルトのリスト",
         "length":songs.length,
-        "num":new Date().getTime(),
+        "num":0,
         "updatedAt":timeFormatter(3),
       });
       for(let i = 0;i < songs.length; ++i){
