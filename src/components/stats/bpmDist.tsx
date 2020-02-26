@@ -65,7 +65,9 @@ export const bpmDist = async(difficulty:"11"|"12" = "12"):Promise<distBPMI[]>=>{
     return groups;
   },{});
   (await (await scdb.loadStore()).getItemsBySongDifficulty(difficulty)).reduce((groups:scores,item:scoreData)=>{
-    distByBPM[allSongs[item.title + difficultyParser(item.difficulty,isSingle)]].push(item.currentBPI);
+    if(!isNaN(item.currentBPI)){
+      distByBPM[allSongs[item.title + difficultyParser(item.difficulty,isSingle)]].push(item.currentBPI);
+    }
     return groups;
   },{});
   Object.keys(distByBPM).map((item:string)=>{

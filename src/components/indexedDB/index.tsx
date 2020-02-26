@@ -219,6 +219,10 @@ export const scoresDB = class extends storageWrapper{
     return await this.scores.where({storedAt:storedAt}).delete();
   }
 
+  async removeNaNItems():Promise<number>{
+    return await this.scores.where({storedAt:_currentStore(),currentBPI:NaN}).delete();
+  }
+
   async setItem(item:any):Promise<any>{
     try{
       return await this.scores.where("[title+difficulty+storedAt+isSingle]").equals(

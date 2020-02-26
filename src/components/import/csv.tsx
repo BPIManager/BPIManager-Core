@@ -1,11 +1,11 @@
 import {scoreData, historyData} from "../../types/data";
 import { convertClearState,convertLeggendariaStates } from "../songs/filter";
+import importCommon from "./common";
 
 export default class importCSV {
 
   rawData:string = "";
-  result:scoreData[] = [];
-  resultHistory:historyData[] = [];
+  common:importCommon = new importCommon();
 
   isSingle:number = 1;
   currentStore:string = "";
@@ -17,11 +17,11 @@ export default class importCSV {
   }
 
   getResult():scoreData[]{
-    return this.result;
+    return this.common.getResult();
   }
 
   getResultHistory():historyData[]{
-    return this.resultHistory;
+    return this.common.getResultHistory();
   }
 
   execute():Promise<number>{
@@ -31,16 +31,17 @@ export default class importCSV {
       try{
         const splittedByBreak:string[] = self.rawData.split(/\r\n|\n/);
         const lengthSum:number = splittedByBreak.length;
-        let result = [],resultHistory = [];
         if(splittedByBreak[0].split(/,/)[5] === "NORMAL 難易度"){
           //Rootage以前のCSV判別
           mode = 1;
         }
         for(let i = 1; i < lengthSum; ++i){
           for(let j = 0; j < 3; ++j){
+
             let eachObjNum:number[] = [];
             let t:string = "";
             const p = splittedByBreak[i].split(/,/);
+
             if(mode === 0){
               //HYPER
               if(j === 0){
@@ -92,12 +93,10 @@ export default class importCSV {
             let {name,difficulty} = mode === 1 ? convertLeggendariaStates(p[eachObjNum[1]],t) : {name:p[eachObjNum[1]],difficulty:t};
             const clearState:string|number = convertClearState(p[eachObjNum[6]],0);
             if(typeof clearState !== "number") throw new Error();
-            name = name.replace(/ +$/g,"");
-            if(mode === 1 && name === "炎影") name = "火影";
-            if(name === "Rave*it!! Rave*it!!") name = "Rave*it!! Rave*it!! ";
-            if(name === "Close the World feat. a☆ru") name = "Close the World feat.a☆ru";
+            name = self.common.nameEscape(name);
             if(Number(p[eachObjNum[2]]) === 0) continue;
-            result.push({
+
+            self.common.setResult({
               title:name,
               difficulty:difficulty,
               currentBPI:0,
@@ -110,7 +109,7 @@ export default class importCSV {
               isSingle:self.isSingle,
               updatedAt:p[eachObjNum[8]]
             });
-            resultHistory.push({
+            self.common.setResultHistory({
               title:name,
               exScore:Number(p[eachObjNum[2]]),
               difficulty:difficulty,
@@ -122,9 +121,7 @@ export default class importCSV {
             });
           }
         }
-        self.result = result;
-        self.resultHistory = resultHistory;
-        return resolve(result.length);
+        return resolve(1);
       }catch(e){
         console.log(e);
         return reject(e);

@@ -146,7 +146,7 @@ export const statMain = class {
     level === "12" ? this.twelves : this.elevens
   ).find((elm:scoreData)=>( elm.title === title && elm.difficulty === difficultyDiscriminator(difficulty) ) )
 
-  bpiMapper = (t:scoreData[])=>t.map((item:scoreData)=>item.currentBPI);
+  bpiMapper = (t:scoreData[])=>t.map((item:scoreData)=>item.currentBPI).filter(item=>!isNaN(item));
 
   groupBy = (array:number[])=>{
     return array.reduce((groups:{[key:number]:number}, item:number) => {

@@ -1,11 +1,11 @@
 import {scoreData, historyData} from "../../types/data";
 import timeFormatter from "../common/timeFormatter";
+import importCommon from "./common";
 
 export default class importJSON {
 
   rawData:any[] = [];
-  result:scoreData[] = [];
-  resultHistory:historyData[] = [];
+  common:importCommon = new importCommon();
 
   isSingle:number = 1;
   currentStore:string = "";
@@ -19,28 +19,23 @@ export default class importJSON {
   }
 
   getResult():scoreData[]{
-    return this.result;
+    return this.common.getResult();
   }
 
   getResultHistory():historyData[]{
-    return this.resultHistory;
+    return this.common.getResultHistory();
   }
 
   execute():Promise<number>{
     const self = this;
-    let mode = 0;
     return new Promise(function(resolve, reject) {
       try{
-        let result = [],resultHistory = [];
         const lengthSum = self.rawData.length;
         for(let i = 1; i < lengthSum; ++i){
           const p = self.rawData[i];
-          let name = p["title"].replace(/ +$/g,"");
-          if(mode === 1 && name === "炎影") name = "火影";
-          if(name === "Rave*it!! Rave*it!!") name = "Rave*it!! Rave*it!! ";
-          if(name === "Close the World feat. a☆ru") name = "Close the World feat.a☆ru";
+          const name = self.common.nameEscape(p["title"],true);
           if(Number(p.score === 0)) continue;
-          result.push({
+          self.common.setResult({
             title:name,
             difficulty:p.difficulty,
             currentBPI:0,
@@ -53,7 +48,8 @@ export default class importJSON {
             isSingle:self.isSingle,
             updatedAt:self.updateTime
           });
-          resultHistory.push({
+
+          self.common.setResultHistory({
             title:name,
             exScore:p.score,
             difficulty:p.difficulty,
@@ -64,9 +60,7 @@ export default class importJSON {
             updatedAt:self.updateTime,
           });
         }
-        self.result = result;
-        self.resultHistory = resultHistory;
-        return resolve(result.length);
+        return resolve(1);
       }catch(e){
         console.log(e);
         return reject(e);

@@ -34,6 +34,7 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
         this.scoresDB.removeSpecificItemAtAllStores("Close the World feat. a☆ru");
       //
       const songsAvailable:string[] = await this.songsDB.getAll();
+      await this.scoresDB.removeNaNItems();
       if(songsAvailable.length > 0){
         return this.setState({show:false});
       }

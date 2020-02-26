@@ -248,12 +248,8 @@ legend.MuiFormLabel-root{
 }
 
 @media (min-width: 360px){
-  main > .MuiContainer-fixed {
+  .MuiContainer-fixed {
     max-width: 95% !important;
-  }
-
-  .MuiContainer-root{
-    padding:5px !important;
   }
 }
 
