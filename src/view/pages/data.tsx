@@ -94,7 +94,6 @@ export default class Index extends React.Component<P,{
       const exec:number = await executor.execute();
       const scores = [];
       const histories = [];
-      console.log(exec);
       if(!exec){
         throw new Error("データの形式が正しくありません");
       }
