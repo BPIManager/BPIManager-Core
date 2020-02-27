@@ -134,7 +134,7 @@ class Shared extends React.Component<RouteComponentProps,S> {
   render(){
     const {isLoading,score,userData,song,you} = this.state;
     if(isLoading){
-      <Loader/>
+      return <Loader/>
     }
     if(!score || !song){
       return (
