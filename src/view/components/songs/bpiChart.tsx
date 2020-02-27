@@ -27,12 +27,16 @@ class BPIChart extends React.Component<P,{}> {
         const p = props.payload[0].payload;
         return (
           <div className="custom-tooltip">
-          {p.name !== "YOU" && <div>
+          {(p.name !== "YOU" && p.name !== "RIVAL") && <div>
               <p>BPI{p.name}</p>
               <p>EX:{p["EX SCORE"]}</p>
               <p>GAP:{(!Number.isNaN(newScore) ? newScore : score.exScore) - p["EX SCORE"]}</p>
             </div>
           }
+          {p.name === "RIVAL" && <div>
+              <p>RIVAL SCORE</p>
+              <p>EX:{p["EX SCORE"]}</p>
+          </div>}
           {p.name === "YOU" && <div>
               <p>YOUR SCORE</p>
               <p>EX:{p["EX SCORE"]}</p>

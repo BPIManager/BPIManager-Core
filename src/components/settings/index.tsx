@@ -107,21 +107,21 @@ export const _chartColor = ()=>{
 export const _chartBarColor = (name:string)=>{
   const c = _currentTheme();
   if(c === "light"){
-    if(name === "YOU"){
+    if(name === "YOU" || name === "RIVAL"){
       return "#BF4C0A"
     }else{
       return "#D9AFA0";
     }
   }
   if(c === "dark"){
-    if(name === "YOU"){
+    if(name === "YOU" || name === "RIVAL"){
       return "#BF4C0A"
     }else{
       return "#aaa";
     }
   }
   if(c === "deepsea"){
-    if(name === "YOU"){
+    if(name === "YOU" || name === "RIVAL"){
       return "#1490ff"
     }else{
       return "#6D808C";

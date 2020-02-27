@@ -3,7 +3,7 @@ import timeFormatter from "../common/timeFormatter";
 import { scoresDB, scoreHistoryDB, songsDB } from "../indexedDB";
 import platform from "platform";
 import firebase from 'firebase/app';
-import { rivalStoreData } from "../../types/data";
+import { rivalStoreData, scoreData } from "../../types/data";
 import bpiCalcuator from '../bpi';
 import {getTotalBPI} from '../common';
 
@@ -265,5 +265,11 @@ export default class fbActions{
     }
   }
 
+  async createShare(score:scoreData,uid:string){
+    return  await firestore.collection("shared").add(Object.assign(score,{
+      uid:uid,
+      updatedAt:timeFormatter(3)
+    }));
+  }
 
 }

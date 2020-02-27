@@ -22,7 +22,7 @@ import ThumbsUpDownIcon from '@material-ui/icons/ThumbsUpDown';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import {scoresDB,scoreHistoryDB} from "../../../components/indexedDB";
 import ShowSnackBar from "../snackBar";
-import {Button, CircularProgress, Tooltip, Fab, List, ListItem, SwipeableDrawer, ListItemIcon, ListItemText, ListSubheader} from '@material-ui/core';
+import {Button, CircularProgress, Tooltip, Fab, List, ListItem, SwipeableDrawer, ListItemIcon, ListItemText, ListSubheader, Backdrop} from '@material-ui/core';
 import BPIChart from "./bpiChart";
 import SongDetails from "./songDetails";
 import SongDiffs from "./songDiffs";
@@ -39,6 +39,7 @@ import { DBLists } from "../../../types/lists";
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import Filter1Icon from '@material-ui/icons/Filter1';
+import fbActions from "../../../components/firebase/actions";
 
 interface P{
   isOpen:boolean,
@@ -70,7 +71,8 @@ interface S{
   hasRival:boolean,
   isLoading:boolean,
   allLists:{title:string,num:number,description:string}[],
-  allSavedLists:number[]
+  allSavedLists:number[],
+  isPreparing:boolean,
 }
 
 export interface chartData{
@@ -107,7 +109,8 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       showBody:false,
       hasRival:false,
       allLists:[],
-      allSavedLists:[]
+      allSavedLists:[],
+      isPreparing:false,
     }
   }
 
@@ -223,7 +226,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
     }
   }
 
-  jumpWeb = (type:number):void =>{
+  jumpWeb = async(type:number):Promise<void> =>{
     if(!this.props.song){return;}
     switch(type){
       case 0:
@@ -244,11 +247,23 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       break;
       case 3:
         if(!this.props.score) return;
+        this.setState({isPreparing:true});
         const score = this.state.newScore ? this.state.newScore : this.props.score.exScore;
         const bpi = this.state.newBPI ? this.state.newBPI : this.props.score.currentBPI;
         const diff = this.props.score.lastScore !== -1 ? score - this.props.score.lastScore : score;
         const text = encodeURIComponent(`[${diff > 0 ? "+" + diff : diff}] ${this.props.song.title}${_prefixFromNum(this.props.song.difficulty,true)} [EX:${score}(${this.showRank(false)}${this.showRank(true)})][BPI:${bpi}]`);
-        window.open(`https://twitter.com/intent/tweet?&hashtags=BPIManager&text=${text}`);
+        new fbActions().auth().onAuthStateChanged(async (user: any)=> {
+          if(user){
+            const res = await new fbActions().createShare(Object.assign(this.props.score,{
+              exScore:score,
+              currentBPI:bpi
+            }),user.uid);
+            window.open(`https://twitter.com/intent/tweet?&url=https://bpi.poyashi.me/share/${res.id}&text=${text}`);
+          }else{
+            window.open(`https://twitter.com/intent/tweet?&text=${text}`);
+          }
+        });
+        this.setState({isPreparing:false});
       break;
     }
     return this.toggleMenu();
@@ -264,7 +279,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       const {newBPI,newScore,newClearState,newMissCount} = this.state;
       const {score,song,willDelete} = this.props;
       if(!song || !score){return;}
-      this.setState({isSaving:true});
+      this.setState({isPreparing:true});
       const scores = new scoresDB(), scoreHist = new scoreHistoryDB();
       await scores.updateScore(score,{currentBPI:newBPI,exScore:newScore,clearState:newClearState,missCount:newMissCount});
       if(!Number.isNaN(newBPI)) scoreHist._add(Object.assign(score, { difficultyLevel: song.difficultyLevel, currentBPI: newBPI, exScore: newScore }));
@@ -281,7 +296,6 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
     const max:number = song.notes * 2;
     const s:number = !Number.isNaN(newScore) ? newScore : score.exScore;
     return _djRank(showBody,isBody,max,s);
-
   }
 
   handleClearState = (e:React.ChangeEvent<{ value: unknown }>)=> this.setState({newClearState:Number(e.target.value) < 0 ? 0 : Number(e.target.value)});
@@ -290,7 +304,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
   render(){
     const {formatMessage} = this.props.intl;
     const {isOpen,handleOpen,song,score} = this.props;
-    const {isSaving,isLoading,newScore,newBPI,newClearState,newMissCount,showCharts,chartData,currentTab,justSelectedList,openListsMenu,openShareMenu,justFavorited,allLists,allSavedLists,successSnack,errorSnack,errorSnackMessage,hasRival} = this.state;
+    const {isSaving,isLoading,isPreparing,newScore,newBPI,newClearState,newMissCount,showCharts,chartData,currentTab,justSelectedList,openListsMenu,openShareMenu,justFavorited,allLists,allSavedLists,successSnack,errorSnack,errorSnackMessage,hasRival} = this.state;
     if(!song || !score){
       return (null);
     }
@@ -318,6 +332,11 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
             }
           </Toolbar>
         </AppBar>
+        {isPreparing &&
+          <Backdrop open={true} className="absolutelyTop">
+            <CircularProgress color="primary" />
+          </Backdrop>
+        }
         <Toolbar/>
         <Paper>
           <Grid container spacing={3}>

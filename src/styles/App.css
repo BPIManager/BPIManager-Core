@@ -451,7 +451,7 @@ th.MuiTableCell-root.MuiTableCell-head:first-child{
   z-index:9999 !important;
 }
 
-.MuiDrawer-root .MuiBackdrop-root, .MuiDialog-root .MuiBackdrop-root{
+.MuiDrawer-root .MuiBackdrop-root, .MuiDialog-root .MuiBackdrop-root:not(.absolutelyTop){
   z-index:-1 !important;
 }
 
@@ -485,4 +485,8 @@ div#root > div > .MuiContainer-root{
 
 .MuiFormControlLabel-root{
   margin-right:14px !important;
+}
+
+.absolutelyTop{
+  z-index:99999 !important;
 }

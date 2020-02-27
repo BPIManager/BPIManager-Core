@@ -132,6 +132,8 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         return "GlobalNav.Help";
         case "u":
         return page[2];
+        case "share":
+        return "BPIManager"
       }
     }
     const navBar = [
@@ -196,7 +198,6 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         icon:<HelpIcon />
       }
     ]
-    console.log(page);
     const { classes } = this.props;
     const drawer = (isPerment:boolean)=>(
       <div>
