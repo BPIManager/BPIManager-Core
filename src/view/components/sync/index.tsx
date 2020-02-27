@@ -38,9 +38,6 @@ class SyncIndex extends React.Component<{},S> {
     }
     return (
       <Container className="commonLayout" fixed>
-        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
-          Sync
-        </Typography>
         <Paper style={{padding:"15px"}}>
           {!userData && <SyncLoginScreen/>}
           {userData && <SyncControlScreen userData={userData}/>}

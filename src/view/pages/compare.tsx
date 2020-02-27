@@ -245,9 +245,6 @@ export default class Compare extends React.Component<{},S> {
     }
     return (
       <Container className="commonLayout" fixed  id="songsVil">
-        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
-          <FormattedMessage id="Compare.Title"/>
-        </Typography>
         <Grid container spacing={1} style={{margin:"5px 0"}}>
           <Grid item xs={6}>
             <FormControl style={{width:"100%"}}>

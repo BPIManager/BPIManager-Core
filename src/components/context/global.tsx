@@ -1,5 +1,5 @@
 import { Container } from 'unstated'
-import { _lang,_currentStore, _currentTheme, _isSingle, _goalBPI, _goalPercentage } from '../settings'
+import { _lang,_currentStore, _currentTheme, _isSingle, _goalBPI, _goalPercentage, _area } from '../settings'
 
 interface S{
   lang:string,
@@ -9,6 +9,7 @@ interface S{
   isSingle:number,
   goalBPI:number,
   goalPercentage:number,
+  area:number,
 }
 
 export default class GlobalContainer extends Container<S> {
@@ -21,6 +22,7 @@ export default class GlobalContainer extends Container<S> {
     this.setIsSingle = this.setIsSingle.bind(this);
     this.setGoalBPI = this.setGoalBPI.bind(this);
     this.setGoalPercentage = this.setGoalPercentage.bind(this);
+    this.setArea = this.setArea.bind(this);
   }
 
   state = {
@@ -30,6 +32,7 @@ export default class GlobalContainer extends Container<S> {
     isSingle : _isSingle(),
     goalBPI : _goalBPI(),
     goalPercentage : _goalPercentage(),
+    area: _area(),
     cannotMove: false
   }
 
@@ -57,6 +60,12 @@ export default class GlobalContainer extends Container<S> {
     localStorage.setItem("goalBPI",String(newState));
     this.setState({ goalBPI: newState });
   }
+
+  setArea(newState:number){
+    localStorage.setItem("area",String(newState));
+    this.setState({ area: newState });
+  }
+
 
   setGoalPercentage(newState:number){
     localStorage.setItem("goalPercentage",String(newState));

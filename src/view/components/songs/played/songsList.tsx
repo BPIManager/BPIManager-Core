@@ -305,7 +305,6 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
               <Button onClick={()=>this.props.history.push("/lists")} style={{minWidth:"auto",padding:"6px 0px"}}><ArrowBackIcon/></Button>
             }
             {isFav && this.props.title}
-            {!isFav && <FormattedMessage id={this.props.title}/>}
           </div>
           <div style={{display:"flex"}}>
             <Button

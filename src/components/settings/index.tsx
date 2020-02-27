@@ -26,6 +26,10 @@ export const _currentTheme = ()=>{
   return localStorage.getItem("theme") || "light";
 }
 
+export const _area = ()=>{
+  return Number(localStorage.getItem("area")) || 0;
+}
+
 export const _currentViewComponents = ()=>{
   return localStorage.getItem("viewComponents") || "last,djLevel";
 }

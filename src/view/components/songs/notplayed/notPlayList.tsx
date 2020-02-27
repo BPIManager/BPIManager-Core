@@ -177,8 +177,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
     return (
       <Container className="commonLayout" fixed id="songsVil">
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom
-          style={{display:"flex",justifyContent:"space-between"}}>
-          <FormattedMessage id={this.props.title}/>
+          style={{display:"flex",justifyContent:"flex-end"}}>
           <Button
             className="filterButton"
             onClick={this.handleToggleFilterScreen} variant="outlined" color="primary" style={{marginRight:"10px",minWidth:"40px",padding:"5px 6px"}}>

@@ -14,6 +14,8 @@ import Button from '@material-ui/core/Button';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import * as H from 'history';
 import ListAdd from "./add";
+import Alert from '@material-ui/lab/Alert';
+import AlertTitle from '@material-ui/lab/AlertTitle';
 
 interface S {
   isLoading:boolean,
@@ -73,16 +75,17 @@ class FavLists extends React.Component<{}&RouteComponentProps,S> {
     }
     return (
       <Container className="commonLayout" fixed>
-        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
-          リスト
-        </Typography>
-        <p>アイコンクリックでリスト情報の編集やリストの削除が可能です</p>
         {lists.map((item,i)=>{
           return <ListComponent key={i} data={item} history={this.props.history} toggleEditListScreen={this.toggleEditListScreen}/>
         })}
         <Button color="secondary" variant="outlined" fullWidth style={{marginTop:"10px"}} onClick={()=>this.toggleAddListScreen()}>
           新しいリストを作成
         </Button>
+
+        <Alert severity="info" style={{margin:"10px 0"}}>
+          <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>Tips</AlertTitle>
+          <p>リスト左側に表示されているアイコンをクリックして、リスト情報を編集したり、リストを削除できます。<br/>リストを作成できる数に上限はありません。</p>
+        </Alert>
         {addList && <ListAdd isCreating={currentTarget === -1} target={currentTarget} toggleSnack={this.toggleSnack} handleToggle={this.toggleAddListScreen}/>}
       </Container>
     );

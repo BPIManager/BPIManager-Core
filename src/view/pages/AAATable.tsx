@@ -36,9 +36,6 @@ class Stats extends React.Component<{intl:any},S> {
     }
     return (
       <Container className="commonLayout" fixed>
-        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
-          <FormattedMessage id="GlobalNav.AAATable"/>
-        </Typography>
         <p>表の見方: 左の数字がAAA+0におけるBPI、右の数字が表示中のユーザーの現在のBPI<br/>AAA達成時のBPIが高い順に5刻みでカテゴライズしています</p>
         <ClearLampTable data={data}/>
       </Container>

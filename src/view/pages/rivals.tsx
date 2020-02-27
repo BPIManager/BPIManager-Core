@@ -46,13 +46,6 @@ class Stats extends React.Component<{intl:any},S> {
     const {currentView,currentUser,message,showSnackBar,rivalMeta,descendingRivalData,lastVisible,arenaRank,recentView} = this.state;
     return (
       <Container className="commonLayout" fixed>
-        {currentView === 0 &&
-        <div>
-          <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
-            <FormattedMessage id="GlobalNav.Rivals"/>
-          </Typography>
-        </div>
-        }
         {currentView === 0 && <RivalIndex showEachRival={this.showEachRival} compareUser={this.compareUser} backToRecentPage={recentView} last={lastVisible} arenaRank={arenaRank}/>}
         {(rivalMeta && currentView === 1) && <RivalView showAllScore={false} toggleSnack={this.toggleSnack} backToMainPage={this.backToMainPage} rivalData={currentUser} rivalMeta={rivalMeta}/>}
         {(rivalMeta && currentView === 2) && <RivalView showAllScore={false} toggleSnack={this.toggleSnack} backToMainPage={this.backToMainPage} rivalData={rivalMeta.uid} rivalMeta={rivalMeta} descendingRivalData={descendingRivalData} isNotRival={true}/>}

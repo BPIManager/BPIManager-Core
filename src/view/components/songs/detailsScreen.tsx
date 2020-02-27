@@ -28,7 +28,7 @@ import SongDetails from "./songDetails";
 import SongDiffs from "./songDiffs";
 import { UnregisterCallback } from "history";
 import TabPanel from "./common/tabPanel";
-import { _currentTheme,isEnableTweetButton } from "../../../components/settings";
+import { _currentTheme,isEnableTweetButton, _area, _isSingle, _currentStore } from "../../../components/settings";
 import _djRank from "../../../components/common/djRank";
 import {rivalListsDB} from "../../../components/indexedDB";
 import SongRivals from "./songRivals";
@@ -38,6 +38,7 @@ import favLists from "./common/lists";
 import { DBLists } from "../../../types/lists";
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import Filter1Icon from '@material-ui/icons/Filter1';
 
 interface P{
   isOpen:boolean,
@@ -425,6 +426,19 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
                       <ListItemIcon><ThumbsUpDownIcon/></ListItemIcon>
                       <ListItemText primary="IIDX.info" secondary="この楽曲のランキングをIIDX.infoで確認します"/>
                     </ListItem>
+                    <form method="post" name="rivalSearch" action={"https://p.eagate.573.jp/game/2dx/" + _currentStore() +"/ranking/topranker.html#musiclist"}>
+                      <input type="hidden" name="pref_id" value={_area()}/>
+                      <input type="hidden" name="play_style" value={_isSingle() === 1 ? "0" : "1"}/>
+                      <input type="hidden" name="series_id" value={Number(song["textage"].replace(/\/.*?$/,"")) - 1}/>
+                      <input type="hidden" name="s" value="1"/>
+                      <input type="hidden" name="rival" value=""/>
+                      <Button type="submit" fullWidth disableRipple style={{padding:0}}>
+                        <ListItem button>
+                          <ListItemIcon><Filter1Icon/></ListItemIcon>
+                          <ListItemText primary="TOP RANKER" secondary="所属地域のTOP RANKERページのうち、この楽曲が含まれるシリーズを表示します"/>
+                        </ListItem>
+                      </Button>
+                    </form>
                     <Divider style={{margin:"10px 0"}}/>
                     <ListItem button onClick={()=>this.jumpWeb(3)}>
                       <ListItemIcon><TwitterIcon/></ListItemIcon>

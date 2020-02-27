@@ -22,7 +22,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogActions from '@material-ui/core/DialogActions';
 import Switch from '@material-ui/core/Switch';
-import { config } from '../../../config';
+import { config, area } from '../../../config';
 import TextField from '@material-ui/core/TextField';
 import {Link as RefLink} from '@material-ui/core/';
 import Loader from '../common/loader';
@@ -135,7 +135,7 @@ class Settings extends React.Component<P,S> {
     }
     return (
       <Subscribe to={[GlobalContainer]}>
-        {({state,setLang,setStore,setTheme,setIsSingle,setGoalBPI,setGoalPercentage}:GlobalContainer)=> (
+        {({state,setLang,setStore,setTheme,setIsSingle,setGoalBPI,setGoalPercentage,setArea}:GlobalContainer)=> (
           <Container fixed style={{padding:0}}>
             <Paper style={{padding:"15px"}}>
               <FormControl>
@@ -282,6 +282,20 @@ class Settings extends React.Component<P,S> {
                 <RefLink color="secondary" href="https://github.com/potakusan/bpim-score-repo">定義ファイルに誤りなどを発見した場合、GitHubにてプルリクエストを送信することができます。</RefLink>
               </Typography>
               {isURLDialogOpen && <URLDialog isDialogOpen={isURLDialogOpen} exec={this.changeDefinitionURL} close={this.toggleURLDialog}/>}
+              <Divider style={{margin:"10px 0"}}/>
+              <FormControl>
+                <InputLabel>地域</InputLabel>
+                <Select value={state.area} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+                  if(typeof e.target.value === "number"){
+                    setArea(e.target.value)
+                  }
+                }}>
+                {area.map((item,i)=><MenuItem key={item} value={i}>{item}</MenuItem>)}
+                </Select>
+              </FormControl>
+              <Typography variant="caption" display="block">
+                所属地域を選択することで、楽曲詳細画面から該当楽曲/該当地域のTOP RANKERページを開くことができます。
+              </Typography>
             </Paper>
           </Container>
         )}

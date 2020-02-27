@@ -30,9 +30,6 @@ class Stats extends React.Component<{intl:any},S> {
   render(){
     return (
       <Container className="commonLayout" id="stat" fixed>
-        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
-          <FormattedMessage id="Stats.title"/>
-        </Typography>
         <Tabs
           value={this.state.currentTab}
           onChange={this.handleChange}

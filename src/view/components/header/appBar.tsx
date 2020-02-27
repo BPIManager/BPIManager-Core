@@ -1,5 +1,5 @@
 import React from "react";
-import { Link as RouterLink, LinkProps as RouterLinkProps } from "react-router-dom";
+import { Link as RouterLink, LinkProps as RouterLinkProps, withRouter, RouteComponentProps } from "react-router-dom";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
@@ -20,7 +20,7 @@ import TrendingUpIcon from "@material-ui/icons/TrendingUp";
 import SettingsIcon from "@material-ui/icons/Settings";
 import SaveAltIcon from "@material-ui/icons/SaveAlt";
 import BorderColorIcon from '@material-ui/icons/BorderColor';
-import StarIcon from '@material-ui/icons/Star';
+import BookmarkIcon from '@material-ui/icons/Bookmark';
 import FilterNoneIcon from '@material-ui/icons/FilterNone';
 import HelpIcon from '@material-ui/icons/Help';
 import SwapVerticalCircleIcon from '@material-ui/icons/SwapVerticalCircle';
@@ -86,9 +86,9 @@ const RLink = React.forwardRef<HTMLAnchorElement, RouterLinkProps>((props, ref) 
   <RouterLink innerRef={ref} {...props} />
 ));
 
-class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,children:any} & HideOnScrollProps,{isOpen:boolean,errorSnack:boolean}>{
+class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,children:any} & HideOnScrollProps&RouteComponentProps,{isOpen:boolean,errorSnack:boolean}>{
 
-  constructor(props:{global:any,classes:any,theme:any,children:any} & HideOnScrollProps){
+  constructor(props:{global:any,classes:any,theme:any,children:any} & HideOnScrollProps&RouteComponentProps){
     super(props);
     this.state = {
       isOpen: false,
@@ -101,6 +101,39 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
 
   render(){
     const {isOpen} = this.state;
+    const page = this.props.location.pathname.split("/");
+    const currentPage = ()=>{
+      switch(page[1]){
+        default:
+        return "Top.Title";
+        case "data":
+        return "GlobalNav.Data";
+        case "lists":
+        return "GlobalNav.FavoriteSongs";
+        case "songs":
+        return "GlobalNav.SongList";
+        case "notPlayed":
+        return "GlobalNav.unregisteredSongs";
+        case "compare":
+        return "GlobalNav.compare";
+        case "stats":
+        return "GlobalNav.Statistics";
+        case "rivals":
+        return "GlobalNav.Rivals";
+        case "sync":
+        return "GlobalNav.Sync";
+        case "AAATable":
+        return "GlobalNav.AAATable";
+        case "tools":
+        return "GlobalNav.Tools";
+        case "settings":
+        return "GlobalNav.Settings";
+        case "help":
+        return "GlobalNav.Help";
+        case "u":
+        return page[2];
+      }
+    }
     const navBar = [
       {
         to:"/data",
@@ -110,7 +143,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
       {
         to:"/lists",
         id:"GlobalNav.FavoriteSongs",
-        icon:<StarIcon />
+        icon:<BookmarkIcon />
       },
       {
         to:"/songs",
@@ -163,6 +196,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         icon:<HelpIcon />
       }
     ]
+    console.log(page);
     const { classes } = this.props;
     const drawer = (isPerment:boolean)=>(
       <div>
@@ -206,7 +240,8 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
                 <MenuIcon />
               </IconButton>
               <Typography variant="h6">
-                <FormattedMessage id="Top.Title"/>
+                {(page.length === 2 || page[1] === "lists") && <FormattedMessage id={currentPage()}/>}
+                {(page.length > 2 && page[1] !== "lists") && currentPage()}
               </Typography>
             </Toolbar>
           </AppBar>
@@ -243,4 +278,4 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
 
 }
 
-export default withStyles(styles, { withTheme: true })(GlobalHeader);
+export default withRouter(withStyles(styles, { withTheme: true })(GlobalHeader));
