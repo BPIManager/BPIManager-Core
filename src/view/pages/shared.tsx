@@ -65,6 +65,10 @@ class Shared extends React.Component<RouteComponentProps,S> {
     })
   }
 
+  componentWillUnmount(){
+    window.document.title = "BPI Manager";
+  }
+
   private calc:bpiCalcuator = new bpiCalcuator();
 
   makeGraph = (newScore?:number):chartData[]=>{
