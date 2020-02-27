@@ -21,12 +21,14 @@ import { alternativeImg } from '../../components/common';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import WarningIcon from "@material-ui/icons/Warning";
 import ShareButtons from '../components/common/shareButtons';
+import Loader from '../components/common/loader';
 
 interface S {
   score:scoreData&{uid:string}|null,
   you:scoreData|null,
   userData:rivalStoreData|null,
-  song:songData|null
+  song:songData|null,
+  isLoading:boolean,
 }
 
 class Shared extends React.Component<RouteComponentProps,S> {
@@ -37,7 +39,8 @@ class Shared extends React.Component<RouteComponentProps,S> {
       score:null,
       you:null,
       userData:null,
-      song:null
+      song:null,
+      isLoading:true,
     }
   }
 
@@ -58,6 +61,7 @@ class Shared extends React.Component<RouteComponentProps,S> {
       score: (scoreData as scoreData&{uid:string}),
       song: songData[0] || null,
       you: myScore[0] || null,
+      isLoading:false,
     })
   }
 
@@ -128,7 +132,10 @@ class Shared extends React.Component<RouteComponentProps,S> {
   calcRank = ()=> this.state.score ? `${this.calc.rank(this.state.score.currentBPI)}` : "-";
 
   render(){
-    const {score,userData,song,you} = this.state;
+    const {isLoading,score,userData,song,you} = this.state;
+    if(isLoading){
+      <Loader/>
+    }
     if(!score || !song){
       return (
         <Container className="commonLayout" fixed>
