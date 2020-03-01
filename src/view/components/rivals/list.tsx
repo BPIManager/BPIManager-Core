@@ -23,6 +23,8 @@ import Alert from '@material-ui/lab/Alert/Alert';
 import Grid from '@material-ui/core/Grid';
 import RecentActorsIcon from '@material-ui/icons/RecentActors';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import Divider from '@material-ui/core/Divider';
+import List from '@material-ui/core/List';
 
 interface S {
   isAddOpen:boolean,
@@ -107,9 +109,14 @@ class RivalLists extends React.Component<P,S> {
             まだライバルがいません。
           </Alert>
         )}
-        {rivals.map(item=>(
-          <div key={item.uid} onClick={()=>this.props.showEachRival(item)}><RivalComponent data={item}/></div>)
-        )}
+        <List>
+          {rivals.map((item,i)=>(
+            <div key={item.uid} onClick={()=>this.props.showEachRival(item)}>
+              <RivalComponent data={item}/>
+              {i !== rivals.length - 1 && <Divider variant="inset" component="li" />}
+            </div>)
+          )}
+        </List>
         <Grid container spacing={1} style={{marginTop:"4px",marginBottom:"4px"}}>
           <Grid item xs={12} sm={6} style={{paddingTop:"8px"}}>
             <Button color="secondary" variant="outlined" fullWidth onClick={()=>this.props.changeTab(null,2)}>
@@ -143,22 +150,18 @@ class RivalComponent extends React.Component<CP,{}> {
 
   render(){
     const {data} = this.props;
-    const text = <span>{data.profile}<br/>最終更新: {data.updatedAt}</span>
+    const text = <span>{data.profile || <i>-</i>}<br/>最終更新: {data.updatedAt}</span>
     return (
-      <div style={{margin:"10px 0 0 0"}}>
-        <Paper>
-          <ListItem button>
-            <ListItemAvatar>
-              <Avatar>
-                <img src={data.photoURL ? data.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
-                  alt={data.rivalName}
-                  onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(data.rivalName)}/>
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={data.rivalName} secondary={text} />
-          </ListItem>
-        </Paper>
-      </div>
+      <ListItem button>
+        <ListItemAvatar>
+          <Avatar>
+            <img src={data.photoURL ? data.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
+              alt={data.rivalName}
+              onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(data.rivalName)}/>
+          </Avatar>
+        </ListItemAvatar>
+        <ListItemText primary={data.rivalName} secondary={text} />
+      </ListItem>
     );
   }
 }
