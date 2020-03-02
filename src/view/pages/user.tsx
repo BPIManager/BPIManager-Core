@@ -17,14 +17,15 @@ import ShareButtons from '../components/common/shareButtons';
 import { rivalListsDB } from '../../components/indexedDB';
 import ShowSnackBar from '../components/snackBar';
 import RivalView from '../components/rivals/view';
-import { rivalScoreData, scoreData } from '../../types/data';
-import {Link, Chip, Divider, Grid} from '@material-ui/core/';
+import { rivalScoreData, scoreData, rivalStoreData } from '../../types/data';
+import {Link, Chip, Divider, Grid, GridList, GridListTile, GridListTileBar, IconButton, ListSubheader} from '@material-ui/core/';
 import {Link as RefLink} from "react-router-dom";
 import ClearLampView from '../components/table/fromUserPage';
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
 import bpiCalcuator from '../../components/bpi';
 import {arenaRankColor, alternativeImg} from '../../components/common';
 import Loader from '../components/common/loader';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
 interface S {
   userName:string,
@@ -37,6 +38,8 @@ interface S {
   uid:string,
   alternativeId:string,
   rivalData:rivalScoreData[],
+  loadingRecommended:boolean,
+  recommendUsers:rivalStoreData[],
   totalBPI:number,
 }
 
@@ -60,11 +63,13 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
       res:null,
       uid:"",
       rivalData:[],
+      loadingRecommended:true,
+      recommendUsers:[],
       totalBPI:NaN,
     }
   }
 
-  componentDidMount(){
+  async componentDidMount(){
     if(!this.state.userName){
       new fbActions().auth().onAuthStateChanged(async (user: any)=> {
         if(user){
@@ -81,15 +86,19 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
         }
       });
     }else{
-      this.search();
+      await this.search();
+      this.recommended();
     }
   }
 
   backToMainPage = ()=> this.setState({currentView:0});
   toggleSnack = (message:string = "ライバルを追加しました")=> this.setState({add:false,message:message,showSnackBar:!this.state.showSnackBar});
 
-  search = async():Promise<void>=>{
-    const {userName} = this.state;
+  search = async(forceUserName?:string):Promise<void>=>{
+    let {userName} = this.state;
+    if(forceUserName){
+      userName = forceUserName;
+    }
     this.setState({processing:true});
     const res = await this.fbA.searchRival(userName);
     if(res){
@@ -97,7 +106,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
       if(!data){
         return this.setState({userName:userName,res:res,uid:res.uid,rivalData:[],processing:false});
       }
-      const totalBPI = ():number=>{
+      const _totalBPI = ():number=>{
         const s = data.scores.filter((item:any)=>item.difficultyLevel === "12");
         const b = new bpiCalcuator();
         return b.setSongs(s.reduce((sum:number[],item:scoreData)=>{
@@ -105,9 +114,22 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
           return sum;
         },[]));
       }
-      return this.setState({userName:userName,res:res,uid:res.uid,rivalData:data.scores || [],totalBPI:data.totalBPI || totalBPI(),processing:false});
+      const totalBPI = data.totalBPI || _totalBPI();
+      return this.setState({userName:userName,res:res,uid:res.uid,rivalData:data.scores || [],totalBPI:totalBPI,processing:false});
     }else{
       return this.setState({userName:"", res:null,uid:"",processing:false});
+    }
+  }
+
+  recommended = async():Promise<void>=>{
+    try{
+      const {totalBPI,res} = this.state;
+      const recommend:rivalStoreData[] = (await this.fbA.recommendedByBPI(totalBPI)).filter(item=>item.displayName !== res.displayName);
+      console.log(recommend);
+      return this.setState({loadingRecommended:false,recommendUsers:recommend});
+    }catch(e){
+      console.log(e);
+      return this.setState({loadingRecommended:false,recommendUsers:[]});
     }
   }
 
@@ -159,34 +181,13 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
   }
 
   render(){
-    const {processing,add,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI} = this.state;
+    const {processing,add,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI,loadingRecommended,recommendUsers} = this.state;
     const url = "https://bpi.poyashi.me/u/" + encodeURI(userName);
     if(processing){
       return (<Loader/>);
     }
     if(!userName){
-      return (
-        <Container className="commonLayout" fixed>
-          <Paper>
-            <div style={{textAlign:"center",padding:"15px"}}>
-              <WarningIcon style={{color:"#555",fontSize:"45px"}}/>
-              <Typography variant="h4" gutterBottom>
-                Error!
-              </Typography>
-              <Typography variant="body2" gutterBottom>
-                指定されたユーザーは見つかりませんでした
-              </Typography>
-              {(!(this.props.match.params as any).uid && alternativeId) &&
-              <Typography variant="body2" gutterBottom>
-                あなたのプロフィールは<br/>
-                <RefLink to={"/u/" + alternativeId} style={{textDecoration:"none"}}><Link color="secondary" component="span">https://bpi.poyashi.me/u/{alternativeId}</Link></RefLink><br/>
-                から閲覧できます
-              </Typography>
-              }
-            </div>
-          </Paper>
-        </Container>
-      );
+      return <NoUserError match={this.props.match} alternativeId={alternativeId}/>;
     }
     if(currentView === 1){
       return (
@@ -205,6 +206,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
       )
     }
     return (
+      <div>
       <Container className="commonLayout" id="users" fixed>
         <Paper>
           <div style={{textAlign:"center",padding:"15px"}}>
@@ -258,13 +260,66 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
             Twitter
           </Button>
         }
-        <img src={`https://chart.apis.google.com/chart?cht=qr&chs=150x150&chl=${url}`} alt="ライバルに追加" style={{margin:"10px auto",display:"block",border:"1px solid #ccc"}}/>
-        <ShareButtons withTitle={false} url={url}/>
+        <ShareButtons withTitle={true} url={url} text={res.displayName}/>
         <ShowSnackBar message={message} variant={message === "ライバルを追加しました" ? "success" : "error"}
-            handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>
+          handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>
       </Container>
+      {loadingRecommended && <Loader/>}
+      {!loadingRecommended && (
+        <div style={{display:"flex",flexWrap:"wrap",justifyContent:"space-around",overflow:"hidden",margin:"15px auto"}}>
+          <GridList  cellHeight={180} style={{height:"400px",width:"100vw"}}>
+            <GridListTile key="Subheader" cols={2} style={{ height: 'auto' }}>
+              <ListSubheader component="div">このユーザーもおすすめです:</ListSubheader>
+            </GridListTile>
+            {recommendUsers.map((tile:rivalStoreData) => (
+              <GridListTile key={tile.displayName} onClick={async()=>{
+                this.props.history.replace("/u/" + tile.displayName);
+                this.setState({userName:tile.displayName,processing:true,loadingRecommended:true});
+                await this.search(tile.displayName);
+                this.recommended();
+              }}>
+                <img src={tile.photoURL.replace("_normal","")} alt={tile.displayName}
+                  onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(res.displayName)}/>
+                <GridListTileBar
+                  title={tile.displayName}
+                  subtitle={"総合BPI " + String(tile.totalBPI || "-")}
+                />
+              </GridListTile>
+            ))}
+          </GridList>
+        </div>
+      )}
+      </div>
     );
   }
 }
 
 export default injectIntl(withRouter(User));
+
+class NoUserError extends React.Component<{match:any,alternativeId:string},{}>{
+  render(){
+    const {match,alternativeId} = this.props;
+    return (
+      <Container className="commonLayout" fixed>
+        <Paper>
+          <div style={{textAlign:"center",padding:"15px"}}>
+            <WarningIcon style={{color:"#555",fontSize:"45px"}}/>
+            <Typography variant="h4" gutterBottom>
+              Error!
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              指定されたユーザーは見つかりませんでした
+            </Typography>
+            {(!(match.params as any).uid && alternativeId) &&
+            <Typography variant="body2" gutterBottom>
+              あなたのプロフィールは<br/>
+              <RefLink to={"/u/" + alternativeId} style={{textDecoration:"none"}}><Link color="secondary" component="span">https://bpi.poyashi.me/u/{alternativeId}</Link></RefLink><br/>
+              から閲覧できます
+            </Typography>
+            }
+          </div>
+        </Paper>
+      </Container>
+    );
+  }
+}

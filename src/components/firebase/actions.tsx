@@ -202,32 +202,38 @@ export default class fbActions{
     }
   }
 
-  async recentUpdated(last:rivalStoreData|null,endAt:rivalStoreData|null,arenaRank:string,recommended:boolean):Promise<rivalStoreData[]>{
+  async recentUpdated(last:rivalStoreData|null,endAt:rivalStoreData|null,arenaRank:string):Promise<rivalStoreData[]>{
+    let query:firebase.firestore.Query = firestore.collection("users").orderBy("serverTime", "desc");
+    if(arenaRank !== "すべて"){
+      query = query.where("arenaRank","==",arenaRank);
+    }
+    if(last){
+      query = query.startAfter(last.serverTime);
+    }
+    if(endAt){
+      query = query.endAt(endAt.serverTime);
+    }
+    if(!endAt){
+      query = query.limit(10);
+    }
+    return await this.getUsers(query);
+  }
+
+  async recommendedByBPI(exactBPI?:number){
+    let query:firebase.firestore.Query = firestore.collection("users").orderBy("totalBPI", "desc");
+    const total = exactBPI || await getTotalBPI();
+    const downLimit = total > 60 ? 50 : total - 5;
+    const upLimit = total > 50 ? 100 : total + 5;
+    query = query.where("totalBPI",">=",downLimit);
+    query = query.where("totalBPI","<=",upLimit);
+    query = query.limit(20);
+    return (await this.getUsers(query)).sort((a,b)=>{
+      return Math.abs(total - (Number(a.totalBPI) || -15)) - Math.abs(total - (Number(b.totalBPI) || -15))
+    })
+  }
+
+  private async getUsers(query:firebase.firestore.Query){
     try{
-      let query:firebase.firestore.Query = firestore.collection("users").orderBy("serverTime", "desc");
-      if(!recommended){
-        if(arenaRank !== "すべて"){
-          query = query.where("arenaRank","==",arenaRank);
-        }
-        if(last){
-          query = query.startAfter(last.serverTime);
-        }
-        if(endAt){
-          query = query.endAt(endAt.serverTime);
-        }
-        if(!endAt){
-          query = query.limit(10);
-        }
-      }
-      const total = await getTotalBPI();
-      if(recommended){
-        query = firestore.collection("users").orderBy("totalBPI", "desc");
-        const downLimit = total > 60 ? 50 : total - 5;
-        const upLimit = total > 50 ? 100 : total + 5;
-        query = query.where("totalBPI",">=",downLimit);
-        query = query.where("totalBPI","<=",upLimit);
-        query = query.limit(20);
-      }
       const res = await query.get();
       if(!res.empty && res.size >= 1){
         const uid = this.authInfo();
@@ -238,9 +244,7 @@ export default class fbActions{
           }
           return groups;
         },[]);
-        return recommended ? d.sort((a,b)=>{
-          return Math.abs(total - (Number(a.totalBPI) || -15)) - Math.abs(total - (Number(b.totalBPI) || -15))
-        }) : d;
+        return d;
       }else{
         return [];
       }

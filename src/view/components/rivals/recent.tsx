@@ -81,7 +81,7 @@ class RecentlyAdded extends React.Component<P,S> {
   search = async(last:rivalStoreData|null = null,endAt:rivalStoreData|null = null,arenaRank = this.state.arenaRank):Promise<void>=>{
     const {recommended} = this.props;
     this.setState({processing:true,isLoading:true,});
-    const res = await this.fbA.recentUpdated(last,endAt,arenaRank,recommended);
+    const res = recommended ? await this.fbA.recommendedByBPI() : await this.fbA.recentUpdated(last,endAt,arenaRank);
     if(!res){
       return this.toggleSnack("該当ページが見つかりませんでした。","warning")
     }
