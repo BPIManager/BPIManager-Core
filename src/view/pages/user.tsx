@@ -106,15 +106,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
       if(!data){
         return this.setState({userName:userName,res:res,uid:res.uid,rivalData:[],processing:false});
       }
-      const _totalBPI = ():number=>{
-        const s = data.scores.filter((item:any)=>item.difficultyLevel === "12");
-        const b = new bpiCalcuator();
-        return b.setSongs(s.reduce((sum:number[],item:scoreData)=>{
-          sum.push(item.currentBPI);
-          return sum;
-        },[]));
-      }
-      const totalBPI = data.totalBPI || _totalBPI();
+      const totalBPI = res.totalBPI || "-";
       return this.setState({userName:userName,res:res,uid:res.uid,rivalData:data.scores || [],totalBPI:totalBPI});
     }else{
       return this.setState({userName:"", res:null,uid:""});
@@ -208,7 +200,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
     return (
       <div>
       <Container className="commonLayout" id="users" fixed>
-        <Paper>
+        <div>
           <div style={{textAlign:"center",padding:"15px"}}>
             <Avatar style={{width:"150px",height:"150px",border:"1px solid #ccc",margin:"15px auto"}}>
               <img src={res.photoURL ? res.photoURL.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
@@ -227,7 +219,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
               {res.profile}
             </Typography>
           </div>
-        </Paper>
+        </div>
         <Grid container spacing={1} style={{marginTop:"4px",marginBottom:"4px"}}>
           <Grid item xs={12} md={4}>
             <Button onClick={()=>this.view(1)} disabled={add || processing} startIcon={<ViewListIcon/>} variant="outlined" color="secondary" fullWidth>
@@ -268,7 +260,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
       </Container>
       {loadingRecommended && <Loader/>}
       {!loadingRecommended && (
-        <div style={{display:"flex",flexWrap:"wrap",justifyContent:"space-around",overflow:"hidden",margin:"15px auto"}}>
+        <div style={{display:"flex",flexWrap:"wrap",justifyContent:"space-around",overflow:"hidden",margin:"15px auto",width:"90%"}}>
           <GridList  cellHeight={180} style={{height:"400px",width:"100%"}}>
             <GridListTile key="Subheader" cols={2} style={{ height: 'auto' }}>
               <ListSubheader component="div">このユーザーもおすすめです:</ListSubheader>
