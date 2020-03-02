@@ -260,14 +260,16 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
             Twitter
           </Button>
         }
-        <ShareButtons withTitle={true} url={url} text={res.displayName}/>
+        <div style={{margin:"15px 0"}}>
+          <ShareButtons withTitle={true} url={url} text={res.displayName}/>
+        </div>
         <ShowSnackBar message={message} variant={message === "ライバルを追加しました" ? "success" : "error"}
           handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>
       </Container>
       {loadingRecommended && <Loader/>}
       {!loadingRecommended && (
         <div style={{display:"flex",flexWrap:"wrap",justifyContent:"space-around",overflow:"hidden",margin:"15px auto"}}>
-          <GridList  cellHeight={180} style={{height:"400px",width:"100vw"}}>
+          <GridList  cellHeight={180} style={{height:"400px",width:"100%"}}>
             <GridListTile key="Subheader" cols={2} style={{ height: 'auto' }}>
               <ListSubheader component="div">このユーザーもおすすめです:</ListSubheader>
             </GridListTile>
