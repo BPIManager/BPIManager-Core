@@ -115,9 +115,9 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
         },[]));
       }
       const totalBPI = data.totalBPI || _totalBPI();
-      return this.setState({userName:userName,res:res,uid:res.uid,rivalData:data.scores || [],totalBPI:totalBPI,processing:false});
+      return this.setState({userName:userName,res:res,uid:res.uid,rivalData:data.scores || [],totalBPI:totalBPI});
     }else{
-      return this.setState({userName:"", res:null,uid:"",processing:false});
+      return this.setState({userName:"", res:null,uid:""});
     }
   }
 
@@ -126,10 +126,10 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
       const {totalBPI,res} = this.state;
       const recommend:rivalStoreData[] = (await this.fbA.recommendedByBPI(totalBPI)).filter(item=>item.displayName !== res.displayName);
       console.log(recommend);
-      return this.setState({loadingRecommended:false,recommendUsers:recommend});
+      return this.setState({loadingRecommended:false,recommendUsers:recommend,processing:false});
     }catch(e){
       console.log(e);
-      return this.setState({loadingRecommended:false,recommendUsers:[]});
+      return this.setState({loadingRecommended:false,recommendUsers:[],processing:false});
     }
   }
 
