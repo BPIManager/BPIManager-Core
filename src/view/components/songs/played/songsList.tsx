@@ -44,6 +44,7 @@ interface stateInt {
   filterOpen:boolean,
   bpm:B,
   bpi:BPIR,
+  memo:boolean,
   orderTitle:number,
   orderMode:number,
   versions:number[]
@@ -85,6 +86,7 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
         min:initialBPIRange ? Number(initialBPIRange) : "",
         max:initialBPIRange && initialBPIRange !== "100" ? Number(initialBPIRange) + 10 : "",
       },
+      memo:false,
       range:0,
       page:0,
       filterOpen:false,
@@ -117,7 +119,14 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
     }
   }
 
-  updateScoreData():Promise<void>{
+  updateScoreData(row:songData):Promise<void>{
+    if(row){
+      const allSongsData = Object.assign({},this.state.allSongsData);
+      allSongsData[row["title"] + _prefixFromNum(row["difficulty"])]["memo"] = row["memo"];
+      this.setState({
+        allSongsData:allSongsData
+      })
+    }
     return this.props.updateScoreData();
   }
 
@@ -146,6 +155,7 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
     const m = newState.mode;
     const r = newState.range;
     const b = newState.bpm;
+    const _memo = newState.memo;
     const bpir = newState.bpi;
     const v = newState.versions;
     const f = this.state.allSongsData;
@@ -179,6 +189,14 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
       return v.indexOf(Number(songVer)) > -1;
     }
 
+    const availableMemo = (memo?:string)=>{
+      if(!_memo){
+        return true;
+      }else{
+        return memo !== "" && memo !== undefined;
+      }
+    }
+
     if(Object.keys(this.state.allSongsData).length === 0) return [];
     return this.props.full.filter((data)=>{
       const _f = f[data.title + _prefix(data["difficulty"])];
@@ -190,6 +208,7 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
         evaluateRange(data) &&
         evaluateMode(data,max) &&
         evaluateVersion(_f.textage) &&
+        availableMemo(_f.memo) &&
         newState["options"]["level"].some((item:string)=>{
           return item === data.difficultyLevel }) &&
         newState["options"]["difficulty"].some((item:string)=>{
@@ -225,23 +244,28 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
         case 2:
         return a.currentBPI - b.currentBPI;
         case 3:
+        const isUndefinedPlayState = 7;
+        const convertPlayState = (st:number)=>(st === isUndefinedPlayState || isNaN(st) ? -1 : st)
+        return convertPlayState(a.clearState) - convertPlayState(b.clearState);
+        case 4:
         const am = !a.missCount ? Infinity : Number.isNaN(a.missCount) ? Infinity : a.missCount,
         bm = !b.missCount ? Infinity : Number.isNaN(b.missCount) ? Infinity : b.missCount;
         return  am-bm;
-        case 4:
-        return a.exScore - b.exScore;
         case 5:
-        return a.exScore / aFull["notes"] * 2 - b.exScore / bFull["notes"] * 2;
+        return a.exScore - b.exScore;
         case 6:
-        return moment(a.updatedAt).diff(b.updatedAt);
+        return a.exScore / aFull["notes"] * 2 - b.exScore / bFull["notes"] * 2;
         case 7:
+        return moment(a.updatedAt).diff(b.updatedAt);
         case 8:
+        case 9:
+        const isMaxBPM = 8;
         let aBpm = aFull["bpm"];
         let bBpm = bFull["bpm"];
-        if(/-/.test(aBpm)) aBpm = orderTitle === 7 ? aBpm.split("-")[1] : aBpm.split("-")[0];
-        if(/-/.test(bBpm)) bBpm = orderTitle === 7 ? bBpm.split("-")[1] : bBpm.split("-")[0];
+        if(/-/.test(aBpm)) aBpm = orderTitle === isMaxBPM ? aBpm.split("-")[1] : aBpm.split("-")[0];
+        if(/-/.test(bBpm)) bBpm = orderTitle === isMaxBPM ? bBpm.split("-")[1] : bBpm.split("-")[0];
         return Number(aBpm) - Number(bBpm);
-        case 9:
+        case 10:
         let aVer = aFull["textage"].replace(/\/.*?$/,"");
         let bVer = bFull["textage"].replace(/\/.*?$/,"");
         return Number(aVer) - Number(bVer);
@@ -264,11 +288,12 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
     return this.setState({scoreData:this.songFilter(newState),range:event.target.value,page:0});
   }
 
-  applyFilter = (state:{bpm:B,versions:number[]}):void=>{
+  applyFilter = (state:{bpm:B,versions:number[],memo:boolean|null}):void=>{
     let newState = this.clone();
     newState.bpm = state.bpm;
     newState.versions = state.versions;
-    return this.setState({scoreData:this.songFilter(newState),bpm:state.bpm,versions:state.versions,page:0});
+    newState.memo = typeof state.memo !== "boolean" ? false : state.memo;
+    return this.setState({scoreData:this.songFilter(newState),bpm:state.bpm,versions:state.versions,memo:newState.memo,page:0});
   }
 
   handleToggleFilterScreen = ()=> this.setState({filterOpen:!this.state.filterOpen});
@@ -285,6 +310,7 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
       formatMessage({id:"Orders.Title"}),
       formatMessage({id:"Orders.Level"}),
       formatMessage({id:"Orders.BPI"}),
+      formatMessage({id:"Orders.ClearLamp"}),
       formatMessage({id:"Orders.MissCount"}),
       formatMessage({id:"Orders.EX"}),
       formatMessage({id:"Orders.Percentage"}),
@@ -362,7 +388,7 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
           data={this.sortedData()} mode={mode}
           allSongsData={this.state.allSongsData}
           updateScoreData={this.updateScoreData}/>
-        {filterOpen && <SongsFilter versions={versions} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpi={this.state.bpi} bpm={this.state.bpm}/>}
+        {filterOpen && <SongsFilter versions={versions} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpi={this.state.bpi} bpm={this.state.bpm} memo={this.state.memo}/>}
       </Container>
     );
   }

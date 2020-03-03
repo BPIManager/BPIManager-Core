@@ -20,7 +20,7 @@ import Tab from "@material-ui/core/Tab";
 import YouTubeIcon from '@material-ui/icons/YouTube';
 import ThumbsUpDownIcon from '@material-ui/icons/ThumbsUpDown';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
-import {scoresDB,scoreHistoryDB} from "../../../components/indexedDB";
+import {scoresDB,scoreHistoryDB, songsDB} from "../../../components/indexedDB";
 import ShowSnackBar from "../snackBar";
 import {Button, CircularProgress, Tooltip, Fab, List, ListItem, SwipeableDrawer, ListItemIcon, ListItemText, ListSubheader, Backdrop} from '@material-ui/core';
 import BPIChart from "./bpiChart";
@@ -49,12 +49,15 @@ interface P{
   willDelete?:boolean
 }
 
+interface ListItemBody{title:string,num:number,description:string,length:number}
+
 interface S{
   isError:boolean,
   newScore:number,
   newBPI:number,
   newClearState:number,
   newMissCount:number,
+  newMemo:string,
   showCharts:boolean,
   chartData:chartData[],
   currentTab:number,
@@ -70,9 +73,10 @@ interface S{
   showBody:boolean,
   hasRival:boolean,
   isLoading:boolean,
-  allLists:{title:string,num:number,description:string}[],
+  allLists:ListItemBody[],
   allSavedLists:number[],
   isPreparing:boolean,
+  hasModifiedMemo:boolean,
 }
 
 export interface chartData{
@@ -94,6 +98,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       newBPI:NaN,
       newClearState:-1,
       newMissCount:-1,
+      newMemo:"",
       showCharts : true,
       chartData:this.makeGraph().reverse(),
       justFavorited:false,
@@ -111,6 +116,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       allLists:[],
       allSavedLists:[],
       isPreparing:false,
+      hasModifiedMemo:false,
     }
   }
 
@@ -191,8 +197,8 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       const p = await f.loadLists();
       const q = await f.loadSavedLists(title,difficulty);
       this.setState({
-        allLists:p.reduce((groups:{title:string,num:number,description:string}[],item:DBLists)=>{
-          groups.push({title:item.title,num:item.num,description:item.description});
+        allLists:p.reduce((groups:ListItemBody[],item:DBLists)=>{
+          groups.push({title:item.title,num:item.num,description:item.description,length:item.length});
           return groups;
         },[]),
         allSavedLists:q.reduce((groups:number[],item:any)=>{
@@ -276,14 +282,18 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
 
   saveAndClose = async()=>{
     try{
-      const {newBPI,newScore,newClearState,newMissCount} = this.state;
+      const {newBPI,newScore,newMemo,newClearState,newMissCount,hasModifiedMemo} = this.state;
       const {score,song,willDelete} = this.props;
       if(!song || !score){return;}
       this.setState({isPreparing:true});
-      const scores = new scoresDB(), scoreHist = new scoreHistoryDB();
-      await scores.updateScore(score,{currentBPI:newBPI,exScore:newScore,clearState:newClearState,missCount:newMissCount});
+      const scores = new scoresDB(), scoreHist = new scoreHistoryDB(), songs = new songsDB();
+      if(!Number.isNaN(newScore) || newClearState !== -1 || newMissCount !== -1) await scores.updateScore(score,{currentBPI:newBPI,exScore:newScore,clearState:newClearState,missCount:newMissCount});
       if(!Number.isNaN(newBPI)) scoreHist._add(Object.assign(score, { difficultyLevel: song.difficultyLevel, currentBPI: newBPI, exScore: newScore }));
-      this.props.handleOpen(true,null,willDelete ? {title:score.title,difficulty:score.difficulty} : null);
+      if(hasModifiedMemo && newMemo !== song.memo){
+        await songs.updateMemo(song,newMemo);
+        song.memo = newMemo;
+      }
+      this.props.handleOpen(true,song,willDelete ? {title:score.title,difficulty:score.difficulty} : null);
     }catch(e){
       return this.setState({errorSnack:true,errorSnackMessage:e});
     }
@@ -298,18 +308,37 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
     return _djRank(showBody,isBody,max,s);
   }
 
+  isModified = ()=>{
+    const {newBPI,newScore,newClearState,newMemo,newMissCount,hasModifiedMemo} = this.state;
+    const {score,song} = this.props;
+    if(!score || !song){
+      return false;
+    }
+    return (
+      !Number.isNaN(newBPI) ||
+      !Number.isNaN(newScore) ||
+      (newClearState !== -1 && newClearState !== score.clearState) ||
+      (newMissCount !== -1 && newMissCount !== score.missCount) ||
+      (hasModifiedMemo && newMemo !== song.memo)
+    );
+  }
+
   handleClearState = (e:React.ChangeEvent<{ value: unknown }>)=> this.setState({newClearState:Number(e.target.value) < 0 ? 0 : Number(e.target.value)});
   handleMissCount = (e:React.ChangeEvent<HTMLInputElement>)=> this.setState({newMissCount:Number(e.target.value) < 0 ? 0 : Number(e.target.value)});
+  handleMemo = (e:React.ChangeEvent<HTMLInputElement>)=> this.setState({hasModifiedMemo:true,newMemo:e.target.value || ""});
 
   render(){
     const {formatMessage} = this.props.intl;
     const {isOpen,handleOpen,song,score} = this.props;
-    const {isSaving,isLoading,isPreparing,newScore,newBPI,newClearState,newMissCount,showCharts,chartData,currentTab,justSelectedList,openListsMenu,openShareMenu,justFavorited,allLists,allSavedLists,successSnack,errorSnack,errorSnackMessage,hasRival} = this.state;
+    const {
+      isSaving,isLoading,isPreparing,newScore,newMemo,newBPI,newClearState,newMissCount,showCharts,chartData,
+      currentTab,justSelectedList,openListsMenu,openShareMenu,justFavorited,allLists,allSavedLists,successSnack,errorSnack,errorSnackMessage,
+      hasRival,hasModifiedMemo} = this.state;
     if(!song || !score){
       return (null);
     }
     if(isLoading){
-      return (<Loader/>);
+      return (null);
     }
     const c = _currentTheme();
     return (
@@ -322,7 +351,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
             <Typography variant="h6" className="be-ellipsis" style={{flexGrow:1}}>
               {song.title + _prefixFromNum(song.difficulty)}
             </Typography>
-            {( !Number.isNaN(newBPI) || !Number.isNaN(newScore) || (newClearState !== -1 && newClearState !== score.clearState) || (newMissCount !== -1 && newMissCount !== score.missCount) ) &&
+            {this.isModified() &&
               <div style={{position:"relative"}}>
                 <Button variant="contained" color="secondary" onClick={this.saveAndClose} disabled={isSaving}>
                   <FormattedMessage id="Details.SaveButton"/>
@@ -404,12 +433,12 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
                             楽曲のリスト管理
                           </ListSubheader>
                       }>
-                        {allLists.map((item:{title:string,num:number,description:string})=>{
+                        {allLists.map((item:ListItemBody)=>{
                           const alreadyExists = allSavedLists.indexOf(item.num) > -1;
                           return (
                           <ListItem button onClick={()=>this.toggleFavLists(item,!alreadyExists)} key={item.num}>
                             <ListItemIcon>{alreadyExists ? <CheckBoxIcon/> : <CheckBoxOutlineBlankIcon/>}</ListItemIcon>
-                            <ListItemText primary={item.title} secondary={item.description}/>
+                            <ListItemText primary={`${item.title}(${item.length})`} secondary={item.description}/>
                           </ListItem>
                         )})}
                       </List>
@@ -492,8 +521,8 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
           }
         </TabPanel>
         <TabPanel value={currentTab} index={1}>
-          <SongDetails song={song} score={score} newMissCount={newMissCount} newClearState={newClearState}
-            handleClearState={this.handleClearState} handleMissCount={this.handleMissCount}/>
+          <SongDetails song={song} score={score} newMemo={newMemo} newMissCount={newMissCount} newClearState={newClearState}
+            handleClearState={this.handleClearState} handleMissCount={this.handleMissCount} handleMemo={this.handleMemo} memoModified={hasModifiedMemo}/>
         </TabPanel>
         <TabPanel value={currentTab} index={2}>
           <SongDiffs song={song} score={score}/>

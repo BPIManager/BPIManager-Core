@@ -16,16 +16,18 @@ import { buttonTextColor } from '../../../../components/settings';
 
 interface P {
   handleToggle:()=>void,
-  applyFilter:(state:{bpm:B,versions:number[]})=>void,
+  applyFilter:(state:{bpm:B,versions:number[],memo:boolean|null})=>void,
   bpm:B,
   bpi?:BPIR,
+  memo?:boolean,
   versions:number[],
 }
 
 interface S {
   bpm:B,
   bpi:BPIR|null,
-  versions:number[]
+  versions:number[],
+  memo:boolean|null,
 }
 
 export interface B {
@@ -45,6 +47,7 @@ class SongsFilter extends React.Component<P,S> {
   constructor(props:P){
     super(props);
     this.state = {
+      memo:typeof props.memo !== "boolean" ? null : props.memo,
       bpm:props.bpm,
       versions:props.versions,
       bpi:props.bpi || null
@@ -66,6 +69,12 @@ class SongsFilter extends React.Component<P,S> {
     bpm[name] = event.target.checked;
     return this.setState({
       bpm:bpm
+    })
+  }
+
+  handleMemoChkBox = ()=> (event: React.ChangeEvent<HTMLInputElement>)=>{
+    return this.setState({
+      memo:event.target.checked
     })
   }
 
@@ -105,11 +114,27 @@ class SongsFilter extends React.Component<P,S> {
 
   render(){
     const {handleToggle} = this.props;
-    const {bpm,versions,bpi} = this.state;
+    const {bpm,versions,bpi,memo} = this.state;
     return (
       <Dialog open={true} onClose={handleToggle}>
         <DialogTitle>詳細フィルタ</DialogTitle>
         <DialogContent>
+          {memo !== null && (<div>
+            <Typography component="h6" variant="h6" style={{marginTop:"5px"}}>
+              メモ
+            </Typography>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={memo}
+                  onChange={this.handleMemoChkBox()}
+                  value={1.5}
+                  color="primary"
+                />
+              }
+              label="メモが記入済みの楽曲のみ表示"
+            />
+          </div>)}
           <Typography component="h6" variant="h6">
             BPM
           </Typography>

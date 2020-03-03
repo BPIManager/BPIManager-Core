@@ -1,7 +1,7 @@
 import * as React from 'react';
 import SongsList from '../components/songs/played/songsList';
 import { scoresDB } from '../../components/indexedDB';
-import { scoreData } from '../../types/data';
+import { scoreData, songData } from '../../types/data';
 import Loader from '../components/common/loader';
 
 interface S {

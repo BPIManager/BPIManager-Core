@@ -30,7 +30,7 @@ interface P{
   data:scoreData[],
   mode:number,
   allSongsData:{[key:string]:songData}
-  updateScoreData:()=>void,
+  updateScoreData:(row:songData)=>void,
   page:number,
   handleChangePage:(_e:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number)=>void
 }
@@ -56,12 +56,12 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
     }
   }
 
-  handleOpen = (updateFlag:boolean,row?:scoreData|null):void=> {
-    if(updateFlag){this.props.updateScoreData();}
+  handleOpen = (updateFlag:boolean,row:songData|scoreData):void=> {
+    if(updateFlag){this.props.updateScoreData(row as songData);}
     return this.setState({
       isOpen:!this.state.isOpen,
-      currentSongData:row ? this.props.allSongsData[row.title + _prefix(row.difficulty)] : null,
-      currentScoreData:row ? row : null
+      currentSongData:(row ? this.props.allSongsData[row.title + _prefix(row.difficulty)] : null) as songData,
+      currentScoreData:(row ? row : null) as scoreData
     });
   }
 

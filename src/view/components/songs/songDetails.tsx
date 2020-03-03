@@ -17,22 +17,50 @@ import { verNameArr } from "./common";
 interface P{
   song:songData|null,
   score:scoreData|null,
+  newMemo:string,
   newMissCount:number,
   newClearState:number,
+  memoModified:boolean,
   handleMissCount:(e:React.ChangeEvent<HTMLInputElement>)=>void,
-  handleClearState:(e:React.ChangeEvent<{value:unknown}>)=>void
+  handleClearState:(e:React.ChangeEvent<{value:unknown}>)=>void,
+  handleMemo:(e:React.ChangeEvent<HTMLInputElement>)=>void
 }
 
-class SongDetails extends React.Component<P,{}> {
-
+class SongDetails extends React.Component<P> {
   render(){
-    const {song,score,newMissCount,newClearState,handleClearState,handleMissCount} = this.props;
+    const {song,score,newMemo,newMissCount,newClearState,handleClearState,handleMissCount,handleMemo,memoModified} = this.props;
     if(!song || !score){
       return (null);
     }
     const max = song.notes * 2;
     return (
       <div>
+        <Paper>
+          <Table aria-label="Score Details">
+            <TableHead>
+              <TableRow>
+                <TableCell style={{minWidth:"130px",maxWidth:"130px"}}></TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell>Memo</TableCell>
+                <TableCell>
+                  <TextField
+                    placeholder="type anything..."
+                    multiline fullWidth
+                    rows="4"
+                    error={newMemo.length > 1000}
+                    onChange={handleMemo}
+                    value={!memoModified ? song.memo : newMemo}
+                    helperText={newMemo.length > 1000 ? "テキストが長すぎます." : ""}
+                  />
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </Paper>
         <Paper>
           <Table aria-label="Song Details">
             <TableHead>

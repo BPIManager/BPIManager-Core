@@ -108,6 +108,15 @@ const storageWrapper = class extends Dexie{
         delete item.isFavorited;
       });
     });
+    this.version(9).stores({
+      scores : "[title+difficulty+storedAt+isSingle],title,*difficulty,*difficultyLevel,currentBPI,exScore,missCount,clearState,storedAt,isSingle,updatedAt,lastScore",
+      songs : "&++num,title,*difficulty,*difficultyLevel,wr,avg,notes,bpm,textage,dpLevel,memo,[title+difficulty]",
+      rivals : "&[title+difficulty+storedAt+isSingle+rivalName],rivalName,title,*difficulty,*difficultyLevel,exScore,missCount,clearState,storedAt,isSingle,updatedAt",
+      rivalLists : "&uid,rivalName,lastUpdatedAt,updatedAt,[isSingle+storedAt],photoURL,profile",
+      scoreHistory : "&++num,[title+storedAt+difficulty+isSingle],[title+storedAt+difficulty+isSingle+updatedAt],title,difficulty,difficultyLevel,storedAt,exScore,BPI,isSingle,updatedAt",
+      favLists : "&num,title,length,description,updatedAt",
+      favSongs : "&[title+difficulty+listedOn],[title+difficulty],listedOn",
+    })
     this.scores = this.table("scores");
     this.scoreHistory = this.table("scoreHistory");
     this.songs = this.table("songs");
@@ -474,12 +483,13 @@ export const scoresDB = class extends storageWrapper{
         if(Number.isNaN(data.exScore)) delete data.exScore;
         if(data.clearState === -1 || data.clearState === score.clearState) delete data.clearState;
         if(data.missCount === -1 || data.missCount === score.missCount) delete data.missCount;
-        await this.scores.where("[title+difficulty+storedAt+isSingle]").equals([score.title,score.difficulty,score.storedAt,score.isSingle]).modify(
-        Object.assign(data,{
+
+        const newData = Object.assign(data,{
           updatedAt : timeFormatter(0),
           lastScore: score.exScore,
-        })
-        );
+        });
+
+        await this.scores.where("[title+difficulty+storedAt+isSingle]").equals([score.title,score.difficulty,score.storedAt,score.isSingle]).modify(newData);
       }
       return true;
     }catch(e){
@@ -817,15 +827,6 @@ export const songsDB = class extends storageWrapper{
     }
   }
 
-  async getAllFavoritedItems(isSingle:number = 1):Promise<any[]>{
-    try{
-      return await this.getAll(isSingle,true).then(t=>t.and((item:songData)=>item.isFavorited === true).toArray());
-    }catch(e){
-      console.error(e);
-      return [];
-    }
-  }
-
   async deleteAll():Promise<void>{
     return await this.songs.clear();
   }
@@ -861,6 +862,20 @@ export const songsDB = class extends storageWrapper{
     return this.getOneItemIsSingle(title,difficulty);
   }
 
+  async updateMemo(song:songData,newMemo:string):Promise<boolean>{
+    try{
+      await this.songs.where({
+        title:song.title,
+        difficulty:song.difficulty
+      }).modify({
+        memo:newMemo
+      });
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
+
   async setItem(item:any):Promise<any>{
     try{
       return await this.songs.put({
@@ -873,8 +888,6 @@ export const songsDB = class extends storageWrapper{
         textage:item["textage"],
         difficultyLevel:item["difficultyLevel"],
         dpLevel:item["dpLevel"],
-        isFavorited:item["isFavorited"] || false,
-        isCreated: item["isCreated"] || false,
         coef:item["coef"] ? this.validateCoef(Number(item["coef"])) : -1,
         updatedAt: item["updatedAt"] || timeFormatter(0),
       })
@@ -902,17 +915,6 @@ export const songsDB = class extends storageWrapper{
         coef:Number(this.validateCoef(item["coef"] || -1)),
         updatedAt: timeFormatter(0),
       })
-    }catch(e){
-      console.error(e);
-      return 1;
-    }
-  }
-
-  async toggleFavorite(title:string,difficulty:string,newState:boolean):Promise<any>{
-    try{
-      return await this.songs.where({title:title,difficulty:difficulty}).modify({
-        isFavorited:newState
-      });
     }catch(e){
       console.error(e);
       return 1;

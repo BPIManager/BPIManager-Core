@@ -37,6 +37,7 @@ export interface songData{
   isCreated:boolean,
   updatedAt:string,
   coef?:number,
+  memo?:string,
 }
 
 export interface historyData{

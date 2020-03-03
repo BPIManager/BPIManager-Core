@@ -1,9 +1,9 @@
 export const config ={
-  versionNumber:"39",
+  versionNumber:"40",
   client:"ca-pub-1494631468121976",
   slot:"6952909012",
-  versionString:"beta ver0.0.3.9",
-  lastUpdate:"2020/02/27 JST"
+  versionString:"beta ver0.0.4.0",
+  lastUpdate:"2020/03/04 JST"
 }
 
 export const area =[
