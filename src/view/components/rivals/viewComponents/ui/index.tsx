@@ -24,7 +24,7 @@ import { withRivalData } from '../../../../../components/stats/radar';
 import { songData } from '../../../../../types/data';
 import Loader from '../../../common/loader';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { toMoment } from '../../../../../components/common/timeFormatter';
+import timeFormatter, { toMoment } from '../../../../../components/common/timeFormatter';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import Link from '@material-ui/core/Link';
@@ -269,6 +269,11 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
     return this.setState({scoreData:this.songFilter(newState),bpm:state.bpm,versions:state.versions,page:0});
   }
 
+  timeFormat = ()=>{
+    const {todayOnly} = this.state;
+    return timeFormatter(4,!/\d{6}/.test(todayOnly) ? new Date() : todayOnly)
+  }
+
   render(){
     const {formatMessage} = this.props.intl;
     const {isLoading,filterByName,options,orderMode,orderTitle,page,mode,filterOpen,versions,todayOnly} = this.state;
@@ -302,9 +307,9 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
       <div>
         {todayOnly && (
           <Alert severity="info" style={{margin:"10px 0"}}>
-            <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>今日の更新</AlertTitle>
+            <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>{this.timeFormat()}の更新</AlertTitle>
             <p>
-              本日の更新だけを表示しています。<br/>
+              {this.timeFormat()}分の更新だけを表示しています。<br/>
               <Link onClick={this.toggleTodayOnly} color="textSecondary">すべてのデータを表示するにはこちらをクリック</Link>
             </p>
           </Alert>

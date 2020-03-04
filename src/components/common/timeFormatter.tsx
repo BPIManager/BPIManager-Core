@@ -1,6 +1,6 @@
 import moment from "moment";
 
-const timeFormatter = (type = 0,date = new Date()):string =>{
+const timeFormatter = (type = 0,date:string|Date = new Date()):string =>{
   const m = moment(date);
   switch (type){
     case 0:
@@ -11,6 +11,8 @@ const timeFormatter = (type = 0,date = new Date()):string =>{
     return m.format("HHmmss");
     case 3:
     return m.format("YYYY-MM-DD HH:mm:ss");
+    case 4:
+    return m.format("YYYY/MM/DD");
   }
   return "";
 }
