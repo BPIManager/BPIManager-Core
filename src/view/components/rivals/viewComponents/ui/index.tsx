@@ -305,8 +305,7 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
             <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>今日の更新</AlertTitle>
             <p>
               本日の更新だけを表示しています。<br/>
-              <Link onClick={this.toggleTodayOnly} color="textSecondary">すべてのデータを表示するにはこちらをクリック</Link><br/>
-              <Link href={`https://twitter.com/share?text=BPIManagerのスコアを更新しました&url=${config.baseUrl}/u/${this.props.rivalName()}%3Finit%3D1`} target="_blank" color="textSecondary">Twitterでシェア</Link>
+              <Link onClick={this.toggleTodayOnly} color="textSecondary">すべてのデータを表示するにはこちらをクリック</Link>
             </p>
           </Alert>
         )}
