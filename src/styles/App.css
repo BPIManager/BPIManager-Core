@@ -2,10 +2,6 @@
   font-family: "Roboto", "Helvetica", "Hiragino Kaku Gothic ProN","メイリオ", sans-serif !important;
 }
 
-html,body{
-  overflow-x: hidden !important;
-}
-
 .App {
   text-align: center;
 }
