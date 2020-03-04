@@ -4,7 +4,6 @@
 
 html,body{
   overflow-x: hidden !important;
-  width:100vw !important;
 }
 
 .App {
@@ -252,12 +251,6 @@ legend.MuiFormLabel-root{
     text-shadow: 0px 0px 0px #ffffff;
 }
 
-@media (min-width: 360px){
-  .MuiContainer-fixed {
-    max-width: 95% !important;
-  }
-}
-
 .MuiTypography-h4{
   font-size:2rem !important;
 }
@@ -494,4 +487,13 @@ div#root > div > .MuiContainer-root{
 
 .absolutelyTop{
   z-index:99999 !important;
+}
+
+.MuiAlert-message{
+  width:100%;
+}
+
+.MuiContainer-root{
+  padding-left: 4px !important;
+  padding-right: 4px !important;
 }

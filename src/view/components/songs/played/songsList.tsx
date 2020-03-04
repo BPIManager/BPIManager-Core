@@ -31,6 +31,7 @@ import { commonFunc } from '../../../../components/common';
 import FilterByLevelAndDiff from '../../common/selector';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '../../common/loader';
+import { toMoment } from '../../../../components/common/timeFormatter';
 
 interface stateInt {
   isLoading:boolean,
@@ -161,10 +162,9 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
     const f = this.state.allSongsData;
 
     const evaluateRange = (data:scoreData):boolean=>{
-      const format = (t:string|Date|moment.Moment)=>moment(t).format("YYYYMMDD");
       return r === 0 ? true :
-      r === 1 ? format(data.updatedAt) === format(new Date()) :
-      r === 2 ? format(data.updatedAt) === format(moment().subtract(1, 'day')) :
+      r === 1 ? toMoment(data.updatedAt) === toMoment(new Date()) :
+      r === 2 ? toMoment(data.updatedAt) === toMoment(moment().subtract(1, 'day')) :
       r === 3 ? moment(data.updatedAt).week() === moment(new Date()).week() :
       moment(data.updatedAt).isBefore(moment().subtract(1, 'month'))
     }

@@ -92,5 +92,5 @@ export const alternativeImg = (input:string) => {
       return "base";
     }
   }
-  return "http://tinygraphs.com/squares/"+ input +"?theme=" + namebased() + "&numcolors=3&size=240&fmt=svg";
+  return "https://www.tinygraphs.com/squares/"+ input +"?theme=" + namebased() + "&numcolors=3&size=240&fmt=svg";
 }

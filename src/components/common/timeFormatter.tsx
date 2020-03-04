@@ -19,4 +19,6 @@ export const timeCompare = (from:moment.Moment,to:moment.Moment) =>{
   return from.diff(to,"seconds");
 }
 
+export const toMoment = (t:string|Date|moment.Moment)=>moment(t).format("YYYYMMDD");
+
 export default timeFormatter;

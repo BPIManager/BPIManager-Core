@@ -40,6 +40,7 @@ import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import Filter1Icon from '@material-ui/icons/Filter1';
 import fbActions from "../../../components/firebase/actions";
+import { config } from "../../../config";
 
 interface P{
   isOpen:boolean,
@@ -264,7 +265,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
               exScore:score,
               currentBPI:bpi
             }),user.uid);
-            window.open(`https://twitter.com/intent/tweet?&url=https://bpi.poyashi.me/share/${res.id}&text=${text}`);
+            window.open(`https://twitter.com/intent/tweet?&url=${config.baseUrl}/share/${res.id}&text=${text}`);
           }else{
             window.open(`https://twitter.com/intent/tweet?&text=${text}`);
           }

@@ -17,15 +17,14 @@ import ShareButtons from '../components/common/shareButtons';
 import { rivalListsDB } from '../../components/indexedDB';
 import ShowSnackBar from '../components/snackBar';
 import RivalView from '../components/rivals/view';
-import { rivalScoreData, scoreData, rivalStoreData } from '../../types/data';
-import {Link, Chip, Divider, Grid, GridList, GridListTile, GridListTileBar, IconButton, ListSubheader} from '@material-ui/core/';
+import { rivalScoreData, rivalStoreData } from '../../types/data';
+import {Link, Chip, Divider, Grid, GridList, GridListTile, GridListTileBar, ListSubheader} from '@material-ui/core/';
 import {Link as RefLink} from "react-router-dom";
 import ClearLampView from '../components/table/fromUserPage';
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
-import bpiCalcuator from '../../components/bpi';
 import {arenaRankColor, alternativeImg} from '../../components/common';
 import Loader from '../components/common/loader';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import { config } from '../../config';
 
 interface S {
   userName:string,
@@ -52,11 +51,13 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
     super(props);
     this.fbA.setColName("users");
     this.fbStores.setColName(`${_currentStore()}_${_isSingle()}`);
+    const search = new URLSearchParams(props.location.search);
+    const initialView = search.get("init");
     this.state ={
       userName:(props.match.params as any).uid || "",
       processing:true,
       add:false,
-      currentView:0,
+      currentView:initialView === "1" ? 1 : 0,
       message:"",
       alternativeId:"",
       showSnackBar:false,
@@ -117,7 +118,6 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
     try{
       const {totalBPI,res} = this.state;
       const recommend:rivalStoreData[] = (await this.fbA.recommendedByBPI(totalBPI)).filter(item=>item.displayName !== res.displayName);
-      console.log(recommend);
       return this.setState({loadingRecommended:false,recommendUsers:recommend,processing:false});
     }catch(e){
       console.log(e);
@@ -174,7 +174,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
 
   render(){
     const {processing,add,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI,loadingRecommended,recommendUsers} = this.state;
-    const url = "https://bpi.poyashi.me/u/" + encodeURI(userName);
+    const url = config.baseUrl + "/u/" + encodeURI(userName);
     if(processing){
       return (<Loader/>);
     }
@@ -307,7 +307,7 @@ class NoUserError extends React.Component<{match:any,alternativeId:string},{}>{
             {(!(match.params as any).uid && alternativeId) &&
             <Typography variant="body2" gutterBottom>
               あなたのプロフィールは<br/>
-              <RefLink to={"/u/" + alternativeId} style={{textDecoration:"none"}}><Link color="secondary" component="span">https://bpi.poyashi.me/u/{alternativeId}</Link></RefLink><br/>
+              <RefLink to={"/u/" + alternativeId} style={{textDecoration:"none"}}><Link color="secondary" component="span">{config.baseUrl}/u/{alternativeId}</Link></RefLink><br/>
               から閲覧できます
             </Typography>
             }

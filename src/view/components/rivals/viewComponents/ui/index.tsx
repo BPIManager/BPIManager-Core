@@ -23,6 +23,12 @@ import FilterByLevelAndDiff from "../../../common/selector";
 import { withRivalData } from '../../../../../components/stats/radar';
 import { songData } from '../../../../../types/data';
 import Loader from '../../../common/loader';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { toMoment } from '../../../../../components/common/timeFormatter';
+import Alert from '@material-ui/lab/Alert';
+import AlertTitle from '@material-ui/lab/AlertTitle';
+import Link from '@material-ui/core/Link';
+import { config } from '../../../../../config';
 
 interface stateInt {
   isLoading:boolean,
@@ -37,6 +43,7 @@ interface stateInt {
   orderMode:number,
   versions:number[],
   bpm:B,
+  todayOnly:boolean
 }
 
 interface P{
@@ -44,12 +51,15 @@ interface P{
   full:withRivalData[],
   intl:any,
   showAllScore:boolean,
+  rivalName:()=>string
 }
 
-class SongsUI extends React.Component<P,stateInt> {
+class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
 
-  constructor(props:P){
+  constructor(props:P&RouteComponentProps){
     super(props);
+    const search = new URLSearchParams(props.location.search);
+    const initialView = search.get("init");
     this.state = {
       isLoading:true,
       filterByName:"",
@@ -63,7 +73,7 @@ class SongsUI extends React.Component<P,stateInt> {
       filterOpen:false,
       allSongsData:{},
       page:0,
-      orderTitle:2,
+      orderTitle:initialView === "1" ? 11 : 2,
       orderMode:1,
       bpm:{
         noSoflan:true,
@@ -71,7 +81,8 @@ class SongsUI extends React.Component<P,stateInt> {
         max:"",
         soflan:true,
       },
-      versions:verArr()
+      versions:verArr(),
+      todayOnly:initialView === "1" ? true : false
     }
   }
 
@@ -84,10 +95,12 @@ class SongsUI extends React.Component<P,stateInt> {
       const prefix:string = _prefixFromNum(allSongsRawData[i]["difficulty"]);
       allSongs[allSongsRawData[i]["title"] + prefix] = allSongsRawData[i];
     }
+    let newState = this.clone();
+    newState.allSongsData = allSongs;
     this.setState({
       isLoading:false,
       allSongsData:allSongs,
-      scoreData:this.props.full,
+      scoreData:this.songFilter(newState),
     });
   }
 
@@ -113,11 +126,18 @@ class SongsUI extends React.Component<P,stateInt> {
     return this.setState({scoreData:this.songFilter(newState),filterByName:newState.filterByName,page:0});
   }
 
+  toggleTodayOnly = () => {
+    let newState = this.clone();
+    newState.todayOnly = !this.state.todayOnly;
+    return this.setState({scoreData:this.songFilter(newState),todayOnly:newState.todayOnly,page:0});
+  }
+
   songFilter = (newState:stateInt = this.state) =>{
     const diffs:string[] = ["hyper","another","leggendaria"];
     const v = newState.versions;
     const b = newState.bpm;
-    const f = this.state.allSongsData;
+    const f = newState.allSongsData;
+    const todayOnly = newState.todayOnly;
 
     const evaluateVersion = (song:string):boolean=>{
       const songVer = song.split("/")[0];
@@ -138,10 +158,18 @@ class SongsUI extends React.Component<P,stateInt> {
         if(plus && !minus) return data.myEx - data.rivalEx > 0;
         return plus && minus ? true : false;
       }
+      const isTodayOnly = ()=>{
+        if(!todayOnly){
+          return true;
+        }else{
+          return toMoment(data.rivalLastUpdate) === toMoment(new Date());
+        }
+      }
       return (
         bpmFilter(_f.bpm,b) &&
         evaluateVersion(_f.textage) &&
         evaluateGap() &&
+        isTodayOnly() &&
         newState["options"]["level"].some((item:string)=>{
           return item === data.difficultyLevel }) &&
         newState["options"]["difficulty"].some((item:string)=>{
@@ -243,7 +271,7 @@ class SongsUI extends React.Component<P,stateInt> {
 
   render(){
     const {formatMessage} = this.props.intl;
-    const {isLoading,filterByName,options,orderMode,orderTitle,page,mode,filterOpen,versions} = this.state;
+    const {isLoading,filterByName,options,orderMode,orderTitle,page,mode,filterOpen,versions,todayOnly} = this.state;
     const _my = formatMessage({id:"Orders.My"}), _rival = formatMessage({id:"Orders.Rival"});
     let orders = [
       formatMessage({id:"Orders.Title"}),
@@ -272,6 +300,16 @@ class SongsUI extends React.Component<P,stateInt> {
     }
     return (
       <div>
+        {todayOnly && (
+          <Alert severity="info" style={{margin:"10px 0"}}>
+            <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>今日の更新</AlertTitle>
+            <p>
+              本日の更新だけを表示しています。<br/>
+              <Link onClick={this.toggleTodayOnly} color="textSecondary">すべてのデータを表示するにはこちらをクリック</Link><br/>
+              <Link href={`https://twitter.com/share?text=BPIManagerのスコアを更新しました&url=${config.baseUrl}/u/${this.props.rivalName()}%3Finit%3D1`} target="_blank" color="textSecondary">Twitterでシェア</Link>
+            </p>
+          </Alert>
+        )}
         <Grid container spacing={1} style={{margin:"5px 0"}}>
           <Grid item xs={10}>
             <FormControl component="fieldset" style={{width:"100%"}}>
@@ -316,4 +354,4 @@ class SongsUI extends React.Component<P,stateInt> {
   }
 }
 
-export default injectIntl(SongsUI);
+export default withRouter(injectIntl(SongsUI));

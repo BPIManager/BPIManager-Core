@@ -89,6 +89,8 @@ class RivalView extends React.Component<P,S> {
     this.setState({currentTab:newValue});
   };
 
+  rivalName = ()=> (this.props.isNotRival ? (this.props.rivalMeta as rivalStoreData).displayName : (this.props.rivalMeta as DBRivalStoreData).rivalName);
+
   render(){
     const {isLoading,currentTab,full} = this.state;
     const {backToMainPage,isNotRival,rivalMeta,showAllScore} = this.props;
@@ -99,7 +101,7 @@ class RivalView extends React.Component<P,S> {
       <div>
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
           <Button onClick={backToMainPage} style={{minWidth:"auto",padding:"6px 0px"}}><ArrowBackIcon/></Button>
-          &nbsp;{rivalMeta && (isNotRival ? (rivalMeta as rivalStoreData).displayName : (rivalMeta as DBRivalStoreData).rivalName)}
+          &nbsp;{rivalMeta && this.rivalName()}
         </Typography>
         <Tabs
           value={this.state.currentTab}
@@ -112,7 +114,7 @@ class RivalView extends React.Component<P,S> {
           <Tab label="統計" />
           {!isNotRival && <Tab label="設定" />}
         </Tabs>
-        {currentTab === 0 && <SongsUI showAllScore={showAllScore} type={0} full={full}/>}
+        {currentTab === 0 && <SongsUI rivalName={this.rivalName} showAllScore={showAllScore} type={0} full={full}/>}
         {currentTab === 1 && <RivalStats full={full}/>}
         {(rivalMeta && !isNotRival && currentTab === 2) && <Settings backToMainPage={this.props.backToMainPage} toggleSnack={this.props.toggleSnack} rivalMeta={rivalMeta as DBRivalStoreData}/>}
       </div>

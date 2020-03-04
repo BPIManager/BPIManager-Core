@@ -13,7 +13,7 @@ import { _currentStore, _isSingle, _currentStoreWithFullName } from '../../compo
 import { _autoSync } from '../../components/settings';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Link from '@material-ui/core/Link';
-import {Link as RLink} from "react-router-dom";
+import {Link as RLink, withRouter, RouteComponentProps} from "react-router-dom";
 import moment from "moment";
 import { scoreData } from '../../types/data';
 import fbActions from '../../components/firebase/actions';
@@ -24,34 +24,36 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio from '@material-ui/core/Radio';
 import Paper from '@material-ui/core/Paper';
 import Alert from '@material-ui/lab/Alert/Alert';
+import AlertTitle from '@material-ui/lab/AlertTitle';
+import { config } from '../../config';
 
 interface P{
   global:any,
   updateGlobal:(uid:string)=>void
 }
 
-export default class Index extends React.Component<P,{
+class Index extends React.Component<P&RouteComponentProps,{
   raw:string,
-  isSnackbarOpen:boolean,
   stateText:string,
   errors:string[],
   isSaving:boolean,
   currentState:string,
   progress:number,
   uid:string,
+  displayName:string,
 }> {
 
-  constructor(props:P){
+  constructor(props:P&RouteComponentProps){
     super(props);
     this.state = {
       raw: "",
-      isSnackbarOpen:false,
       stateText:"Data.Success",
       errors:[],
       isSaving:false,
       currentState:"",
       progress:0,
-      uid:""
+      uid:"",
+      displayName:""
     }
     this.execute = this.execute.bind(this);
   }
@@ -59,9 +61,10 @@ export default class Index extends React.Component<P,{
   componentDidMount(){
     new fbActions().auth().onAuthStateChanged(async (user: any)=> {
       if(user){
-        console.log(user.uid);
+        const t = await new fbActions().setColName("users").setDocName(user.uid).load();
         this.setState({
           uid:user.uid,
+          displayName: t ? t.displayName : ""
         });
       }
     });
@@ -137,31 +140,22 @@ export default class Index extends React.Component<P,{
       }
       this.props.global.setMove(false);
       errors.unshift(result.length + "件処理しました," + updated + "件更新しました," + skipped + "件スキップされました,"+ errorOccured + "件追加できませんでした");
-      return this.setState({isSaving:false,raw:"",isSnackbarOpen:true,stateText:"Data.Success",errors:errors});
+      return this.setState({isSaving:false,raw:"",stateText:"Data.Success",errors:errors});
     }catch(e){
       console.log(e);
       this.props.global.setMove(false);
-      return this.setState({isSaving:false,isSnackbarOpen:true,stateText:"Data.Failed",errors:[e.message]});
+      return this.setState({isSaving:false,stateText:"Data.Failed",errors:[e.message],raw:""});
     }
   }
 
   onChangeText = (e: React.ChangeEvent<HTMLInputElement>)=> this.setState({raw:e.target.value});
-  handleClose = ()=> this.setState({isSnackbarOpen:false});
 
   render(){
     const spdp = _isSingle() ? "SP" : "DP";
-    const {raw,isSnackbarOpen,stateText,errors,isSaving} = this.state;
+    const {raw,stateText,errors,isSaving,displayName} = this.state;
     return (
       <Container className="commonLayout" fixed>
         <Paper style={{padding:"15px"}}>
-          <Snackbar
-            open={isSnackbarOpen}
-            onClose={this.handleClose}
-            ContentProps={{
-              'aria-describedby': 'message-id',
-            }}
-            message={<span id="message-id"><FormattedMessage id={stateText}/></span>}
-          />
           <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
             <FormattedMessage id="Data.add"/>
           </Typography>
@@ -190,8 +184,33 @@ export default class Index extends React.Component<P,{
               </Button>
               {isSaving && <CircularProgress size={24} style={{color:"#777",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
             </div>
+            {(errors.length > 0 && stateText !== "Data.Failed") &&
+              <Alert severity="success" style={{margin:"10px 0"}}>
+                <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>処理が終了しました</AlertTitle>
+                <div style={{width:"100%"}}>
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    color="secondary"
+                    onClick={()=>this.props.history.push("/songs")}
+                    style={{margin:"5px 0"}}>
+                      楽曲一覧を表示
+                  </Button>
+                  { displayName &&
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    color="secondary"
+                    onClick={()=>window.open(`https://twitter.com/share?text=BPIManagerのスコアを更新しました&url=${config.baseUrl}/u/${displayName}%3Finit%3D1`)}
+                    style={{margin:"5px 0"}}>
+                      更新をツイート
+                  </Button>
+                  }
+                </div>
+              </Alert>
+            }
             {errors.length > 0 &&
-              <Alert severity="info" style={{margin:"8px 0"}}>
+              <Alert severity="error" style={{margin:"8px 0"}}>
                 {errors.map(item=><span key={item}>{item}<br/></span>)}
               </Alert>
             }
@@ -304,3 +323,5 @@ class Navigation extends React.Component<{},{currentTab:number}>{
     )
   }
 }
+
+export default withRouter(Index);

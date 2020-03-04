@@ -17,6 +17,7 @@ import TextField from '@material-ui/core/TextField';
 import {Link, CircularProgress} from '@material-ui/core/';
 import {Link as RefLink} from "react-router-dom";
 import Alert from '@material-ui/lab/Alert';
+import { config } from '../../../config';
 
 class SyncControlScreen extends React.Component<{userData:any},{
   isLoading:boolean,
@@ -200,7 +201,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
         {(!isLoading && sentName) &&
           <p>
             あなたのプロフィールURL:<br/>
-            <RefLink to={"/u/" + sentName} style={{textDecoration:"none"}}><Link color="secondary" component="span">https://bpi.poyashi.me/u/{sentName}</Link></RefLink><br/>
+            <RefLink to={"/u/" + sentName} style={{textDecoration:"none"}}><Link color="secondary" component="span">{config.baseUrl}/u/{sentName}</Link></RefLink><br/>
             このリンクをシェアすると、他の人があなたのプロフィールやスコアを確認できます。
           </p>
         }

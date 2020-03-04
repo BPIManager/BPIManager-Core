@@ -30,8 +30,12 @@ export default class importCSV {
     return new Promise(function(resolve, reject) {
       try{
         const splittedByBreak:string[] = self.rawData.split(/\r\n|\n/);
+        const check = splittedByBreak[0].split(/,/);
         const lengthSum:number = splittedByBreak.length;
-        if(splittedByBreak[0].split(/,/)[5] === "NORMAL 難易度"){
+        if(check[0] !== "バージョン"){
+          throw new Error("フォーマットが不正です。");
+        }
+        if(check[5] === "NORMAL 難易度"){
           //Rootage以前のCSV判別
           mode = 1;
         }
