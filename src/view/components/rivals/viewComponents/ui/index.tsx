@@ -43,7 +43,7 @@ interface stateInt {
   orderMode:number,
   versions:number[],
   bpm:B,
-  todayOnly:boolean
+  todayOnly:string
 }
 
 interface P{
@@ -73,7 +73,7 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
       filterOpen:false,
       allSongsData:{},
       page:0,
-      orderTitle:initialView === "1" ? 11 : 2,
+      orderTitle:initialView ? 11 : 2,
       orderMode:1,
       bpm:{
         noSoflan:true,
@@ -82,7 +82,7 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
         soflan:true,
       },
       versions:verArr(),
-      todayOnly:initialView === "1" ? true : false
+      todayOnly:initialView ? initialView : ""
     }
   }
 
@@ -128,7 +128,7 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
 
   toggleTodayOnly = () => {
     let newState = this.clone();
-    newState.todayOnly = !this.state.todayOnly;
+    newState.todayOnly = "";
     return this.setState({scoreData:this.songFilter(newState),todayOnly:newState.todayOnly,page:0});
   }
 
@@ -162,7 +162,7 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
         if(!todayOnly){
           return true;
         }else{
-          return toMoment(data.rivalLastUpdate) === toMoment(new Date());
+          return toMoment(data.rivalLastUpdate) === toMoment(todayOnly === "1" ? new Date() : todayOnly);
         }
       }
       return (

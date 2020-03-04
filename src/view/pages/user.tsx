@@ -57,7 +57,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
       userName:(props.match.params as any).uid || "",
       processing:true,
       add:false,
-      currentView:initialView === "1" ? 1 : 0,
+      currentView:initialView ? 1 : 0,
       message:"",
       alternativeId:"",
       showSnackBar:false,

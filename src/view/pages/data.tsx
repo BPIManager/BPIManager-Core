@@ -26,6 +26,7 @@ import Paper from '@material-ui/core/Paper';
 import Alert from '@material-ui/lab/Alert/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import { config } from '../../config';
+import timeFormatter from '../../components/common/timeFormatter';
 
 interface P{
   global:any,
@@ -201,7 +202,7 @@ class Index extends React.Component<P&RouteComponentProps,{
                     fullWidth
                     variant="outlined"
                     color="secondary"
-                    onClick={()=>window.open(`https://twitter.com/share?text=BPIManagerのスコアを更新しました&url=${config.baseUrl}/u/${displayName}%3Finit%3D1`)}
+                    onClick={()=>window.open(`https://twitter.com/share?text=BPIManagerのスコアを更新しました&url=${config.baseUrl}/u/${displayName}%3Finit%3D${timeFormatter(1)}`)}
                     style={{margin:"5px 0"}}>
                       更新をツイート
                   </Button>
