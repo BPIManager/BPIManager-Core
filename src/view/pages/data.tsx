@@ -197,7 +197,7 @@ class Index extends React.Component<P&RouteComponentProps,{
                     style={{margin:"5px 0"}}>
                       楽曲一覧を表示
                   </Button>
-                  { displayName &&
+                  { ( _autoSync() && displayName ) &&
                   <Button
                     fullWidth
                     variant="outlined"
