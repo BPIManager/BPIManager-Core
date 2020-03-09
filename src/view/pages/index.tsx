@@ -44,7 +44,8 @@ class AddToHomeScreenTicker extends React.Component<{},{show:boolean}>{
   render(){
     if(!this.state.show) return null;
     return (
-      <Grid xs={12} sm={12} item className="indexGridsContainer fullWidth" style={{marginBottom:"10px"}}>
+      <Grid container justify="space-between">
+        <Grid xs={12} item className="indexGridsContainer fullWidth">
         <div className="indexGrids">
           <PhonelinkSetupIcon className="indexGridsIcon"/>
           <Typography component="h5" variant="h5" color="textPrimary" paragraph>
@@ -55,6 +56,7 @@ class AddToHomeScreenTicker extends React.Component<{},{show:boolean}>{
           スマートフォンのホーム画面に追加することで、より便利にお使いいただけます。
         </Typography>
         <img src="https://files.poyashi.me/1a0f22bf.png" alt="Description of adding to home screen" className="addImage"/>
+        </Grid>
       </Grid>
     )
   }
@@ -122,11 +124,11 @@ class IfNotOnTheHomeScreen extends React.Component<{},{
     return (
       <div className="heroLayout">
         <Container className="heroTitle">
-          <Grid container spacing={4} style={{justifyContent:"center",alignItems:"center"}}>
+          <Grid container style={{justifyContent:"center",alignItems:"center"}}>
             <Grid item xs={12} sm={3}>
               <img src="https://files.poyashi.me/bpim/icon.png" style={{margin:"0 auto",display:"block",borderRadius:"8%",maxWidth:"120px"}} alt="BPIManager"/>
             </Grid>
-            <Grid item xs={12} sm={4} md={5}>
+            <Grid item xs={12} sm={4}>
               <div className="mdCentered">
                 <Typography component="h4" variant="h4" color="textPrimary" gutterBottom>
                   <FormattedMessage id="Top.Title"/>
@@ -156,11 +158,11 @@ class IfNotOnTheHomeScreen extends React.Component<{},{
             </Alert>
           )}
         </Container>
-        <AddToHomeScreenTicker/>
         {show && <div>
         <Container fixed>
+          <AddToHomeScreenTicker/>
           <div style={{marginTop:"25px"}}>
-            <Grid container spacing={4} justify="space-between">
+            <Grid container justify="space-between">
               <Grid xs={12} sm={4} item className="indexGridsContainer">
                 <div className="indexGrids">
                   <GetAppIcon className="indexGridsIcon"/>
@@ -232,7 +234,7 @@ class IfNotOnTheHomeScreen extends React.Component<{},{
       </div>}
       <Container>
         <div style={{marginTop:"20px"}}>
-          <Grid container spacing={2} justify="center">
+          <Grid container justify="center">
             <Grid item>
               <Typography align="center" color="textSecondary" paragraph variant="caption">
                 <FormattedMessage id="Index.notes1"/>
