@@ -40,18 +40,23 @@ class RivalIndex extends React.Component<P,S> {
           value={this.state.currentTab}
           onChange={this.handleChange}
           indicatorColor="primary"
+          variant="scrollable"
+          scrollButtons="on"
           textColor="secondary"
           style={{margin:"5px 0"}}
         >
           <Tab label="一覧" />
           <Tab label="総合勝敗" />
           <Tab label="おすすめ" />
+          <Tab label="逆ライバル" />
           <Tab label="最近更新" />
         </Tabs>
         {currentTab === 0 && <RivalLists showEachRival={this.props.showEachRival} changeTab={this.handleChange}/>}
         {currentTab === 1 && <RivalChallengeLetters/>}
-        {currentTab === 2 && <RecentlyAdded recommended={true} compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
-        {currentTab === 3 && <RecentlyAdded recommended={false} compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
+        {/* 再レンダリングするため敢えてコピペしてる */}
+        {currentTab === 2 && <RecentlyAdded mode={0} compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
+        {currentTab === 3 && <RecentlyAdded mode={2} compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
+        {currentTab === 4 && <RecentlyAdded mode={1} compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
       </div>
     );
   }

@@ -3,9 +3,10 @@ import timeFormatter from "../common/timeFormatter";
 import { scoresDB, scoreHistoryDB, songsDB } from "../indexedDB";
 import platform from "platform";
 import firebase from 'firebase/app';
-import { rivalStoreData, scoreData } from "../../types/data";
+import { rivalStoreData, scoreData, DBRivalStoreData } from "../../types/data";
 import bpiCalcuator from '../bpi';
 import {getTotalBPI} from '../common';
+import { _currentStore } from "../settings";
 
 export default class fbActions{
 
@@ -154,20 +155,27 @@ export default class fbActions{
     try{
       if(!this.name || !this.docName){return {error:true,date:null};}
       if(displayName.length > 16 || profile.length > 140){
-        console.log("too long error");
-        return {error:true,date:null};
+        throw new Error("too long error");
       }
       if(displayName.length !== 0 && !/^[a-zA-Z0-9]+$/g.test(displayName)){
-        console.log("invalid inputs error");
-        return {error:true,date:null};
+        throw new Error("invalid inputs error");
       }
       const duplication = await this.searchRival(displayName,true);
       if(duplication !== null && displayName !== "" && duplication.uid !== this.docName){
-        console.log("already used error");
-        return {error:true,date:null};
+        throw new Error("already used error");
       }
+      const batch = firestore.batch();
+      const from = firestore.collection("users").doc(this.docName);
       if(displayName === ""){
         await firestore.collection("users").doc(this.docName).delete();
+        firestore.collection("followings").where("from","==",from).get().then(async (querySnapshot)=>{
+          querySnapshot.forEach(doc=>{
+            batch.update(doc.ref,{
+              isPublic:false,
+            });
+          });
+          batch.commit();
+        });
       }else{
         await firestore.collection("users").doc(this.docName).set({
           timeStamp: timeFormatter(3),
@@ -178,6 +186,14 @@ export default class fbActions{
           photoURL:photoURL,
           arenaRank:arenaRank,
           totalBPI:await this.totalBPI(),
+        });
+        firestore.collection("followings").where("from","==",from).get().then(async (querySnapshot)=>{
+          querySnapshot.forEach(doc=>{
+            batch.update(doc.ref,{
+              isPublic:true,
+            });
+          });
+          batch.commit();
         });
       }
       return {error:false,date:timeFormatter(3)};
@@ -232,6 +248,33 @@ export default class fbActions{
     })
   }
 
+  async addedAsRivals():Promise<rivalStoreData[]>{
+    try{
+      const user = this.authInfo();
+      if(!user || !user.uid){
+        throw new Error("No UserData Has Been Retrieved");
+      }
+      const to:firebase.firestore.DocumentReference = firestore.collection("users").doc(user.uid);
+      let query:firebase.firestore.Query = firestore.collection("followings").orderBy("updatedAt", "desc");
+      query = query.where("to","==",to);
+      query = query.limit(20);
+      const res = await query.get();
+      if(!res.empty){
+        let result:any[] = [];
+        for(let i = 0; i < res.docs.length; ++i){
+          const d = res.docs[i].data();
+          d.from = (await d.from.get()).data();
+          result.push(d.from);
+        }
+        return result;
+      }else{
+        throw new Error("No Rivals Found");
+      }
+    }catch(e){
+      return [];
+    }
+  }
+
   private async getUsers(query:firebase.firestore.Query){
     try{
       const res = await query.get();
@@ -274,6 +317,102 @@ export default class fbActions{
       uid:uid,
       updatedAt:timeFormatter(3)
     }));
+  }
+
+  async syncLoadRival(isDescribed = false){
+    try{
+      const uid = this.docName;
+      if(!uid){
+        throw new Error("Not logged in");
+      }
+      let from:firebase.firestore.DocumentReference = firestore.collection("users").doc(uid);
+      const res = await firestore.collection("followings").where("from","==",from).get();
+      if(!res.empty){
+        let result:any[] = [];
+        for(let i = 0; i < res.docs.length; ++i){
+          const d = res.docs[i].data();
+          if(isDescribed){
+            d.to = (await d.to.get()).data();
+          }
+          result.push(d);
+        }
+        return result;
+      }else{
+        return [];
+      }
+    }catch(e){
+      console.log(e);
+      return [];
+    }
+  }
+
+  async syncUploadRival(rivals:DBRivalStoreData[],willAdd = true,isPublic:string = ""){
+    const uid = this.docName;
+    let from:firebase.firestore.DocumentReference = firestore.collection("users").doc(uid);
+    const batch = firestore.batch();
+    return firestore.collection("followings").where("from","==",from).get().then(async (querySnapshot)=>{
+      querySnapshot.forEach(doc=>{
+        batch.delete(doc.ref);
+      })
+      if(willAdd){
+        for(let i = 0; i < rivals.length; ++i){
+          let to:firebase.firestore.DocumentReference = firestore.collection("users").doc(rivals[i]["uid"]);
+          const target = firestore.collection("followings").doc();
+          batch.set(target,{
+            from:from,
+            isPublic:!!isPublic,
+            to:to,
+            updatedAt:this.time(),
+            version:_currentStore()
+          });
+        }
+      }
+      try {
+        await batch.commit();
+        return true;
+      }
+      catch (_e) {
+        return false;
+      }
+    });
+  }
+
+  async syncUploadOne(rivalId:string,isPublic:string = ""):Promise<boolean>{
+    try{
+      const uid = this.docName;
+      let from:firebase.firestore.DocumentReference = firestore.collection("users").doc(uid);
+      let to:firebase.firestore.DocumentReference = firestore.collection("users").doc(rivalId);
+      const data = await firestore.collection("followings").where("from","==",from).where("to","==",to).get();
+      if(!data.empty){
+        return false;
+      }
+      firestore.collection("followings").add({
+        from:from,
+        isPublic:!!isPublic,
+        to:to,
+        updatedAt:this.time(),
+        version:_currentStore()
+      });
+      return true;
+    }catch(e){
+      console.log(e);
+      return false;
+    }
+  }
+
+  async syncDeleteOne(rivalId:string):Promise<boolean>{
+    try{
+      const uid = this.docName;
+      let from:firebase.firestore.DocumentReference = firestore.collection("users").doc(uid);
+      let to:firebase.firestore.DocumentReference = firestore.collection("users").doc(rivalId);
+      await firestore.collection("followings").where("from","==",from).where("to","==",to).get().then((querySnapshot)=>{
+        querySnapshot.forEach((doc)=>doc.ref.delete());
+      });
+      return true;
+    }catch(e){
+      console.log(e);
+      return false;
+    }
   }
 
 }

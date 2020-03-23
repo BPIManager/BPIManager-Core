@@ -22,6 +22,7 @@ import { Switch } from '@material-ui/core';
 import CachedIcon from '@material-ui/icons/Cached';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Loader from '../common/loader';
+import fbActions from '../../../components/firebase/actions';
 
 interface S {
   isLoading:boolean,
@@ -90,7 +91,10 @@ class Settings extends React.Component<P,S> {
       if(target === "Songs Database"){
         await sodb.deleteAll();
       }else if(target === "Rivals"){
-        await ridb.deleteAll();
+        new fbActions().auth().onAuthStateChanged(async(user: any)=> {
+          new fbActions().setDocName(user.uid).syncUploadRival([],false);
+          await ridb.deleteAll();
+        });
       }else{
         await sdb.resetItems(target);
         await shdb.reset(target);

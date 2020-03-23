@@ -166,6 +166,14 @@ import {Link as RefLink} from '@material-ui/core/';
           <FormattedMessage id="Help.G.13"/><br/>
           <FormattedMessage id="Help.G.14"/><br/>
         </div>
+    },{
+      "title":"Help.Donation",
+      "body":
+        <div>
+          BPIManagerは非営利で運営していますが、サービス/インフラ維持・機能増強のため寄付をしてくださる方を募集しています。<br/>
+          msqkn310@gmail.com宛にAmazonギフト券をご送信くださりますと非常に助かります。<br/>
+          <RefLink color="secondary" href="https://www.amazon.co.jp/dp/B004N3APGO" target="_blank" rel="noopener noreferrer">こちら</RefLink>にて、\15から支援いただけます。よろしくお願いします。<br/>
+        </div>
     }
   ]
 

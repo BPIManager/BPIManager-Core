@@ -234,6 +234,7 @@ const ja = {
   "Orders.PercentageGap":"Percentage gap",
   "Orders.My":"Your ",
   "Orders.Rival":"Rival's ",
+  "Help.Donation":"About Donation"
 };
 
 export default ja;

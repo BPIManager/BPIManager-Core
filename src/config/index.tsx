@@ -1,9 +1,9 @@
 export const config ={
-  versionNumber:"41",
+  versionNumber:"42",
   client:"ca-pub-1494631468121976",
   slot:"6952909012",
-  versionString:"beta ver0.0.4.1",
-  lastUpdate:"2020/03/04 JST",
+  versionString:"beta ver0.0.4.2",
+  lastUpdate:"2020/03/24 JST",
   baseUrl:"https://bpi.poyashi.me"
 }
 

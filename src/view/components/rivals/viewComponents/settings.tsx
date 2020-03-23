@@ -61,6 +61,9 @@ class RivalSettings extends React.Component<P,S> {
 
   delete = async()=>{
     try{
+      new fbActions().auth().onAuthStateChanged(async(user: any)=> {
+        new fbActions().setDocName(user.uid).syncDeleteOne(this.props.rivalMeta.uid);
+      });
       const res = await this.rivalListsDB.removeUser(this.props.rivalMeta);
       if(!res){
         throw new Error("削除に失敗しました");

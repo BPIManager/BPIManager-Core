@@ -1,11 +1,9 @@
 import * as React from 'react';
 import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
 import SyncLoginScreen from './login';
-import SyncControlScreen from './control';
 import fbActions from '../../../components/firebase/actions';
 import Loader from '../common/loader';
+import ControlTab from './controlTabs';
 
 interface S {
   isLoading:boolean,
@@ -38,10 +36,8 @@ class SyncIndex extends React.Component<{},S> {
     }
     return (
       <Container className="commonLayout" fixed>
-        <Paper style={{padding:"15px"}}>
-          {!userData && <SyncLoginScreen/>}
-          {userData && <SyncControlScreen userData={userData}/>}
-        </Paper>
+        {!userData && <SyncLoginScreen/>}
+        {userData && <ControlTab userData={userData}/>}
       </Container>
     );
   }

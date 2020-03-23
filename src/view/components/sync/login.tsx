@@ -4,6 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import fbActions from '../../../components/firebase/actions';
+import Paper from '@material-ui/core/Paper';
 
 class SyncLoginScreen extends React.Component<{},{}> {
 
@@ -11,7 +12,7 @@ class SyncLoginScreen extends React.Component<{},{}> {
 
   render(){
     return (
-      <div>
+      <Paper style={{padding:"15px"}}>
         <Typography component="h6" variant="h6" color="textPrimary" style={{textAlign:"center"}}>
           <FormattedMessage id="Sync.Login.needLogin"/>
         </Typography>
@@ -44,7 +45,7 @@ class SyncLoginScreen extends React.Component<{},{}> {
           アップロードされたデータは、いつ・どの端末からでもダウンロードし使用することが可能です。
         </Typography>
         <Divider style={{margin:"10px 0"}}/>
-      </div>
+      </Paper>
     );
   }
 }

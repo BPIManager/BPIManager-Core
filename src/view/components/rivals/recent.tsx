@@ -23,12 +23,14 @@ import {Chip, CardActions, ButtonGroup} from '@material-ui/core/';
 import {arenaRankColor, alternativeImg} from '../../../components/common';
 import {Link} from 'react-router-dom';
 import Loader from '../common/loader';
+import Alert from '@material-ui/lab/Alert';
+import AlertTitle from '@material-ui/lab/AlertTitle';
 
 interface P {
   compareUser:(rivalMeta:rivalStoreData,rivalBody:rivalScoreData[],last:rivalStoreData,arenaRank:string,currentPage:number)=>void,
   last:rivalStoreData|null,
   arenaRank:string,
-  recommended:boolean,
+  mode:number,
 }
 
 interface S {
@@ -43,11 +45,13 @@ interface S {
   rivals:string[],
   arenaRank:string,
   isLoading:boolean,
+  displayName:string,
 }
 
 class RecentlyAdded extends React.Component<P,S> {
 
   private fbA:fbActions = new fbActions();
+  private fbU:fbActions = new fbActions();
   private fbStores:fbActions = new fbActions();
   private rivalListsDB = new rivalListsDB();
 
@@ -55,6 +59,7 @@ class RecentlyAdded extends React.Component<P,S> {
     super(props);
     this.fbA.setColName("users");
     this.fbStores.setColName(`${_currentStore()}_${_isSingle()}`);
+    this.fbU.setColName("users");
     this.state = {
       input:"",
       uid:"",
@@ -67,21 +72,34 @@ class RecentlyAdded extends React.Component<P,S> {
       rivals:[],
       arenaRank:props.arenaRank || "すべて",
       isLoading:true,
+      displayName:"",
     }
   }
 
   async componentDidMount(){
     this.search(null,this.props.last);
-    this.setState({rivals:(await this.rivalListsDB.getAll()).reduce((groups:string[],item:DBRivalStoreData)=>{
-      groups.push(item.uid);
-      return groups;
-    },[])})
+    let t:any = [];
+    this.fbU.auth().onAuthStateChanged(async(user: any)=> {
+      t = await new fbActions().setColName("users").setDocName(user.uid).load();
+      this.fbU.setDocName(user.uid);
+      this.setState({rivals:(await this.rivalListsDB.getAll()).reduce((groups:string[],item:DBRivalStoreData)=>{
+        groups.push(item.uid);
+        return groups;
+      },[]),displayName:(t && t.displayName ) ? t.displayName  : ""});
+    });
   }
 
   search = async(last:rivalStoreData|null = null,endAt:rivalStoreData|null = null,arenaRank = this.state.arenaRank):Promise<void>=>{
-    const {recommended} = this.props;
+    const {mode} = this.props;
     this.setState({processing:true,isLoading:true,});
-    const res = recommended ? await this.fbA.recommendedByBPI() : await this.fbA.recentUpdated(last,endAt,arenaRank);
+    let res:rivalStoreData[] = [];
+    if(mode === 0){
+      res = await this.fbA.recommendedByBPI()
+    }else if(mode === 1){
+      res = await this.fbA.recentUpdated(last,endAt,arenaRank);
+    }else if(mode === 2){
+      res = (await this.fbA.addedAsRivals()).filter((item)=> item !== undefined);
+    }
     if(!res){
       return this.toggleSnack("該当ページが見つかりませんでした。","warning")
     }
@@ -104,6 +122,7 @@ class RecentlyAdded extends React.Component<P,S> {
       isSingle:_isSingle(),
       storedAt:_currentStore(),
     },data.scores);
+    await this.fbU.syncUploadOne(meta.uid,this.state.displayName);
     if(!putResult){
       return this.toggleSnack("追加に失敗しました","error");
     }
@@ -113,12 +132,12 @@ class RecentlyAdded extends React.Component<P,S> {
 
   compareButton = async (meta:rivalStoreData)=>{
     const {res,arenaRank} = this.state;
-    const {recommended} = this.props;
+    const {mode} = this.props;
     const data = await this.fbStores.setDocName(meta.uid).load();
     if(!data){
       return this.toggleSnack("該当ユーザーは当該バージョン/モードにおけるスコアを登録していません。","warning");
     }
-    this.props.compareUser(meta,data.scores,res[res.length-1],arenaRank,recommended ? 2 : 3);
+    this.props.compareUser(meta,data.scores,res[res.length-1],arenaRank,mode + 2);
   }
 
   next = ()=>{
@@ -132,10 +151,10 @@ class RecentlyAdded extends React.Component<P,S> {
 
   render(){
     const {isLoading,showSnackBar,activated,res,rivals,processing,message,variant,arenaRank} = this.state;
-    const {recommended} = this.props;
+    const {mode} = this.props;
     return (
       <div>
-      {!recommended &&
+      {mode === 1 &&
       <FormControl style={{minWidth:"150px",float:"right"}}>
         <InputLabel>最高アリーナランク</InputLabel>
         <Select value={arenaRank} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
@@ -149,9 +168,12 @@ class RecentlyAdded extends React.Component<P,S> {
       }
       <div className="clearBoth" style={{marginTop:"5px"}}/>
       {(activated && res.length === 0) && <div>
-        <p>
-        条件に該当するユーザーが見つかりませんでした。
-        </p>
+        <Alert severity="error" style={{margin:"10px 0"}}>
+          <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>Error</AlertTitle>
+          <p>
+            条件に合致するユーザーが見つかりませんでした。
+          </p>
+        </Alert>
       </div>}
       {res.map((item:rivalStoreData)=>
         (activated && <div key={item.uid}>
@@ -201,7 +223,7 @@ class RecentlyAdded extends React.Component<P,S> {
       </div>
       ))}
       {isLoading && <Loader/>}
-      {!recommended &&
+      {mode === 1 &&
       <Grid container>
         <Grid item xs={12}>
           <Button disabled={processing} onClick={this.next} variant="contained" color="secondary" fullWidth>

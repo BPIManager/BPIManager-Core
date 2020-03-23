@@ -4,7 +4,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import ListItemText from '@material-ui/core/ListItemText';
-import Paper from '@material-ui/core/Paper';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
 import Button from '@material-ui/core/Button';
@@ -25,6 +24,15 @@ import RecentActorsIcon from '@material-ui/icons/RecentActors';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import IconButton from '@material-ui/core/IconButton';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import SyncIcon from '@material-ui/icons/Sync';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import SettingsIcon from '@material-ui/icons/Settings';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
+import fbActions from '../../../components/firebase/actions';
 
 interface S {
   isAddOpen:boolean,
@@ -33,6 +41,7 @@ interface S {
   rivals:DBRivalStoreData[],
   message:string,
   bulkUpdate:boolean,
+  openMenu:boolean,
 }
 
 interface P {
@@ -42,10 +51,10 @@ interface P {
 
 const updateMinuteError = "一括更新機能は1分あたり1回までご利用いただけます。";
 
-class RivalLists extends React.Component<P,S> {
+class RivalLists extends React.Component<P&RouteComponentProps,S> {
   private rivalListsDB = new rivalListsDB();
 
-  constructor(props:P){
+  constructor(props:P&RouteComponentProps){
     super(props);
     this.state = {
       isAddOpen:false,
@@ -53,12 +62,17 @@ class RivalLists extends React.Component<P,S> {
       showSnackBar:false,
       isLoading:true,
       rivals:[],
-      message:""
+      message:"",
+      openMenu:false,
     }
   }
 
-  componentDidMount(){
+  async componentDidMount(){
     this.loadRivals();
+  }
+
+  toggleMenu = (willOpen:boolean = false)=>{
+    this.setState({openMenu: willOpen });
   }
 
   loadRivals = async()=>{
@@ -71,6 +85,7 @@ class RivalLists extends React.Component<P,S> {
   }
 
   update = async ()=>{
+    this.toggleMenu(false);
     const {rivals} = this.state;
     let updated = 0;
     let lastUpdateTime = localStorage.getItem("lastBatchRivalUpdate") || "1970-01-01 00:00";
@@ -92,14 +107,42 @@ class RivalLists extends React.Component<P,S> {
   toggleSnack = (message:string = "ライバルを追加しました")=> this.setState({message:message,showSnackBar:!this.state.showSnackBar});
 
   render(){
-    const {isAddOpen,showSnackBar,rivals,isLoading,message,bulkUpdate} = this.state;
+    const {isAddOpen,showSnackBar,rivals,isLoading,message,bulkUpdate,openMenu,} = this.state;
     if(isLoading){
       return (<Loader/>);
     }
     return (
       <div>
         <div style={{display:"flex",justifyContent:"flex-end"}}>
-          <Button color="secondary" variant="outlined" onClick={this.update} style={{marginBottom:"10px"}}>一括更新</Button>
+          <div style={{margin:"10px 6px 0"}}>
+            <IconButton
+              aria-haspopup="true"
+              onClick={()=>this.toggleMenu(true)}>
+                <SettingsIcon />
+            </IconButton>
+              <SwipeableDrawer
+                anchor="bottom"
+                open={openMenu}
+                onClose={()=>this.toggleMenu(false)}
+                onOpen={()=>this.toggleMenu(true)}
+                >
+                  <List
+                    subheader={
+                      <ListSubheader component="div" id="nested-list-subheader">
+                        ライバル管理
+                      </ListSubheader>
+                  }>
+                    <ListItem button onClick={()=>this.props.history.push("/sync?init=1")}>
+                      <ListItemIcon><SyncIcon/></ListItemIcon>
+                      <ListItemText primary={"ライバルリストを同期"} secondary={"現在登録済みのライバルをアカウントに同期します。"}/>
+                    </ListItem>
+                    <ListItem button onClick={this.update}>
+                      <ListItemIcon><CloudUploadIcon/></ListItemIcon>
+                      <ListItemText primary={"ライバルスコアの一括更新"} secondary={"現在登録済みのライバルの登録スコアを一括で最新状態にアップデートします。"}/>
+                    </ListItem>
+                  </List>
+              </SwipeableDrawer>
+          </div>
           <Backdrop open={bulkUpdate}>
             <CircularProgress color="inherit" />
           </Backdrop>
@@ -166,4 +209,4 @@ class RivalComponent extends React.Component<CP,{}> {
   }
 }
 
-export default RivalLists;
+export default withRouter(RivalLists);

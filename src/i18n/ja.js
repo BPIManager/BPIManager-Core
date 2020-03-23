@@ -234,7 +234,8 @@ const ja = {
   "Orders.My":"あなたの",
   "Orders.Rival":"ライバルの",
   "Orders.asc":"昇順",
-  "Orders.desc":"降順"
+  "Orders.desc":"降順",
+  "Help.Donation":"寄付のお願い"
 };
 
 export default ja;

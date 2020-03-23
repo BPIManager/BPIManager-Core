@@ -14,7 +14,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import timeFormatter from '../../../components/common/timeFormatter';
 import { scoresDB, scoreHistoryDB } from '../../../components/indexedDB';
 import TextField from '@material-ui/core/TextField';
-import {Link, CircularProgress} from '@material-ui/core/';
+import {Link, CircularProgress, Paper} from '@material-ui/core/';
 import {Link as RefLink} from "react-router-dom";
 import Alert from '@material-ui/lab/Alert';
 import { config } from '../../../config';
@@ -109,7 +109,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
     const nameError:boolean = myName.length !== 0 && (!/^[a-zA-Z0-9]+$/g.test(myName) || myName.length > 16);
     const profError:boolean = myProfile.length > 140;
     return (
-      <div>
+      <Paper style={{padding:"15px"}}>
         <Typography component="h5" variant="h5">
           転送
         </Typography>
@@ -219,7 +219,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
           userId: {this.props.userData.uid}<br/>
           <RefLink to="/help" style={{textDecoration:"none"}}><Link color="secondary" component="span">免責事項・利用について</Link></RefLink>
         </Typography>
-      </div>
+      </Paper>
     );
   }
 }

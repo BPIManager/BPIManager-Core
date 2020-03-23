@@ -1,15 +1,18 @@
 import * as React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import timeFormatter from "../common/timeFormatter";
-import {songsDB, scoresDB, favsDB, scoreHistoryDB} from "../indexedDB";
+import {songsDB, scoresDB, favsDB, scoreHistoryDB, rivalListsDB} from "../indexedDB";
 import WarningIcon from '@material-ui/icons/Warning';
 import Backdrop from "@material-ui/core/Backdrop";
 import { _currentDefinitionURL } from '../settings';
+import fbActions from '../firebase/actions';
 
 export default class Initialize extends React.Component<{},{show:boolean,error:boolean,errorMessage:string,consoleMes:string,p:number}>{
   private songsDB = new songsDB();
   private scoresDB = new scoresDB();
   private scoreHistoryDB = new scoreHistoryDB();
+  private rivalListsDB = new rivalListsDB();
+  private fbA:fbActions = new fbActions();
 
   constructor(props:Object){
     super(props);
@@ -30,6 +33,21 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
 
   async componentDidMount(){
     try{
+
+      if(!localStorage.getItem("isUploadedRivalData")){
+        new fbActions().auth().onAuthStateChanged(async(user: any)=> {
+          const t = await this.rivalListsDB.getAll();
+          if(t.length > 0 && user){
+            if((await this.fbA.syncLoadRival()).length === 0){
+              const u = await new fbActions().setColName("users").setDocName(user.uid).load();
+              this.fbA.setDocName(user.uid);
+              this.fbA.syncUploadRival(t,true,u ? u.displayName : "");
+            }
+            localStorage.setItem("isUploadedRivalData","true");
+          }
+        });
+      }
+
       // Close the world bug fix 2019/11/11 & 2019/12/08
         this.songsDB.removeItem("Close the World feat. a☆ru");
         this.scoresDB.removeSpecificItemAtAllStores("Close the World feat. a☆ru");

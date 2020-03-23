@@ -178,6 +178,7 @@ class Settings extends React.Component<P,S> {
                 }}>
                   <MenuItem value="26">26 Rootage</MenuItem>
                   <MenuItem value="27">27 HEROIC VERSE</MenuItem>
+                  <MenuItem value="INF">INFINITAS</MenuItem>
                 </Select>
               </FormControl>
               <Typography variant="caption" display="block">

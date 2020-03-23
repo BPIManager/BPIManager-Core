@@ -32,7 +32,6 @@ import { _currentTheme,isEnableTweetButton, _area, _isSingle, _currentStore } fr
 import _djRank from "../../../components/common/djRank";
 import {rivalListsDB} from "../../../components/indexedDB";
 import SongRivals from "./songRivals";
-import Loader from "../common/loader";
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 import favLists from "./common/lists";
 import { DBLists } from "../../../types/lists";
