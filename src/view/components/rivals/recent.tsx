@@ -80,8 +80,8 @@ class RecentlyAdded extends React.Component<P,S> {
     this.search(null,this.props.last);
     let t:any = [];
     this.fbU.auth().onAuthStateChanged(async(user: any)=> {
-      t = await new fbActions().setColName("users").setDocName(user.uid).load();
-      this.fbU.setDocName(user.uid);
+      t = await new fbActions().setColName("users").setDocName(user ? user.uid : "").load();
+      this.fbU.setDocName(user ? user.uid : "");
       this.setState({rivals:(await this.rivalListsDB.getAll()).reduce((groups:string[],item:DBRivalStoreData)=>{
         groups.push(item.uid);
         return groups;
