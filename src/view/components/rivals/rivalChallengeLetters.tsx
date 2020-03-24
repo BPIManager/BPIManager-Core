@@ -201,8 +201,8 @@ class RivalChallengeLetters extends React.Component<P,stateInt> {
       "最終更新日時",
     ];
     return (
-      <Container fixed className="innerContainer">
-        <Grid container spacing={1} style={{margin:"5px 0"}}>
+      <Container fixed>
+        <Grid container style={{margin:"5px 0"}}>
           <Grid item xs={10}>
             <FormControl component="fieldset" style={{width:"100%"}}>
             <InputLabel><FormattedMessage id="Songs.filterByName"/></InputLabel>

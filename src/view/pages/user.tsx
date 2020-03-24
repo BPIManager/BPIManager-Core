@@ -40,6 +40,10 @@ interface S {
   loadingRecommended:boolean,
   recommendUsers:rivalStoreData[],
   totalBPI:number,
+  counts:{
+    followers:number,
+    followings:number,
+  }
 }
 
 class User extends React.Component<{intl:any}&RouteComponentProps,S> {
@@ -67,6 +71,10 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
       loadingRecommended:true,
       recommendUsers:[],
       totalBPI:NaN,
+      counts:{
+        followers:0,
+        followings:0,
+      }
     }
   }
 
@@ -103,15 +111,23 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
     this.setState({processing:true});
     const res = await this.fbA.searchRival(userName);
     if(res){
-      const data = await this.fbStores.setDocName(res.uid).load();
-      if(!data){
-        return this.setState({userName:userName,res:res,uid:res.uid,rivalData:[],processing:false});
-      }
       const totalBPI = res.totalBPI || "-";
-      return this.setState({userName:userName,res:res,uid:res.uid,rivalData:data.scores || [],totalBPI:totalBPI});
+      return this.setState({userName:userName,res:res,uid:res.uid,rivalData:[],totalBPI:totalBPI,counts:{
+        followers:await this.counts(0,res.uid),
+        followings:await this.counts(1,res.uid)
+      }});
     }else{
       return this.setState({userName:"", res:null,uid:""});
     }
+  }
+
+  counts = async(type:number = 0, id:string):Promise<number>=>{
+    return (await fetch(`https://us-central1-bpim-d5971.cloudfunctions.net/${type === 0 ? "getFollowersCnt" : "getFollowingsCnt"}?targetId=${id}&version=${_currentStore()}`)).json().then(t=>{
+      return t.length || 0;
+    }).catch(e=>{
+      console.log(e);
+      return 0;
+    });
   }
 
   recommended = async():Promise<void>=>{
@@ -137,8 +153,9 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
 
   addUser = async():Promise<void>=>{
     this.setState({add:true});
-    const {res,rivalData} = this.state;
-    if(rivalData.length === 0 || !res){
+    const {res,uid} = this.state;
+    const data = await this.fbStores.setDocName(uid).load();
+    if(!data || data.length === 0){
       this.toggleSnack("該当ユーザーは当該バージョン/モードにおけるスコアを登録していません。");
       return this.setState({add:false});
     }
@@ -151,7 +168,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
       lastUpdatedAt:res.timeStamp,
       isSingle:_isSingle(),
       storedAt:_currentStore(),
-    },rivalData);
+    },data.scores);
     if(!putResult){
       return this.setState({message:"追加に失敗しました",add:false});
     }
@@ -160,11 +177,14 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
   }
 
   view = async(v:number):Promise<void>=>{
-    if(this.state.rivalData.length === 0){
+    const {uid} = this.state;
+    const data = await this.fbStores.setDocName(uid).load();
+    if(!data || data.length === 0){
       return this.toggleSnack("該当ユーザーは当該バージョン/モードにおけるスコアを登録していません。");
     }
     this.setState({
       currentView:v,
+      rivalData:data.scores
     })
   }
 
@@ -173,8 +193,9 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
   }
 
   render(){
-    const {processing,add,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI,loadingRecommended,recommendUsers} = this.state;
+    const {processing,add,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI,loadingRecommended,recommendUsers,counts} = this.state;
     const url = config.baseUrl + "/u/" + encodeURI(userName);
+    console.log(counts);
     if(processing){
       return (<Loader/>);
     }
@@ -252,7 +273,26 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
             Twitter
           </Button>
         }
-        <div style={{margin:"15px 0"}}>
+        <Grid container style={{marginTop:"15px",textAlign:"center"}}>
+          <Grid item xs={6} lg={6}>
+            <Typography component="h6" variant="h6" color="textSecondary">
+              ライバル
+            </Typography>
+            <Typography component="h4" variant="h4" color="textPrimary">
+              {counts.followings}
+            </Typography>
+          </Grid>
+          <Grid item xs={6} lg={6}>
+            <Typography component="h6" variant="h6" color="textSecondary">
+              逆ライバル
+            </Typography>
+            <Typography component="h4" variant="h4" color="textPrimary">
+              {counts.followers}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Divider style={{margin:"15px 0"}}/>
+        <div>
           <ShareButtons withTitle={true} url={url} text={res.displayName}/>
         </div>
         <ShowSnackBar message={message} variant={message === "ライバルを追加しました" ? "success" : "error"}

@@ -256,7 +256,7 @@ export default class fbActions{
       }
       const to:firebase.firestore.DocumentReference = firestore.collection("users").doc(user.uid);
       let query:firebase.firestore.Query = firestore.collection("followings").orderBy("updatedAt", "desc");
-      query = query.where("to","==",to);
+      query = query.where("to","==",to).where("isPublic","==",true).where("version","==",_currentStore());
       query = query.limit(20);
       const res = await query.get();
       if(!res.empty){
@@ -271,6 +271,7 @@ export default class fbActions{
         throw new Error("No Rivals Found");
       }
     }catch(e){
+      console.log(e);
       return [];
     }
   }
@@ -326,7 +327,7 @@ export default class fbActions{
         throw new Error("Not logged in");
       }
       let from:firebase.firestore.DocumentReference = firestore.collection("users").doc(uid);
-      const res = await firestore.collection("followings").where("from","==",from).get();
+      const res = await firestore.collection("followings").where("from","==",from).where("version","==",_currentStore()).get();
       if(!res.empty){
         let result:any[] = [];
         for(let i = 0; i < res.docs.length; ++i){

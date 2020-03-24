@@ -141,7 +141,7 @@ class IfNotOnTheHomeScreen extends React.Component<{},{
                   <span>Check out <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink> for update information.</span>
                   }
                   {_lang() === "ja" &&
-                    <span>最新情報を<RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>にて発信中</span>
+                    <span>最新情報を<RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>にて発信中(アカウントロック中)</span>
                   }
                 </Typography>
               </div>

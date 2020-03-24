@@ -489,12 +489,6 @@ div#root > div > .MuiContainer-root{
   width:100%;
 }
 
-.MuiContainer-root{
-  padding-left: 4px !important;
-  padding-right: 4px !important;
-}
-
-
 @media screen and (max-width:360px){
   .commonLayout{
     max-width:95% !important;

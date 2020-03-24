@@ -173,6 +173,13 @@ class RecentlyAdded extends React.Component<P,S> {
           <p>
             条件に合致するユーザーが見つかりませんでした。
           </p>
+          {mode === 2 && (
+            <p>
+              逆ライバルに表示されるユーザーは以下の条件を満たす場合に限られます。<br/>
+              ・BPIManager v0.0.4.2以降を使用している<br/>
+              ・ライバルデータを同期済み
+            </p>
+          )}
         </Alert>
       </div>}
       {res.map((item:rivalStoreData)=>
