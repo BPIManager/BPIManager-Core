@@ -201,7 +201,7 @@ class RivalChallengeLetters extends React.Component<P,stateInt> {
       "最終更新日時",
     ];
     return (
-      <Container fixed>
+      <div>
         <Grid container style={{margin:"5px 0"}}>
           <Grid item xs={10}>
             <FormControl component="fieldset" style={{width:"100%"}}>
@@ -241,7 +241,7 @@ class RivalChallengeLetters extends React.Component<P,stateInt> {
           page={page} handleChangePage={this.handleChangePage}
           data={this.sortedData()} isLoading={isLoading}/>
         {filterOpen && <SongsFilter versions={versions} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpm={this.state.bpm}/>}
-      </Container>
+      </div>
     );
   }
 }
