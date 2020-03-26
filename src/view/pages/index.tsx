@@ -242,7 +242,7 @@ class IfNotOnTheHomeScreen extends React.Component<{},{
                 <FormattedMessage id="Index.notes2"/>
               </Typography>
               <Typography align="center" color="textSecondary" paragraph variant="caption">
-                English is available on this App. Go to settings and there you can change the language used in app.
+                English ver. is now available! Go to settings and there you can change the language used in this app.
               </Typography>
             </Grid>
           </Grid>
