@@ -42,7 +42,6 @@ class AddToHomeScreenTicker extends React.Component<{},{show:boolean}>{
   }
 
   render(){
-    if(!this.state.show) return null;
     return (
       <Grid container justify="space-between">
         <Grid xs={12} item className="indexGridsContainer fullWidth">
@@ -53,7 +52,7 @@ class AddToHomeScreenTicker extends React.Component<{},{show:boolean}>{
           </Typography>
         </div>
         <Typography component="p" variant="body1" color="textPrimary" paragraph>
-          スマートフォンのホーム画面に追加することで、より便利にお使いいただけます。
+          スマートフォンのホーム画面に追加することで、アプリとして便利にお使いいただけます。
         </Typography>
         <img src="https://files.poyashi.me/1a0f22bf.png" alt="Description of adding to home screen" className="addImage"/>
         </Grid>
@@ -106,6 +105,11 @@ class IfNotOnTheHomeScreen extends React.Component<{},{
     const {show,showUpdate,latestVersion,updateInfo} = this.state;
     const navBar = [
       {
+        to:"/help",
+        id:"Top.Help",
+        icon:<HelpIcon />
+      },
+      {
         to:"/data",
         id:"GlobalNav.Data",
         icon:<SaveAltIcon />
@@ -114,11 +118,6 @@ class IfNotOnTheHomeScreen extends React.Component<{},{
         to:"/songs",
         id:"GlobalNav.SongList",
         icon:<LibraryMusicIcon />
-      },
-      {
-        to:"/help",
-        id:"GlobalNav.Help",
-        icon:<HelpIcon />
       }
     ]
     return (
@@ -134,7 +133,7 @@ class IfNotOnTheHomeScreen extends React.Component<{},{
                   <FormattedMessage id="Top.Title"/>
                 </Typography>
                 <Typography component="h6" variant="body1" color="textPrimary" gutterBottom>
-                  The score management tool for IIDXers
+                  Next-gen score management tool for IIDX
                 </Typography>
                 <Typography color="textSecondary" paragraph variant="caption">
                   {_lang() === "en" &&
@@ -217,7 +216,7 @@ class IfNotOnTheHomeScreen extends React.Component<{},{
           </div>
         </Container>
       </div>}
-      {!show && <div style={{width:"85%",margin:"25px auto 5px auto"}}>
+      <div style={{width:"85%",margin:"25px auto 5px auto"}}>
         {navBar.map(item=>(
           <Link to={item.to} key={item.id} style={{textDecoration:"none"}}>
             <Button variant="outlined" color="secondary" fullWidth style={{margin:"5px"}}
@@ -231,7 +230,7 @@ class IfNotOnTheHomeScreen extends React.Component<{},{
           startIcon={<QuestionAnswerIcon/>}>
           アンケートにご協力ください！
         </Button>
-      </div>}
+      </div>
       <Container>
         <div style={{marginTop:"20px"}}>
           <Grid container justify="center">
@@ -241,6 +240,9 @@ class IfNotOnTheHomeScreen extends React.Component<{},{
               </Typography>
               <Typography align="center" color="textSecondary" paragraph variant="caption">
                 <FormattedMessage id="Index.notes2"/>
+              </Typography>
+              <Typography align="center" color="textSecondary" paragraph variant="caption">
+                English is available on this App. Go to settings and there you can change the language used in app.
               </Typography>
             </Grid>
           </Grid>

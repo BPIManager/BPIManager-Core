@@ -95,9 +95,9 @@ class RecentlyAdded extends React.Component<P,S> {
     let res:rivalStoreData[] = [];
     if(mode === 0){
       res = await this.fbA.recommendedByBPI()
-    }else if(mode === 1){
-      res = await this.fbA.recentUpdated(last,endAt,arenaRank);
     }else if(mode === 2){
+      res = await this.fbA.recentUpdated(last,endAt,arenaRank);
+    }else if(mode === 1){
       res = (await this.fbA.addedAsRivals()).filter((item)=> item !== undefined);
     }
     if(!res){
@@ -154,7 +154,13 @@ class RecentlyAdded extends React.Component<P,S> {
     const {mode} = this.props;
     return (
       <div>
-      {mode === 1 &&
+        <Alert severity="info" style={{margin:"10px 0"}}>
+          <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>Info</AlertTitle>
+          <p>
+            ユーザーのアイコンをクリックして詳細情報を確認できます。
+          </p>
+        </Alert>
+      {mode === 2 &&
       <FormControl style={{minWidth:"150px",float:"right"}}>
         <InputLabel>最高アリーナランク</InputLabel>
         <Select value={arenaRank} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
@@ -173,7 +179,7 @@ class RecentlyAdded extends React.Component<P,S> {
           <p>
             条件に合致するユーザーが見つかりませんでした。
           </p>
-          {mode === 2 && (
+          {mode === 1 && (
             <p>
               逆ライバルに表示されるユーザーは以下の条件を満たす場合に限られます。<br/>
               ・BPIManager v0.0.4.2以降を使用している<br/>
@@ -230,7 +236,7 @@ class RecentlyAdded extends React.Component<P,S> {
       </div>
       ))}
       {isLoading && <Loader/>}
-      {mode === 1 &&
+      {mode === 2 &&
       <Grid container>
         <Grid item xs={12}>
           <Button disabled={processing} onClick={this.next} variant="contained" color="secondary" fullWidth>

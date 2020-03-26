@@ -55,8 +55,8 @@ class RivalIndex extends React.Component<P,S> {
         {currentTab === 1 && <RivalChallengeLetters/>}
         {/* 再レンダリングするため敢えてコピペしてる */}
         {currentTab === 2 && <RecentlyAdded mode={0} compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
-        {currentTab === 3 && <RecentlyAdded mode={2} compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
-        {currentTab === 4 && <RecentlyAdded mode={1} compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
+        {currentTab === 3 && <RecentlyAdded mode={1} compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
+        {currentTab === 4 && <RecentlyAdded mode={2} compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
       </div>
     );
   }
