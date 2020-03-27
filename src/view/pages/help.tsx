@@ -169,7 +169,7 @@ import {Link as RefLink} from '@material-ui/core/';
     },{
       "title":"Help.PrivacyPolicy",
       "body":
-        <div>
+        <div style={{wordBreak:"break-all"}}>
         当サイトはGoogle及びGoogleのパートナー（第三者配信事業者）の提供する広告を設置しております。その際にCookieを使用しており、当サイトやその他のサイトへの過去のアクセス情報に基づいて広告を配信します。<br/>
         Googleアカウントの広告設定ページ（https://adssettings.google.com/u/0/authenticated）で、パーソナライズ広告を無効にできます。<br/>
         Cookieの取り扱いの詳細については、こちら（https://policies.google.com/technologies/ads）をご覧ください。<br/><br/>
