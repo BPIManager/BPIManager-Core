@@ -23,7 +23,7 @@ const ja = {
   "Index.songsListButton" : "楽曲一覧",
   "Index.enqueteButton":"アンケートにご協力ください",
   "Index.helpButton" : "ヘルプを読む",
-  "Index.notes1" : "beatmaniaは株式会社コナミデジタルエンタテインメントの登録商標です。",
+  "Index.notes1" : "beatmaniaは株式会社コナミデジタルエンタテインメントの登録商標です。本サービスは当該法人とは一切関係を有さない個人が制作したものです。",
   "Index.notes2" : "本ツールはnorimiso様考案のBPIおよびZUBU様制作のBPICLのそれぞれにインスパイアされて制作されました。",
   "Data.add" : "スコアのインポート",
   "Data.infoBulk" : "e-AMUSEMENTプレミアムコースに加入済みの場合、CSVデータを取り込むことで全ての曲データを一括でインポートできます。",

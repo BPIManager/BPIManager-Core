@@ -26,6 +26,7 @@ import Alert from '@material-ui/lab/Alert/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import { config } from '../../config';
 import timeFormatter from '../../components/common/timeFormatter';
+import {AdShort} from "../components/slot";
 
 interface P{
   global:any,
@@ -215,6 +216,7 @@ class Index extends React.Component<P&RouteComponentProps,{
               </Alert>
             }
         </Paper>
+        <AdShort/>
         <Paper style={{padding:"15px",margin:"10px 0 0 0"}}>
             <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
               取り込み方

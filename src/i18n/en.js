@@ -22,7 +22,7 @@ const ja = {
   "Index.songsListButton" : "Songs list",
   "Index.helpButton" : "Read documents",
   "Index.enqueteButton":"Please kindly answer a survey.",
-  "Index.notes1" : "beatmania is the trademark registered by Konami Degital Entertainment Co., Ltd.",
+  "Index.notes1" : "beatmania is the trademark registered by Konami Degital Entertainment Co., Ltd. BPIManager was created by the one who has no relationship with that corporation.",
   "Index.notes2" : "This tool was affected by both of BPI which was invented by norimiso and BPICL which was released by ZUBU.",
   "Data.add" : "Import score data",
   "Data.infoBulk" : "If you've been subscribed to the e-AMUSEMENT Premium Course, you can import all your scores in bulk by importing a CSV from the official IIDX website.",

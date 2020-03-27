@@ -10,6 +10,7 @@ import TableRow from "@material-ui/core/TableRow";
 import { alternativeImg } from "../../../components/common";
 import Loader from "../common/loader";
 import { datasets, rivalShow } from "../../../components/rivals/letters";
+import {AdShort} from "../slot/";
 
 interface P{
   song:songData|null,
@@ -64,6 +65,7 @@ class SongRivals extends React.Component<P,S> {
           {
             !isLoading && <DiffsTable scoreTable={dataset} yourEx={yourEx}/>
           }
+          <AdShort/>
         </Container>
       </div>
     );
