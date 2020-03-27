@@ -12,6 +12,7 @@ import RivalStats from './viewComponents/stats';
 import { scoreData, rivalScoreData, rivalStoreData, DBRivalStoreData } from '../../../types/data';
 import { withRivalData } from '../../../components/stats/radar';
 import Loader from '../common/loader';
+import Container from '@material-ui/core/Container/Container';
 
 interface S {
   isLoading:boolean,
@@ -98,7 +99,7 @@ class RivalView extends React.Component<P,S> {
       return (<Loader/>);
     }
     return (
-      <div>
+      <Container className="commonLayout" fixed>
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
           <Button onClick={backToMainPage} style={{minWidth:"auto",padding:"6px 0px"}}><ArrowBackIcon/></Button>
           &nbsp;{rivalMeta && this.rivalName()}
@@ -117,7 +118,7 @@ class RivalView extends React.Component<P,S> {
         {currentTab === 0 && <SongsUI rivalName={this.rivalName} showAllScore={showAllScore} type={0} full={full}/>}
         {currentTab === 1 && <RivalStats full={full}/>}
         {(rivalMeta && !isNotRival && currentTab === 2) && <Settings backToMainPage={this.props.backToMainPage} toggleSnack={this.props.toggleSnack} rivalMeta={rivalMeta as DBRivalStoreData}/>}
-      </div>
+      </Container>
     );
   }
 }
