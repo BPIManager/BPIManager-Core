@@ -13,7 +13,7 @@ class Adsense extends React.Component<{component:JSX.Element},{}> {
   }
 
   render() {
-    return <div style={{margin:"5px auto",display:"flex",justifyContent:"center"}}>{this.props.component}</div>;
+    return <div style={{margin:"5px auto"}}>{this.props.component}</div>;
   }
 }
 
