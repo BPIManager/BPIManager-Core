@@ -858,6 +858,7 @@ export const songsDB = class extends storageWrapper{
     }
   }
 
+  //統合済み
   async getOneItemIsDouble(title:string,difficulty:string):Promise<songData[]>{
     return this.getOneItemIsSingle(title,difficulty);
   }

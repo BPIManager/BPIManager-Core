@@ -14,7 +14,7 @@ import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import {Link as RefLink} from '@material-ui/core/';
+import {Link as RefLink, Collapse} from '@material-ui/core/';
 import LibraryMusicIcon from "@material-ui/icons/LibraryMusic";
 import TrendingUpIcon from "@material-ui/icons/TrendingUp";
 import SettingsIcon from "@material-ui/icons/Settings";
@@ -31,6 +31,18 @@ import ShowSnackBar from "../snackBar";
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
 import { withStyles } from '@material-ui/core/styles';
 import { config } from "../../../config";
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import QueueMusicIcon from '@material-ui/icons/QueueMusic';
+import LanguageIcon from '@material-ui/icons/Language';
+import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
+import ThumbsUpDownIcon from '@material-ui/icons/ThumbsUpDown';
+
+interface navBars {
+  to:string,
+  id:string,
+  icon:JSX.Element
+}
 
 const drawerWidth = 231;
 const styles = (theme:any) => ({
@@ -63,6 +75,9 @@ const styles = (theme:any) => ({
     flexGrow: 1,
     paddingTop: theme.spacing(7),
   },
+  nested: {
+    paddingLeft: theme.spacing(4),
+  },
 });
 
 
@@ -86,21 +101,33 @@ const RLink = React.forwardRef<HTMLAnchorElement, RouterLinkProps>((props, ref) 
   <RouterLink innerRef={ref} {...props} />
 ));
 
-class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,children:any} & HideOnScrollProps&RouteComponentProps,{isOpen:boolean,errorSnack:boolean}>{
+class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,children:any} & HideOnScrollProps&RouteComponentProps,{
+  isOpen:boolean,
+  isOpenSongs:boolean,
+  isOpenMyStat:boolean,
+  isOpenSocial:boolean,
+  errorSnack:boolean
+}>{
 
   constructor(props:{global:any,classes:any,theme:any,children:any} & HideOnScrollProps&RouteComponentProps){
     super(props);
     this.state = {
-      isOpen: false,
+      isOpen:false,
+      isOpenSongs:true,
+      isOpenMyStat: false,
+      isOpenSocial: false,
       errorSnack:false
     }
   }
 
   toggleNav = ()=> this.setState({isOpen:!this.state.isOpen});
+  handleClickStats = ()=> this.setState({isOpenMyStat:!this.state.isOpenMyStat});
+  handleClickSongs = ()=>this.setState({isOpenSongs:!this.state.isOpenSongs});
+  handleClickSocial = ()=>this.setState({isOpenSocial:!this.state.isOpenSocial});
   toggleErrorSnack = ()=> this.setState({errorSnack:!this.state.errorSnack});
 
   render(){
-    const {isOpen} = this.state;
+    const {isOpen,isOpenSongs,isOpenMyStat,isOpenSocial} = this.state;
     const page = this.props.location.pathname.split("/");
     const currentPage = ()=>{
       switch(page[1]){
@@ -120,6 +147,8 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         return "GlobalNav.Statistics";
         case "rivals":
         return "GlobalNav.Rivals";
+        case "rivalCompare":
+        return "GlobalNav.RivalCompare";
         case "sync":
         return "GlobalNav.Sync";
         case "AAATable":
@@ -136,12 +165,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         return "BPIManager"
       }
     }
-    const navBar = [
-      {
-        to:"/data",
-        id:"GlobalNav.Data",
-        icon:<SaveAltIcon />
-      },
+    const songs:navBars[] = [
       {
         to:"/lists",
         id:"GlobalNav.FavoriteSongs",
@@ -157,6 +181,8 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         id:"GlobalNav.unregisteredSongs",
         icon:<BorderColorIcon />
       },
+    ];
+    const myStat:navBars[] = [
       {
         to:"/compare",
         id:"GlobalNav.compare",
@@ -168,16 +194,6 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         icon:<TrendingUpIcon />
       },
       {
-        to:"/rivals",
-        id:"GlobalNav.Rivals",
-        icon:<PeopleIcon />
-      },
-      {
-        to:"/sync",
-        id:"GlobalNav.Sync",
-        icon:<SwapVerticalCircleIcon />
-      },
-      {
         to:"/AAATable",
         id:"GlobalNav.AAATable",
         icon:<WbIncandescentIcon />
@@ -187,6 +203,32 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         id:"GlobalNav.Tools",
         icon:<BallotIcon />
       },
+    ]
+    const social:navBars[] = [
+      {
+        to:"/rivals",
+        id:"GlobalNav.Rivals",
+        icon:<PeopleIcon />
+      },
+      {
+        to:"/rivalCompare",
+        id:"GlobalNav.RivalCompare",
+        icon:<ThumbsUpDownIcon />
+      },
+      {
+        to:"/sync",
+        id:"GlobalNav.Sync",
+        icon:<SwapVerticalCircleIcon />
+      },
+    ]
+    const navBarTop:navBars[] = [
+      {
+        to:"/data",
+        id:"GlobalNav.Data",
+        icon:<SaveAltIcon />
+      },
+    ]
+    const navBarBottom:navBars[] = [
       {
         to:"/settings",
         id:"GlobalNav.Settings",
@@ -198,21 +240,34 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         icon:<HelpIcon />
       }
     ]
-    const { classes } = this.props;
+    const { classes,history,global } = this.props;
     const drawer = (isPerment:boolean)=>(
       <div>
-        <List style={{width:"230px"}}>
-          {navBar.map(item=>{
-            return (
-              <RefLink key={item.id} component={RLink} to={item.to} underline="none" color="textPrimary" onClick={!isPerment ? this.toggleNav : ()=>null}>
-                <ListItem button>
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={<FormattedMessage id={item.id}/>} />
-                </ListItem>
-              </RefLink>
-            )
-          })}
-        </List>
+        <img alt="BPIM Logo" src={`https://files.poyashi.me/bpim/${global.state.theme === "light" ? "lightVersion" : "darkVersion"}.png`} style={{width:"230px"}}/>
+        <Divider />
+        {navBarTop.map(item=>(
+          <ListItem key={item.id} onClick={()=>{history.push(item.to);if(!isPerment){this.toggleNav()}}} button>
+            <ListItemIcon>
+              {item.icon}
+            </ListItemIcon>
+            <ListItemText primary={<FormattedMessage id={item.id}/>} />
+          </ListItem>
+        ))}
+        <InnerList child={songs} handleClick={this.handleClickSongs} classes={classes} history={history} toggleNav={this.toggleNav} isPerment={isPerment}
+          parent={{id:"GlobalNav.Parent.Songs",icon:<QueueMusicIcon />}} isOpen={isOpenSongs}/>
+        <InnerList child={myStat} handleClick={this.handleClickStats} classes={classes} history={history} toggleNav={this.toggleNav} isPerment={isPerment}
+          parent={{id:"GlobalNav.Parent.Stats",icon:<SportsEsportsIcon />}} isOpen={isOpenMyStat}/>
+        <InnerList child={social} handleClick={this.handleClickSocial} classes={classes} history={history} toggleNav={this.toggleNav} isPerment={isPerment}
+          parent={{id:"GlobalNav.Parent.Social",icon:<LanguageIcon />}} isOpen={isOpenSocial}/>
+        <Divider />
+        {navBarBottom.map(item=>(
+          <ListItem key={item.id} onClick={()=>{history.push(item.to);if(!isPerment){this.toggleNav()}}} button>
+            <ListItemIcon>
+              {item.icon}
+            </ListItemIcon>
+            <ListItemText primary={<FormattedMessage id={item.id}/>} />
+          </ListItem>
+        ))}
         <Divider />
         <Typography align="center" variant="caption" style={{margin:"8px 0",width:"100%",display:"block"}}>
           {config.versionString}<br/>
@@ -280,3 +335,45 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
 }
 
 export default withRouter(withStyles(styles, { withTheme: true })(GlobalHeader));
+
+class InnerList extends React.Component<{
+  parent:{
+    id:string,
+    icon:JSX.Element
+  },
+  child:navBars[],
+  handleClick:()=>void,
+  isOpen:boolean,
+  history:any,
+  classes:any,
+  toggleNav:()=>void,
+  isPerment:boolean,
+},{}>{
+
+  render(){
+    const {child,handleClick,isOpen,history,classes,parent,toggleNav,isPerment} = this.props;
+    return (
+      <List style={{width:"230px"}} disablePadding key={parent.id}>
+        <ListItem button onClick={handleClick}>
+          <ListItemIcon>
+            {parent.icon}
+          </ListItemIcon>
+          <ListItemText primary={<FormattedMessage id={parent.id}/>} />
+          {isOpen ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+        <Collapse in={isOpen} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            {child.map(item=>(
+              <ListItem onClick={()=>{history.push(item.to);if(!isPerment){toggleNav()}}} key={item.id} button className={classes.nested}>
+                <ListItemIcon>
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText primary={<FormattedMessage id={item.id}/>} />
+              </ListItem>
+            ))}
+          </List>
+        </Collapse>
+      </List>
+    );
+  }
+}

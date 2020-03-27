@@ -169,11 +169,7 @@ export default class fbActions{
       if(displayName === ""){
         await firestore.collection("users").doc(this.docName).delete();
         firestore.collection("followings").where("from","==",from).get().then(async (querySnapshot)=>{
-          querySnapshot.forEach(doc=>{
-            batch.update(doc.ref,{
-              isPublic:false,
-            });
-          });
+          querySnapshot.forEach(doc=>batch.update(doc.ref,{isPublic:false}));
           batch.commit();
         });
       }else{
@@ -188,11 +184,7 @@ export default class fbActions{
           totalBPI:await this.totalBPI(),
         });
         firestore.collection("followings").where("from","==",from).get().then(async (querySnapshot)=>{
-          querySnapshot.forEach(doc=>{
-            batch.update(doc.ref,{
-              isPublic:true,
-            });
-          });
+          querySnapshot.forEach(doc=>batch.update(doc.ref,{isPublic:true,}));
           batch.commit();
         });
       }

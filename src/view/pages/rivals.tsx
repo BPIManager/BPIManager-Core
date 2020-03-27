@@ -1,10 +1,9 @@
 import * as React from 'react';
 import Container from '@material-ui/core/Container';
-import { injectIntl, FormattedMessage } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import RivalView from "../components/rivals/view";
 import ShowSnackBar from '../components/snackBar';
 import RivalIndex from '../components/rivals';
-import Typography from '@material-ui/core/Typography';
 import { rivalScoreData, rivalStoreData, DBRivalStoreData } from '../../types/data';
 
 interface S {

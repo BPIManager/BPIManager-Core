@@ -19,9 +19,9 @@ import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import { _isSingle } from '../../../components/settings';
-import Container from '@material-ui/core/Container';
 import OrderControl from "../songs/common/orders";
 import moment from 'moment';
+import Container from '@material-ui/core/Container/Container';
 
 interface P{
 
@@ -201,7 +201,7 @@ class RivalChallengeLetters extends React.Component<P,stateInt> {
       "最終更新日時",
     ];
     return (
-      <div>
+      <Container className="commonLayout" fixed>
         <Grid container style={{margin:"5px 0"}}>
           <Grid item xs={10}>
             <FormControl component="fieldset" style={{width:"100%"}}>
@@ -241,7 +241,7 @@ class RivalChallengeLetters extends React.Component<P,stateInt> {
           page={page} handleChangePage={this.handleChangePage}
           data={this.sortedData()} isLoading={isLoading}/>
         {filterOpen && <SongsFilter versions={versions} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpm={this.state.bpm}/>}
-      </div>
+      </Container>
     );
   }
 }

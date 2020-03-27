@@ -1,5 +1,8 @@
 const ja = {
   "Top.Title": "BPIManager",
+  "GlobalNav.Parent.Songs":"All Songs",
+  "GlobalNav.Parent.Stats":"Your Ability",
+  "GlobalNav.Parent.Social":"Social",
   "GlobalNav.Home": "Home",
   "GlobalNav.Data": "Import Data",
   "GlobalNav.FavoriteSongs": "Lists",
@@ -13,6 +16,7 @@ const ja = {
   "GlobalNav.Tools":"Tools",
   "GlobalNav.Settings": "Settings",
   "GlobalNav.Help": "Help",
+  "GlobalNav.RivalCompare":"Rival Win/Lose",
   "Index.heroText": "Easily manage your beatmania IIDX scores and visualize them as BPI, in Web.",
   "Index.importButton" : "Import CSV",
   "Index.songsListButton" : "Songs list",

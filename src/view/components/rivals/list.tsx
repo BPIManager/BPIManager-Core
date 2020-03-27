@@ -32,7 +32,6 @@ import SyncIcon from '@material-ui/icons/Sync';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import fbActions from '../../../components/firebase/actions';
 
 interface S {
   isAddOpen:boolean,
@@ -162,13 +161,13 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
         </List>
         <Grid container spacing={1} style={{marginTop:"4px",marginBottom:"4px"}}>
           <Grid item xs={12} sm={6} style={{paddingTop:"8px"}}>
-            <Button color="secondary" variant="outlined" fullWidth onClick={()=>this.props.changeTab(null,2)}>
+            <Button color="secondary" variant="outlined" fullWidth onClick={()=>this.props.changeTab(null,1)}>
               <PersonAddIcon/>
               おすすめユーザーを見る
             </Button>
           </Grid>
           <Grid item xs={12} sm={6} style={{paddingTop:"8px"}}>
-            <Button color="secondary" variant="outlined" fullWidth onClick={()=>this.props.changeTab(null,3)}>
+            <Button color="secondary" variant="outlined" fullWidth onClick={()=>this.props.changeTab(null,2)}>
               <RecentActorsIcon/>
               最近更新したユーザー
             </Button>

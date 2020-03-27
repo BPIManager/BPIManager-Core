@@ -1,14 +1,9 @@
 import * as React from 'react';
 
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
 import { _currentStore, _isSingle } from '../../../components/settings';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { favsDB, rivalListsDB } from '../../../components/indexedDB';
-import { DBRivalStoreData, rivalStoreData } from '../../../types/data';
+import { rivalListsDB } from '../../../components/indexedDB';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import List from '@material-ui/core/List';

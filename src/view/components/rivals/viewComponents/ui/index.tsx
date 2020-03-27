@@ -28,7 +28,6 @@ import timeFormatter, { toMoment } from '../../../../../components/common/timeFo
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import Link from '@material-ui/core/Link';
-import { config } from '../../../../../config';
 
 interface stateInt {
   isLoading:boolean,

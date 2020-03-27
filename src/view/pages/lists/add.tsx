@@ -6,7 +6,6 @@ import DialogContent from '@material-ui/core/DialogContent';
 import TextField from '@material-ui/core/TextField';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
-import { _currentStore, _isSingle } from '../../../components/settings';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { favsDB } from '../../../components/indexedDB';
 import Checkbox from '@material-ui/core/Checkbox';

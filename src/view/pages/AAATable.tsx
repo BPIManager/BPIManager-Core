@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { injectIntl } from 'react-intl';
 import { scoresDB } from '../../components/indexedDB';
 import { scoreData } from '../../types/data';
 import ClearLampTable from '../components/table/table';

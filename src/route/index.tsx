@@ -31,6 +31,7 @@ import SyncIndex from '../view/components/sync';
 
 import fbActions from '../components/firebase/actions';
 import { _currentStore, _isSingle } from '../components/settings';
+import RivalChallengeLetters from '../view/components/rivals/rivalChallengeLetters';
 
 export default class Router extends React.Component<{},{}> {
 
@@ -63,6 +64,7 @@ export default class Router extends React.Component<{},{}> {
                   <Route path="/help" exact component={Help}/>
                   <Route path="/sync" exact component={SyncIndex}/>
                   <Route path="/rivals" exact component={Rivals}/>
+                  <Route path="/rivalCompare" exact component={RivalChallengeLetters}/>
                   <Route path="/AAATable" exact component={AAATable}/>
                   <Route path="/tools" exact component={Tools}/>
                   <Route path="/share/:id" exact component={Shared}/>
