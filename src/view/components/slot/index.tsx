@@ -20,9 +20,10 @@ class Adsense extends React.Component<{component:JSX.Element},{}> {
 const Short = () => {
   return (
     <ins className="adsbygoogle"
-      style={{display:"inline-block",width:"295px",height:"95px"}}
       data-ad-client="ca-pub-9237861069664679"
-      data-ad-slot="3297665612"/>
+      data-ad-slot="3297665612"
+      data-ad-format="auto"
+      data-full-width-responsive="true"/>
   );
 };
 

@@ -166,6 +166,16 @@ import {Link as RefLink} from '@material-ui/core/';
           <FormattedMessage id="Help.G.13"/><br/>
           <FormattedMessage id="Help.G.14"/><br/>
         </div>
+    },{
+      "title":"Help.PrivacyPolicy",
+      "body":
+        <div>
+        当サイトはGoogle及びGoogleのパートナー（第三者配信事業者）の提供する広告を設置しております。その際にCookieを使用しており、当サイトやその他のサイトへの過去のアクセス情報に基づいて広告を配信します。<br/>
+        Googleアカウントの広告設定ページ（https://adssettings.google.com/u/0/authenticated）で、パーソナライズ広告を無効にできます。<br/>
+        Cookieの取り扱いの詳細については、こちら（https://policies.google.com/technologies/ads）をご覧ください。<br/><br/>
+        利用状況調査のため、本サービスではGoogle Analyticsを利用しています。Google AnalyticsはCookieを利用して利用情報を収集します。<br/>
+        Google Analyticsの利用規約は、こちら（https://marketingplatform.google.com/about/analytics/terms/jp/）をご覧ください。<br/>
+        </div>
     }
   ]
 
