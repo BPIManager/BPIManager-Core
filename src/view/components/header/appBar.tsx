@@ -1,5 +1,5 @@
 import React from "react";
-import { Link as RouterLink, LinkProps as RouterLinkProps, withRouter, RouteComponentProps } from "react-router-dom";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
@@ -96,10 +96,6 @@ interface HideOnScrollProps {
   children?: React.ReactElement,
   window?: () => Window,
 };
-
-const RLink = React.forwardRef<HTMLAnchorElement, RouterLinkProps>((props, ref) => (
-  <RouterLink innerRef={ref} {...props} />
-));
 
 class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,children:any} & HideOnScrollProps&RouteComponentProps,{
   isOpen:boolean,
@@ -243,7 +239,8 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
     const { classes,history,global } = this.props;
     const drawer = (isPerment:boolean)=>(
       <div>
-        <img alt="BPIM Logo" src={`https://files.poyashi.me/bpim/${global.state.theme === "light" ? "lightVersion" : "darkVersion"}.png`} style={{width:"230px"}}/>
+        <img src={`https://files.poyashi.me/bpim/${global.state.theme === "light" ? "lightVersion" : "darkVersion"}.png`}
+         style={{width:"230px",userSelect:"none"}} alt="BPIM Logo"/>
         <Divider />
         {navBarTop.map(item=>(
           <ListItem key={item.id} onClick={()=>{history.push(item.to);if(!isPerment){this.toggleNav()}}} button>
@@ -270,13 +267,10 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         ))}
         <Divider />
         <Typography align="center" variant="caption" style={{margin:"8px 0",width:"100%",display:"block"}}>
-          {config.versionString}<br/>
+          {config.versionString}&nbsp;
           {config.lastUpdate}<br/>
           <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink><br/>
-          <RefLink color="secondary" href="https://forms.gle/yVCa8sP2ndEQNaxg8">アンケートにご協力下さい </RefLink><br/>
-          <RefLink underline="none" color="textPrimary" to="/" component={RLink} onClick={!isPerment ? this.toggleNav : ()=>null}>
-            Home
-          </RefLink>
+          <RefLink color="secondary" href="https://forms.gle/yVCa8sP2ndEQNaxg8">アンケートにご協力下さい </RefLink>
         </Typography>
       </div>
     );

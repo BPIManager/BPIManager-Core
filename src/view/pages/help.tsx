@@ -167,12 +167,14 @@ import {Link as RefLink} from '@material-ui/core/';
           <FormattedMessage id="Help.G.14"/><br/>
         </div>
     },{
-      "title":"Help.Donation",
+      "title":"Help.PrivacyPolicy",
       "body":
-        <div>
-          BPIManagerは非営利で運営していますが、サービス/インフラ維持・機能増強のため寄付をしてくださる方を募集しています。<br/>
-          msqkn310@gmail.com宛にAmazonギフト券をご送信くださりますと非常に助かります。<br/>
-          <RefLink color="secondary" href="https://www.amazon.co.jp/dp/B004N3APGO" target="_blank" rel="noopener noreferrer">こちら</RefLink>にて、\15から支援いただけます。よろしくお願いします。<br/>
+        <div style={{wordBreak:"break-all"}}>
+        当サイトはGoogle及びGoogleのパートナー（第三者配信事業者）の提供する広告を設置しております。その際にCookieを使用しており、当サイトやその他のサイトへの過去のアクセス情報に基づいて広告を配信します。<br/>
+        Googleアカウントの広告設定ページ（https://adssettings.google.com/u/0/authenticated）で、パーソナライズ広告を無効にできます。<br/>
+        Cookieの取り扱いの詳細については、こちら（https://policies.google.com/technologies/ads）をご覧ください。<br/><br/>
+        利用状況調査のため、本サービスではGoogle Analyticsを利用しています。Google AnalyticsはCookieを利用して利用情報を収集します。<br/>
+        Google Analyticsの利用規約は、こちら（https://marketingplatform.google.com/about/analytics/terms/jp/）をご覧ください。<br/>
         </div>
     }
   ]
