@@ -105,6 +105,19 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
 
   search = async(forceUserName?:string):Promise<void>=>{
     let {userName} = this.state;
+    const rivalScores = async(res:any)=>{
+      if(this.state.currentView !== 1) return [];
+      try{
+        const store = await this.fbStores.setDocName(res.uid).load();
+        if(!store){
+          return [];
+        }
+        return store.scores;
+      }catch(e){
+        console.log(e);
+        return [];
+      }
+    }
     if(forceUserName){
       userName = forceUserName;
     }
@@ -112,7 +125,9 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
     const res = await this.fbA.searchRival(userName);
     if(res){
       const totalBPI = res.totalBPI || "-";
-      return this.setState({userName:userName,res:res,uid:res.uid,rivalData:[],totalBPI:totalBPI,counts:{
+      return this.setState({userName:userName,res:res,uid:res.uid,
+        rivalData:await rivalScores(res),
+        totalBPI:totalBPI,counts:{
         followers:await this.counts(0,res.uid),
         followings:await this.counts(1,res.uid)
       }});
