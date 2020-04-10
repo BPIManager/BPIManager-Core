@@ -161,7 +161,7 @@ class Index extends React.Component<P&RouteComponentProps,{
             <FormattedMessage id="Data.add"/>
           </Typography>
           <Link color="secondary" href={"https://p.eagate.573.jp/game/2dx/"+_currentStore()+"/djdata/score_download.html?style=" + spdp} target="_blank" rel="noopener noreferrer">
-            CSVダウンロードはこちら
+            <FormattedMessage id="Data.csvURL"/>
           </Link>
           <TextField
             onChange={this.onChangeText}
@@ -268,13 +268,13 @@ class Navigation extends React.Component<{},{currentTab:number}>{
             <FormControlLabel
               value={0}
               control={<Radio color="primary" />}
-              label="CSV(プレミアム会員向け)"
+              label={<FormattedMessage id="Data.hwt.csv"/>}
               labelPlacement="end"
             />
             <FormControlLabel
               value={1}
               control={<Radio color="primary" />}
-              label="ブックマークレット(非プレミアム会員向け)"
+              label={<FormattedMessage id="Data.hwt.bookmarklet"/>}
               labelPlacement="end"
             />
           </RadioGroup>

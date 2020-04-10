@@ -25,7 +25,6 @@ import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
 import {arenaRankColor, alternativeImg} from '../../components/common';
 import Loader from '../components/common/loader';
 import { config } from '../../config';
-import {AdShort} from "../components/slot";
 
 interface S {
   userName:string,
@@ -307,7 +306,6 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
             </Typography>
           </Grid>
         </Grid>
-        <AdShort/>
         <Divider style={{margin:"15px 0"}}/>
         <div>
           <ShareButtons withTitle={true} url={url} text={res.displayName}/>

@@ -81,7 +81,7 @@ class FavLists extends React.Component<{}&RouteComponentProps,S> {
         <List>
           {lists.map((item,i)=>{
             return (
-              <div>
+              <div key={i}>
                 <ListComponent key={i} data={item} history={this.props.history} toggleEditListScreen={this.toggleEditListScreen}/>
                 {i !== lists.length - 1 && <Divider variant="inset" component="li" />}
               </div>
@@ -122,8 +122,8 @@ class ListComponent extends React.Component<CP,{}> {
         </ListItemAvatar>
         <ListItemText primary={`${data.title}(${data.length})`} secondary={text} onClick={()=>this.props.history.push("/lists/" + data.num)} />
         <ListItemSecondaryAction>
-          <IconButton edge="end" aria-label="comments">
-                <SettingsIcon onClick={()=>this.props.toggleEditListScreen(data.num)}/>
+          <IconButton edge="end" aria-label="comments" onClick={()=>this.props.toggleEditListScreen(data.num)}>
+            <SettingsIcon/>
           </IconButton>
         </ListItemSecondaryAction>
       </ListItem>

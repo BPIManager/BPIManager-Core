@@ -15,14 +15,15 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogActions from '@material-ui/core/DialogActions';
-import { _currentVersion, _setTraditionalMode, _traditionalMode } from '../../../components/settings';
+import { _currentVersion, _setTraditionalMode, _traditionalMode, _currentStore, _isSingle } from '../../../components/settings';
 import { scoresDB, scoreHistoryDB, songsDB, rivalListsDB } from '../../../components/indexedDB';
 import Divider from '@material-ui/core/Divider';
-import { Switch } from '@material-ui/core';
+import { Switch, Backdrop } from '@material-ui/core';
 import CachedIcon from '@material-ui/icons/Cached';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Loader from '../common/loader';
 import fbActions from '../../../components/firebase/actions';
+import ExportButton from '../../../components/settings/exportButton';
 
 interface S {
   isLoading:boolean,
@@ -228,17 +229,27 @@ class Settings extends React.Component<P,S> {
             <Typography variant="caption" display="block">
               {message2}
             </Typography>
+            <Divider style={{margin:"10px 0"}}/>
+            <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
+              エクスポート
+            </Typography>
+            <ExportButton/>
+            <Typography variant="caption" display="block">
+              現在のバージョン({_currentStore()}/{_isSingle() ? "SP" : "DP"})に登録されたスコアデータおよびメタデータをCSVで書き出します。
+            </Typography>
             <AlertDialog isDialogOpen={isDialogOpen} exec={this.deleteDef} close={this.toggleDialog} currentResetStore={currentResetStore}/>
             {disableDeleteBtn && <CircularProgress size={24} style={{color:"#777",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
           </div>
         </Paper>
-        {recalculating && <div style={{width:"100vw",height:"100vh",position:"absolute" as "absolute",zIndex:9999,display:"flex",justifyContent:"center",alignItems:"center",background:"#ffffffd9",top:0,left:0,flexDirection:"column",textAlign:"center"}}>
-          <CircularProgress/>
-          <p>
-          再計算中です<br/>
-          画面を閉じないでください...
-          </p>
-        </div>
+        {recalculating &&
+          <Backdrop open style={{flexDirection:"column"}}>
+            <div>
+              <CircularProgress color="secondary"/>
+            </div>
+            <div>
+              <p style={{textAlign:"center"}}>再計算中です</p>
+            </div>
+          </Backdrop>
         }
       </Container>
     );

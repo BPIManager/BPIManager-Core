@@ -59,7 +59,6 @@ class FavBody extends React.Component<{}&RouteComponentProps,S> {
         full.push(res[0]);
       }
     }
-    console.log(full);
     this.setState({full:full,title:listInfo ? listInfo.title : "List"});
   }
 

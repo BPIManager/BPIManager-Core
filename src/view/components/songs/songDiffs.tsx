@@ -15,7 +15,6 @@ import TableHead from "@material-ui/core/TableHead";
 import Table from "@material-ui/core/Table";
 import TableRow from "@material-ui/core/TableRow";
 import timeFormatter from "../../../components/common/timeFormatter";
-import {AdShort} from "../slot/";
 
 interface P{
   song:songData|null,
@@ -93,7 +92,6 @@ class SongDiffs extends React.Component<P,S> {
           {
             !isLoading && <DiffsTable scoreTable={dataset} type={current}/>
           }
-          <AdShort/>
         </Container>
       </div>
     );

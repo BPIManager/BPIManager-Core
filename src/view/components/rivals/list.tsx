@@ -132,11 +132,11 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
                       </ListSubheader>
                   }>
                     <ListItem button onClick={()=>this.props.history.push("/sync?init=1")}>
-                      <ListItemIcon><SyncIcon/></ListItemIcon>
+                      <ListItemIcon><CloudUploadIcon/></ListItemIcon>
                       <ListItemText primary={"ライバルリストを同期"} secondary={"現在登録済みのライバルをアカウントに同期します。"}/>
                     </ListItem>
                     <ListItem button onClick={this.update}>
-                      <ListItemIcon><CloudUploadIcon/></ListItemIcon>
+                      <ListItemIcon><SyncIcon/></ListItemIcon>
                       <ListItemText primary={"ライバルスコアの一括更新"} secondary={"現在登録済みのライバルの登録スコアを一括で最新状態にアップデートします。"}/>
                     </ListItem>
                   </List>
@@ -152,7 +152,7 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
           </Alert>
         )}
         <List>
-          {rivals.map((item,i)=>(
+          {rivals.sort((a,b)=>moment(b.updatedAt).diff(a.updatedAt)).map((item,i)=>(
             <div key={item.uid} onClick={()=>this.props.showEachRival(item)}>
               <RivalComponent data={item}/>
               {i !== rivals.length - 1 && <Divider variant="inset" component="li" />}
@@ -167,7 +167,7 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
             </Button>
           </Grid>
           <Grid item xs={12} sm={6} style={{paddingTop:"8px"}}>
-            <Button color="secondary" variant="outlined" fullWidth onClick={()=>this.props.changeTab(null,2)}>
+            <Button color="secondary" variant="outlined" fullWidth onClick={()=>this.props.changeTab(null,3)}>
               <RecentActorsIcon/>
               最近更新したユーザー
             </Button>

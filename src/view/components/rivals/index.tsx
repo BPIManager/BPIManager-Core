@@ -5,7 +5,6 @@ import Tab from '@material-ui/core/Tab';
 import RivalLists from "./list";
 import RecentlyAdded from "./recent";
 import { rivalScoreData, rivalStoreData, DBRivalStoreData } from '../../../types/data';
-import {AdShort} from "../slot/";
 
 interface S {
   currentTab:number,
@@ -55,7 +54,6 @@ class RivalIndex extends React.Component<P,S> {
         {currentTab === 1 && <RecentlyAdded mode={0} compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
         {currentTab === 2 && <RecentlyAdded mode={1} compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
         {currentTab === 3 && <RecentlyAdded mode={2} compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
-        <AdShort/>
       </div>
     );
   }

@@ -10,7 +10,6 @@ import { getRadar, Details, radarData } from '../../../components/stats/radar';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '../common/loader';
 import { Alert, AlertTitle } from '@material-ui/lab';
-import {AdShort} from "../slot/";
 
 class Main extends React.Component<{intl:any}&RouteComponentProps,{
   isLoading:boolean,
@@ -91,7 +90,6 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,{
             </Grid>
           </Grid>
         }
-        <AdShort/>
         <Alert severity="info" style={{margin:"10px 0"}}>
           <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>レーダーとは？</AlertTitle>
           <p>
