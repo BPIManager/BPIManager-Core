@@ -225,22 +225,28 @@ class Index extends React.Component<P&RouteComponentProps,{
         </Paper>
         <Paper style={{padding:"15px",margin:"10px 0 0 0"}}>
             <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
-              データを同期
+              FAQ
             </Typography>
-            <RLink to="/sync" style={{textDecoration:"none"}}><Link color="secondary" component="span">「Sync」</Link></RLink>から、端末に保管されているデータをクラウド上にアップロードすることができます。<br/>
-            アップロードされたデータは他の端末と同期することが可能です。<br/>
-            注意:端末内に保管されているデータは、ブラウザのキャッシュをクリアすると削除される場合があります(Google Chromeで「Cookieとサイトデータの削除」を実行した場合など)。<br/>
-            定期的に本機能を用いてデータのバックアップを取ることをおすすめしています。
-            <Divider variant="middle" style={{margin:"10px 0"}}/>
-            <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
-              <FormattedMessage id="Data.edit"/>
-            </Typography>
-            <FormattedMessage id="Data.howToEdit"/>
-            <ol>
-              <li><FormattedMessage id="Data.howToEdit1"/></li>
-              <li><FormattedMessage id="Data.howToEdit2"/></li>
-              <li><FormattedMessage id="Data.howToEdit3"/></li>
-            </ol>
+            <p>
+              <b>・存在しない楽曲が表示される</b><br/>
+              本来存在しないレジェンダリア譜面などが「取り込み失敗」一覧に表示される場合、CSVダウンロード画面のページ読み込みが完了していないままデータをコピー＆ペーストしている可能性が考えられます。<br/>
+              ページ読み込みが終了していることを確認のうえ再度お試しください。</p>
+            <p>
+              <b>・データのクラウド同期について</b><br/>
+              <RLink to="/sync" style={{textDecoration:"none"}}><Link color="secondary" component="span">「Sync」</Link></RLink>から、端末に保管されているデータをクラウド上にアップロードすることができます。<br/>
+              アップロードされたデータは他の端末と同期することが可能です。<br/>
+              注意:端末内に保管されているデータは、ブラウザのキャッシュをクリアすると削除される場合があります(Google Chromeで「Cookieとサイトデータの削除」を実行した場合など)。<br/>
+              定期的に本機能を用いてデータのバックアップを取ることをおすすめしています。
+            </p>
+            <p>
+              <b>・<FormattedMessage id="Data.edit"/></b><br/>
+              <FormattedMessage id="Data.howToEdit"/>
+              <ol>
+                <li><FormattedMessage id="Data.howToEdit1"/></li>
+                <li><FormattedMessage id="Data.howToEdit2"/></li>
+                <li><FormattedMessage id="Data.howToEdit3"/></li>
+              </ol>
+            </p>
         </Paper>
       </Container>
     );

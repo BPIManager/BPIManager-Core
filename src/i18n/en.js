@@ -31,7 +31,7 @@ const ja = {
   "Data.notPremium1": "If you cannot use the way above, so please fill each songs in individually.",
   "Data.Success":"Successfully imported.",
   "Data.Failed":"Failed to import scores.",
-  "Data.edit" : "Edit scores on your own",
+  "Data.edit" : "How to edit scores on your own",
   "Data.howToEdit" : "You can edit scores for each songs in the detailed song information screen.",
   "Data.howToEdit1" : "Access to the \"songs not done yet\" page and search by the song name you want to edit.",
   "Data.howToEdit2" : "Search results will be shown, then click the song name.",

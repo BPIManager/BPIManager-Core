@@ -33,7 +33,7 @@ const ja = {
   "Data.notPremium1": "プレミアムコースに加入していない場合、現段階では個別に曲データを入力する必要があります。",
   "Data.Success":"インポートに成功しました。",
   "Data.Failed":"インポートに失敗しました。",
-  "Data.edit" : "スコアの手動入力",
+  "Data.edit" : "スコアの手動入力方法について",
   "Data.hwt.csv":"CSV(プレミアム会員)",
   "Data.hwt.bookmarklet":"ブックマークレット(ベーシック会員)",
   "Data.howToEdit" : "各楽曲の詳細表示画面でスコアを編集することができます。以下が手順です:",

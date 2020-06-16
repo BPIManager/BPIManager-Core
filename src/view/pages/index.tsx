@@ -133,16 +133,15 @@ class IfNotOnTheHomeScreen extends React.Component<{},{
                   <FormattedMessage id="Top.Title"/>
                 </Typography>
                 <Typography component="h6" variant="body1" color="textPrimary" gutterBottom>
-                  不要不急の外出は控えましょう
+                  Score management tool for IIDX
                 </Typography>
                 <Typography color="textSecondary" paragraph variant="caption">
                   {_lang() === "en" &&
                   <span>Check out <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink> for update information.</span>
                   }
                   {_lang() === "ja" &&
-                    <span>最新情報を<RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>にて発信中(アカウントロック中)</span>
+                    <span>最新情報を<RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>にて発信中</span>
                   }<br/>
-                  暫定的に<RefLink color="secondary" href="https://poyashi.me/categories/BPIM/">ブログ</RefLink>に更新情報を記載しています
                 </Typography>
               </div>
             </Grid>
