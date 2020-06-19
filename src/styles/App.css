@@ -153,7 +153,7 @@ legend.MuiFormLabel-root{
 }
 
 #detailedScreen .MuiGrid-root.MuiGrid-container{
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
 .deepSeaDetailedScreen .MuiTab-textColorPrimary.Mui-selected{
@@ -216,7 +216,7 @@ legend.MuiFormLabel-root{
   display: none!important
 }
 
-.MuiDialog-paperScrollPaper:not(.MuiDialog-paperFullScreen){
+.MuiDialog-paperScrollPaper:not(.MuiDialog-paperFullScreen):not(.MuiPickersModal-dialogRoot){
   width:calc(100% - 12px) !important;
   margin:0 !important;
 }

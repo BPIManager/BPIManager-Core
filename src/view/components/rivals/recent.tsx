@@ -5,8 +5,6 @@ import Button from '@material-ui/core/Button';
 import fbActions from '../../../components/firebase/actions';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
 import { _currentStore, _isSingle } from '../../../components/settings';
 import { rivalListsDB } from '../../../components/indexedDB';
 import Grid from '@material-ui/core/Grid';
@@ -17,14 +15,14 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import CheckIcon from '@material-ui/icons/Check';
 import AddIcon from '@material-ui/icons/Add';
-import VisibilityIcon from '@material-ui/icons/Visibility';
 import { rivalStoreData, rivalScoreData, DBRivalStoreData } from '../../../types/data';
-import {Chip, CardActions, ButtonGroup} from '@material-ui/core/';
+import {Chip, CardActionArea} from '@material-ui/core/';
 import {arenaRankColor, alternativeImg} from '../../../components/common';
-import {Link} from 'react-router-dom';
+import {withRouter, RouteComponentProps} from 'react-router-dom';
 import Loader from '../common/loader';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
+import ModalUser from './modal';
 
 interface P {
   compareUser:(rivalMeta:rivalStoreData,rivalBody:rivalScoreData[],last:rivalStoreData,arenaRank:string,currentPage:number)=>void,
@@ -46,16 +44,18 @@ interface S {
   arenaRank:string,
   isLoading:boolean,
   displayName:string,
+  isModalOpen:boolean,
+  currentUserName:string
 }
 
-class RecentlyAdded extends React.Component<P,S> {
+class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
 
   private fbA:fbActions = new fbActions();
   private fbU:fbActions = new fbActions();
   private fbStores:fbActions = new fbActions();
   private rivalListsDB = new rivalListsDB();
 
-  constructor(props:P){
+  constructor(props:P & RouteComponentProps){
     super(props);
     this.fbA.setColName("users");
     this.fbStores.setColName(`${_currentStore()}_${_isSingle()}`);
@@ -73,6 +73,8 @@ class RecentlyAdded extends React.Component<P,S> {
       arenaRank:props.arenaRank || "すべて",
       isLoading:true,
       displayName:"",
+      isModalOpen:false,
+      currentUserName:""
     }
   }
 
@@ -149,17 +151,14 @@ class RecentlyAdded extends React.Component<P,S> {
     return this.setState({message:message,showSnackBar:!this.state.showSnackBar,processing:false,variant:variant,isLoading:false});
   }
 
+  handleModalOpen = (flag:boolean)=> this.setState({isModalOpen:flag});
+  open = (uid:string)=> this.setState({isModalOpen:true,currentUserName:uid})
+
   render(){
-    const {isLoading,showSnackBar,activated,res,rivals,processing,message,variant,arenaRank} = this.state;
+    const {isLoading,isModalOpen,showSnackBar,activated,res,rivals,processing,message,variant,arenaRank,currentUserName} = this.state;
     const {mode} = this.props;
     return (
       <div>
-        <Alert severity="info" style={{margin:"10px 0"}}>
-          <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>Info</AlertTitle>
-          <p>
-            ユーザーのアイコンをクリックして詳細情報を確認できます。
-          </p>
-        </Alert>
       {mode === 2 &&
       <FormControl style={{minWidth:"150px",float:"right"}}>
         <InputLabel>最高アリーナランク</InputLabel>
@@ -188,63 +187,52 @@ class RecentlyAdded extends React.Component<P,S> {
           )}
         </Alert>
       </div>}
-      {res.map((item:rivalStoreData)=>
-        (activated && <div key={item.uid}>
-        <Card style={{margin:"10px 0"}}>
+      {res.map((item:rivalStoreData)=>{
+        const isAdded = rivals.indexOf(item.uid) > -1;
+        return (activated && <div key={item.uid}>
+        <Card style={{margin:"10px 0",background:"transparent"}} variant="outlined">
+          <CardActionArea>
           <CardHeader
             avatar={
-              <Link to={"/u/" + item.displayName}>
-                <Avatar>
-                  <img src={item.photoURL ? item.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
-                    alt={item.displayName}
-                    onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(item.displayName)}/>
-                </Avatar>
-              </Link>
+              <Avatar onClick={()=>this.open(item.displayName)}>
+                <img src={item.photoURL ? item.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
+                  alt={item.displayName}
+                  onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(item.displayName)}/>
+              </Avatar>
             }
-            title={item.displayName}
-            subheader={<span>
-            <Chip size="small" style={{backgroundColor:arenaRankColor(item.arenaRank),color:"#fff",margin:"5px 0"}} label={item.arenaRank || "-"} />
-            {item.totalBPI && <Chip size="small" style={{backgroundColor:"green",color:"#fff",margin:"0 0 0 5px"}} label={"総合BPI:" + item.totalBPI} />}
-            </span>}
-          />
-          <CardContent>
-            <Typography variant="body2" color="textSecondary" component="p">
-              {item.profile}
-            </Typography>
-          </CardContent>
-          <CardActions className="bottomedActionButtons">
-            <ButtonGroup color="secondary" variant="outlined" fullWidth>
-              {rivals.indexOf(item.uid) === -1 &&
-                <Button disabled={processing} onClick={()=>this.addUser(item)}>
-                  <AddIcon/>
-                  追加
-                </Button>
-              }
-              {rivals.indexOf(item.uid) > -1 &&
-                <Button disabled={true}>
-                  <CheckIcon/>
-                  ライバルです
-                </Button>
-              }
-              <Button disabled={processing} onClick={()=>this.compareButton(item)}>
-                <VisibilityIcon/>
-                比較
+            action={
+              <Button
+                disabled={processing || isAdded}
+                color="secondary" variant="outlined"
+                startIcon={!isAdded ? <AddIcon/> : <CheckIcon/>}
+                onClick={()=>!isAdded && this.addUser(item)}>
+                  {!isAdded ? "追加" : "追加済み"}
               </Button>
-            </ButtonGroup>
-          </CardActions>
+            }
+            title={<div onClick={()=>this.open(item.displayName)}>{item.displayName}</div>}
+            subheader={<div onClick={()=>this.open(item.displayName)}>
+              <span>
+                <Chip size="small" style={{backgroundColor:arenaRankColor(item.arenaRank),color:"#fff",margin:"5px 0"}} label={item.arenaRank || "-"} />
+                {item.totalBPI && <Chip size="small" style={{backgroundColor:"green",color:"#fff",margin:"0 0 0 5px"}} label={"総合BPI:" + item.totalBPI} />}
+              </span>
+              <span style={{display:"block"}}>{item.profile}</span>
+            </div>}
+          />
+          </CardActionArea>
         </Card>
       </div>
-      ))}
+      )})}
       {isLoading && <Loader/>}
       {mode === 2 &&
       <Grid container>
         <Grid item xs={12}>
-          <Button disabled={processing} onClick={this.next} variant="contained" color="secondary" fullWidth>
+          <Button disabled={processing} onClick={this.next} variant="outlined" color="secondary" fullWidth>
             次の10件を表示
           </Button>
         </Grid>
       </Grid>
       }
+      {isModalOpen && <ModalUser isOpen={isModalOpen} currentUserName={currentUserName} handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
       <ShowSnackBar message={message} variant={variant}
           handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>
       </div>
@@ -252,4 +240,4 @@ class RecentlyAdded extends React.Component<P,S> {
   }
 }
 
-export default RecentlyAdded;
+export default withRouter(RecentlyAdded);

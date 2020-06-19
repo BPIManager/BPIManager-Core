@@ -3,7 +3,7 @@ import Container from '@material-ui/core/Container';
 import { injectIntl } from 'react-intl';
 import Typography from '@material-ui/core/Typography';
 import WarningIcon from '@material-ui/icons/Warning';
-import { _currentStore, _isSingle } from '../../components/settings';
+import { _currentStore, _isSingle, _currentTheme } from '../../components/settings';
 import fbActions from '../../components/firebase/actions';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
@@ -43,22 +43,23 @@ interface S {
   counts:{
     followers:number,
     followings:number,
-  }
+  },
+  limited:boolean
 }
 
-class User extends React.Component<{intl:any}&RouteComponentProps,S> {
+class User extends React.Component<{intl:any,currentUserName?:string,limited?:boolean,updateName?:(name:string)=>void}&RouteComponentProps,S> {
   private fbA:fbActions = new fbActions();
   private fbStores:fbActions = new fbActions();
   private rivalListsDB = new rivalListsDB();
 
-  constructor(props:{intl:any}&RouteComponentProps){
+  constructor(props:{intl:any,currentUserName?:string,limited?:boolean,updateName?:(name:string)=>void}&RouteComponentProps){
     super(props);
     this.fbA.setColName("users");
     this.fbStores.setColName(`${_currentStore()}_${_isSingle()}`);
     const search = new URLSearchParams(props.location.search);
     const initialView = search.get("init");
     this.state ={
-      userName:(props.match.params as any).uid || "",
+      userName:props.currentUserName || (props.match.params as any).uid || "",
       processing:true,
       add:false,
       currentView:initialView ? 1 : 0,
@@ -74,7 +75,8 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
       counts:{
         followers:0,
         followings:0,
-      }
+      },
+      limited:props.limited || false
     }
   }
 
@@ -105,6 +107,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
 
   search = async(forceUserName?:string):Promise<void>=>{
     let {userName} = this.state;
+    console.log(userName)
     const rivalScores = async(res:any)=>{
       if(this.state.currentView !== 1) return [];
       try{
@@ -208,7 +211,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
   }
 
   render(){
-    const {processing,add,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI,loadingRecommended,recommendUsers,counts} = this.state;
+    const {processing,add,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI,loadingRecommended,recommendUsers,counts,limited} = this.state;
     const url = config.baseUrl + "/u/" + encodeURI(userName);
     console.log(counts);
     if(processing){
@@ -233,11 +236,12 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
         </Container>
       )
     }
+    const buttonRange = limited ? 6 : 4;
+    const themeColor = _currentTheme();
     return (
       <div>
-      <Container className="commonLayout" id="users" fixed>
-        <div>
-          <div style={{textAlign:"center",padding:"15px"}}>
+        <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover",display:"flex",padding:"5vh 0",alignItems:"center",justifyContent:"center"}}>
+          <div style={{textAlign:"center",color:themeColor === "light" ? "#222" : "#fff"}}>
             <Avatar style={{width:"150px",height:"150px",border:"1px solid #ccc",margin:"15px auto"}}>
               <img src={res.photoURL ? res.photoURL.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
                 alt={res.displayName}
@@ -248,30 +252,36 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
             </Typography>
             <Chip size="small" style={{backgroundColor:this.color(res.arenaRank),color:"#fff",margin:"5px 0"}} label={res.arenaRank || "-"} />
             <Chip size="small" style={{backgroundColor:"green",color:"#fff",margin:"0 0 0 5px"}} label={"総合BPI:" + String(Number.isNaN(totalBPI) ? "-" : totalBPI)} />
-            <Typography variant="caption" component="p" gutterBottom style={{color:"#aaa",marginBottom:"10px"}}>
-              最終更新:{res.timeStamp}
-            </Typography>
-            <Typography variant="body1" gutterBottom>
-              {res.profile}
-            </Typography>
+              <div style={{textAlign:"center",margin:"0 0 15px 0",padding: "20px"}}>
+                <Typography variant="body1" gutterBottom>
+                  {res.profile}
+                </Typography>
+                <Typography variant="caption" component="p" gutterBottom style={{color:themeColor === "light" ? "#888" : "#aaa"}}>
+                  最終更新:{res.timeStamp}
+                </Typography>
+              </div>
           </div>
         </div>
+        <div>
+        <Container className="commonLayout" id="users" fixed style={{borderTopRightRadius:"15px",borderTopLeftRadius:"15px"}}>
         <Grid container spacing={1} style={{marginTop:"4px",marginBottom:"4px"}}>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={buttonRange}>
             <Button onClick={()=>this.view(1)} disabled={add || processing} startIcon={<ViewListIcon/>} variant="outlined" color="secondary" fullWidth>
               スコアを見る
             </Button>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={buttonRange}>
             <Button onClick={()=>this.view(2)} disabled={add || processing} startIcon={<WbIncandescentIcon/>} variant="outlined" color="secondary" fullWidth>
               AAA達成表
             </Button>
           </Grid>
-          <Grid item xs={12} md={4}>
+          {!limited &&
+          <Grid item xs={12} md={buttonRange}>
             <Button onClick={this.addUser} disabled={add || processing} startIcon={<GroupAddIcon/>} variant="outlined" color="secondary" fullWidth>
               ライバルに追加
             </Button>
           </Grid>
+          }
         </Grid>
         {(this.getIIDXId(res.profile) !== "" || this.getTwitterName(res.profile) !== "") && <Divider style={{margin:"5px 0 10px 0"}}/>}
         {this.getIIDXId(res.profile) !== "" &&
@@ -322,7 +332,13 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
             </GridListTile>
             {recommendUsers.map((tile:rivalStoreData) => (
               <GridListTile key={tile.displayName} onClick={async()=>{
-                this.props.history.replace("/u/" + tile.displayName);
+                if(!limited){
+                  this.props.history.replace("/u/" + tile.displayName);
+                }else{
+                  if(this.props.updateName){
+                    this.props.updateName(tile.displayName);
+                  }
+                }
                 this.setState({userName:tile.displayName,processing:true,loadingRecommended:true});
                 await this.search(tile.displayName);
                 this.recommended();
@@ -338,6 +354,7 @@ class User extends React.Component<{intl:any}&RouteComponentProps,S> {
           </GridList>
         </div>
       )}
+      </div>
       </div>
     );
   }

@@ -32,6 +32,7 @@ import FilterByLevelAndDiff from '../../common/selector';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '../../common/loader';
 import { toMoment } from '../../../../components/common/timeFormatter';
+import TimeRangeDialog from '../common/timeRange';
 
 interface stateInt {
   isLoading:boolean,
@@ -43,8 +44,13 @@ interface stateInt {
   range:number,
   page:number,
   filterOpen:boolean,
+  timeRangeOpen:boolean,
   bpm:B,
   bpi:BPIR,
+  dateRange:{
+    from:string,
+    to:string,
+  },
   memo:boolean,
   orderTitle:number,
   orderMode:number,
@@ -59,7 +65,7 @@ interface P{
   isFav:boolean
 }
 
-const ranges = [{val:0,label:"全期間"},{val:1,label:"本日更新"},{val:2,label:"前日更新"},{val:3,label:"今週更新"},{val:4,label:"1ヶ月以上未更新"}]
+const ranges = [{val:0,label:"全期間"},{val:1,label:"本日更新"},{val:2,label:"前日更新"},{val:3,label:"今週更新"},{val:5,label:"期間指定"},{val:4,label:"1ヶ月以上未更新"}]
 
 class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
 
@@ -87,10 +93,15 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
         min:initialBPIRange ? Number(initialBPIRange) : "",
         max:initialBPIRange && initialBPIRange !== "100" ? Number(initialBPIRange) + 10 : "",
       },
+      dateRange:{
+        from:toMoment(new Date()),
+        to:toMoment(new Date()),
+      },
       memo:false,
       range:0,
       page:0,
       filterOpen:false,
+      timeRangeOpen:false,
       orderTitle:2,
       orderMode:1,
       versions:verArr()
@@ -155,6 +166,7 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
     const diffs:string[] = ["hyper","another","leggendaria"];
     const m = newState.mode;
     const r = newState.range;
+    const rb = newState.dateRange;
     const b = newState.bpm;
     const _memo = newState.memo;
     const bpir = newState.bpi;
@@ -166,6 +178,7 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
       r === 1 ? toMoment(data.updatedAt) === toMoment(new Date()) :
       r === 2 ? toMoment(data.updatedAt) === toMoment(moment().subtract(1, 'day')) :
       r === 3 ? moment(data.updatedAt).week() === moment(new Date()).week() :
+      r === 5 ? moment(data.updatedAt).isBetween(rb.from,rb.to,"day") :
       moment(data.updatedAt).isBefore(moment().subtract(1, 'month'))
     }
 
@@ -281,8 +294,12 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
     return this.setState({scoreData:this.songFilter(newState),mode:event.target.value,page:0});
   }
 
-  handleRangeCange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
+  handleRangeChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
     if (typeof event.target.value !== "number") { return; }
+    if(event.target.value === 5){
+      this.toggleTimeRangeDialog();
+      return;
+    }
     let newState = this.clone();
     newState.range = event.target.value;
     return this.setState({scoreData:this.songFilter(newState),range:event.target.value,page:0});
@@ -296,7 +313,16 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
     return this.setState({scoreData:this.songFilter(newState),bpm:state.bpm,versions:state.versions,memo:newState.memo,page:0});
   }
 
+  applyTimeFilter = (state:{from:string,to:string}):void=>{
+    let newState = this.clone();
+    newState.dateRange.from = state.from;
+    newState.dateRange.to = state.to;
+    newState.range = 5;
+    return this.setState({scoreData:this.songFilter(newState),range:5,dateRange:state,page:0});
+  }
+
   handleToggleFilterScreen = ()=> this.setState({filterOpen:!this.state.filterOpen});
+  toggleTimeRangeDialog = ()=> this.setState({timeRangeOpen:!this.state.timeRangeOpen})
 
   clone = ()=>{
     return new commonFunc().set(this.state).clone();
@@ -305,7 +331,7 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
   render(){
     const {formatMessage} = this.props.intl;
     const {isFav} = this.props;
-    const {isLoading,filterByName,options,orderMode,orderTitle,mode,range,page,filterOpen,versions} = this.state;
+    const {isLoading,filterByName,options,orderMode,orderTitle,mode,range,page,filterOpen,versions,timeRangeOpen} = this.state;
     const orders = [
       formatMessage({id:"Orders.Title"}),
       formatMessage({id:"Orders.Level"}),
@@ -339,7 +365,7 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
               <FilterListIcon/>
             </Button>
             <FormControl>
-              <Select value={range} displayEmpty onChange={this.handleRangeCange}>
+              <Select value={range} displayEmpty onChange={this.handleRangeChange}>
                 {ranges.map(item=>(
                   <MenuItem value={item.val} key={item.val}>{item.label}</MenuItem>
                 ))}
@@ -389,6 +415,7 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
           allSongsData={this.state.allSongsData}
           updateScoreData={this.updateScoreData}/>
         {filterOpen && <SongsFilter versions={versions} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpi={this.state.bpi} bpm={this.state.bpm} memo={this.state.memo}/>}
+        {timeRangeOpen && <TimeRangeDialog handleToggle={this.toggleTimeRangeDialog} dateRange={this.state.dateRange} applyTimeFilter={this.applyTimeFilter}/>}
       </Container>
     );
   }
