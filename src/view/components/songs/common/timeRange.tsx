@@ -12,7 +12,7 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
-import moment, { Moment } from 'moment';
+import { Moment } from 'moment';
 import Alert from '@material-ui/lab/Alert';
 
 interface P {

@@ -5,7 +5,6 @@ import Button from '@material-ui/core/Button';
 import { FormattedMessage } from "react-intl";
 import {scoresDB, importer} from "../../components/indexedDB";
 import TextField from '@material-ui/core/TextField';
-import Divider from '@material-ui/core/Divider';
 import importCSV from "../../components/import/csv";
 import bpiCalculator from "../../components/bpi";
 import { _currentStore, _isSingle, _currentStoreWithFullName } from '../../components/settings';
