@@ -17,7 +17,7 @@ class ControlTab extends React.Component<P&RouteComponentProps,{currentTab:numbe
     super(props);
     const search = new URLSearchParams(props.location.search);
     this.state ={
-      currentTab:search.get("init") ? 1 : 0,
+      currentTab:Number(search.get("init")) || 0,
     }
   }
 

@@ -32,6 +32,7 @@ import SyncIcon from '@material-ui/icons/Sync';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
+import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 
 interface S {
   isAddOpen:boolean,
@@ -141,6 +142,10 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
                     <ListItem button onClick={this.update}>
                       <ListItemIcon><SyncIcon/></ListItemIcon>
                       <ListItemText primary={"ライバルスコアの一括更新"} secondary={"現在登録済みのライバルの登録スコアを一括で最新状態にアップデートします。"}/>
+                    </ListItem>
+                    <ListItem button onClick={()=>this.props.history.push("/sync?init=2")}>
+                      <ListItemIcon><NotificationsActiveIcon/></ListItemIcon>
+                      <ListItemText primary={"プッシュ通知管理"} secondary={"指定したライバルのスコア更新を自動でお知らせします"}/>
                     </ListItem>
                   </List>
               </SwipeableDrawer>
