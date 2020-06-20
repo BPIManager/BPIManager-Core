@@ -16,6 +16,7 @@ export default class ReloadModal extends Component<{registration: ServiceWorkerR
   }
 
   componentDidMount(){
+    console.log(this.props.registration);
     if((this.props.registration && this.props.registration.waiting)){
       this.handleUpdate();
     }
