@@ -4,7 +4,7 @@ import * as ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 //import * as serviceWorker from "./serviceWorker";
-import ReloadModal from './view/components/update';
+//import ReloadModal from './view/components/update';
 
 ReactDOM.render(<App />, document.getElementById("root"));
 
