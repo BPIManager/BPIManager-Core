@@ -4,6 +4,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import SyncControlScreen from './control';
 import SyncRivalScreen from './rival';
+import PushSettings from "./pushNotifications";
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 interface P {
@@ -36,9 +37,11 @@ class ControlTab extends React.Component<P&RouteComponentProps,{currentTab:numbe
         >
           <Tab label="基本" />
           <Tab label="ライバル" />
+          <Tab label="プッシュ通知" />
         </Tabs>
         {this.state.currentTab === 0 && <SyncControlScreen userData={this.props.userData}/>}
         {this.state.currentTab === 1 && <SyncRivalScreen/>}
+        {this.state.currentTab === 2 && <PushSettings/>}
       </Container>
     );
   }

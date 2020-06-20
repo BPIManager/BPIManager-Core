@@ -11,7 +11,6 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import timeFormatter from '../../../components/common/timeFormatter';
 import { scoresDB, scoreHistoryDB } from '../../../components/indexedDB';
 import TextField from '@material-ui/core/TextField';
 import {Link, CircularProgress, Paper} from '@material-ui/core/';
@@ -52,6 +51,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
   async componentDidMount(){
     const t = await this.fbA.load();
     this.fbLoader.updateProfileIcon();
+    console.log(await this.fbLoader.load());
     this.setState({
       isLoading:false,
       scoreData: await this.fbLoader.load(),
@@ -70,7 +70,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
       alert("エラーが発生しました");
       return this.setState({isLoading:false});;
     }
-    this.setState({isLoading:false,scoreData:{timeStamp:timeFormatter(3),type:this.fbA.type()}});
+    this.setState({isLoading:false,scoreData:await this.fbLoader.load()});
   }
 
   download = async()=>{

@@ -59,6 +59,7 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
     super(props);
     const search = new URLSearchParams(props.location.search);
     const initialView = search.get("init");
+    const initialSort = search.get("sort");
     this.state = {
       isLoading:true,
       filterByName:"",
@@ -72,7 +73,7 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
       filterOpen:false,
       allSongsData:{},
       page:0,
-      orderTitle:initialView ? 11 : 2,
+      orderTitle:(initialView || initialSort) ? 11 : 2,
       orderMode:1,
       bpm:{
         noSoflan:true,

@@ -7,6 +7,7 @@ import { rivalStoreData, scoreData, DBRivalStoreData } from "../../types/data";
 import bpiCalcuator from '../bpi';
 import {getTotalBPI} from '../common';
 import { _currentStore } from "../settings";
+import { messanger } from "./message";
 
 export default class fbActions{
 
@@ -411,6 +412,23 @@ export default class fbActions{
       return false;
     }
   }
+
+  async syncNotificationItem(syncData:any):Promise<void>{
+    let from:firebase.firestore.DocumentReference = firestore.collection("users").doc(syncData.from.id);
+    let to:firebase.firestore.DocumentReference = firestore.collection("users").doc(syncData.to.uid);
+    const token = await new messanger().getToken();
+    this.updateToken(syncData.from.id,token);
+    return await firestore.collection("followings").where("from","==",from).where("to","==",to).get().then(async (query)=>{
+      if(!query.empty){
+        const data = query.docs[0];
+        data.ref.update({
+          notify:syncData.notify
+        });
+      }
+    });
+  }
+
+  updateToken = async (id:string,token:string)=>firestore.collection("notifyTokens").doc(id).set({uid:id,token:token});
 
   async syncDeleteOne(rivalId:string):Promise<boolean>{
     try{

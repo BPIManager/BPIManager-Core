@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import Button from '@material-ui/core/Button';
 import { _currentStore, _isSingle } from '../../../components/settings';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import { rivalListsDB } from '../../../components/indexedDB';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
@@ -26,6 +25,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Paper from '@material-ui/core/Paper';
 import ShowSnackBar from '../snackBar';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 interface P {
 }
@@ -119,7 +119,10 @@ class SyncRivalScreen extends React.Component<P,S> {
       this.fbActions.setDocName(user.uid);
       const p = user.uid ? (await this.fbActions.syncLoadRival(true)) as any : [];
       const uidList = p.reduce((groups:string[],item:any)=>{
-        groups.push(item.to.uid);
+        if(!groups) groups = [];
+        if(item.to){
+          groups.push(item.to.uid);
+        }
         return groups;
       },[]);
       this.setState({
@@ -202,7 +205,9 @@ class SyncRivalScreen extends React.Component<P,S> {
             {(syncData.length === 0 && notUploaded.length !== 0) &&
               <Button onClick={()=>this.uploadExec()} fullWidth color="secondary" variant="outlined">サーバーへアップロード</Button>
             }
-            {syncData.map(item=>(
+            {syncData.map(item=>{
+              if(!item.to)return (null);
+              return (
               <ListItem key={item.to.displayName}>
                 <ListItemAvatar>
                   <Avatar>
@@ -221,7 +226,7 @@ class SyncRivalScreen extends React.Component<P,S> {
                   </IconButton>
                 </ListItemSecondaryAction>
               </ListItem>
-            ))}
+            )})}
           </List>
           <Divider/>
           <List
@@ -252,7 +257,7 @@ class SyncRivalScreen extends React.Component<P,S> {
             ))}
           </List>
 
-          {processing && <LinearProgress style={{margin:"10px 0"}}/>}
+          {processing && <div style={{display:"flex",justifyContent:"center"}}><CircularProgress color="secondary" style={{margin:"10px auto"}}/></div>}
           <p style={{color:"#ff0000",textAlign:"center"}}>{errorMessage}</p>
         </Paper>
 
