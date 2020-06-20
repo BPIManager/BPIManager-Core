@@ -122,6 +122,12 @@ class PushSettings extends React.Component<P,S> {
               </ListSubheader>
             }>
             {processing && <div style={{display:"flex",justifyContent:"center"}}><CircularProgress color="secondary" style={{margin:"10px auto"}}/></div>}
+            {(syncData.length === 0 && !processing) && <div>
+              <Typography component="p" variant="caption" style={{margin:"10px 0"}}>
+                通知を許可できるユーザーがいません。<br/>
+                「ライバル」タブで通知対象にしたいユーザーが「アップロード済み」欄に存在することを確認のうえ、再度お試しください。
+              </Typography>
+            </div>}
             {syncData.map((item,i)=>{
               if(!item.to) return (null);
               return (
@@ -155,7 +161,8 @@ class PushSettings extends React.Component<P,S> {
           ・通知をクリックするとユーザーのスコア更新を確認できます<br/>
           ・スコアデータを非公開にしているユーザーの更新は通知されません<br/>
           ・お試し実装なので今後機能の改廃を行う可能性が大です<br/>
-          ・問題が発生した場合は@BPIManagerまで教えていただけると助かります
+          ・問題が発生した場合は@BPIManagerまで教えていただけると助かります<br/>
+          ・通知を許可できる対象は「ライバル」タブよりサーバーにデータを送信済みのライバルのみです
           </p>
         </Alert>
       </div>
