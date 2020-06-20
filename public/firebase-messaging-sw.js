@@ -1,6 +1,7 @@
 
 importScripts('https://www.gstatic.com/firebasejs/7.14.4/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/7.14.4/firebase-messaging.js');
+importScripts("/service-worker.js")
 
 firebase.initializeApp({
   apiKey: "AIzaSyDSy7KvNgPa42c8aiILI6o7jknMCq72Saw",

@@ -46,11 +46,18 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149038263-1"></script>
     <script>
-     if(!localStorage.getItem("reloaded")){
-      localStorage.setItem("reloaded","true");
-      location.reload(true);
-     }
-     window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'UA-149038263-1');
+     if(!localStorage.getItem("fcm")){
+       if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            for(let registration of registrations) {
+              registration.unregister();
+            }
+          });
+        }
+        localStorage.setItem("fcm","true");
+        location.reload(true);
+      }
+      window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'UA-149038263-1');
     </script>
   </body>
 </html>
