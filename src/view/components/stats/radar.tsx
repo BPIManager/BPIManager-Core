@@ -3,7 +3,7 @@ import Container from '@material-ui/core/Container';
 import { injectIntl } from 'react-intl';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import {_isSingle, _chartColor} from "../../../components/settings";
+import {_isSingle, _chartColor, _chartBarColor} from "../../../components/settings";
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar} from 'recharts';
 import {Table, TableRow, TableCell, TableBody} from '@material-ui/core/';
 import { getRadar, Details, radarData } from '../../../components/stats/radar';
@@ -44,6 +44,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,{
   render(){
     const {isLoading,radar,radarDetail} = this.state;
     const chartColor = _chartColor();
+    const barColor = _chartBarColor("bar");
     if(isLoading){
       return (
         <Container fixed style={{padding:0}}>
@@ -65,7 +66,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,{
                         <PolarGrid />
                         <PolarAngleAxis dataKey="title" stroke={chartColor} />
                         <PolarRadiusAxis />
-                        <Radar name="TotalBPI" dataKey="TotalBPI" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+                        <Radar name="TotalBPI" dataKey="TotalBPI" fill={barColor} fillOpacity={0.6} />
                       </RadarChart>
                     </ResponsiveContainer>
                   </div>

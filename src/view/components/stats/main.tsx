@@ -6,8 +6,8 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import bpiCalcuator from '../../../components/bpi';
-import {_chartColor} from "../../../components/settings";
-import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, Legend, BarChart, ReferenceLine} from 'recharts';
+import {_chartColor, _chartBarColor} from "../../../components/settings";
+import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, BarChart, ReferenceLine} from 'recharts';
 import _withOrd from '../../../components/common/ord';
 import {FormControlLabel, FormControl, RadioGroup, Radio, FormLabel} from '@material-ui/core/';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
@@ -81,7 +81,8 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
     const {totalBPI,isLoading,perDate,targetLevel,groupedByBPM,totalRank,groupedByLevel,groupedByDJRank,groupedByClearState} = this.state;
     const {formatMessage} = this.props.intl;
     const chartColor = _chartColor();
-    const chartBgColor = targetLevel === 12 ? "#82ca9d" : "#8884d8";
+    const barColor = _chartBarColor("bar");
+    const lineColor = _chartBarColor("line");
     if(isLoading){
       return (
         <Container fixed style={{padding:0}}>
@@ -125,8 +126,8 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
                       <XAxis dataKey="name" stroke={chartColor} />
                       <YAxis orientation="left" tickLine={false} axisLine={false} stroke={chartColor}/>
                       <Tooltip contentStyle={{color:"#333"}}/>
-                      <Bar dataKey="sum" name={formatMessage({id:"Stats.UpdatedSum"})} fill={chartBgColor} />
-                      <Line dataKey="avg" name={formatMessage({id:"Stats.Average"})} />
+                      <Bar dataKey="sum" name={formatMessage({id:"Stats.UpdatedSum"})} fill={barColor} />
+                      <Line dataKey="avg" name={formatMessage({id:"Stats.Average"})} stroke={lineColor} />
                     </ComposedChart>
                   </ResponsiveContainer>
                 </div>
@@ -155,9 +156,8 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
                         <XAxis type={"number"} dataKey="name" stroke={chartColor} ticks={this.xAxisTicker()} domain={[-20,100]}/>
                         <YAxis stroke={chartColor}/>
                         <Tooltip contentStyle={{color:"#333"}}/>
-                        <Legend />
-                        <ReferenceLine x={totalBPI} stroke="#ffa0a0" isFront={true} />
-                        <Line type="monotone" dataKey={"☆" + targetLevel} stroke={chartBgColor} activeDot={{ r: 8 }} />
+                        <ReferenceLine x={totalBPI} stroke={barColor} isFront={true} />
+                        <Line type="monotone" dataKey={"☆" + targetLevel} stroke={lineColor} activeDot={{ r: 8 }} />
                       </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -186,7 +186,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
                       <XAxis stroke={chartColor} type="number" />
                       <YAxis stroke={chartColor} type="category" dataKey="name" />
                       <Tooltip contentStyle={{color:"#333"}}/>
-                      <Bar dataKey="BPI" fill={chartBgColor} />
+                      <Bar dataKey="BPI" fill={barColor} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -214,7 +214,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
                         <XAxis dataKey="name" stroke={chartColor} />
                         <YAxis stroke={chartColor} />
                         <Tooltip contentStyle={{color:"#333"}} />
-                        <Bar dataKey={"☆" + targetLevel} fill={chartBgColor} />
+                        <Bar dataKey={"☆" + targetLevel} fill={barColor} />
                       </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -240,7 +240,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
                         <XAxis dataKey="name" stroke={chartColor} />
                         <YAxis stroke={chartColor}/>
                         <Tooltip contentStyle={{color:"#333"}}/>
-                        <Bar dataKey={"☆" + targetLevel} fill={chartBgColor} />
+                        <Bar dataKey={"☆" + targetLevel} fill={barColor} />
                       </BarChart>
                   </ResponsiveContainer>
                 </div>

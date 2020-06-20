@@ -99,7 +99,7 @@ export const _chartColor = ()=>{
     return "#eee";
   }
   if(c === "light"){
-    return "#333";
+    return "#666";
   }
 
 }
@@ -108,23 +108,29 @@ export const _chartBarColor = (name:string)=>{
   const c = _currentTheme();
   if(c === "light"){
     if(name === "YOU" || name === "RIVAL"){
-      return "#BF4C0A"
+      return "#BF4C0A";
+    }else if(name === "line"){
+      return "#943300";
     }else{
       return "#D9AFA0";
     }
   }
   if(c === "dark"){
     if(name === "YOU" || name === "RIVAL"){
-      return "#BF4C0A"
+      return "#BF4C0A";
+    }else if(name === "line"){
+      return "#fff";
     }else{
       return "#aaa";
     }
   }
   if(c === "deepsea"){
     if(name === "YOU" || name === "RIVAL"){
-      return "#1490ff"
+      return "#3E38F2";
+    }else if(name === "line"){
+      return "#5C73F2";
     }else{
-      return "#6D808C";
+      return "#829FD9";
     }
   }
 }

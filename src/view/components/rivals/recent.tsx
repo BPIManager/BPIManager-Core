@@ -1,10 +1,7 @@
 import * as React from 'react';
 
-import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import fbActions from '../../../components/firebase/actions';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
 import { _currentStore, _isSingle } from '../../../components/settings';
 import { rivalListsDB } from '../../../components/indexedDB';
 import Grid from '@material-ui/core/Grid';
@@ -13,16 +10,14 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import CheckIcon from '@material-ui/icons/Check';
-import AddIcon from '@material-ui/icons/Add';
 import { rivalStoreData, rivalScoreData, DBRivalStoreData } from '../../../types/data';
-import {Chip, CardActionArea} from '@material-ui/core/';
-import {arenaRankColor, alternativeImg} from '../../../components/common';
+import {Container} from '@material-ui/core/';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
 import Loader from '../common/loader';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import ModalUser from './modal';
+import UserCard from './viewComponents/card';
 
 interface P {
   compareUser:(rivalMeta:rivalStoreData,rivalBody:rivalScoreData[],last:rivalStoreData,arenaRank:string,currentPage:number)=>void,
@@ -187,40 +182,12 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
           )}
         </Alert>
       </div>}
+      <Container className="commonLayout" fixed>
       {res.map((item:rivalStoreData)=>{
         const isAdded = rivals.indexOf(item.uid) > -1;
         return (activated && <div key={item.uid}>
-        <Card style={{margin:"10px 0",background:"transparent"}} variant="outlined">
-          <CardActionArea>
-          <CardHeader
-            avatar={
-              <Avatar onClick={()=>this.open(item.displayName)}>
-                <img src={item.photoURL ? item.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
-                  alt={item.displayName}
-                  onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(item.displayName)}/>
-              </Avatar>
-            }
-            action={
-              <Button
-                disabled={processing || isAdded}
-                color="secondary" variant="outlined"
-                startIcon={!isAdded ? <AddIcon/> : <CheckIcon/>}
-                onClick={()=>!isAdded && this.addUser(item)}>
-                  {!isAdded ? "追加" : "追加済み"}
-              </Button>
-            }
-            title={<div onClick={()=>this.open(item.displayName)}>{item.displayName}</div>}
-            subheader={<div onClick={()=>this.open(item.displayName)}>
-              <span>
-                <Chip size="small" style={{backgroundColor:arenaRankColor(item.arenaRank),color:"#fff",margin:"5px 0"}} label={item.arenaRank || "-"} />
-                {item.totalBPI && <Chip size="small" style={{backgroundColor:"green",color:"#fff",margin:"0 0 0 5px"}} label={"総合BPI:" + item.totalBPI} />}
-              </span>
-              <span style={{display:"block"}}>{item.profile}</span>
-            </div>}
-          />
-          </CardActionArea>
-        </Card>
-      </div>
+          <UserCard open={this.open} item={item} processing={processing} isAdded={isAdded} addUser={this.addUser}/>
+        </div>
       )})}
       {isLoading && <Loader/>}
       {mode === 2 &&
@@ -232,6 +199,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
         </Grid>
       </Grid>
       }
+      </Container>
       {isModalOpen && <ModalUser isOpen={isModalOpen} currentUserName={currentUserName} handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
       <ShowSnackBar message={message} variant={variant}
           handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>

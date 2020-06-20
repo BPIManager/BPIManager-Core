@@ -102,7 +102,10 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
     return this.toggleSnack(`${updated}件更新しました`);
   }
 
-  handleToggleModal = ()=> this.setState({isAddOpen:!this.state.isAddOpen});
+  handleToggleModal = ()=> {
+    this.loadRivals();
+    this.setState({isAddOpen:!this.state.isAddOpen});
+  }
   toggleSnack = (message:string = "ライバルを追加しました")=> this.setState({message:message,showSnackBar:!this.state.showSnackBar});
 
   render(){

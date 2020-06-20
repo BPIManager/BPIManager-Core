@@ -8,7 +8,6 @@ import fbActions from '../../components/firebase/actions';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
 import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ViewListIcon from '@material-ui/icons/ViewList';
@@ -18,13 +17,14 @@ import { rivalListsDB } from '../../components/indexedDB';
 import ShowSnackBar from '../components/snackBar';
 import RivalView from '../components/rivals/view';
 import { rivalScoreData, rivalStoreData } from '../../types/data';
-import {Link, Chip, Divider, Grid, GridList, GridListTile, GridListTileBar, ListSubheader} from '@material-ui/core/';
+import {Link, Chip, Divider, Grid, GridList, GridListTile, GridListTileBar, ListSubheader, List, ListItem, ListItemAvatar, ListItemText, ListItemSecondaryAction, IconButton} from '@material-ui/core/';
 import {Link as RefLink} from "react-router-dom";
 import ClearLampView from '../components/table/fromUserPage';
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
 import {arenaRankColor, alternativeImg} from '../../components/common';
 import Loader from '../components/common/loader';
 import { config } from '../../config';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
 interface S {
   userName:string,
@@ -213,7 +213,6 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
   render(){
     const {processing,add,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI,loadingRecommended,recommendUsers,counts,limited} = this.state;
     const url = config.baseUrl + "/u/" + encodeURI(userName);
-    console.log(counts);
     if(processing){
       return (<Loader/>);
     }
@@ -236,12 +235,19 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
         </Container>
       )
     }
-    const buttonRange = limited ? 6 : 4;
     const themeColor = _currentTheme();
+    const avatarBgColor = themeColor === "light" ? "#efefef" : "rgba(255, 255, 255, 0.05)";
+    const avatarFontColor = themeColor === "light" ? "#222" : "#efefef";
+    const buttons = [
+      {icon:<ViewListIcon />,primary:"スコアを見る",secondary:res.displayName + "さんの登録スコアを表示します",onClick:()=>this.view(1)},
+      {icon:<WbIncandescentIcon />,primary:"AAA達成表",secondary:"BPIに基づいたAAA達成難易度表を表示します",onClick:()=>this.view(2)},
+      {icon:<GroupAddIcon />,primary:"追加",secondary:res.displayName + "さんをライバルに追加します",onClick:()=>this.addUser()},
+    ]
     return (
       <div>
-        <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover",display:"flex",padding:"5vh 0",alignItems:"center",justifyContent:"center"}}>
-          <div style={{textAlign:"center",color:themeColor === "light" ? "#222" : "#fff"}}>
+        <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover"}}>
+        <div style={{background:themeColor === "light" ? "rgba(255,255,255,.1)" : "rgba(0,0,0,.4)",display:"flex",padding:"5vh 0",alignItems:"center",justifyContent:"center"}}>
+          <div style={{textAlign:"center",color:themeColor === "light" ? "#222" : "#fff",width:"75%"}}>
             <Avatar style={{width:"150px",height:"150px",border:"1px solid #ccc",margin:"15px auto"}}>
               <img src={res.photoURL ? res.photoURL.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
                 alt={res.displayName}
@@ -260,69 +266,91 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
                   最終更新:{res.timeStamp}
                 </Typography>
               </div>
+              <Grid container style={{marginTop:"15px",textAlign:"center"}}>
+                <Grid item xs={6} lg={6}>
+                  <Typography component="h6" variant="h6" color="textSecondary">
+                    ライバル
+                  </Typography>
+                  <Typography component="h4" variant="h4" color="textPrimary">
+                    {counts.followings}
+                  </Typography>
+                </Grid>
+                <Grid item xs={6} lg={6}>
+                  <Typography component="h6" variant="h6" color="textSecondary">
+                    逆ライバル
+                  </Typography>
+                  <Typography component="h4" variant="h4" color="textPrimary">
+                    {counts.followers}
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Divider style={{margin:"15px 0"}}/>
           </div>
         </div>
+        </div>
         <div>
-        <Container className="commonLayout" id="users" fixed style={{borderTopRightRadius:"15px",borderTopLeftRadius:"15px"}}>
-        <Grid container spacing={1} style={{marginTop:"4px",marginBottom:"4px"}}>
-          <Grid item xs={12} md={buttonRange}>
-            <Button onClick={()=>this.view(1)} disabled={add || processing} startIcon={<ViewListIcon/>} variant="outlined" color="secondary" fullWidth>
-              スコアを見る
-            </Button>
-          </Grid>
-          <Grid item xs={12} md={buttonRange}>
-            <Button onClick={()=>this.view(2)} disabled={add || processing} startIcon={<WbIncandescentIcon/>} variant="outlined" color="secondary" fullWidth>
-              AAA達成表
-            </Button>
-          </Grid>
-          {!limited &&
-          <Grid item xs={12} md={buttonRange}>
-            <Button onClick={this.addUser} disabled={add || processing} startIcon={<GroupAddIcon/>} variant="outlined" color="secondary" fullWidth>
-              ライバルに追加
-            </Button>
-          </Grid>
+          <List>
+            {buttons.map((item,i)=>{
+              return (
+                <ListItem key={i} button onClick={item.onClick} disabled={add || processing}>
+                  <ListItemAvatar>
+                    <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
+                      {item.icon}
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary={item.primary} secondary={item.secondary} />
+                  <ListItemSecondaryAction onClick={item.onClick}>
+                    <IconButton edge="end">
+                      <ArrowForwardIosIcon />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              )
+            })
           }
-        </Grid>
+          </List>
         {(this.getIIDXId(res.profile) !== "" || this.getTwitterName(res.profile) !== "") && <Divider style={{margin:"5px 0 10px 0"}}/>}
+        <List>
         {this.getIIDXId(res.profile) !== "" &&
           <form method="post" name="rivalSearch" action="https://p.eagate.573.jp/game/2dx/27/rival/rival_search.html#rivalsearch">
             <input type="hidden" name="iidxid" value={this.getIIDXId(res.profile)}/>
             <input type="hidden" name="mode" value="1"/>
-            <Button startIcon={<ExitToAppIcon/>} variant="outlined" color="secondary" fullWidth type="submit" style={{margin:"0 0 5px 0"}}>
-              eAMUSEMENT
-            </Button>
+            <ListItem component="button" type="submit" button disabled={add || processing}>
+              <ListItemAvatar>
+                <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
+                  <ExitToAppIcon/>
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText primary={"eAMUSEMENT"} secondary="IIDX公式サイトでユーザー情報を表示します" />
+              <ListItemSecondaryAction>
+                <IconButton edge="end">
+                  <ArrowForwardIosIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
           </form>
         }
         {this.getTwitterName(res.profile) !== "" &&
-          <Button startIcon={<TwitterIcon/>} variant="outlined" color="secondary" fullWidth type="submit" href={`https://twitter.com/${this.getTwitterName(res.profile)}`}>
-            Twitter
-          </Button>
+          <ListItem component="a" button disabled={add || processing} href={`https://twitter.com/${this.getTwitterName(res.profile)}`}>
+            <ListItemAvatar>
+              <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
+                <TwitterIcon/>
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText primary={"Twitter"} secondary={`@${this.getTwitterName(res.profile)}`} />
+            <ListItemSecondaryAction>
+              <IconButton edge="end">
+                <ArrowForwardIosIcon />
+              </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
         }
-        <Grid container style={{marginTop:"15px",textAlign:"center"}}>
-          <Grid item xs={6} lg={6}>
-            <Typography component="h6" variant="h6" color="textSecondary">
-              ライバル
-            </Typography>
-            <Typography component="h4" variant="h4" color="textPrimary">
-              {counts.followings}
-            </Typography>
-          </Grid>
-          <Grid item xs={6} lg={6}>
-            <Typography component="h6" variant="h6" color="textSecondary">
-              逆ライバル
-            </Typography>
-            <Typography component="h4" variant="h4" color="textPrimary">
-              {counts.followers}
-            </Typography>
-          </Grid>
-        </Grid>
-        <Divider style={{margin:"15px 0"}}/>
-        <div>
+        </List>
+        <div style={{width:"50%",margin:"10px auto"}}>
           <ShareButtons withTitle={true} url={url} text={res.displayName}/>
         </div>
         <ShowSnackBar message={message} variant={message === "ライバルを追加しました" ? "success" : "error"}
           handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>
-      </Container>
       {loadingRecommended && <Loader/>}
       {!loadingRecommended && (
         <div style={{display:"flex",flexWrap:"wrap",justifyContent:"space-around",overflow:"hidden",margin:"15px auto",width:"90%"}}>

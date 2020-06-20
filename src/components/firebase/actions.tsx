@@ -173,10 +173,13 @@ export default class fbActions{
           batch.commit();
         });
       }else{
+        const idMatcher = profile.match(/(\d{4}-\d{4}|\d{8})/);
+        const iidxId = idMatcher ? idMatcher[0].replace("-","") : "";
         await firestore.collection("users").doc(this.docName).set({
           timeStamp: timeFormatter(3),
           serverTime:this.time(),
           uid:this.docName,
+          iidxId:iidxId,
           displayName:displayName,
           profile:profile,
           photoURL:photoURL,
@@ -201,6 +204,22 @@ export default class fbActions{
       const res = await firestore.collection("users").where("displayName","==",input).get();
       if(!res.empty && res.size === 1){
         return res.docs[0].data();
+      }else{
+        return null;
+      }
+    }catch(e){
+      console.log(e);
+      return null;
+    }
+  }
+
+  async searchAllRival(input:string,saving:boolean = false){
+    try{
+      if(!input || (input === "" && saving !== true)){ return null;}
+      const res = await firestore.collection("users").orderBy("displayName").startAt(input).endAt(input + "\uf8ff").get();
+      const res2 = await firestore.collection("users").orderBy("iidxId").startAt(input).endAt(input + "\uf8ff").get();
+      if(!res.empty || !res2.empty){
+        return res.docs.concat(res2.docs);
       }else{
         return null;
       }
@@ -407,5 +426,30 @@ export default class fbActions{
       return false;
     }
   }
+/*
+  async dBatch(){
+    try{
+      let batch = firestore.batch();
+      const snapshots = await firestore.collection("users").get();
+      snapshots.docs.map((doc,index)=>{
+        if((index + 1) % 500 === 0){
+          batch.commit();
+          batch = firestore.batch();
+        }
+        const data = doc.data();
+        if(data.profile){
+          const idMatcher = data.profile.match(/(\d{4}-\d{4}|\d{8})/);
+          const iidxId = idMatcher ? idMatcher[0].replace("-","") : "";
+          batch.update(doc.ref,{
+            iidxId:iidxId,
+          })
+        }
+      });
+      batch.commit();
+    }catch(e){
+      console.log(e);
+    }
 
+  }
+*/
 }
