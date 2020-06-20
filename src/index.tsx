@@ -20,6 +20,14 @@ serviceWorker.register({
 });
 */
 if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.getRegistrations()
+  .then(registrations => {
+    for (let registration of registrations) {
+      if(registration.active && registration.active.scriptURL.match(/serviceWorker\.js/)){
+        registration.unregister();
+      }
+    }
+  });
   navigator.serviceWorker.register("./firebase-messaging-sw.js").then(function(registration) {
       console.log("Registration successful, scope is:", registration.scope);
   }).catch(function(err) {
