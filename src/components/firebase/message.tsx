@@ -25,10 +25,6 @@ if(firebase.messaging.isSupported()){
 export class messanger{
   private messaging = firebase.messaging();
 
-  constructor(){
-    this.messaging.usePublicVapidKey(pubkey);
-  }
-
   checkPermission(){
     return Notification.permission === "granted";
   }
