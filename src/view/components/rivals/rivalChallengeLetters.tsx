@@ -39,7 +39,8 @@ interface stateInt {
   bpm:B,
   orderTitle:number,
   orderMode:number,
-  versions:number[]
+  versions:number[],
+  userData:any
 }
 
 class RivalChallengeLetters extends React.Component<P,stateInt> {
@@ -66,7 +67,8 @@ class RivalChallengeLetters extends React.Component<P,stateInt> {
       },
       page:0,
       filterOpen:false,
-      versions:verArr()
+      versions:verArr(),
+      userData:null
     }
   }
 

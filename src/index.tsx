@@ -3,19 +3,15 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
-import firebase from 'firebase/app';
-import 'firebase/messaging';
+import * as serviceWorker from "./serviceWorker";
+import ReloadModal from './view/components/update';
 
 ReactDOM.render(<App />, document.getElementById("root"));
-if (firebase.messaging.isSupported()){
-  const messaging = firebase.messaging();
-  if (navigator.serviceWorker) {
-    navigator.serviceWorker.register('/firebase-messaging-sw.js').then(() => {
-      return navigator.serviceWorker.ready;
-    }).then(registration => {
-      messaging.useServiceWorker(registration);
-    }).catch(error => {
-      console.error(error);
-    });
-  }
-}
+
+serviceWorker.register({
+  onUpdate: (registration:ServiceWorkerRegistration) => {
+    if (registration.waiting) {
+      ReactDOM.render(<ReloadModal registration={registration} />, document.querySelector('.SW-update-dialog'));
+    }
+  },
+});

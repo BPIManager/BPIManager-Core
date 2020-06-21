@@ -272,13 +272,13 @@ class Navigation extends React.Component<{},{currentTab:number}>{
           <RadioGroup aria-label="position" name="position" value={currentTab} onChange={this.handleChange} row>
             <FormControlLabel
               value={0}
-              control={<Radio color="primary" />}
+              control={<Radio color="secondary" />}
               label={<FormattedMessage id="Data.hwt.csv"/>}
               labelPlacement="end"
             />
             <FormControlLabel
               value={1}
-              control={<Radio color="primary" />}
+              control={<Radio color="secondary" />}
               label={<FormattedMessage id="Data.hwt.bookmarklet"/>}
               labelPlacement="end"
             />

@@ -267,14 +267,14 @@ class ChangeLevel extends React.Component<{targetLevel:number,changeLevel:(e:Rea
         <RadioGroup aria-label="position" name="position" value={targetLevel} onChange={changeLevel} row>
           <FormControlLabel
             value={11}
-            control={<Radio color="primary" />}
+            control={<Radio color="secondary" />}
             label="☆11"
             labelPlacement="end"
             disabled={isLoading}
           />
           <FormControlLabel
             value={12}
-            control={<Radio color="primary" />}
+            control={<Radio color="secondary" />}
             label="☆12"
             labelPlacement="end"
             disabled={isLoading}

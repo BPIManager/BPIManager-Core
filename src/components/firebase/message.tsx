@@ -1,26 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/messaging';
 import fbActions from './actions';
-const pubkey = "BK9k1aToNoODFR7kAWGLmyKy4B7oEhhk17RJwQ08xw5XzSmYnP7195rEcMhwlBqJ3KfTlQjCg4zxGa7VBFA6rus";
-
-if(firebase.messaging.isSupported()){
-  try{
-    const messaging = firebase.messaging();
-    messaging.usePublicVapidKey(pubkey);
-    messaging.onTokenRefresh(function() {
-      messaging.getToken().then(function(refreshedToken) {
-        new messanger().refreshToken(refreshedToken);
-      });
-    });
-
-    messaging.onMessage(payload => {
-      console.log("Message received. ", payload);
-    });
-  }catch(e){
-    console.log(e);
-    alert("FCMの初期化中にエラーが発生しました。");
-  }
-}
+export const pubkey = "BK9k1aToNoODFR7kAWGLmyKy4B7oEhhk17RJwQ08xw5XzSmYnP7195rEcMhwlBqJ3KfTlQjCg4zxGa7VBFA6rus";
 
 export class messanger{
   private messaging = firebase.messaging();
@@ -36,8 +17,13 @@ export class messanger{
   refreshToken(refreshedToken?:string){
     try{
       new fbActions().auth().onAuthStateChanged(async(user: any)=> {
-        const token = refreshedToken || await this.getToken();
-        new fbActions().updateToken(user.uid,token);
+        console.info("Login Status:" + user);
+        if(user && user.uid){
+          const token = refreshedToken || await this.getToken();
+          new fbActions().updateToken(user.uid,token);
+        }else{
+          console.error("NOT LOGGED IN, REFRESH TOKEN HAS BEEN ABORTED")
+        }
       });
     }catch(e){
       alert(e);

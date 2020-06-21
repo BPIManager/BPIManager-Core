@@ -25,6 +25,7 @@ interface P {
 }
 
 interface S {
+  uid:string,
   processing:boolean,
   errorMessage:string,
   syncData:{
@@ -36,6 +37,7 @@ interface S {
   }[],
   userData:any,
   permission:boolean,
+  rivalAdded:boolean,
 }
 
 class PushSettings extends React.Component<P,S> {
@@ -46,11 +48,13 @@ class PushSettings extends React.Component<P,S> {
   constructor(props:P){
     super(props);
     this.state = {
+      uid:"",
       processing:true,
       errorMessage:"",
       syncData:[],
       userData:null,
       permission:false,
+      rivalAdded:false,
     }
     this.fbStores.setColName(`${_currentStore()}_${_isSingle()}`);
   }
@@ -70,18 +74,22 @@ class PushSettings extends React.Component<P,S> {
   }
 
   uid = ()=>{
-    return this.state.userData ? this.state.userData.uid : ""
+    return this.state.uid
   }
 
   refreshData = ()=>{
     this.setState({processing:true});
     return this.fbActions.auth().onAuthStateChanged(async(user: any)=> {
+      if(!user.uid) return;
       this.fbActions.setDocName(user.uid);
+      const me = await new fbActions().setColName("notifyWhenAddedAsRivals").setDocName(user.uid).load();
       const p = user.uid ? (await this.fbActions.syncLoadRival(true)) as any : [];
       this.setState({
+        uid:user.uid,
         processing:false,
         userData:this.state.userData || await new fbActions().setColName("users").setDocName(user.uid).load(),
         syncData:p,
+        rivalAdded:(me && me.addedNotify === true) || false
       });
     });
   }
@@ -91,6 +99,11 @@ class PushSettings extends React.Component<P,S> {
       await this.messanger.requestPermission();
       return this.setState({permission:true});
     }
+  }
+
+  toggleAddedNotify = (event:React.ChangeEvent<HTMLInputElement>)=> {
+    this.fbActions.toggleAddedNotify(this.uid(),event.target.checked);
+    return this.setState({rivalAdded:event.target.checked});
   }
 
   render(){
@@ -112,7 +125,7 @@ class PushSettings extends React.Component<P,S> {
               本機能の利用にはプッシュ通知を許可する必要があります。<br/>
               下のボタンをクリックし、通知を許可してください。<br/>
               通知許可はブラウザの設定画面から何時でも取り消すことが可能です。<br/>
-              iOSには対応していません。
+              iOSには対応していません。Android/Windows PCでのみ利用可能です。
             </Typography>
           </Paper>
         </div>);
@@ -123,7 +136,7 @@ class PushSettings extends React.Component<P,S> {
           <List
             subheader={
               <ListSubheader component="div" disableSticky>
-                通知を管理
+                スコア更新を通知
               </ListSubheader>
             }>
             {processing && <div style={{display:"flex",justifyContent:"center"}}><CircularProgress color="secondary" style={{margin:"10px auto"}}/></div>}
@@ -154,6 +167,29 @@ class PushSettings extends React.Component<P,S> {
               </ListItem>
             )})}
           </List>
+          {/* (
+            <List
+              subheader={
+                <ListSubheader component="div" disableSticky>
+                  その他のタイミング
+                </ListSubheader>
+              }>
+              <ListItem>
+                <ListItemAvatar>
+                  <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
+                    <GroupAddIcon/>
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={"逆ライバル通知"}
+                  secondary={"他のユーザーがあなたをライバルとして追加されたときに通知します。"}
+                />
+                <ListItemSecondaryAction>
+                  <Switch color="secondary" onChange={this.toggleAddedNotify} disabled={true} checked={false}/>
+                </ListItemSecondaryAction>
+              </ListItem>
+            </List>
+        )*/}
         </Paper>
 
         <Alert severity="info" style={{margin:"10px 0"}}>
@@ -169,6 +205,9 @@ class PushSettings extends React.Component<P,S> {
           ・問題が発生した場合は@BPIManagerまで教えていただけると助かります<br/>
           ・通知を許可できる対象は「ライバル」タブよりサーバーにデータを送信済みのライバルのみです<br/>
           ・iOSには対応していません
+          </p>
+          <p>
+            使用中のデバイス:通知を{firebase.messaging.isSupported() ? "利用可能" : "利用不可"}
           </p>
         </Alert>
       </div>
