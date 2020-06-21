@@ -51,7 +51,6 @@ class SyncControlScreen extends React.Component<{userData:any},{
   async componentDidMount(){
     const t = await this.fbA.load();
     this.fbLoader.updateProfileIcon();
-    console.log(await this.fbLoader.load());
     this.setState({
       isLoading:false,
       scoreData: await this.fbLoader.load(),

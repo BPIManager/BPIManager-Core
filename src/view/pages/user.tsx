@@ -36,6 +36,7 @@ interface S {
   res:any,
   uid:string,
   alternativeId:string,
+  myDisplayName:string,
   rivalData:rivalScoreData[],
   loadingRecommended:boolean,
   recommendUsers:rivalStoreData[],
@@ -65,6 +66,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
       currentView:initialView ? 1 : 0,
       message:"",
       alternativeId:"",
+      myDisplayName:"",
       showSnackBar:false,
       res:null,
       uid:"",
@@ -88,6 +90,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
           console.log(t);
           this.setState({
             alternativeId:(t && t.displayName) ? t.displayName : "",
+            myDisplayName:(t && t.displayName) ? t.displayName : "",
             processing:false,
           });
         }else{
@@ -97,6 +100,14 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
         }
       });
     }else{
+      new fbActions().auth().onAuthStateChanged(async (user: any)=> {
+        if(user){
+          const t = await this.fbA.setDocName(user.uid).load();
+          this.setState({
+            myDisplayName:(t && t.displayName) ? t.displayName : "",
+          });
+        }
+      });
       await this.search();
       this.recommended();
     }
@@ -187,6 +198,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
       isSingle:_isSingle(),
       storedAt:_currentStore(),
     },data.scores);
+    await this.fbA.syncUploadOne(res.uid,this.state.myDisplayName);
     if(!putResult){
       return this.setState({message:"追加に失敗しました",add:false});
     }

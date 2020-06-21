@@ -5,14 +5,9 @@ import Tab from '@material-ui/core/Tab';
 import RivalLists from "./list";
 import RecentlyAdded from "./recent";
 import { rivalScoreData, rivalStoreData, DBRivalStoreData } from '../../../types/data';
-import fbActions from '../../../components/firebase/actions';
-import Loader from '../common/loader';
-import SyncLoginScreen from '../sync/login';
 
 interface S {
   currentTab:number,
-  isLoading:boolean,
-  userData:any
 }
 
 interface P{
@@ -29,15 +24,7 @@ class RivalIndex extends React.Component<P,S> {
     super(props);
     this.state = {
       currentTab:props.backToRecentPage,
-      isLoading:true,
-      userData:null,
     }
-  }
-
-  async componentDidMount(){
-    new fbActions().auth().onAuthStateChanged((user: any)=> {
-      this.setState({userData:user,isLoading:false})
-    });
   }
 
   handleChange = (_event: React.ChangeEvent<{}>|null, newValue: number) => {
@@ -45,13 +32,7 @@ class RivalIndex extends React.Component<P,S> {
   };
 
   render(){
-    const {currentTab,isLoading,userData} = this.state;
-    if(isLoading){
-      return (<Loader/>);
-    }
-    if(!userData){
-      return (<SyncLoginScreen mode={1}/>)
-    }
+    const {currentTab} = this.state;
     return (
       <div>
         <Tabs

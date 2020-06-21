@@ -74,22 +74,19 @@ class RivalChallengeLetters extends React.Component<P,stateInt> {
     }
   }
 
-  componentDidMount(){
-    return new fbActions().auth().onAuthStateChanged(async(user: any)=> {
-      let allSongs:{[key:string]:songData} = {};
-      const l = await loader();
-      const allSongsRawData = await new songsDB().getAll(_isSingle());
-      for(let i =0; i < allSongsRawData.length; ++i){
-        const prefix:string = difficultyDiscriminator(allSongsRawData[i]["difficulty"]);
-        allSongs[allSongsRawData[i]["title"] + prefix] = allSongsRawData[i];
-      }
-      this.setState({
-        userData:user,
-        allSongsData:l,
-        scoreData:l,
-        full:allSongs,
-        isLoading:false,
-      });
+  async componentDidMount(){
+    let allSongs:{[key:string]:songData} = {};
+    const l = await loader();
+    const allSongsRawData = await new songsDB().getAll(_isSingle());
+    for(let i =0; i < allSongsRawData.length; ++i){
+      const prefix:string = difficultyDiscriminator(allSongsRawData[i]["difficulty"]);
+      allSongs[allSongsRawData[i]["title"] + prefix] = allSongsRawData[i];
+    }
+    this.setState({
+      allSongsData:l,
+      scoreData:l,
+      full:allSongs,
+      isLoading:false,
     });
   }
 
@@ -198,7 +195,7 @@ class RivalChallengeLetters extends React.Component<P,stateInt> {
   }
 
   render(){
-    const {isLoading,options,page,full,filterOpen,versions,filterByName,orderMode,orderTitle,userData} = this.state;
+    const {isLoading,options,page,full,filterOpen,versions,filterByName,orderMode,orderTitle} = this.state;
     const orders = [
       "勝率",
       "勝利数",
@@ -207,13 +204,6 @@ class RivalChallengeLetters extends React.Component<P,stateInt> {
       "レベル",
       "最終更新日時",
     ];
-    if(!userData){
-      return (
-        <Container className="commonLayout" fixed>
-          <SyncLoginScreen mode={1}/>
-        </Container>
-      );
-    }
     return (
       <Container className="commonLayout" fixed>
         <Grid container style={{margin:"5px 0"}}>

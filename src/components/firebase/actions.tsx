@@ -444,6 +444,18 @@ export default class fbActions{
       return false;
     }
   }
+
+  toggleAddedNotify = async(uid:string,newState:boolean)=>{
+    try{
+      return await firestore.collection("notifyWhenAddedAsRivals").doc(uid).set({
+        addedNotify:newState,
+        uid:uid,
+        reference:firestore.collection("users").doc(uid)
+      });
+    }catch(e){
+      console.log(e);
+    }
+  }
 /*
   async dBatch(){
     try{

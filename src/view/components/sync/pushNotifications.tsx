@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import Button from '@material-ui/core/Button';
-import { _currentStore, _isSingle } from '../../../components/settings';
+import { _currentStore, _isSingle, _currentTheme } from '../../../components/settings';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import List from '@material-ui/core/List';
@@ -20,11 +20,13 @@ import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import firebase from 'firebase/app';
 import 'firebase/messaging';
+import GroupAddIcon from '@material-ui/icons/GroupAdd';
 
 interface P {
 }
 
 interface S {
+  uid:string,
   processing:boolean,
   errorMessage:string,
   syncData:{
@@ -36,6 +38,7 @@ interface S {
   }[],
   userData:any,
   permission:boolean,
+  rivalAdded:boolean,
 }
 
 class PushSettings extends React.Component<P,S> {
@@ -46,11 +49,13 @@ class PushSettings extends React.Component<P,S> {
   constructor(props:P){
     super(props);
     this.state = {
+      uid:"",
       processing:true,
       errorMessage:"",
       syncData:[],
       userData:null,
       permission:false,
+      rivalAdded:false,
     }
     this.fbStores.setColName(`${_currentStore()}_${_isSingle()}`);
   }
@@ -70,18 +75,22 @@ class PushSettings extends React.Component<P,S> {
   }
 
   uid = ()=>{
-    return this.state.userData ? this.state.userData.uid : ""
+    return this.state.uid
   }
 
   refreshData = ()=>{
     this.setState({processing:true});
     return this.fbActions.auth().onAuthStateChanged(async(user: any)=> {
+      if(!user.uid) return;
       this.fbActions.setDocName(user.uid);
+      const me = await new fbActions().setColName("notifyWhenAddedAsRivals").setDocName(user.uid).load();
       const p = user.uid ? (await this.fbActions.syncLoadRival(true)) as any : [];
       this.setState({
+        uid:user.uid,
         processing:false,
         userData:this.state.userData || await new fbActions().setColName("users").setDocName(user.uid).load(),
         syncData:p,
+        rivalAdded:(me && me.addedNotify === true) || false
       });
     });
   }
@@ -93,8 +102,16 @@ class PushSettings extends React.Component<P,S> {
     }
   }
 
+  toggleAddedNotify = (event:React.ChangeEvent<HTMLInputElement>)=> {
+    this.fbActions.toggleAddedNotify(this.uid(),event.target.checked);
+    return this.setState({rivalAdded:event.target.checked});
+  }
+
   render(){
-    const {syncData,permission,processing} = this.state;
+    const {syncData,permission,processing,rivalAdded} = this.state;
+    const themeColor = _currentTheme();
+    const avatarBgColor = themeColor === "light" ? "#efefef" : "rgba(255, 255, 255, 0.05)";
+    const avatarFontColor = themeColor === "light" ? "#222" : "#efefef";
     if(!permission){
       return (
         <div>
@@ -123,7 +140,7 @@ class PushSettings extends React.Component<P,S> {
           <List
             subheader={
               <ListSubheader component="div" disableSticky>
-                通知を管理
+                スコア更新を通知
               </ListSubheader>
             }>
             {processing && <div style={{display:"flex",justifyContent:"center"}}><CircularProgress color="secondary" style={{margin:"10px auto"}}/></div>}
@@ -154,6 +171,29 @@ class PushSettings extends React.Component<P,S> {
               </ListItem>
             )})}
           </List>
+          {/* (
+            <List
+              subheader={
+                <ListSubheader component="div" disableSticky>
+                  その他のタイミング
+                </ListSubheader>
+              }>
+              <ListItem>
+                <ListItemAvatar>
+                  <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
+                    <GroupAddIcon/>
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={"逆ライバル通知"}
+                  secondary={"他のユーザーがあなたをライバルとして追加されたときに通知します。"}
+                />
+                <ListItemSecondaryAction>
+                  <Switch color="secondary" onChange={this.toggleAddedNotify} disabled={true} checked={false}/>
+                </ListItemSecondaryAction>
+              </ListItem>
+            </List>
+        )*/}
         </Paper>
 
         <Alert severity="info" style={{margin:"10px 0"}}>

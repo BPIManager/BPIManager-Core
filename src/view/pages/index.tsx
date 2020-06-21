@@ -5,8 +5,8 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { FormattedMessage } from "react-intl";
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import {Link as RefLink} from '@material-ui/core/';
-import { _lang, _currentVersion } from '../../components/settings';
+import {Link as RefLink, ListItem, ListItemAvatar, Avatar, ListItemText, ListItemSecondaryAction, IconButton, List} from '@material-ui/core/';
+import { _lang, _currentVersion, _currentTheme } from '../../components/settings';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import LanguageIcon from '@material-ui/icons/Language';
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
@@ -16,13 +16,14 @@ import LibraryMusicIcon from '@material-ui/icons/LibraryMusic';
 import HelpIcon from '@material-ui/icons/Help';
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 import Alert from '@material-ui/lab/Alert/Alert';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
 class Index extends React.Component<RouteComponentProps,{}> {
 
   render(){
     return (
       <div>
-        <IfNotOnTheHomeScreen/>
+        <IfNotOnTheHomeScreen history={this.props.history}/>
       </div>
     );
   }
@@ -61,14 +62,16 @@ class AddToHomeScreenTicker extends React.Component<{},{show:boolean}>{
   }
 }
 
-class IfNotOnTheHomeScreen extends React.Component<{},{
+class IfNotOnTheHomeScreen extends React.Component<{
+  history:any
+},{
   show:boolean,
   showUpdate:boolean,
   latestVersion:string,
   updateInfo:string,
 }>{
 
-  constructor(props:{}){
+  constructor(props:{history:any}){
     super(props);
     const isStandAloneIn_iOS = () =>("standalone" in window.navigator) && (window.navigator["standalone"]);
     const isStandAloneInAndroid = ()=>window.matchMedia('(display-mode: standalone)').matches;
@@ -120,6 +123,9 @@ class IfNotOnTheHomeScreen extends React.Component<{},{
         icon:<LibraryMusicIcon />
       }
     ]
+    const themeColor = _currentTheme();
+    const avatarBgColor = themeColor === "light" ? "#efefef" : "rgba(255, 255, 255, 0.05)";
+    const avatarFontColor = themeColor === "light" ? "#222" : "#efefef";
     return (
       <div className="heroLayout">
         <Container className="heroTitle">
@@ -216,21 +222,37 @@ class IfNotOnTheHomeScreen extends React.Component<{},{
           </div>
         </Container>
       </div>}
-      <div style={{width:"85%",margin:"25px auto 5px auto"}}>
-        {navBar.map(item=>(
-          <Link to={item.to} key={item.id} style={{textDecoration:"none"}}>
-            <Button variant="outlined" color="secondary" fullWidth style={{margin:"5px"}}
-              startIcon={item.icon}>
-              <FormattedMessage id={item.id}/>
-            </Button>
-          </Link>
+      <List>
+        {navBar.map((item,i)=>(
+          <ListItem button key={i} onClick={()=>this.props.history.push(item.to)}>
+            <ListItemAvatar>
+              <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
+                {item.icon}
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText primary={<FormattedMessage id={item.id}/>} secondary={""} />
+            <ListItemSecondaryAction>
+              <IconButton edge="end">
+                <ArrowForwardIosIcon />
+              </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
         ))}
-        <Button variant="outlined" color="secondary" fullWidth style={{margin:"5px"}}
-          onClick={()=>window.open("https://docs.google.com/forms/d/e/1FAIpQLSfhJkZZp5K1ChbE5RH-f0hOIkGvGX-7tYCZMxzVlsHVAtZ6eg/viewform?usp=sf_link")}
-          startIcon={<QuestionAnswerIcon/>}>
-          アンケートにご協力ください！
-        </Button>
-      </div>
+        <ListItem button
+          onClick={()=>window.open("https://docs.google.com/forms/d/e/1FAIpQLSfhJkZZp5K1ChbE5RH-f0hOIkGvGX-7tYCZMxzVlsHVAtZ6eg/viewform?usp=sf_link")}>
+          <ListItemAvatar>
+            <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
+              <QuestionAnswerIcon/>
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText primary={"アンケートにご協力ください！"} secondary={"機能改善のため簡単なアンケートにご協力お願いします。"} />
+          <ListItemSecondaryAction>
+            <IconButton edge="end">
+              <ArrowForwardIosIcon />
+            </IconButton>
+          </ListItemSecondaryAction>
+        </ListItem>
+      </List>
       <Container>
         <div style={{marginTop:"20px"}}>
           <Grid container justify="center">
