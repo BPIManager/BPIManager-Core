@@ -2,16 +2,18 @@ import firebase from 'firebase/app';
 import 'firebase/messaging';
 import fbActions from './actions';
 const messaging = firebase.messaging();
-messaging.usePublicVapidKey("BK9k1aToNoODFR7kAWGLmyKy4B7oEhhk17RJwQ08xw5XzSmYnP7195rEcMhwlBqJ3KfTlQjCg4zxGa7VBFA6rus");
-messaging.onTokenRefresh(function() {
-  messaging.getToken().then(function(refreshedToken) {
-    new messanger().refreshToken(refreshedToken);
+if(firebase.messaging.isSupported()){
+  messaging.usePublicVapidKey("BK9k1aToNoODFR7kAWGLmyKy4B7oEhhk17RJwQ08xw5XzSmYnP7195rEcMhwlBqJ3KfTlQjCg4zxGa7VBFA6rus");
+  messaging.onTokenRefresh(function() {
+    messaging.getToken().then(function(refreshedToken) {
+      new messanger().refreshToken(refreshedToken);
+    });
   });
-});
 
-messaging.onMessage(payload => {
-  console.log("Message received. ", payload);
-});
+  messaging.onMessage(payload => {
+    console.log("Message received. ", payload);
+  });
+}
 
 export class messanger{
 
@@ -24,10 +26,14 @@ export class messanger{
   }
 
   refreshToken(refreshedToken?:string){
-    new fbActions().auth().onAuthStateChanged(async(user: any)=> {
-      const token = refreshedToken || await this.getToken();
-      new fbActions().updateToken(user.uid,token);
-    });
+    try{
+      new fbActions().auth().onAuthStateChanged(async(user: any)=> {
+        const token = refreshedToken || await this.getToken();
+        new fbActions().updateToken(user.uid,token);
+      });
+    }catch(e){
+      alert(e);
+    }
 
   }
 

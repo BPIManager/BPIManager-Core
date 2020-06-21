@@ -18,6 +18,8 @@ import Switch from '@material-ui/core/Switch';
 import { messanger } from '../../../components/firebase/message';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import firebase from 'firebase/app';
+import 'firebase/messaging';
 
 interface P {
 }
@@ -85,8 +87,10 @@ class PushSettings extends React.Component<P,S> {
   }
 
   requestNotify = async()=>{
-    await this.messanger.requestPermission();
-    return this.setState({permission:true});
+    if(firebase.messaging.isSupported()){
+      await this.messanger.requestPermission();
+      return this.setState({permission:true});
+    }
   }
 
   render(){
@@ -107,7 +111,8 @@ class PushSettings extends React.Component<P,S> {
             <Typography component="p" variant="caption" style={{margin:"10px 0"}}>
               本機能の利用にはプッシュ通知を許可する必要があります。<br/>
               下のボタンをクリックし、通知を許可してください。<br/>
-              通知許可はGoogle Chromeの設定画面から何時でも取り消すことが可能です。
+              通知許可はブラウザの設定画面から何時でも取り消すことが可能です。<br/>
+              iOSには対応していません。
             </Typography>
           </Paper>
         </div>);
@@ -162,7 +167,8 @@ class PushSettings extends React.Component<P,S> {
           ・スコアデータを非公開にしているユーザーの更新は通知されません<br/>
           ・お試し実装なので今後機能の改廃を行う可能性が大です<br/>
           ・問題が発生した場合は@BPIManagerまで教えていただけると助かります<br/>
-          ・通知を許可できる対象は「ライバル」タブよりサーバーにデータを送信済みのライバルのみです
+          ・通知を許可できる対象は「ライバル」タブよりサーバーにデータを送信済みのライバルのみです<br/>
+          ・iOSには対応していません
           </p>
         </Alert>
       </div>

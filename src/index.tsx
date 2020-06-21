@@ -8,12 +8,20 @@ import 'firebase/messaging';
 const messaging = firebase.messaging();
 
 ReactDOM.render(<App />, document.getElementById("root"));
-if (navigator.serviceWorker) {
-  navigator.serviceWorker.register('/firebase-messaging-sw.js').then(() => {
-    return navigator.serviceWorker.ready;
-  }).then(registration => {
-    messaging.useServiceWorker(registration);
-  }).catch(error => {
-    console.error(error);
-  });
+if (firebase.messaging.isSupported()){
+  if (navigator.serviceWorker) {
+    navigator.serviceWorker.register('/firebase-messaging-sw.js').then(() => {
+      return navigator.serviceWorker.ready;
+    }).then(registration => {
+      messaging.useServiceWorker(registration);
+    }).catch(error => {
+      console.error(error);
+    });
+  }
+}else{
+   navigator.serviceWorker.getRegistrations().then(function(registrations) {
+     for(let registration of registrations) {
+       registration.unregister();
+     }
+   });
 }
