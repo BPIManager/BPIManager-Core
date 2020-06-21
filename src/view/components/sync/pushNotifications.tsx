@@ -112,7 +112,7 @@ class PushSettings extends React.Component<P,S> {
               本機能の利用にはプッシュ通知を許可する必要があります。<br/>
               下のボタンをクリックし、通知を許可してください。<br/>
               通知許可はブラウザの設定画面から何時でも取り消すことが可能です。<br/>
-              iOSには対応していません。
+              iOSには対応していません。Android/Windows PCでのみ利用可能です。
             </Typography>
           </Paper>
         </div>);
@@ -169,6 +169,9 @@ class PushSettings extends React.Component<P,S> {
           ・問題が発生した場合は@BPIManagerまで教えていただけると助かります<br/>
           ・通知を許可できる対象は「ライバル」タブよりサーバーにデータを送信済みのライバルのみです<br/>
           ・iOSには対応していません
+          </p>
+          <p>
+            使用中のデバイス:通知を{firebase.messaging.isSupported() ? "利用可能" : "利用不可"}
           </p>
         </Alert>
       </div>

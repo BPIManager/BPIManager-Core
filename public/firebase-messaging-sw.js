@@ -3,7 +3,7 @@ importScripts('https://www.gstatic.com/firebasejs/7.14.4/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/7.14.4/firebase-messaging.js');
 
 if (firebase.messaging.isSupported()) {
-
+  console.log("FCM Available, service-worker is enabled.")
   firebase.initializeApp({
     apiKey: "AIzaSyDSy7KvNgPa42c8aiILI6o7jknMCq72Saw",
     authDomain: "bpim-d5971.firebaseapp.com",
@@ -35,12 +35,4 @@ if (firebase.messaging.isSupported()) {
     );
   })
 
-  self.addEventListener('install', function(event) {
-    console.log('Service Worker installing.');
-  });
-
-  self.addEventListener('activate', function(event) {
-    console.log('Service Worker activating.');
-  });
-  
 }
