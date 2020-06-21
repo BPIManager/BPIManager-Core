@@ -6,20 +6,24 @@ const pubkey = "BK9k1aToNoODFR7kAWGLmyKy4B7oEhhk17RJwQ08xw5XzSmYnP7195rEcMhwlBqJ
 if(firebase.messaging.isSupported()){
   try{
     const messaging = firebase.messaging();
+    console.log("Public key successfully set.");
     messaging.usePublicVapidKey(pubkey);
     messaging.onTokenRefresh(function() {
       messaging.getToken().then(function(refreshedToken) {
+        console.log("FCM token has been refreshed and pulled up to the server.");
         new messanger().refreshToken(refreshedToken);
       });
     });
 
     messaging.onMessage(payload => {
-      console.log("Message received. ", payload);
+      console.log("[FOREGROUND]Message received. ", payload);
     });
   }catch(e){
     console.log(e);
-    alert("FCMの初期化中にエラーが発生しました。");
+    alert("Your device is supporting FCM but an error occured while setting up.");
   }
+}else{
+  console.log("Firebase Cloud Messaging is not supported on this device.")
 }
 
 export class messanger{
