@@ -1,28 +1,40 @@
 import firebase from 'firebase/app';
 import 'firebase/messaging';
 import fbActions from './actions';
-const messaging = firebase.messaging();
-if(firebase.messaging.isSupported()){
-  messaging.usePublicVapidKey("BK9k1aToNoODFR7kAWGLmyKy4B7oEhhk17RJwQ08xw5XzSmYnP7195rEcMhwlBqJ3KfTlQjCg4zxGa7VBFA6rus");
-  messaging.onTokenRefresh(function() {
-    messaging.getToken().then(function(refreshedToken) {
-      new messanger().refreshToken(refreshedToken);
-    });
-  });
+const pubkey = "BK9k1aToNoODFR7kAWGLmyKy4B7oEhhk17RJwQ08xw5XzSmYnP7195rEcMhwlBqJ3KfTlQjCg4zxGa7VBFA6rus";
 
-  messaging.onMessage(payload => {
-    console.log("Message received. ", payload);
-  });
+if(firebase.messaging.isSupported()){
+  try{
+    const messaging = firebase.messaging();
+    messaging.usePublicVapidKey(pubkey);
+    messaging.onTokenRefresh(function() {
+      messaging.getToken().then(function(refreshedToken) {
+        new messanger().refreshToken(refreshedToken);
+      });
+    });
+
+    messaging.onMessage(payload => {
+      console.log("Message received. ", payload);
+    });
+  }catch(e){
+    console.log(e);
+    alert("FCMの初期化中にエラーが発生しました。");
+  }
 }
 
 export class messanger{
+  private messaging = firebase.messaging();
+
+  constructor(){
+    this.messaging.usePublicVapidKey(pubkey);
+  }
 
   checkPermission(){
     return Notification.permission === "granted";
   }
 
   getToken(){
-    return messaging.getToken();
+    return this.messaging.getToken();
   }
 
   refreshToken(refreshedToken?:string){

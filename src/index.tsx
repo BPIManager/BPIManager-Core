@@ -5,10 +5,10 @@ import "./index.css";
 import App from "./App";
 import firebase from 'firebase/app';
 import 'firebase/messaging';
-const messaging = firebase.messaging();
 
 ReactDOM.render(<App />, document.getElementById("root"));
 if (firebase.messaging.isSupported()){
+  const messaging = firebase.messaging();
   if (navigator.serviceWorker) {
     navigator.serviceWorker.register('/firebase-messaging-sw.js').then(() => {
       return navigator.serviceWorker.ready;
@@ -18,10 +18,4 @@ if (firebase.messaging.isSupported()){
       console.error(error);
     });
   }
-}else{
-   navigator.serviceWorker.getRegistrations().then(function(registrations) {
-     for(let registration of registrations) {
-       registration.unregister();
-     }
-   });
 }
