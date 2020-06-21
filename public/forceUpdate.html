@@ -31,8 +31,8 @@
               registration.unregister();
               document.write("<br/>削除済み:" + registration.active.scriptURL);
             }
-            document.write("<br/>正常に完了しました");
-            document.write("<br/><a href=\"/\">こちら</a>をクリックしてBPIManagerを起動してください");
+            document.write("<br/>正常に完了しました<br/>上記表示が「0個のserviceWorker」になるまでページをリロードしてください");
+            document.write("<br/>0個になった場合は<a href=\"/\">こちら</a>をクリックしてBPIManagerを起動してください");
             return;
           });
         }
