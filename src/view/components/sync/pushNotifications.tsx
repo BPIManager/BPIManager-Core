@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import Button from '@material-ui/core/Button';
-import { _currentStore, _isSingle, _currentTheme } from '../../../components/settings';
+import { _currentStore, _isSingle } from '../../../components/settings';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import List from '@material-ui/core/List';
@@ -20,7 +20,6 @@ import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import firebase from 'firebase/app';
 import 'firebase/messaging';
-import GroupAddIcon from '@material-ui/icons/GroupAdd';
 
 interface P {
 }
@@ -108,10 +107,7 @@ class PushSettings extends React.Component<P,S> {
   }
 
   render(){
-    const {syncData,permission,processing,rivalAdded} = this.state;
-    const themeColor = _currentTheme();
-    const avatarBgColor = themeColor === "light" ? "#efefef" : "rgba(255, 255, 255, 0.05)";
-    const avatarFontColor = themeColor === "light" ? "#222" : "#efefef";
+    const {syncData,permission,processing} = this.state;
     if(!permission){
       return (
         <div>

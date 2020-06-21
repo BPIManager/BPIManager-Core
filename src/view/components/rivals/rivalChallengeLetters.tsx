@@ -22,8 +22,6 @@ import { _isSingle } from '../../../components/settings';
 import OrderControl from "../songs/common/orders";
 import moment from 'moment';
 import Container from '@material-ui/core/Container/Container';
-import fbActions from '../../../components/firebase/actions';
-import SyncLoginScreen from '../sync/login';
 
 interface P{
 
