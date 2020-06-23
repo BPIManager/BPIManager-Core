@@ -178,7 +178,7 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
       r === 1 ? toMoment(data.updatedAt) === toMoment(new Date()) :
       r === 2 ? toMoment(data.updatedAt) === toMoment(moment().subtract(1, 'day')) :
       r === 3 ? moment(data.updatedAt).week() === moment(new Date()).week() :
-      r === 5 ? moment(data.updatedAt).isBetween(rb.from,rb.to,"day") :
+      r === 5 ? moment(data.updatedAt).isBetween(rb.from,rb.to,"day", '[]') :
       moment(data.updatedAt).isBefore(moment().subtract(1, 'month'))
     }
 
