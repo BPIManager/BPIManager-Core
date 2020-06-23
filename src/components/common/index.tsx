@@ -1,7 +1,7 @@
 import bpiCalcuator from "../bpi";
 import {scoresDB, songsDB} from "../indexedDB";
 import {scoreData} from "../../types/data";
-import {_isSingle,_currentStore} from "../settings";
+import {_isSingle,_currentStore, _currentTheme} from "../settings";
 
 export const commonFunc = class{
 
@@ -94,3 +94,7 @@ export const alternativeImg = (input:string) => {
   }
   return "https://www.tinygraphs.com/squares/"+ input +"?theme=" + namebased() + "&numcolors=3&size=240&fmt=svg";
 }
+
+const themeColor = _currentTheme();
+export const avatarBgColor = themeColor === "light" ? "#efefef" : "rgba(255, 255, 255, 0.05)";
+export const avatarFontColor = themeColor === "light" ? "#222" : "#efefef";

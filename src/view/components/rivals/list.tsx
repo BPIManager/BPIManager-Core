@@ -141,11 +141,6 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
             <CircularProgress color="inherit" />
           </Backdrop>
         </div>
-        {rivals.length === 0 && (
-          <Alert severity="warning">
-            まだライバルがいません。
-          </Alert>
-        )}
         <List
           subheader={
             <ListSubheader component="div" disableSticky>
@@ -164,6 +159,11 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
             </div>)
           )}
         </List>
+        {rivals.length === 0 && (
+          <Alert severity="warning">
+            まだライバルがいません。
+          </Alert>
+        )}
         <List
           subheader={
             <ListSubheader component="div" disableSticky>

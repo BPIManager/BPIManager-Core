@@ -976,6 +976,15 @@ export const rivalListsDB = class extends storageWrapper{
     }
   }
 
+  async getAllRivalUid(){
+    return (await this.getAll()).reduce(
+      (groups:string[],item:DBRivalStoreData)=>{
+        groups.push(item.uid);
+        return groups;
+      },[]
+    );
+  }
+
   async getDisplayData(uid:string):Promise<{name:string,icon:string}>{
     try{
       const t = await this.rivalLists.where({uid:uid}).toArray();

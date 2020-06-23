@@ -10,10 +10,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import { _currentTheme } from '../../../components/settings';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import LockIcon from '@material-ui/icons/Lock';
 import Avatar from '@material-ui/core/Avatar';
+import { avatarFontColor, avatarBgColor } from '../../../components/common';
 
 class SyncLoginScreen extends React.Component<{
   mode:number
@@ -23,9 +23,6 @@ class SyncLoginScreen extends React.Component<{
 
   render(){
     const {mode} = this.props;
-    const themeColor = _currentTheme();
-    const avatarBgColor = themeColor === "light" ? "#efefef" : "rgba(255, 255, 255, 0.05)";
-    const avatarFontColor = themeColor === "light" ? "#222" : "#efefef";
     return (
       <Paper style={{padding:"15px"}}>
         <Avatar style={{background:avatarBgColor,color:avatarFontColor,margin:"10px auto",padding:"35px",fontSize:"25px"}}>

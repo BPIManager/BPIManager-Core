@@ -10,7 +10,7 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import { rivalStoreData, rivalScoreData, DBRivalStoreData } from '../../../types/data';
+import { rivalStoreData, rivalScoreData } from '../../../types/data';
 import {Container, Divider, Input, InputAdornment, IconButton} from '@material-ui/core/';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
 import Loader from '../common/loader';
@@ -87,10 +87,12 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
     this.fbU.auth().onAuthStateChanged(async(user: any)=> {
       t = await new fbActions().setColName("users").setDocName(user ? user.uid : "").load();
       this.fbU.setDocName(user ? user.uid : "");
-      this.setState({rivals:(await this.rivalListsDB.getAll()).reduce((groups:string[],item:DBRivalStoreData)=>{
-        groups.push(item.uid);
-        return groups;
-      },[]),displayName:(t && t.displayName ) ? t.displayName  : ""});
+      this.setState(
+        {
+          rivals:await this.rivalListsDB.getAllRivalUid(),
+          displayName:(t && t.displayName ) ? t.displayName  : ""
+        }
+      );
     });
   }
 
@@ -171,7 +173,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
     this.timeOut = setTimeout(() => {
       searchExec();
     }, 300);
-    this.setState({processing:true,searchInput:val,isLoading:true});
+    this.setState({processing:true,searchInput:val,isLoading:true,res:[],activated:false});
   }
 
   handleModalOpen = (flag:boolean)=> this.setState({isModalOpen:flag});

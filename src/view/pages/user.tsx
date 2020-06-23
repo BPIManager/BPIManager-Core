@@ -21,7 +21,7 @@ import {Link, Chip, Divider, Grid, GridList, GridListTile, GridListTileBar, List
 import {Link as RefLink} from "react-router-dom";
 import ClearLampView from '../components/table/fromUserPage';
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
-import {arenaRankColor, alternativeImg} from '../../components/common';
+import {arenaRankColor, alternativeImg, avatarBgColor, avatarFontColor} from '../../components/common';
 import Loader from '../components/common/loader';
 import { config } from '../../config';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
@@ -38,10 +38,12 @@ interface S {
   alternativeId:string,
   myDisplayName:string,
   rivalData:rivalScoreData[],
+  rivalUids:string[],
   loadingRecommended:boolean,
   recommendUsers:rivalStoreData[],
   totalBPI:number,
   counts:{
+    loading:boolean,
     followers:number,
     followings:number,
   },
@@ -71,10 +73,12 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
       res:null,
       uid:"",
       rivalData:[],
+      rivalUids:[],
       loadingRecommended:true,
       recommendUsers:[],
       totalBPI:NaN,
       counts:{
+        loading:true,
         followers:0,
         followings:0,
       },
@@ -87,7 +91,6 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
       new fbActions().auth().onAuthStateChanged(async (user: any)=> {
         if(user){
           const t = await this.fbA.setDocName(user.uid).load();
-          console.log(t);
           this.setState({
             alternativeId:(t && t.displayName) ? t.displayName : "",
             myDisplayName:(t && t.displayName) ? t.displayName : "",
@@ -105,6 +108,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
           const t = await this.fbA.setDocName(user.uid).load();
           this.setState({
             myDisplayName:(t && t.displayName) ? t.displayName : "",
+            rivalUids:await this.rivalListsDB.getAllRivalUid()
           });
         }
       });
@@ -118,7 +122,6 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
 
   search = async(forceUserName?:string):Promise<void>=>{
     let {userName} = this.state;
-    console.log(userName)
     const rivalScores = async(res:any)=>{
       if(this.state.currentView !== 1) return [];
       try{
@@ -139,15 +142,25 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     const res = await this.fbA.searchRival(userName);
     if(res){
       const totalBPI = res.totalBPI || "-";
-      return this.setState({userName:userName,res:res,uid:res.uid,
+      this.countAsync(res.uid);
+      return this.setState({
+        userName:userName,res:res,uid:res.uid,
         rivalData:await rivalScores(res),
-        totalBPI:totalBPI,counts:{
-        followers:await this.counts(0,res.uid),
-        followings:await this.counts(1,res.uid)
-      }});
+        totalBPI:totalBPI
+      });
     }else{
       return this.setState({userName:"", res:null,uid:""});
     }
+  }
+
+  countAsync = async (uid:string)=>{
+    return this.setState({
+      counts:{
+        loading:false,
+        followers:await this.counts(0,uid),
+        followings:await this.counts(1,uid)
+      }
+    });
   }
 
   counts = async(type:number = 0, id:string):Promise<number>=>{
@@ -225,6 +238,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
   render(){
     const {processing,add,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI,loadingRecommended,recommendUsers,counts,limited} = this.state;
     const url = config.baseUrl + "/u/" + encodeURI(userName);
+    const isAdded = this.state.rivalUids.indexOf(uid) > -1;
     if(processing){
       return (<Loader/>);
     }
@@ -247,14 +261,11 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
         </Container>
       )
     }
-    const themeColor = _currentTheme();
-    const avatarBgColor = themeColor === "light" ? "#efefef" : "rgba(255, 255, 255, 0.05)";
-    const avatarFontColor = themeColor === "light" ? "#222" : "#efefef";
     const buttons = [
       {icon:<ViewListIcon />,primary:"スコアを見る",secondary:res.displayName + "さんの登録スコアを表示します",onClick:()=>this.view(1)},
       {icon:<WbIncandescentIcon />,primary:"AAA達成表",secondary:"BPIに基づいたAAA達成難易度表を表示します",onClick:()=>this.view(2)},
-      {icon:<GroupAddIcon />,primary:"追加",secondary:res.displayName + "さんをライバルに追加します",onClick:()=>this.addUser()},
     ]
+    const themeColor = _currentTheme();
     return (
       <div>
         <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover"}}>
@@ -278,6 +289,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
                   最終更新:{res.timeStamp}
                 </Typography>
               </div>
+              {!counts.loading && (
               <Grid container style={{marginTop:"15px",textAlign:"center"}}>
                 <Grid item xs={6} lg={6}>
                   <Typography component="h6" variant="h6" color="textSecondary">
@@ -296,6 +308,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
                   </Typography>
                 </Grid>
               </Grid>
+              )}
               <Divider style={{margin:"15px 0"}}/>
           </div>
         </div>
@@ -304,22 +317,13 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
           <List>
             {buttons.map((item,i)=>{
               return (
-                <ListItem key={i} button onClick={item.onClick} disabled={add || processing}>
-                  <ListItemAvatar>
-                    <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
-                      {item.icon}
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary={item.primary} secondary={item.secondary} />
-                  <ListItemSecondaryAction onClick={item.onClick}>
-                    <IconButton edge="end">
-                      <ArrowForwardIosIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
+                <DefListCard key={i} onAction={item.onClick} disabled={add || processing} icon={item.icon}
+                  primaryText={item.primary} secondaryText={item.secondary}/>
               )
             })
           }
+            <DefListCard onAction={()=>this.addUser()} disabled={add || processing || isAdded} icon={<GroupAddIcon/>}
+              primaryText={"追加"} secondaryText={res.displayName + (isAdded ? "さんはすでにライバルです" : "さんをライバルに追加します")}/>
           </List>
         {(this.getIIDXId(res.profile) !== "" || this.getTwitterName(res.profile) !== "") && <Divider style={{margin:"5px 0 10px 0"}}/>}
         <List>
@@ -427,5 +431,33 @@ class NoUserError extends React.Component<{match:any,alternativeId:string},{}>{
         </Paper>
       </Container>
     );
+  }
+}
+
+class DefListCard extends React.Component<{
+  onAction:()=>any,
+  disabled:boolean,
+  primaryText:string,
+  secondaryText:string,
+  icon:JSX.Element,
+},{}>{
+
+  render(){
+    const {icon,onAction,disabled,primaryText,secondaryText} = this.props;
+    return (
+      <ListItem button onClick={onAction} disabled={disabled}>
+        <ListItemAvatar>
+          <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
+            {icon}
+          </Avatar>
+        </ListItemAvatar>
+        <ListItemText primary={primaryText} secondary={secondaryText} />
+        <ListItemSecondaryAction onClick={onAction}>
+          <IconButton edge="end">
+            <ArrowForwardIosIcon />
+          </IconButton>
+        </ListItemSecondaryAction>
+      </ListItem>
+    )
   }
 }

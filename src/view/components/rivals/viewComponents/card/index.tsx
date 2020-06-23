@@ -21,7 +21,6 @@ export default class UserCard extends React.Component<{
 
   render(){
     const {item,isAdded,processing} = this.props;
-    console.log(item);
     return (
       <Card style={{margin:"10px 0",background:"transparent"}} elevation={0}>
         <CardActionArea>

@@ -216,8 +216,8 @@ class Index extends React.Component<P&RouteComponentProps,{
               </Alert>
             }
             <Alert severity="info" style={{margin:"8px 0"}}>
-              クリップボードにテキストをコピー済みの場合、フォームへの貼付けを省略できるようになりました。<br/>
-              初回のみクリップボードへのアクセス権限を許可するダイアログが表示されますので許可してください。
+              <FormattedMessage id="Data.UpdateMes1"/><br/>
+                <FormattedMessage id="Data.UpdateMes2"/>
             </Alert>
         </Paper>
         <AdShort/>

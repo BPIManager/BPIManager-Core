@@ -175,13 +175,14 @@ export default class fbActions{
         });
       }else{
         const idMatcher = profile.match(/(\d{4}-\d{4}|\d{8})/);
-        const iidxId = idMatcher ? idMatcher[0].replace("-","") : "";
+        const iidxId = idMatcher ? idMatcher[0].replace(/\D/g,"") : "";
         await firestore.collection("users").doc(this.docName).set({
           timeStamp: timeFormatter(3),
           serverTime:this.time(),
           uid:this.docName,
           iidxId:iidxId,
           displayName:displayName,
+          displayNameSearch:displayName.toLowerCase(),
           profile:profile,
           photoURL:photoURL,
           arenaRank:arenaRank,
@@ -216,9 +217,15 @@ export default class fbActions{
 
   async searchAllRival(input:string):Promise<any[]>{
     try{
+      const zenToHan = (zen:string)=>{
+        return zen.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+          return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+        });
+      }
       if(!input || (input === "")){ return [];}
       const inputID = input.replace(/\D/g,"") || ""; // 数字のみ絞り出し、数字が無い場合（=空欄）は検索しない
-      const res = await firestore.collection("users").orderBy("displayName").startAt(input).endAt(input + "\uf8ff").get();
+      const inputHN = zenToHan(input).toLowerCase();
+      const res = await firestore.collection("users").orderBy("displayNameSearch").startAt(inputHN).endAt(inputHN + "\uf8ff").get();
       if(inputID){
         const res2 = await firestore.collection("users").orderBy("iidxId").startAt(inputID).endAt(inputID + "\uf8ff").get();
         if(!res.empty || !res2.empty){
@@ -458,7 +465,7 @@ export default class fbActions{
       console.log(e);
     }
   }
-/*
+  /*
   async dBatch(){
     try{
       let batch = firestore.batch();
@@ -469,11 +476,9 @@ export default class fbActions{
           batch = firestore.batch();
         }
         const data = doc.data();
-        if(data.profile){
-          const idMatcher = data.profile.match(/(\d{4}-\d{4}|\d{8})/);
-          const iidxId = idMatcher ? idMatcher[0].replace("-","") : "";
+        if(data.displayName){
           batch.update(doc.ref,{
-            iidxId:iidxId,
+            displayNameSearch:data.displayName.toLowerCase(),
           })
         }
       });
@@ -481,7 +486,6 @@ export default class fbActions{
     }catch(e){
       console.log(e);
     }
-
   }
-*/
+  */
 }

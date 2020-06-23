@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 import { FormattedMessage } from "react-intl";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import {Link as RefLink, ListItem, ListItemAvatar, Avatar, ListItemText, ListItemSecondaryAction, IconButton, List} from '@material-ui/core/';
-import { _lang, _currentVersion, _currentTheme } from '../../components/settings';
+import { _lang, _currentVersion } from '../../components/settings';
 import PhonelinkSetupIcon from '@material-ui/icons/PhonelinkSetup';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import LibraryMusicIcon from '@material-ui/icons/LibraryMusic';
@@ -14,6 +14,7 @@ import HelpIcon from '@material-ui/icons/Help';
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 import Alert from '@material-ui/lab/Alert/Alert';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import { avatarFontColor, avatarBgColor } from '../../components/common';
 
 class Index extends React.Component<RouteComponentProps,{}> {
 
@@ -120,9 +121,6 @@ class IfNotOnTheHomeScreen extends React.Component<{
         icon:<LibraryMusicIcon />
       }
     ]
-    const themeColor = _currentTheme();
-    const avatarBgColor = themeColor === "light" ? "#efefef" : "rgba(255, 255, 255, 0.05)";
-    const avatarFontColor = themeColor === "light" ? "#222" : "#efefef";
     return (
       <div className="heroLayout">
         <Container className="heroTitle">
@@ -184,7 +182,7 @@ class IfNotOnTheHomeScreen extends React.Component<{
               <QuestionAnswerIcon/>
             </Avatar>
           </ListItemAvatar>
-          <ListItemText primary={"アンケートにご協力ください！"} secondary={"機能改善のため簡単なアンケートにご協力お願いします。"} />
+          <ListItemText primary={<FormattedMessage id="Top.Survey"/>} secondary={<FormattedMessage id="Top.SurveyMes"/>} />
           <ListItemSecondaryAction>
             <IconButton edge="end">
               <ArrowForwardIosIcon />
