@@ -47,7 +47,7 @@ class RivalIndex extends React.Component<P,S> {
           <Tab label="一覧" />
           <Tab label="おすすめ" />
           <Tab label="逆ライバル" />
-          <Tab label="最近更新" />
+          <Tab label="探す" />
         </Tabs>
         {currentTab === 0 && <RivalLists showEachRival={this.props.showEachRival} changeTab={this.handleChange}/>}
         {/* 再レンダリングするため敢えてコピペしてる */}

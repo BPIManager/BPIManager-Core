@@ -4,10 +4,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import ListItemText from '@material-ui/core/ListItemText';
-import AddIcon from '@material-ui/icons/Add';
-import Fab from '@material-ui/core/Fab';
-import Button from '@material-ui/core/Button';
-import RivalAdd from './add';
 import ShowSnackBar from '../snackBar';
 import { rivalListsDB } from '../../../components/indexedDB';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -19,7 +15,6 @@ import timeFormatter,{timeCompare} from "../../../components/common/timeFormatte
 import Loader from '../common/loader';
 import { alternativeImg } from '../../../components/common';
 import Alert from '@material-ui/lab/Alert/Alert';
-import Grid from '@material-ui/core/Grid';
 import RecentActorsIcon from '@material-ui/icons/RecentActors';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import Divider from '@material-ui/core/Divider';
@@ -33,6 +28,8 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
 interface S {
   isAddOpen:boolean,
@@ -102,15 +99,10 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
     localStorage.setItem("lastBatchRivalUpdate",timeFormatter(3));
     return this.toggleSnack(`${updated}件更新しました`);
   }
-
-  handleToggleModal = ()=> {
-    this.loadRivals();
-    this.setState({isAddOpen:!this.state.isAddOpen});
-  }
   toggleSnack = (message:string = "ライバルを追加しました")=> this.setState({message:message,showSnackBar:!this.state.showSnackBar});
 
   render(){
-    const {isAddOpen,showSnackBar,rivals,isLoading,message,bulkUpdate,openMenu,} = this.state;
+    const {showSnackBar,rivals,isLoading,message,bulkUpdate,openMenu} = this.state;
     if(isLoading){
       return (<Loader/>);
     }
@@ -118,37 +110,32 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
       <div>
         <div style={{display:"flex",justifyContent:"flex-end"}}>
           <div style={{margin:"10px 6px 0"}}>
-            <IconButton
-              aria-haspopup="true"
-              onClick={()=>this.toggleMenu(true)}>
-                <SettingsIcon />
-            </IconButton>
-              <SwipeableDrawer
-                anchor="bottom"
-                open={openMenu}
-                onClose={()=>this.toggleMenu(false)}
-                onOpen={()=>this.toggleMenu(true)}
-                >
-                  <List
-                    subheader={
-                      <ListSubheader component="div" id="nested-list-subheader">
-                        ライバル管理
-                      </ListSubheader>
-                  }>
-                    <ListItem button onClick={()=>this.props.history.push("/sync?init=1")}>
-                      <ListItemIcon><CloudUploadIcon/></ListItemIcon>
-                      <ListItemText primary={"ライバルリストを同期"} secondary={"現在登録済みのライバルをアカウントに同期します。"}/>
-                    </ListItem>
-                    <ListItem button onClick={this.update}>
-                      <ListItemIcon><SyncIcon/></ListItemIcon>
-                      <ListItemText primary={"ライバルスコアの一括更新"} secondary={"現在登録済みのライバルの登録スコアを一括で最新状態にアップデートします。"}/>
-                    </ListItem>
-                    <ListItem button onClick={()=>this.props.history.push("/sync?init=2")}>
-                      <ListItemIcon><NotificationsActiveIcon/></ListItemIcon>
-                      <ListItemText primary={"プッシュ通知管理"} secondary={"指定したライバルのスコア更新を自動でお知らせします"}/>
-                    </ListItem>
-                  </List>
-              </SwipeableDrawer>
+            <SwipeableDrawer
+              anchor="bottom"
+              open={openMenu}
+              onClose={()=>this.toggleMenu(false)}
+              onOpen={()=>this.toggleMenu(true)}
+            >
+              <List
+                subheader={
+                  <ListSubheader component="div">
+                    ライバル管理
+                  </ListSubheader>
+              }>
+                <ListItem button onClick={()=>this.props.history.push("/sync?init=1")}>
+                  <ListItemIcon><CloudUploadIcon/></ListItemIcon>
+                  <ListItemText primary={"ライバルリストを同期"} secondary={"現在登録済みのライバルをアカウントに同期します。"}/>
+                </ListItem>
+                <ListItem button onClick={this.update}>
+                  <ListItemIcon><SyncIcon/></ListItemIcon>
+                  <ListItemText primary={"ライバルスコアの一括更新"} secondary={"現在登録済みのライバルの登録スコアを一括で最新状態にアップデートします。"}/>
+                </ListItem>
+                <ListItem button onClick={()=>this.props.history.push("/sync?init=2")}>
+                  <ListItemIcon><NotificationsActiveIcon/></ListItemIcon>
+                  <ListItemText primary={"プッシュ通知管理"} secondary={"指定したライバルのスコア更新を自動でお知らせします"}/>
+                </ListItem>
+              </List>
+            </SwipeableDrawer>
           </div>
           <Backdrop open={bulkUpdate}>
             <CircularProgress color="inherit" />
@@ -159,32 +146,47 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
             まだライバルがいません。
           </Alert>
         )}
-        <List>
+        <List
+          subheader={
+            <ListSubheader component="div" disableSticky>
+              ライバル一覧
+              <IconButton edge="end" style={{float:"right"}}
+                aria-haspopup="true"
+                onClick={()=>this.toggleMenu(true)}>
+                  <SettingsIcon />
+              </IconButton>
+            </ListSubheader>
+          }>
           {rivals.sort((a,b)=>moment(b.updatedAt).diff(a.updatedAt)).map((item,i)=>(
             <div key={item.uid} onClick={()=>this.props.showEachRival(item)}>
               <RivalComponent data={item}/>
-              {i !== rivals.length - 1 && <Divider variant="inset" component="li" />}
+              {i !== rivals.length - 1 && <Divider variant="middle" component="li" />}
             </div>)
           )}
         </List>
-        <Grid container spacing={1} style={{marginTop:"4px",marginBottom:"4px"}}>
-          <Grid item xs={12} sm={6} style={{paddingTop:"8px"}}>
-            <Button color="secondary" variant="outlined" fullWidth onClick={()=>this.props.changeTab(null,1)}>
-              <PersonAddIcon/>
-              おすすめユーザーを見る
-            </Button>
-          </Grid>
-          <Grid item xs={12} sm={6} style={{paddingTop:"8px"}}>
-            <Button color="secondary" variant="outlined" fullWidth onClick={()=>this.props.changeTab(null,3)}>
-              <RecentActorsIcon/>
-              最近更新したユーザー
-            </Button>
-          </Grid>
-        </Grid>
-        <Fab onClick={this.handleToggleModal} color="secondary" aria-label="add" style={{position:"fixed","bottom":"5%","right":"3%"}}>
-          <AddIcon />
-        </Fab>
-        {isAddOpen && <RivalAdd loadRivals={this.loadRivals} toggleSnack={this.toggleSnack} handleToggle={this.handleToggleModal}/>}
+        <List
+          subheader={
+            <ListSubheader component="div" disableSticky>
+              ライバルを探す
+            </ListSubheader>
+          }>
+          {[
+            {name:"おすすめユーザー",func:()=>this.props.changeTab(null,1),desc:"総合BPIが近いユーザーを表示します",icon:<PersonAddIcon/>},
+            {name:"探す",func:()=>this.props.changeTab(null,3),desc:"様々な条件からユーザーを検索します",icon:<RecentActorsIcon/>}
+          ].map((item,i)=>{
+            return (
+              <ListItem key={i} button onClick={item.func}>
+                <ListItemText primary={item.name} secondary={item.desc} />
+                <ListItemSecondaryAction onClick={item.func}>
+                  <IconButton edge="end">
+                    <ArrowForwardIosIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            )
+          })
+        }
+        </List>
         <ShowSnackBar message={message} variant={message === updateMinuteError ? "warning" : "success"}
             handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>
       </div>

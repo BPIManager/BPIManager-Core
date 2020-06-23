@@ -91,8 +91,9 @@ class Index extends React.Component<P&RouteComponentProps,{
       let errors = [];
       const isSingle:number = _isSingle();
       const currentStore:string = _currentStore();
-      const isJSON = this.isJSON(this.state.raw);
-      const executor:importJSON|importCSV = isJSON ? new importJSON(this.state.raw,isSingle,currentStore) : new importCSV(this.state.raw,isSingle,currentStore);
+      const text = this.state.raw || await navigator.clipboard.readText();
+      const isJSON = this.isJSON(text);
+      const executor:importJSON|importCSV = isJSON ? new importJSON(text,isSingle,currentStore) : new importCSV(text,isSingle,currentStore);
       const calc:bpiCalculator = new bpiCalculator();
       const exec:number = await executor.execute();
       const scores = [];
@@ -214,6 +215,10 @@ class Index extends React.Component<P&RouteComponentProps,{
                 {errors.map(item=><span key={item}>{item}<br/></span>)}
               </Alert>
             }
+            <Alert severity="info" style={{margin:"8px 0"}}>
+              クリップボードにテキストをコピー済みの場合、フォームへの貼付けを省略できるようになりました。<br/>
+              初回のみクリップボードへのアクセス権限を許可するダイアログが表示されますので許可してください。
+            </Alert>
         </Paper>
         <AdShort/>
         <Paper style={{padding:"15px",margin:"10px 0 0 0"}}>
@@ -240,12 +245,12 @@ class Index extends React.Component<P&RouteComponentProps,{
             <p>
               <b>・<FormattedMessage id="Data.edit"/></b><br/>
               <FormattedMessage id="Data.howToEdit"/>
-              <ol>
-                <li><FormattedMessage id="Data.howToEdit1"/></li>
-                <li><FormattedMessage id="Data.howToEdit2"/></li>
-                <li><FormattedMessage id="Data.howToEdit3"/></li>
-              </ol>
             </p>
+            <ol>
+              <li><FormattedMessage id="Data.howToEdit1"/></li>
+              <li><FormattedMessage id="Data.howToEdit2"/></li>
+              <li><FormattedMessage id="Data.howToEdit3"/></li>
+            </ol>
         </Paper>
       </Container>
     );
@@ -289,7 +294,7 @@ class Navigation extends React.Component<{},{currentTab:number}>{
             <ol>
               <li>上記「CSVダウンロードページへ」へアクセスします。</li>
               <li>テキストボックスにCSVデータが表示されますので、それをコピーします。</li>
-              <li>上記テキストボックスにコピーしたデータを貼り付けます。</li>
+              <li>(省略可能)上記テキストボックスにコピーしたデータを貼り付けます。</li>
               <li>「取り込み実行」ボタンをクリックします。</li>
               <li>以上！</li>
             </ol>
@@ -315,7 +320,7 @@ class Navigation extends React.Component<{},{currentTab:number}>{
               <img src="https://files.poyashi.me/bpim/sample_completed.jpg" alt="完了画面" style={{display:"block",margin:"10px auto",width:"350px",maxWidth:"100%",border:"1px solid #ccc"}}/>
               4.処理が完了したら、テキストボックスが画面に表示されます(上画像参照)ので、その中のテキストをコピーします。
             </p>
-            <p>5.上記テキストボックスにコピーしたデータを貼り付けます。</p>
+            <p>5.(省略可能)上記テキストボックスにコピーしたデータを貼り付けます。</p>
             <p>6.「取り込み実行」ボタンをクリックします。</p>
             <p>7.以上！</p>
             <p>注意事項<br/>

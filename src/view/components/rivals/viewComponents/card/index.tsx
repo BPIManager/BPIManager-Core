@@ -8,7 +8,9 @@ import Avatar from "@material-ui/core/Avatar";
 import Chip from "@material-ui/core/Chip";
 import AddIcon from "@material-ui/icons/Add";
 import CheckIcon from "@material-ui/icons/Check";
-
+import moment from "moment";
+import 'moment/locale/ja';
+moment.locale("ja");
 export default class UserCard extends React.Component<{
   item:any,
   open:(q:string)=>void,
@@ -19,8 +21,9 @@ export default class UserCard extends React.Component<{
 
   render(){
     const {item,isAdded,processing} = this.props;
+    console.log(item);
     return (
-      <Card style={{margin:"10px 0",background:"transparent"}} variant="outlined">
+      <Card style={{margin:"10px 0",background:"transparent"}} elevation={0}>
         <CardActionArea>
         <CardHeader
           avatar={
@@ -39,7 +42,7 @@ export default class UserCard extends React.Component<{
                 {!isAdded ? "追加" : "追加済み"}
             </Button>
           }
-          title={<div onClick={()=>this.props.open(item.displayName)}>{item.displayName}</div>}
+          title={<div onClick={()=>this.props.open(item.displayName)}>{item.displayName}&nbsp;<small>{moment(item.timeStamp).fromNow()}</small></div>}
           subheader={<div onClick={()=>this.props.open(item.displayName)}>
             <span>
               <Chip size="small" style={{backgroundColor:arenaRankColor(item.arenaRank),color:"#fff",margin:"5px 0"}} label={item.arenaRank || "-"} />

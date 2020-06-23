@@ -433,14 +433,6 @@ th.MuiTableCell-root.MuiTableCell-head:first-child{
   text-decoration: none !important;
 }
 
-#__light .indexGridsContainer{
-  background:#f5f5f5;
-}
-
-#__dark .indexGridsContainer{
-  background:#333;
-}
-
 .MuiBackdrop-root{
   z-index:9999 !important;
 }

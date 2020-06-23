@@ -4,12 +4,9 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { FormattedMessage } from "react-intl";
-import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import {Link as RefLink, ListItem, ListItemAvatar, Avatar, ListItemText, ListItemSecondaryAction, IconButton, List} from '@material-ui/core/';
 import { _lang, _currentVersion, _currentTheme } from '../../components/settings';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import LanguageIcon from '@material-ui/icons/Language';
-import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import PhonelinkSetupIcon from '@material-ui/icons/PhonelinkSetup';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import LibraryMusicIcon from '@material-ui/icons/LibraryMusic';
@@ -163,66 +160,8 @@ class IfNotOnTheHomeScreen extends React.Component<{
             </Alert>
           )}
         </Container>
-        {show && <div>
-        <Container fixed>
-          <AddToHomeScreenTicker/>
-          <div style={{marginTop:"25px"}}>
-            <Grid container justify="space-between">
-              <Grid xs={12} sm={4} item className="indexGridsContainer">
-                <div className="indexGrids">
-                  <GetAppIcon className="indexGridsIcon"/>
-                  <Typography component="h5" variant="h5" color="textPrimary" paragraph>
-                    簡単操作
-                  </Typography>
-                </div>
-                <Typography component="p" variant="body1" color="textPrimary" paragraph>
-                  データのインポートは一瞬で完了します。<br/>
-                </Typography>
-                <Link to="/data">
-                  <Button variant="outlined" color="secondary">
-                    インポート
-                  </Button>
-                </Link>
-              </Grid>
-              <Grid xs={12} sm={4} item className="indexGridsContainer">
-                <div className="indexGrids">
-                  <LanguageIcon className="indexGridsIcon"/>
-                  <Typography component="h5" variant="h5" color="textPrimary" paragraph>
-                    充実の機能
-                  </Typography>
-                </div>
-                <Typography component="p" variant="body1" color="textPrimary" paragraph>
-                  「ライバル」機能など、モチベーションを高める機能を多数搭載。<br/>
-                  昨日までの自分と、新たなライバルに打ち勝とう。
-                </Typography>
-                <Link to="/rivals">
-                  <Button variant="outlined" color="secondary">
-                    ライバル
-                  </Button>
-                </Link>
-              </Grid>
-              <Grid xs={12} sm={4} item className="indexGridsContainer">
-                <div className="indexGrids">
-                  <VerifiedUserIcon className="indexGridsIcon"/>
-                  <Typography component="h5" variant="h5" color="textPrimary" paragraph>
-                    データ保護
-                  </Typography>
-                </div>
-                <Typography component="p" variant="body1" color="textPrimary" paragraph>
-                  お持ちのSNSアカウントと連携して、スコアを保管しましょう。<br/>
-                  たとえ公式サイトがクローズしても、いつでもスコアを確認できます。
-                </Typography>
-                <Link to="/sync">
-                  <Button variant="outlined" color="secondary">
-                    Sync
-                  </Button>
-                </Link>
-              </Grid>
-            </Grid>
-          </div>
-        </Container>
-      </div>}
-      <List>
+        {show && <AddToHomeScreenTicker/>}
+        <List>
         {navBar.map((item,i)=>(
           <ListItem button key={i} onClick={()=>this.props.history.push(item.to)}>
             <ListItemAvatar>
@@ -252,24 +191,24 @@ class IfNotOnTheHomeScreen extends React.Component<{
             </IconButton>
           </ListItemSecondaryAction>
         </ListItem>
-      </List>
-      <Container>
-        <div style={{marginTop:"20px"}}>
-          <Grid container justify="center">
-            <Grid item>
-              <Typography align="center" color="textSecondary" paragraph variant="caption">
-                <FormattedMessage id="Index.notes1"/>
-              </Typography>
-              <Typography align="center" color="textSecondary" paragraph variant="caption">
-                <FormattedMessage id="Index.notes2"/>
-              </Typography>
-              <Typography align="center" color="textSecondary" paragraph variant="caption">
-                English ver. is now available! Go to settings and there you can change the language used in this app.
-              </Typography>
+        </List>
+        <Container>
+          <div style={{marginTop:"20px"}}>
+            <Grid container justify="center">
+              <Grid item>
+                <Typography align="center" color="textSecondary" paragraph variant="caption">
+                  <FormattedMessage id="Index.notes1"/>
+                </Typography>
+                <Typography align="center" color="textSecondary" paragraph variant="caption">
+                  <FormattedMessage id="Index.notes2"/>
+                </Typography>
+                <Typography align="center" color="textSecondary" paragraph variant="caption">
+                  English ver. is now available! Go to settings and there you can change the language used in this app.
+                </Typography>
+              </Grid>
             </Grid>
-          </Grid>
-        </div>
-      </Container>
+          </div>
+        </Container>
       </div>
     )
   }

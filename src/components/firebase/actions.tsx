@@ -214,19 +214,21 @@ export default class fbActions{
     }
   }
 
-  async searchAllRival(input:string,saving:boolean = false){
+  async searchAllRival(input:string):Promise<any[]>{
     try{
-      if(!input || (input === "" && saving !== true)){ return null;}
+      if(!input || (input === "")){ return [];}
+      const inputID = input.replace(/\D/g,"") || ""; // 数字のみ絞り出し、数字が無い場合（=空欄）は検索しない
       const res = await firestore.collection("users").orderBy("displayName").startAt(input).endAt(input + "\uf8ff").get();
-      const res2 = await firestore.collection("users").orderBy("iidxId").startAt(input).endAt(input + "\uf8ff").get();
-      if(!res.empty || !res2.empty){
-        return res.docs.concat(res2.docs);
-      }else{
-        return null;
+      if(inputID){
+        const res2 = await firestore.collection("users").orderBy("iidxId").startAt(inputID).endAt(inputID + "\uf8ff").get();
+        if(!res.empty || !res2.empty){
+          return res.docs.concat(res2.docs);
+        }
       }
+      return res.docs;
     }catch(e){
       console.log(e);
-      return null;
+      return [];
     }
   }
 
