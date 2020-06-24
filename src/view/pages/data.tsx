@@ -9,7 +9,6 @@ import importCSV from "../../components/import/csv";
 import bpiCalculator from "../../components/bpi";
 import { _currentStore, _isSingle, _currentStoreWithFullName } from '../../components/settings';
 import { _autoSync } from '../../components/settings';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Link from '@material-ui/core/Link';
 import {Link as RLink, withRouter, RouteComponentProps} from "react-router-dom";
 import moment from "moment";
@@ -26,6 +25,7 @@ import AlertTitle from '@material-ui/lab/AlertTitle';
 import { config } from '../../config';
 import timeFormatter from '../../components/common/timeFormatter';
 import {AdShort} from "../components/slot";
+import Loader from '../components/common/loader';
 
 interface P{
   global:any,
@@ -183,7 +183,7 @@ class Index extends React.Component<P&RouteComponentProps,{
                   (->{_currentStoreWithFullName() }&nbsp;/&nbsp;
                   {_isSingle() === 1 ? "SP" : "DP"})
               </Button>
-              {isSaving && <CircularProgress size={24} style={{color:"#777",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
+              {isSaving && <Loader isInner/>}
             </div>
             {(errors.length > 0 && stateText !== "Data.Failed") &&
               <Alert severity="success" style={{margin:"10px 0"}}>

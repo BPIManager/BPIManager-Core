@@ -6,7 +6,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import CircularProgress from "@material-ui/core/CircularProgress";
 import { FormattedMessage } from "react-intl";
 import {scoreHistoryDB} from "../../../components/indexedDB";
 import TableBody from "@material-ui/core/TableBody";
@@ -15,6 +14,7 @@ import TableHead from "@material-ui/core/TableHead";
 import Table from "@material-ui/core/Table";
 import TableRow from "@material-ui/core/TableRow";
 import timeFormatter from "../../../components/common/timeFormatter";
+import Loader from "../common/loader";
 
 interface P{
   song:songData|null,
@@ -87,7 +87,7 @@ class SongDiffs extends React.Component<P,S> {
               </Select>
           </FormControl>
           {
-            isLoading && <div style={{display:"flex",justifyContent:"center",marginTop:"30px"}}><CircularProgress/></div>
+            isLoading && <Loader/>
           }
           {
             !isLoading && <DiffsTable scoreTable={dataset} type={current}/>

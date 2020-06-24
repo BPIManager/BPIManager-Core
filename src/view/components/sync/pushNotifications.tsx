@@ -17,9 +17,9 @@ import Paper from '@material-ui/core/Paper';
 import Switch from '@material-ui/core/Switch';
 import { messanger } from '../../../components/firebase/message';
 import Typography from '@material-ui/core/Typography';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import firebase from 'firebase/app';
 import 'firebase/messaging';
+import Loader from '../common/loader';
 
 interface P {
 }
@@ -139,7 +139,7 @@ class PushSettings extends React.Component<P,S> {
                 スコア更新を通知
               </ListSubheader>
             }>
-            {processing && <div style={{display:"flex",justifyContent:"center"}}><CircularProgress color="secondary" style={{margin:"10px auto"}}/></div>}
+            {processing && <Loader/>}
             {(syncData.length === 0 && !processing) && <div>
               <Typography component="p" variant="caption" style={{margin:"10px 0"}}>
                 通知を許可できるユーザーがいません。<br/>

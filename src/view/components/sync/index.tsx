@@ -32,7 +32,7 @@ class SyncIndex extends React.Component<{},S> {
     const {isLoading,userData} = this.state;
 
     if(isLoading){
-      return (<Loader/>);
+      return (<Loader hasMargin/>);
     }
     return (
       <Container className="commonLayout" fixed>

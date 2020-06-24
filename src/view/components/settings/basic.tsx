@@ -3,7 +3,6 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import Paper from '@material-ui/core/Paper';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
@@ -266,7 +265,7 @@ class Settings extends React.Component<P,S> {
                     startIcon={<UpdateIcon />}>
                     <FormattedMessage id="Settings.UpdateResourcePacks"/>
                   </Button>
-                  {disableUpdateBtn && <CircularProgress size={24} style={{color:"#777",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
+                  {disableUpdateBtn && <Loader/>}
                 </div>
               </FormControl>
               <Typography variant="caption" display="block">

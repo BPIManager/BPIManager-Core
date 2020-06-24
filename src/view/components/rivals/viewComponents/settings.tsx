@@ -4,7 +4,6 @@ import Paper from '@material-ui/core/Paper';
 import FormControl from '@material-ui/core/FormControl';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import UpdateIcon from '@material-ui/icons/Update';
 import fbActions from '../../../../components/firebase/actions';
 import { _isSingle, _currentStore } from '../../../../components/settings';
@@ -13,6 +12,7 @@ import Divider from '@material-ui/core/Divider';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import { DBRivalStoreData } from '../../../../types/data';
 import { updateRivalScore } from "../../../../components/rivals";
+import Loader from '../../common/loader';
 
 interface S {
   isLoading1:boolean,
@@ -93,7 +93,7 @@ class RivalSettings extends React.Component<P,S> {
               startIcon={<UpdateIcon />}>
               更新
             </Button>
-            {isLoading1 && <CircularProgress size={24} style={{color:"#777",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
+            {isLoading1 && <Loader/>}
           </div>
           <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
             {updateErrorMessage && <span>{updateErrorMessage}<br/></span>}
@@ -115,7 +115,7 @@ class RivalSettings extends React.Component<P,S> {
               startIcon={<DeleteForeverIcon />}>
               削除
             </Button>
-            {isLoading2 && <CircularProgress size={24} style={{color:"#777",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
+            {isLoading2 && <Loader/>}
           </div>
         </FormControl>
       </Paper>

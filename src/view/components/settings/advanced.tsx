@@ -3,7 +3,6 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import Paper from '@material-ui/core/Paper';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
@@ -238,13 +237,13 @@ class Settings extends React.Component<P,S> {
               現在のバージョン({_currentStore()}/{_isSingle() ? "SP" : "DP"})に登録されたスコアデータおよびメタデータをCSVで書き出します。
             </Typography>
             <AlertDialog isDialogOpen={isDialogOpen} exec={this.deleteDef} close={this.toggleDialog} currentResetStore={currentResetStore}/>
-            {disableDeleteBtn && <CircularProgress size={24} style={{color:"#777",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
+            {disableDeleteBtn && <Loader/>}
           </div>
         </Paper>
         {recalculating &&
           <Backdrop open style={{flexDirection:"column"}}>
             <div>
-              <CircularProgress color="secondary"/>
+              <Loader/>
             </div>
             <div>
               <p style={{textAlign:"center"}}>再計算中です</p>

@@ -25,7 +25,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Paper from '@material-ui/core/Paper';
 import ShowSnackBar from '../snackBar';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import Loader from '../common/loader';
 
 interface P {
 }
@@ -257,7 +257,7 @@ class SyncRivalScreen extends React.Component<P,S> {
             ))}
           </List>
 
-          {processing && <div style={{display:"flex",justifyContent:"center"}}><CircularProgress color="secondary" style={{margin:"10px auto"}}/></div>}
+          {processing && <Loader/>}
           <p style={{color:"#ff0000",textAlign:"center"}}>{errorMessage}</p>
         </Paper>
 

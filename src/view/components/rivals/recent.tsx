@@ -237,7 +237,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
           {i !== res.length - 1 && <Divider variant="middle" component="div" />}
         </div>
       )})}
-      {isLoading && <Loader/>}
+      {isLoading && <Loader text="検索中です..."/>}
       {(mode === 2 && searchInput === "") &&
       <Grid container>
         <Grid item xs={12}>

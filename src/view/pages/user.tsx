@@ -289,6 +289,9 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
                   最終更新:{res.timeStamp}
                 </Typography>
               </div>
+              {counts.loading && (
+              <Loader/>
+              )}
               {!counts.loading && (
               <Grid container style={{marginTop:"15px",textAlign:"center"}}>
                 <Grid item xs={6} lg={6}>

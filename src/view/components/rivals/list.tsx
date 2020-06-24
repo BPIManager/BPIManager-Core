@@ -6,17 +6,14 @@ import Avatar from '@material-ui/core/Avatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import ShowSnackBar from '../snackBar';
 import { rivalListsDB } from '../../../components/indexedDB';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { DBRivalStoreData } from '../../../types/data';
 import { updateRivalScore } from "../../../components/rivals";
 import Backdrop from "@material-ui/core/Backdrop";
 import moment from "moment";
 import timeFormatter,{timeCompare} from "../../../components/common/timeFormatter";
 import Loader from '../common/loader';
-import { alternativeImg } from '../../../components/common';
+import { alternativeImg, avatarBgColor, avatarFontColor } from '../../../components/common';
 import Alert from '@material-ui/lab/Alert/Alert';
-import RecentActorsIcon from '@material-ui/icons/RecentActors';
-import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import ListSubheader from '@material-ui/core/ListSubheader';
@@ -30,7 +27,8 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import SearchIcon from '@material-ui/icons/Search';
 interface S {
   isAddOpen:boolean,
   showSnackBar:boolean,
@@ -138,7 +136,7 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
             </SwipeableDrawer>
           </div>
           <Backdrop open={bulkUpdate}>
-            <CircularProgress color="inherit" />
+            <Loader/>
           </Backdrop>
         </div>
         <List
@@ -171,11 +169,16 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
             </ListSubheader>
           }>
           {[
-            {name:"おすすめユーザー",func:()=>this.props.changeTab(null,1),desc:"総合BPIが近いユーザーを表示します",icon:<PersonAddIcon/>},
-            {name:"探す",func:()=>this.props.changeTab(null,3),desc:"様々な条件からユーザーを検索します",icon:<RecentActorsIcon/>}
+            {name:"おすすめユーザー",func:()=>this.props.changeTab(null,1),desc:"総合BPIが近いユーザーを表示します",icon:<ThumbUpIcon/>},
+            {name:"探す",func:()=>this.props.changeTab(null,3),desc:"様々な条件からユーザーを検索します",icon:<SearchIcon/>}
           ].map((item,i)=>{
             return (
               <ListItem key={i} button onClick={item.func}>
+                <ListItemAvatar>
+                  <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
+                    {item.icon}
+                  </Avatar>
+                </ListItemAvatar>
                 <ListItemText primary={item.name} secondary={item.desc} />
                 <ListItemSecondaryAction onClick={item.func}>
                   <IconButton edge="end">

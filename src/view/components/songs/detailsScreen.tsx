@@ -22,7 +22,7 @@ import ThumbsUpDownIcon from '@material-ui/icons/ThumbsUpDown';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import {scoresDB,scoreHistoryDB, songsDB} from "../../../components/indexedDB";
 import ShowSnackBar from "../snackBar";
-import {Button, CircularProgress, Tooltip, Fab, List, ListItem, SwipeableDrawer, ListItemIcon, ListItemText, ListSubheader, Backdrop} from '@material-ui/core';
+import {Button, Tooltip, Fab, List, ListItem, SwipeableDrawer, ListItemIcon, ListItemText, ListSubheader, Backdrop} from '@material-ui/core';
 import BPIChart from "./bpiChart";
 import SongDetails from "./songDetails";
 import SongDiffs from "./songDiffs";
@@ -40,6 +40,7 @@ import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import Filter1Icon from '@material-ui/icons/Filter1';
 import fbActions from "../../../components/firebase/actions";
 import { config } from "../../../config";
+import Loader from "../common/loader";
 
 interface P{
   isOpen:boolean,
@@ -356,14 +357,14 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
                 <Button variant="contained" color="secondary" onClick={this.saveAndClose} disabled={isSaving}>
                   <FormattedMessage id="Details.SaveButton"/>
                 </Button>
-                {isSaving && <CircularProgress size={24} style={{color:"#ccc",position:"absolute",top:"50%",left:"50%",marginTop:-12,marginLeft:-12}} />}
+                {isSaving && <Loader isInner/>}
               </div>
             }
           </Toolbar>
         </AppBar>
         {isPreparing &&
           <Backdrop open={true} className="absolutelyTop">
-            <CircularProgress color="primary" />
+            <Loader/>
           </Backdrop>
         }
         <Toolbar/>

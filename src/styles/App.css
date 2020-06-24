@@ -169,7 +169,15 @@ legend.MuiFormLabel-root{
   display:flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   height:30vh;
+}
+.loaderCenteredOnly{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin:10px 0;
 }
 
 @media screen and (min-width:992px){
