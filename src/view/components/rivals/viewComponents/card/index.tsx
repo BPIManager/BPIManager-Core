@@ -16,11 +16,22 @@ export default class UserCard extends React.Component<{
   open:(q:string)=>void,
   processing:boolean,
   isAdded:boolean,
+  myId?:string,
   addUser:(q:any)=>void
 },{}>{
 
   render(){
-    const {item,isAdded,processing} = this.props;
+    const {item,isAdded,processing,myId} = this.props;
+    const normalButton = (
+      <Button component="a"
+      disabled={processing || isAdded}
+      color="secondary" variant="outlined"
+      startIcon={!isAdded ? <AddIcon/> : <CheckIcon/>}
+      onClick={()=>!isAdded && this.props.addUser(item)}>
+        {!isAdded ? "追加" : "追加済み"}
+      </Button>
+    );
+    const selfButton = (null);
     return (
       <Card style={{margin:"10px 0",background:"transparent"}} elevation={0}>
         <CardActionArea>
@@ -32,15 +43,7 @@ export default class UserCard extends React.Component<{
                 onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(item.displayName)}/>
             </Avatar>
           }
-          action={
-            <Button component="a"
-              disabled={processing || isAdded}
-              color="secondary" variant="outlined"
-              startIcon={!isAdded ? <AddIcon/> : <CheckIcon/>}
-              onClick={()=>!isAdded && this.props.addUser(item)}>
-                {!isAdded ? "追加" : "追加済み"}
-            </Button>
-          }
+          action={ myId === item.uid ? selfButton : normalButton}
           title={<div onClick={()=>this.props.open(item.displayName)}>{item.displayName}&nbsp;<small>{moment(item.timeStamp).fromNow()}</small></div>}
           subheader={<div onClick={()=>this.props.open(item.displayName)}>
             <span>

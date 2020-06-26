@@ -301,10 +301,9 @@ export default class fbActions{
     try{
       const res = await query.get();
       if(!res.empty && res.size >= 1){
-        const uid = this.authInfo();
         const d = res.docs.reduce((groups:rivalStoreData[],item:firebase.firestore.QueryDocumentSnapshot)=>{
           const body = item.data();
-          if(body.displayName && body.displayName !== "" && body.serverTime && (uid && body.uid !== uid.uid)){
+          if(body.displayName && body.displayName !== "" && body.serverTime){
             groups.push(body as rivalStoreData);
           }
           return groups;

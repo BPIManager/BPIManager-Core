@@ -47,7 +47,8 @@ interface S {
     followers:number,
     followings:number,
   },
-  limited:boolean
+  limited:boolean,
+  myId:string,
 }
 
 class User extends React.Component<{intl:any,currentUserName?:string,limited?:boolean,updateName?:(name:string)=>void}&RouteComponentProps,S> {
@@ -82,7 +83,8 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
         followers:0,
         followings:0,
       },
-      limited:props.limited || false
+      limited:props.limited || false,
+      myId:""
     }
   }
 
@@ -108,7 +110,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
           const t = await this.fbA.setDocName(user.uid).load();
           this.setState({
             myDisplayName:(t && t.displayName) ? t.displayName : "",
-            rivalUids:await this.rivalListsDB.getAllRivalUid()
+            myId:user ? user.uid : ""
           });
         }
       });
@@ -118,7 +120,12 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
   }
 
   backToMainPage = ()=> this.setState({currentView:0});
-  toggleSnack = (message:string = "ライバルを追加しました")=> this.setState({add:false,message:message,showSnackBar:!this.state.showSnackBar});
+  toggleSnack = async(message:string = "ライバルを追加しました")=> this.setState({
+    add:false,
+    message:message,
+    showSnackBar:!this.state.showSnackBar,
+    rivalUids:await this.rivalListsDB.getAllRivalUid()
+  });
 
   search = async(forceUserName?:string):Promise<void>=>{
     let {userName} = this.state;
@@ -146,7 +153,8 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
       return this.setState({
         userName:userName,res:res,uid:res.uid,
         rivalData:await rivalScores(res),
-        totalBPI:totalBPI
+        totalBPI:totalBPI,
+        rivalUids:await this.rivalListsDB.getAllRivalUid(),
       });
     }else{
       return this.setState({userName:"", res:null,uid:""});
@@ -213,7 +221,10 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     },data.scores);
     await this.fbA.syncUploadOne(res.uid,this.state.myDisplayName);
     if(!putResult){
-      return this.setState({message:"追加に失敗しました",add:false});
+      return this.setState({
+        message:"追加に失敗しました",
+        add:false
+      });
     }
     this.toggleSnack();
     return;
@@ -236,7 +247,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
   }
 
   render(){
-    const {processing,add,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI,loadingRecommended,recommendUsers,counts,limited} = this.state;
+    const {processing,add,myId,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI,loadingRecommended,recommendUsers,counts,limited} = this.state;
     const url = config.baseUrl + "/u/" + encodeURI(userName);
     const isAdded = this.state.rivalUids.indexOf(uid) > -1;
     if(processing){
@@ -290,7 +301,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
                 </Typography>
               </div>
               {counts.loading && (
-              <Loader/>
+              <Loader text="ライバル情報を読み込み中"/>
               )}
               {!counts.loading && (
               <Grid container style={{marginTop:"15px",textAlign:"center"}}>
@@ -325,8 +336,8 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
               )
             })
           }
-            <DefListCard onAction={()=>this.addUser()} disabled={add || processing || isAdded} icon={<GroupAddIcon/>}
-              primaryText={"追加"} secondaryText={res.displayName + (isAdded ? "さんはすでにライバルです" : "さんをライバルに追加します")}/>
+            <DefListCard onAction={()=>this.addUser()} disabled={myId === res.uid || add || processing || isAdded} icon={<GroupAddIcon/>}
+              primaryText={"追加"} secondaryText={myId === res.uid ? ("自分を追加することはできません") : res.displayName + (isAdded ? "さんはすでにライバルです" : "さんをライバルに追加します")}/>
           </List>
         {(this.getIIDXId(res.profile) !== "" || this.getTwitterName(res.profile) !== "") && <Divider style={{margin:"5px 0 10px 0"}}/>}
         <List>

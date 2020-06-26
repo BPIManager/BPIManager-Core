@@ -141,7 +141,7 @@ class IfNotOnTheHomeScreen extends React.Component<{
                   <span>Check out <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink> for update information.</span>
                   }
                   {_lang() === "ja" &&
-                    <span>最新情報を<RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>にて発信中</span>
+                    <span>最新情報を<RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>にて発信中<br/>(またアカウントロックされました)</span>
                   }<br/>
                 </Typography>
               </div>
@@ -158,7 +158,11 @@ class IfNotOnTheHomeScreen extends React.Component<{
             </Alert>
           )}
         </Container>
+        <Grid container>
+        <Grid item xs={12} sm={12} md={6}>
         {show && <AddToHomeScreenTicker/>}
+        </Grid>
+        <Grid item xs={12} sm={12} md={6}>
         <List>
         {navBar.map((item,i)=>(
           <ListItem button key={i} onClick={()=>this.props.history.push(item.to)}>
@@ -190,17 +194,15 @@ class IfNotOnTheHomeScreen extends React.Component<{
           </ListItemSecondaryAction>
         </ListItem>
         </List>
+        </Grid>
+        </Grid>
         <Container>
           <div style={{marginTop:"20px"}}>
             <Grid container justify="center">
               <Grid item>
                 <Typography align="center" color="textSecondary" paragraph variant="caption">
-                  <FormattedMessage id="Index.notes1"/>
-                </Typography>
-                <Typography align="center" color="textSecondary" paragraph variant="caption">
-                  <FormattedMessage id="Index.notes2"/>
-                </Typography>
-                <Typography align="center" color="textSecondary" paragraph variant="caption">
+                  <FormattedMessage id="Index.notes1"/><br/>
+                  <FormattedMessage id="Index.notes2"/><br/>
                   English ver. is now available! Go to settings and there you can change the language used in this app.
                 </Typography>
               </Grid>

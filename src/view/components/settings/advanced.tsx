@@ -92,7 +92,9 @@ class Settings extends React.Component<P,S> {
         await sodb.deleteAll();
       }else if(target === "Rivals"){
         new fbActions().auth().onAuthStateChanged(async(user: any)=> {
-          new fbActions().setDocName(user.uid).syncUploadRival([],false);
+          if(user){
+            new fbActions().setDocName(user.uid).syncUploadRival([],false);
+          }
           await ridb.deleteAll();
         });
       }else{

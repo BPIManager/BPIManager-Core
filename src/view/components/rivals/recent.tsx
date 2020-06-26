@@ -45,6 +45,7 @@ interface S {
   currentUserName:string,
   searchInput:string,
   errorMessage:string,
+  myId:string,
 }
 
 class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
@@ -77,6 +78,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
       currentUserName:"",
       searchInput:"",
       errorMessage:"",
+      myId:"",
     }
     this.timeOut = 0;
   }
@@ -85,12 +87,13 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
     this.search(null,this.props.last);
     let t:any = [];
     this.fbU.auth().onAuthStateChanged(async(user: any)=> {
-      t = await new fbActions().setColName("users").setDocName(user ? user.uid : "").load();
+      t = await new fbActions().setColName("users").setDocName(user ? user.uid : "_dummy_").load();
       this.fbU.setDocName(user ? user.uid : "");
       this.setState(
         {
           rivals:await this.rivalListsDB.getAllRivalUid(),
-          displayName:(t && t.displayName ) ? t.displayName  : ""
+          displayName:(t && t.displayName ) ? t.displayName  : "",
+          myId:user ? user.uid : "",
         }
       );
     });
@@ -180,7 +183,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
   open = (uid:string)=> this.setState({isModalOpen:true,currentUserName:uid})
 
   render(){
-    const {isLoading,isModalOpen,showSnackBar,activated,res,rivals,processing,message,variant,arenaRank,currentUserName,searchInput} = this.state;
+    const {isLoading,isModalOpen,showSnackBar,activated,res,rivals,processing,message,variant,arenaRank,currentUserName,searchInput,myId} = this.state;
     const {mode} = this.props;
     return (
       <div>
@@ -233,7 +236,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
       {res.map((item:rivalStoreData,i:number)=>{
         const isAdded = rivals.indexOf(item.uid) > -1;
         return (activated && <div key={item.uid}>
-          <UserCard open={this.open} item={item} processing={processing} isAdded={isAdded} addUser={this.addUser}/>
+          <UserCard open={this.open} myId={myId} item={item} processing={processing} isAdded={isAdded} addUser={this.addUser}/>
           {i !== res.length - 1 && <Divider variant="middle" component="div" />}
         </div>
       )})}
