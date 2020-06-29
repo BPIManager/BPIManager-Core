@@ -84,7 +84,6 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
   }
 
   async componentDidMount(){
-    this.search(null,this.props.last);
     let t:any = [];
     this.fbU.auth().onAuthStateChanged(async(user: any)=> {
       t = await new fbActions().setColName("users").setDocName(user ? user.uid : "_dummy_").load();
@@ -96,15 +95,19 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
           myId:user ? user.uid : "",
         }
       );
+      this.search(null,this.props.last);
     });
   }
 
   search = async(last:rivalStoreData|null = null,endAt:rivalStoreData|null = null,arenaRank = this.state.arenaRank,willConcat:boolean = true):Promise<void>=>{
     const {mode} = this.props;
+    const {myId} = this.state;
     this.setState({processing:true,isLoading:true,});
     let res:rivalStoreData[] = [];
     if(mode === 0){
-      res = await this.fbA.recommendedByBPI()
+      res = (await this.fbA.recommendedByBPI()).filter((item)=>{
+        return item.uid !== myId
+      })
     }else if(mode === 2){
       res = await this.fbA.recentUpdated(last,endAt,arenaRank);
     }else if(mode === 1){

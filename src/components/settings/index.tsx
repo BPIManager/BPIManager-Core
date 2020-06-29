@@ -119,7 +119,7 @@ export const _chartBarColor = (name:string)=>{
     if(name === "YOU" || name === "RIVAL"){
       return "#BF4C0A";
     }else if(name === "line"){
-      return "#fff";
+      return "#bbb";
     }else{
       return "#aaa";
     }
