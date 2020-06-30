@@ -91,7 +91,14 @@ class Index extends React.Component<P&RouteComponentProps,{
       let errors = [];
       const isSingle:number = _isSingle();
       const currentStore:string = _currentStore();
-      const text = this.state.raw || await navigator.clipboard.readText();
+      let text = this.state.raw;
+      if (text === "") {
+        try{
+          text = await navigator.clipboard.readText();
+        }catch(e){
+          text = this.state.raw;
+        }
+      }
       const isJSON = this.isJSON(text);
       const executor:importJSON|importCSV = isJSON ? new importJSON(text,isSingle,currentStore) : new importCSV(text,isSingle,currentStore);
       const calc:bpiCalculator = new bpiCalculator();
