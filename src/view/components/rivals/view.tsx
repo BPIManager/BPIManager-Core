@@ -68,9 +68,9 @@ class RivalView extends React.Component<P,S> {
         if(showAllScore || mine.exScore !== 0){
           const rival = allRivalScores[key];
           groups.push({
-            title:rival.title,
-            difficulty:rival.difficulty,
-            difficultyLevel:rival.difficultyLevel,
+            title:mine.title,
+            difficulty:mine.difficulty,
+            difficultyLevel:mine.difficultyLevel,
             myEx:mine.exScore,
             rivalEx:rival.exScore,
             myMissCount:mine.missCount,
