@@ -929,14 +929,16 @@ export const songsDB = class extends storageWrapper{
       await this.songs.where("[title+difficulty]").equals([title,difficulty]).modify({
         difficultyLevel: newDifficultyLevel
       });
+      const difficultyStr = difficultyDiscriminator(difficulty);
+      const s = _isSingle();
       // Compound Index 検討
-      await this.rivals.where({title:title,difficulty:difficulty}).modify({
+      await this.rivals.where({title:title,difficulty:difficultyStr,isSingle:s}).modify({
         difficultyLevel: newDifficultyLevel
       })
-      await this.scoreHistory.where({title:title,difficulty:difficulty}).modify({
+      await this.scoreHistory.where({title:title,difficulty:difficultyStr,isSingle:s}).modify({
         difficultyLevel: newDifficultyLevel
       })
-      await this.scores.where({title:title,difficulty:difficulty}).modify({
+      await this.scores.where({title:title,difficulty:difficultyStr,isSingle:s}).modify({
         difficultyLevel: newDifficultyLevel
       })
       return 0;
