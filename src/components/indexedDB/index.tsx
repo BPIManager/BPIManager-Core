@@ -913,6 +913,8 @@ export const songsDB = class extends storageWrapper{
         notes:Number(item["notes"]),
         wr:Number(item["wr"]),
         avg:Number(item["avg"]),
+        difficulty:item["difficulty"],
+        difficultyLevel:item["difficultyLevel"],
         coef:Number(this.validateCoef(item["coef"] || -1)),
         updatedAt: timeFormatter(0),
       })
