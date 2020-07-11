@@ -926,9 +926,20 @@ export const songsDB = class extends storageWrapper{
 
   async diffChange(title:string,difficulty:string,newDifficultyLevel:string):Promise<any>{
     try{
-      return await this.songs.where("[title+difficulty]").equals([title,difficulty]).modify({
+      await this.songs.where("[title+difficulty]").equals([title,difficulty]).modify({
+        difficultyLevel: newDifficultyLevel
+      });
+      // Compound Index 検討
+      await this.rivals.where({title:title,difficulty:difficulty}).modify({
         difficultyLevel: newDifficultyLevel
       })
+      await this.scoreHistory.where({title:title,difficulty:difficulty}).modify({
+        difficultyLevel: newDifficultyLevel
+      })
+      await this.scores.where({title:title,difficulty:difficulty}).modify({
+        difficultyLevel: newDifficultyLevel
+      })
+      return 0;
     }catch(e){
       console.error(e);
       return 1;
