@@ -922,6 +922,21 @@ export const songsDB = class extends storageWrapper{
     }
   }
 
+  async diffChange(title:string,difficulty:string,newDifficultyLevel:string):Promise<any>{
+    try{
+      return await this.songs.where("[title+difficulty]").equals([title,difficulty]).modify({
+        difficultyLevel: newDifficultyLevel
+      })
+    }catch(e){
+      console.error(e);
+      return 1;
+    }
+  }
+
+  async removeItemByDifficulty(title:string,diff:string):Promise<number>{
+    return await this.songs.where({title:title,difficultyLevel:diff}).delete();
+  }
+
   async removeItem(title:string):Promise<number>{
     try{
       return await this.songs.where({title:title}).delete();

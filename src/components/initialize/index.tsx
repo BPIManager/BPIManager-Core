@@ -53,6 +53,14 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
         this.scoresDB.removeSpecificItemAtAllStores("Close the World feat. a☆ru");
       //
 
+      // Data error fixes 2020/07/12
+      //if(!localStorage.getItem("20200712fixes")){
+        this.songsDB.diffChange("Bow shock!!","4","11");
+        this.songsDB.diffChange("Shiva","4","11");
+        this.songsDB.diffChange("錬成人間トリコロイダー","4","11");
+        localStorage.setItem("20200712fixes","1");
+      //}
+
       const songsAvailable:string[] = await this.songsDB.getAll();
       await this.scoresDB.removeNaNItems();
       await this.scoreHistoryDB.removeNaNItems();
