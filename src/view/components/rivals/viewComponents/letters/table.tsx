@@ -211,7 +211,7 @@ class SongDetail extends React.Component<P2,{isLoading:boolean,dataset:datasets[
     const {handleToggle,song} = this.props;
     const {dataset,yourEx,isLoading,isError} = this.state;
     return (
-      <Dialog open={true} onClose={handleToggle}>
+      <Dialog open={true} onClose={handleToggle} onClick={handleToggle}>
         {song && <DialogTitle className="narrowDialogTitle">{song.title}{_prefixFromNum(song.difficulty)}</DialogTitle>}
         <DialogContent style={{padding:0}}>
           {
