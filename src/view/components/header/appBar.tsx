@@ -30,7 +30,7 @@ import Slide from "@material-ui/core/Slide";
 import ShowSnackBar from "../snackBar";
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
 import { withStyles } from '@material-ui/core/styles';
-import { config } from "../../../config";
+import { config } from "@/config";
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import QueueMusicIcon from '@material-ui/icons/QueueMusic';

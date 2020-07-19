@@ -7,10 +7,10 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import SongsUI from './viewComponents/ui';
 import Settings from './viewComponents/settings';
-import { scoresDB, rivalListsDB } from '../../../components/indexedDB';
+import { scoresDB, rivalListsDB } from '@/components/indexedDB';
 import RivalStats from './viewComponents/stats';
-import { scoreData, rivalScoreData, rivalStoreData, DBRivalStoreData } from '../../../types/data';
-import { withRivalData } from '../../../components/stats/radar';
+import { scoreData, rivalScoreData, rivalStoreData, DBRivalStoreData } from '@/types/data';
+import { withRivalData } from '@/components/stats/radar';
 import Loader from '../common/loader';
 import Container from '@material-ui/core/Container/Container';
 

@@ -4,14 +4,14 @@ import Typography from '@material-ui/core/Typography';
 import { injectIntl } from 'react-intl';
 import Paper from '@material-ui/core/Paper';
 import FormControl from '@material-ui/core/FormControl';
-import { _currentViewComponents, _setCurrentViewComponents,isEnableTweetButton,setEnableTweetButton } from '../../../components/settings';
+import { _currentViewComponents, _setCurrentViewComponents,isEnableTweetButton,setEnableTweetButton } from '@/components/settings';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormLabel from '@material-ui/core/FormLabel';
 import Divider from '@material-ui/core/Divider';
 import Switch from '@material-ui/core/Switch';
-import Loader from '../common/loader';
+import Loader from '@/view/components/common/loader';
 
 interface S {
   isLoading:boolean,

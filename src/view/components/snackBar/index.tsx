@@ -45,7 +45,7 @@ const styles = makeStyles((theme: Theme) => ({
 
 export interface Props {
   className?: string;
-  message?: string;
+  message?: any;
   onClose?: () => void;
   variant: keyof typeof variantIcon;
   autoHideDuration?:number

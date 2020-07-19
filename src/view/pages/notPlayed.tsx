@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { scoresDB, songsDB } from '../../components/indexedDB';
-import { songData } from '../../types/data';
-import { difficultyDiscriminator } from '../../components/songs/filter';
-import { _isSingle,_currentStore } from '../../components/settings';
-import NotPlayList from '../components/songs/notplayed/notPlayList';
-import Loader from '../components/common/loader';
+import { scoresDB, songsDB } from '@/components/indexedDB';
+import { songData } from '@/types/data';
+import { difficultyDiscriminator } from '@/components/songs/filter';
+import { _isSingle,_currentStore } from '@/components/settings';
+import NotPlayList from '@/view/components/songs/notplayed/notPlayList';
+import Loader from '@/view/components/common/loader';
 
 interface S {
   full:songData[]

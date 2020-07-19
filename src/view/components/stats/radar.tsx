@@ -3,12 +3,12 @@ import Container from '@material-ui/core/Container';
 import { injectIntl } from 'react-intl';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import {_isSingle, _chartColor, _chartBarColor} from "../../../components/settings";
+import {_isSingle, _chartColor, _chartBarColor} from "@/components/settings";
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar} from 'recharts';
 import {Table, TableRow, TableCell, TableBody} from '@material-ui/core/';
-import { getRadar, Details, radarData } from '../../../components/stats/radar';
+import { getRadar, Details, radarData } from '@/components/stats/radar';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import Loader from '../common/loader';
+import Loader from '@/view/components/common/loader';
 import { Alert, AlertTitle } from '@material-ui/lab';
 
 class Main extends React.Component<{intl:any}&RouteComponentProps,{

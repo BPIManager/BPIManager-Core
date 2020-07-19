@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { scoresDB, songsDB } from '../../components/indexedDB';
-import {_isSingle, _goalBPI, _goalPercentage, _currentStore} from "../../components/settings";
+import { scoresDB, songsDB } from '@/components/indexedDB';
+import {_isSingle, _goalBPI, _goalPercentage, _currentStore} from "@/components/settings";
 import Container from "@material-ui/core/Container";
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
@@ -8,12 +8,12 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
 import { FormattedMessage } from "react-intl";
-import CompareTable from "../components/compare/table";
-import bpiCalcuator from '../../components/bpi';
-import { commonFunc } from '../../components/common';
-import FilterByLevelAndDiff from '../components/common/selector';
-import { compareData } from '../../types/compare';
-import { scoreData } from '../../types/data';
+import CompareTable from "@/view/components/compare/table";
+import bpiCalcuator from '@/components/bpi';
+import { commonFunc } from '@/components/common';
+import FilterByLevelAndDiff from '@/view/components/common/selector';
+import { compareData } from '@/types/compare';
+import { scoreData } from '@/types/data';
 
 interface S {
   [key: string]: any,

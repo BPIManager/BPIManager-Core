@@ -5,7 +5,7 @@ import WarningIcon from '@material-ui/icons/Warning';
 import Backdrop from "@material-ui/core/Backdrop";
 import { _currentDefinitionURL } from '../settings';
 import fbActions from '../firebase/actions';
-import Loader from '../../view/components/common/loader';
+import Loader from '@/view/components/common/loader';
 
 export default class Initialize extends React.Component<{},{show:boolean,error:boolean,errorMessage:string,consoleMes:string,p:number}>{
   private songsDB = new songsDB();

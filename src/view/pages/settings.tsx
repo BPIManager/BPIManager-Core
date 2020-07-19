@@ -4,9 +4,9 @@ import { injectIntl } from 'react-intl';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
-import Basic from "../components/settings/basic";
-import View from "../components/settings/view";
-import Advanced from "../components/settings/advanced";
+import Basic from "@/view/components/settings/basic";
+import View from "@/view/components/settings/view";
+import Advanced from "@/view/components/settings/advanced";
 
 interface S {
   currentTab:number

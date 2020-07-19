@@ -14,15 +14,15 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogActions from '@material-ui/core/DialogActions';
-import { _currentVersion, _setTraditionalMode, _traditionalMode, _currentStore, _isSingle } from '../../../components/settings';
-import { scoresDB, scoreHistoryDB, songsDB, rivalListsDB } from '../../../components/indexedDB';
+import { _currentVersion, _setTraditionalMode, _traditionalMode, _currentStore, _isSingle } from '@/components/settings';
+import { scoresDB, scoreHistoryDB, songsDB, rivalListsDB } from '@/components/indexedDB';
 import Divider from '@material-ui/core/Divider';
 import { Switch, Backdrop } from '@material-ui/core';
 import CachedIcon from '@material-ui/icons/Cached';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Loader from '../common/loader';
-import fbActions from '../../../components/firebase/actions';
-import ExportButton from '../../../components/settings/exportButton';
+import fbActions from '@/components/firebase/actions';
+import ExportButton from '@/components/settings/exportButton';
 
 interface S {
   isLoading:boolean,

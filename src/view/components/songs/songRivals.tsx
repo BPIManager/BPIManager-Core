@@ -1,15 +1,15 @@
 import React from "react";
 
-import { scoreData, songData } from "../../../types/data";
+import { scoreData, songData } from "@/types/data";
 import Container from "@material-ui/core/Container";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import Table from "@material-ui/core/Table";
 import TableRow from "@material-ui/core/TableRow";
-import { alternativeImg } from "../../../components/common";
+import { alternativeImg } from "@/components/common";
 import Loader from "../common/loader";
-import { datasets, rivalShow } from "../../../components/rivals/letters";
+import { datasets, rivalShow } from "@/components/rivals/letters";
 
 interface P{
   song:songData|null,

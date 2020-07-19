@@ -7,14 +7,14 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 
-import {scoreData, songData} from "../../../../types/data";
-import { _prefix } from "../../../../components/songs/filter";
+import {scoreData, songData} from "@/types/data";
+import { _prefix } from "@/components/songs/filter";
 import DetailedSongInformation from "../detailsScreen";
 import { diffColor, behindScore, bp } from "../common";
-import _djRank from "../../../../components/common/djRank";
-import { _currentViewComponents, _traditionalMode } from "../../../../components/settings";
-import bpiCalcuator from "../../../../components/bpi";
-import { scoresDB } from "../../../../components/indexedDB";
+import _djRank from "@/components/common/djRank";
+import { _currentViewComponents, _traditionalMode } from "@/components/settings";
+import bpiCalcuator from "@/components/bpi";
+import { scoresDB } from "@/components/indexedDB";
 
 const columns = [
   { id: "difficultyLevel", label: "☆"},

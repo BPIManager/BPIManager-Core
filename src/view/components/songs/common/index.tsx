@@ -1,6 +1,6 @@
-import { _prefix } from "../../../../components/songs/filter";
+import { _prefix } from "@/components/songs/filter";
 import { B, BPIR } from "./filter";
-import { scoreData, songData } from "../../../../types/data";
+import { scoreData, songData } from "@/types/data";
 
 export const diffColor = (i:number,clearState: number,alternative:number = 0):string=>{
   if(i !== alternative){return "transparent";}

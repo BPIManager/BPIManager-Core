@@ -1,12 +1,12 @@
 import * as React from 'react';
 
 import Button from '@material-ui/core/Button';
-import { _currentStore, _isSingle } from '../../../components/settings';
-import { rivalListsDB } from '../../../components/indexedDB';
+import { _currentStore, _isSingle } from '@/components/settings';
+import { rivalListsDB } from '@/components/indexedDB';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import List from '@material-ui/core/List';
-import fbActions from '../../../components/firebase/actions';
+import fbActions from '@/components/firebase/actions';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
@@ -14,8 +14,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
-import timeFormatter from '../../../components/common/timeFormatter';
-import { alternativeImg } from '../../../components/common';
+import timeFormatter from '@/components/common/timeFormatter';
+import { alternativeImg } from '@/components/common';
 import Divider from '@material-ui/core/Divider';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import ArrowDropDownIcon from  '@material-ui/icons/ArrowDropDown';
@@ -25,7 +25,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Paper from '@material-ui/core/Paper';
 import ShowSnackBar from '../snackBar';
-import Loader from '../common/loader';
+import Loader from '@/view/components/common/loader';
 
 interface P {
 }

@@ -4,7 +4,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import RivalLists from "./list";
 import RecentlyAdded from "./recent";
-import { rivalScoreData, rivalStoreData, DBRivalStoreData } from '../../../types/data';
+import { rivalScoreData, rivalStoreData, DBRivalStoreData } from '@/types/data';
 
 interface S {
   currentTab:number,

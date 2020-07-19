@@ -1,12 +1,12 @@
 import React from 'react';
-import { favsDB } from '../../../components/indexedDB';
-import Loader from '../../components/common/loader';
+import { favsDB } from '@/components/indexedDB';
+import Loader from '@/view/components/common/loader';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import ListItemText from '@material-ui/core/ListItemText';
-import { DBLists } from '../../../types/lists';
-import { alternativeImg } from '../../../components/common';
+import { DBLists } from '@/types/lists';
+import { alternativeImg } from '@/components/common';
 import Container from '@material-ui/core/Container';
 import SettingsIcon from '@material-ui/icons/Settings';
 import Button from '@material-ui/core/Button';

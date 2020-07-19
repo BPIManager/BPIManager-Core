@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { FormattedMessage, injectIntl } from "react-intl";
-import { songsDB } from "../../../../../components/indexedDB";
-
+import { songsDB } from "@/components/indexedDB";
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
 import BackspaceIcon from '@material-ui/icons/Backspace';
@@ -10,21 +9,20 @@ import IconButton from '@material-ui/core/IconButton';
 import Table from "../table";
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import { _prefix, _prefixFromNum } from '../../../../../components/songs/filter';
-import { _isSingle } from '../../../../../components/settings';
-import moment from 'moment';
-import OrderControl from "../../../songs/common/orders";
+import { _prefix, _prefixFromNum } from '@/components/songs/filter';
+import { _isSingle } from '@/components/settings';
+import OrderControl from "@/view/components/songs/common/orders";
 import Button from '@material-ui/core/Button';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import { verArr, bpmFilter } from '../../../songs/common';
-import SongsFilter, { B } from '../../../songs/common/filter';
-import { commonFunc } from '../../../../../components/common';
-import FilterByLevelAndDiff from "../../../common/selector";
-import { withRivalData } from '../../../../../components/stats/radar';
-import { songData } from '../../../../../types/data';
-import Loader from '../../../common/loader';
+import { verArr, bpmFilter } from '@/view/components/songs/common';
+import SongsFilter, { B } from '@/view/components/songs/common/filter';
+import { commonFunc } from '@/components/common';
+import FilterByLevelAndDiff from "@/view/components/common/selector";
+import { withRivalData } from '@/components/stats/radar';
+import { songData } from '@/types/data';
+import Loader from '@/view/components/common/loader';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import timeFormatter, { toMoment } from '../../../../../components/common/timeFormatter';
+import timeFormatter, { toMoment, timeCompare } from '@/components/common/timeFormatter';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import Link from '@material-ui/core/Link';
@@ -216,9 +214,9 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
             brm = !b.rivalMissCount ? Infinity : Number.isNaN(b.rivalMissCount) ? Infinity : b.rivalMissCount;
             return  arm-brm;
           case 10:
-            return moment(a.myLastUpdate).diff(b.myLastUpdate);
+            return timeCompare(a.myLastUpdate,b.myLastUpdate);
           case 11:
-            return moment(a.rivalLastUpdate).diff(b.rivalLastUpdate);
+            return timeCompare(a.rivalLastUpdate,b.rivalLastUpdate);
           case 12:
             return a.myClearState - b.myClearState;
           case 13:

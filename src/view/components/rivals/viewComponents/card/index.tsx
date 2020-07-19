@@ -2,15 +2,14 @@ import React from "react";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardHeader from "@material-ui/core/CardHeader";
 import Card from "@material-ui/core/Card";
-import { alternativeImg, arenaRankColor } from "../../../../../components/common";
+import { alternativeImg, arenaRankColor } from "@/components/common";
 import Button from "@material-ui/core/Button";
 import Avatar from "@material-ui/core/Avatar";
 import Chip from "@material-ui/core/Chip";
 import AddIcon from "@material-ui/icons/Add";
 import CheckIcon from "@material-ui/icons/Check";
-import moment from "moment";
-import 'moment/locale/ja';
-moment.locale("ja");
+import { updatedTime } from "@/components/common/timeFormatter";
+
 export default class UserCard extends React.Component<{
   item:any,
   open:(q:string)=>void,
@@ -44,7 +43,7 @@ export default class UserCard extends React.Component<{
             </Avatar>
           }
           action={ myId === item.uid ? selfButton : normalButton}
-          title={<div onClick={()=>this.props.open(item.displayName)}>{item.displayName}&nbsp;<small>{moment(item.timeStamp).fromNow()}</small></div>}
+          title={<div onClick={()=>this.props.open(item.displayName)}>{item.displayName}&nbsp;<small>{updatedTime(item.timeStamp)}</small></div>}
           subheader={<div onClick={()=>this.props.open(item.displayName)}>
             <span>
               <Chip size="small" style={{backgroundColor:arenaRankColor(item.arenaRank),color:"#fff",margin:"5px 0"}} label={item.arenaRank || "-"} />

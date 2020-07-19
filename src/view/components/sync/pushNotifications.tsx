@@ -1,25 +1,25 @@
 import * as React from 'react';
 
 import Button from '@material-ui/core/Button';
-import { _currentStore, _isSingle } from '../../../components/settings';
+import { _currentStore, _isSingle } from '@/components/settings';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import List from '@material-ui/core/List';
-import fbActions from '../../../components/firebase/actions';
+import fbActions from '@/components/firebase/actions';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import { alternativeImg } from '../../../components/common';
+import { alternativeImg } from '@/components/common';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Paper from '@material-ui/core/Paper';
 import Switch from '@material-ui/core/Switch';
-import { messanger } from '../../../components/firebase/message';
+import { messanger } from '@/components/firebase/message';
 import Typography from '@material-ui/core/Typography';
 import firebase from 'firebase/app';
 import 'firebase/messaging';
-import Loader from '../common/loader';
+import Loader from '@/view/components/common/loader';
 
 interface P {
 }

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import SongsList from '../components/songs/played/songsList';
-import { scoresDB } from '../../components/indexedDB';
-import { scoreData } from '../../types/data';
-import Loader from '../components/common/loader';
+import SongsList from '@/view/components/songs/played/songsList';
+import { scoresDB } from '@/components/indexedDB';
+import { scoreData } from '@/types/data';
+import Loader from '@/view/components/common/loader';
 
 interface S {
   full:scoreData[]

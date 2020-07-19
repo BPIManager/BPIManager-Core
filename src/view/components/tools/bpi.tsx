@@ -3,7 +3,7 @@ import Container from '@material-ui/core/Container';
 import { injectIntl } from 'react-intl';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
-import bpiCalcuator from "../../../components/bpi";
+import bpiCalcuator from "@/components/bpi";
 
 interface S {
   [key:string]:any,

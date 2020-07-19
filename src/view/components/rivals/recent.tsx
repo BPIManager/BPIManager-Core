@@ -1,16 +1,16 @@
 import * as React from 'react';
 
 import Button from '@material-ui/core/Button';
-import fbActions from '../../../components/firebase/actions';
-import { _currentStore, _isSingle } from '../../../components/settings';
-import { rivalListsDB } from '../../../components/indexedDB';
+import fbActions from '@/components/firebase/actions';
+import { _currentStore, _isSingle } from '@/components/settings';
+import { rivalListsDB } from '@/components/indexedDB';
 import Grid from '@material-ui/core/Grid';
 import ShowSnackBar from '../snackBar';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import { rivalStoreData, rivalScoreData } from '../../../types/data';
+import { rivalStoreData, rivalScoreData } from '@/types/data';
 import {Container, Divider, Input, InputAdornment, IconButton} from '@material-ui/core/';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
 import Loader from '../common/loader';
@@ -19,7 +19,7 @@ import AlertTitle from '@material-ui/lab/AlertTitle';
 import ModalUser from './modal';
 import UserCard from './viewComponents/card';
 import SearchIcon from "@material-ui/icons/Search";
-import moment from 'moment';
+import { timeCompare } from '@/components/common/timeFormatter';
 
 interface P {
   compareUser:(rivalMeta:rivalStoreData,rivalBody:rivalScoreData[],last:rivalStoreData,arenaRank:string,currentPage:number)=>void,
@@ -173,7 +173,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
         return (a1.findIndex(function(v2){
           return (v1.uid===v2.uid)
         }) === i1);
-      }).sort((a,b)=>moment(b.timeStamp).diff(a.timeStamp)) || [],errorMessage:!res ? "条件に合致するユーザーが見つかりませんでした。" : "",processing:false,isLoading:false,});
+      }).sort((a,b)=>timeCompare(b.timeStamp,a.timeStamp)) || [],errorMessage:!res ? "条件に合致するユーザーが見つかりませんでした。" : "",processing:false,isLoading:false,});
     }
     if(this.timeOut) clearTimeout(this.timeOut);
     this.timeOut = setTimeout(() => {

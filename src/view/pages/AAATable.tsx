@@ -1,11 +1,11 @@
 import * as React from 'react';
 import Container from '@material-ui/core/Container';
 import { injectIntl } from 'react-intl';
-import { scoresDB } from '../../components/indexedDB';
-import { scoreData } from '../../types/data';
-import ClearLampTable from '../components/table/table';
-import {_isSingle,_currentStore} from '../../components/settings/';
-import Loader from '../components/common/loader';
+import { scoresDB } from '@/components/indexedDB';
+import { scoreData } from '@/types/data';
+import ClearLampTable from '@/view/components/table/table';
+import {_isSingle,_currentStore} from '@/components/settings/';
+import Loader from '@/view/components/common/loader';
 
 interface S {
   data:any[],

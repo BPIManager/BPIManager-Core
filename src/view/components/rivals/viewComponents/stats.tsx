@@ -4,12 +4,12 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Switch from '@material-ui/core/Switch';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { getRadar, Details, radarData, withRivalData } from '../../../../components/stats/radar';
-import { _isSingle,_chartColor } from '../../../../components/settings';
+import { getRadar, Details, radarData, withRivalData } from '@/components/stats/radar';
+import { _isSingle,_chartColor } from '@/components/settings';
 import Grid from '@material-ui/core/Grid';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, PolarRadiusAxis } from 'recharts';
 import {Link as RefLink, Table, TableBody, TableRow, TableCell, TableHead} from '@material-ui/core/';
-import Loader from '../../common/loader';
+import Loader from '@/view/components/common/loader';
 
 interface S {
   scoresAbout:number[],

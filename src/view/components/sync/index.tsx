@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Container from '@material-ui/core/Container';
 import SyncLoginScreen from './login';
-import fbActions from '../../../components/firebase/actions';
+import fbActions from '@/components/firebase/actions';
 import Loader from '../common/loader';
 import ControlTab from './controlTabs';
 

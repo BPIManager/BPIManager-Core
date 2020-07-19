@@ -4,8 +4,8 @@ import { songData, scoreData, historyData } from "../../types/data";
 import { _isSingle, _currentStore } from "../settings";
 import { _DiscriminateRanksByNumber } from "../common/djRank";
 import { difficultyDiscriminator } from "../songs/filter";
-import moment from "moment";
 import bpiCalcuator from "../bpi";
+import timeFormatter, { timeCompare } from "../common/timeFormatter";
 const isSingle = _isSingle();
 const currentStore = _currentStore();
 export const BPITicker = [-20,-10,0,10,20,30,40,50,60,70,80,90,100];
@@ -103,7 +103,7 @@ export const statMain = class {
 
     const sortByDate = (data:historyData[]):{[key:string]:historyData[]}=>{
       return data.reduce((groups:{[key:string]:historyData[]}, item:historyData) => {
-        const date = moment(item.updatedAt).format("YYYY/MM/DD");
+        const date = timeFormatter(4,item.updatedAt);
         if (!groups[date]) {
           groups[date] = [];
         }
@@ -137,7 +137,7 @@ export const statMain = class {
       });
       return 0;
     });
-    return eachDaySum.sort((a,b)=> moment(a.name).diff(b.name)).slice(-10);
+    return eachDaySum.sort((a,b)=> timeCompare(a.name,b.name)).slice(-10);
   }
 
   at = ()=> this.bpiMapper(this.targetLevel === 12 ? this.twelves : this.elevens);

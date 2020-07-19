@@ -1,27 +1,27 @@
 import * as React from 'react';
 import Container from '@material-ui/core/Container';
-import { scoreData, rivalStoreData, songData } from '../../types/data';
-import fbActions from '../../components/firebase/actions';
+import { scoreData, rivalStoreData, songData } from '@/types/data';
+import fbActions from '@/components/firebase/actions';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import BPIChart from '../components/songs/bpiChart';
-import { chartData } from '../components/songs/detailsScreen';
-import bpiCalcuator from '../../components/bpi';
-import { songsDB, scoresDB } from '../../components/indexedDB';
-import { difficultyParser, _prefixFull, _prefixFromNum } from '../../components/songs/filter';
+import BPIChart from '@/view/components/songs/bpiChart';
+import { chartData } from '@/view/components/songs/detailsScreen';
+import bpiCalcuator from '@/components/bpi';
+import { songsDB, scoresDB } from '@/components/indexedDB';
+import { difficultyParser, _prefixFull, _prefixFromNum } from '@/components/songs/filter';
 import Paper from '@material-ui/core/Paper';
-import { _isSingle, _currentStore } from '../../components/settings';
+import { _isSingle, _currentStore } from '@/components/settings';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
-import _djRank from '../../components/common/djRank';
+import _djRank from '@/components/common/djRank';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import { CardContent, Avatar, Button } from '@material-ui/core';
-import { alternativeImg } from '../../components/common';
+import { alternativeImg } from '@/components/common';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import WarningIcon from "@material-ui/icons/Warning";
-import ShareButtons from '../components/common/shareButtons';
-import Loader from '../components/common/loader';
+import ShareButtons from '@/view/components/common/shareButtons';
+import Loader from '@/view/components/common/loader';
 
 interface S {
   score:scoreData&{uid:string}|null,

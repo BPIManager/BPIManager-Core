@@ -1,12 +1,12 @@
 import React from "react";
 import { Dialog, DialogTitle, DialogContent, Table, TableHead, TableRow, TableCell, TableBody} from "@material-ui/core";
-import { songData } from "../../../../../types/data";
-import { songsDB } from "../../../../../components/indexedDB";
-import bpiCalcuator from "../../../../../components/bpi";
-import { _isSingle } from "../../../../../components/settings";
-import { convertClearState } from "../../../../../components/songs/filter";
-import { withRivalData } from "../../../../../components/stats/radar";
-import Loader from "../../../common/loader";
+import { songData } from "@/types/data";
+import { songsDB } from "@/components/indexedDB";
+import bpiCalcuator from "@/components/bpi";
+import { _isSingle } from "@/components/settings";
+import { convertClearState } from "@/components/songs/filter";
+import { withRivalData } from "@/components/stats/radar";
+import Loader from "@/view/components/common/loader";
 
 interface P {
   showDetails:(key:withRivalData|null)=>void,
@@ -76,7 +76,7 @@ export default class Details extends React.Component<P,{
     ]
     const prefix = currentScoreData.difficulty === "hyper" ? "(H)" : currentScoreData.difficulty === "leggendaria" ? "(†)" : "";
     return (
-      <Dialog open={true} onClose={()=>showDetails(null)}>
+      <Dialog open={true} onClose={()=>showDetails(null)} onClick={()=>showDetails(null)}>
         <DialogTitle className="narrowDialogTitle">{currentScoreData.title}{prefix}</DialogTitle>
         <DialogContent className="narrowDialogContent">
           {songData &&

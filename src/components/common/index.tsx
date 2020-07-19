@@ -1,6 +1,6 @@
 import bpiCalcuator from "../bpi";
 import {scoresDB, songsDB} from "../indexedDB";
-import {scoreData} from "../../types/data";
+import {scoreData} from "@/types/data";
 import {_isSingle,_currentStore, _currentTheme} from "../settings";
 
 export const commonFunc = class{

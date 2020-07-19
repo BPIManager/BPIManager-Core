@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 import { FormattedMessage } from "react-intl";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import {Link as RefLink, ListItem, ListItemAvatar, Avatar, ListItemText, ListItemSecondaryAction, IconButton, List} from '@material-ui/core/';
-import { _lang, _currentVersion } from '../../components/settings';
+import { _lang, _currentVersion } from '@/components/settings';
 import PhonelinkSetupIcon from '@material-ui/icons/PhonelinkSetup';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import LibraryMusicIcon from '@material-ui/icons/LibraryMusic';
@@ -14,7 +14,7 @@ import HelpIcon from '@material-ui/icons/Help';
 import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 import Alert from '@material-ui/lab/Alert/Alert';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import { avatarFontColor, avatarBgColor } from '../../components/common';
+import { avatarFontColor, avatarBgColor } from '@/components/common';
 
 class Index extends React.Component<RouteComponentProps,{}> {
 
@@ -141,7 +141,7 @@ class IfNotOnTheHomeScreen extends React.Component<{
                   <span>Check out <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink> for update information.</span>
                   }
                   {_lang() === "ja" &&
-                    <span>最新情報を<RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>にて発信中<br/>(またアカウントロックされました)</span>
+                    <span>最新情報を<RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>にて発信中<br/></span>
                   }<br/>
                 </Typography>
               </div>

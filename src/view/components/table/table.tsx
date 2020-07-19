@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { rivalScoreData,scoreData } from '../../../types/data';
-import { AAADifficulty, CLInt, CLBody } from '../../../components/aaaDiff/data';
+import { rivalScoreData,scoreData } from '@/types/data';
+import { AAADifficulty, CLInt, CLBody } from '@/components/aaaDiff/data';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import FormControl from '@material-ui/core/FormControl';
@@ -10,7 +10,7 @@ import FormLabel from '@material-ui/core/FormLabel';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button'
-import Loader from '../common/loader';
+import Loader from '@/view/components/common/loader';
 
 interface S {
   [key:string]:any,

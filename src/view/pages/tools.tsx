@@ -4,8 +4,8 @@ import { injectIntl } from 'react-intl';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
-import SUDPlus from "../components/tools/sudplus";
-import BPICalc from "../components/tools/bpi";
+import SUDPlus from "@/view/components/tools/sudplus";
+import BPICalc from "@/view/components/tools/bpi";
 
 interface S {
   currentTab:number

@@ -1,16 +1,16 @@
 import * as React from 'react';
-import { scoresDB } from '../../../components/indexedDB';
+import { scoresDB } from '@/components/indexedDB';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import {_isSingle,_currentStore, _chartColor, _goalBPI} from "../../../components/settings";
+import {_isSingle,_currentStore, _chartColor, _goalBPI} from "@/components/settings";
 import { XAxis, CartesianGrid, YAxis, Tooltip, ResponsiveContainer, ScatterChart, Scatter } from 'recharts';
-import { _prefix } from '../../../components/songs/filter';
+import { _prefix } from '@/components/songs/filter';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import Loader from '../common/loader';
+import Loader from '@/view/components/common/loader';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 

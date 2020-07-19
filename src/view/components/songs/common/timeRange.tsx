@@ -6,13 +6,12 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import { toMoment } from '../../../../components/common/timeFormatter';
-import MomentUtils from '@date-io/moment';
+import { toMoment } from '@/components/common/timeFormatter';
+import MomentUtils from '@date-io/dayjs';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
-import { Moment } from 'moment';
 import Alert from '@material-ui/lab/Alert';
 
 interface P {
@@ -42,11 +41,11 @@ class TimeRangeDialog extends React.Component<P,S> {
     return this.props.handleToggle();
   }
 
-  handleFromInput = (date:Moment | null) => {
+  handleFromInput = (date:any) => {
     this.setState({from:toMoment(date || new Date())});
   };
 
-  handleToInput = (date:Moment | null) => {
+  handleToInput = (date:any) => {
     this.setState({to:toMoment(date || new Date())});
   };
 

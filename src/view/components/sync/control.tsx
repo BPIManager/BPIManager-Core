@@ -3,20 +3,20 @@ import { FormattedMessage } from 'react-intl';
 import Button from '@material-ui/core/Button';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import Divider from '@material-ui/core/Divider';
-import fbActions from '../../../components/firebase/actions';
+import fbActions from '@/components/firebase/actions';
 import Typography from '@material-ui/core/Typography';
-import { _currentStore, _isSingle, _autoSync } from '../../../components/settings';
+import { _currentStore, _isSingle, _autoSync } from '@/components/settings';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import { scoresDB, scoreHistoryDB } from '../../../components/indexedDB';
+import { scoresDB, scoreHistoryDB } from '@/components/indexedDB';
 import TextField from '@material-ui/core/TextField';
 import {Link, CircularProgress, Paper} from '@material-ui/core/';
 import {Link as RefLink} from "react-router-dom";
 import Alert from '@material-ui/lab/Alert';
-import { config } from '../../../config';
+import { config } from '@/config';
 
 class SyncControlScreen extends React.Component<{userData:any},{
   isLoading:boolean,

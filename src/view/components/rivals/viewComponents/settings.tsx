@@ -5,14 +5,14 @@ import FormControl from '@material-ui/core/FormControl';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import UpdateIcon from '@material-ui/icons/Update';
-import fbActions from '../../../../components/firebase/actions';
-import { _isSingle, _currentStore } from '../../../../components/settings';
-import { rivalListsDB } from '../../../../components/indexedDB';
+import fbActions from '@/components/firebase/actions';
+import { _isSingle, _currentStore } from '@/components/settings';
+import { rivalListsDB } from '@/components/indexedDB';
 import Divider from '@material-ui/core/Divider';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import { DBRivalStoreData } from '../../../../types/data';
-import { updateRivalScore } from "../../../../components/rivals";
-import Loader from '../../common/loader';
+import { DBRivalStoreData } from '@/types/data';
+import { updateRivalScore } from "@/components/rivals";
+import Loader from '@/view/components/common/loader';
 
 interface S {
   isLoading1:boolean,

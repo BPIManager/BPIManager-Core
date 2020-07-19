@@ -9,22 +9,22 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Divider from '@material-ui/core/Divider';
 import { Subscribe } from 'unstated';
-import GlobalContainer from '../../../components/context/global';
+import GlobalContainer from '@/components/context/global';
 import Button from '@material-ui/core/Button';
 import UpdateIcon from '@material-ui/icons/Update';
-import { _currentVersion, _currentDefinitionURL, _setCurrentDefinitionURL, _setAutoSync, _autoSync } from '../../../components/settings';
-import { songsDB, scoresDB, scoreHistoryDB } from '../../../components/indexedDB';
-import { songData } from '../../../types/data';
+import { _currentVersion, _currentDefinitionURL, _setCurrentDefinitionURL, _setAutoSync, _autoSync } from '@/components/settings';
+import { songsDB, scoresDB, scoreHistoryDB } from '@/components/indexedDB';
+import { songData } from '@/types/data';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogActions from '@material-ui/core/DialogActions';
 import Switch from '@material-ui/core/Switch';
-import { config, area } from '../../../config';
+import { config, area } from '@/config';
 import TextField from '@material-ui/core/TextField';
 import {Link as RefLink} from '@material-ui/core/';
-import Loader from '../common/loader';
+import Loader from '@/view/components/common/loader';
 
 interface S {
   isLoading:boolean,
@@ -265,7 +265,7 @@ class Settings extends React.Component<P,S> {
                     startIcon={<UpdateIcon />}>
                     <FormattedMessage id="Settings.UpdateResourcePacks"/>
                   </Button>
-                  {disableUpdateBtn && <Loader/>}
+                  {disableUpdateBtn && <Loader isInner/>}
                 </div>
               </FormControl>
               <Typography variant="caption" display="block">

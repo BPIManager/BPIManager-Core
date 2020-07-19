@@ -1,5 +1,5 @@
 import {songsDB} from "../indexedDB";
-import { songData } from "../../types/data";
+import { songData } from "@/types/data";
 import { _traditionalMode,_isSingle } from "../settings";
 
 export interface B{

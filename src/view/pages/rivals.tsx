@@ -1,10 +1,10 @@
 import * as React from 'react';
 import Container from '@material-ui/core/Container';
 import { injectIntl } from 'react-intl';
-import RivalView from "../components/rivals/view";
-import ShowSnackBar from '../components/snackBar';
-import RivalIndex from '../components/rivals';
-import { rivalScoreData, rivalStoreData, DBRivalStoreData } from '../../types/data';
+import RivalView from "@/view/components/rivals/view";
+import ShowSnackBar from '@/view/components/snackBar';
+import RivalIndex from '@/view/components/rivals';
+import { rivalScoreData, rivalStoreData, DBRivalStoreData } from '@/types/data';
 
 interface S {
   currentView:number

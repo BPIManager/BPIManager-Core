@@ -1,9 +1,9 @@
 import * as React from 'react';
-import SongsList from '../../components/songs/played/songsList';
-import { scoresDB, favsDB, songsDB } from '../../../components/indexedDB';
-import { scoreData, songData } from '../../../types/data';
-import { difficultyDiscriminator } from '../../../components/songs/filter';
-import { _currentStore, _isSingle } from '../../../components/settings';
+import SongsList from '@/view/components/songs/played/songsList';
+import { scoresDB, favsDB, songsDB } from '@/components/indexedDB';
+import { scoreData, songData } from '@/types/data';
+import { difficultyDiscriminator } from '@/components/songs/filter';
+import { _currentStore, _isSingle } from '@/components/settings';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 interface S {

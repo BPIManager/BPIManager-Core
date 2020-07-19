@@ -1,19 +1,19 @@
 import React from "react";
 
-import { scoreData, songData, historyData } from "../../../types/data";
+import { scoreData, songData, historyData } from "@/types/data";
 import Container from "@material-ui/core/Container";
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { FormattedMessage } from "react-intl";
-import {scoreHistoryDB} from "../../../components/indexedDB";
+import {scoreHistoryDB} from "@/components/indexedDB";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import Table from "@material-ui/core/Table";
 import TableRow from "@material-ui/core/TableRow";
-import timeFormatter from "../../../components/common/timeFormatter";
+import timeFormatter from "@/components/common/timeFormatter";
 import Loader from "../common/loader";
 
 interface P{

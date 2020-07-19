@@ -178,6 +178,7 @@ const ja = {
   "Help.Licenses":"Licenses",
   "Help.AboutBPI":"About BPI",
   "Help.Updates":"Updates",
+  "Help.Donations":"Donations",
   "Help.Disclaimer":"Disclaimer / Terms",
   "Help.G":"1. Note that the author(@notAesthet1c) cannot be held responsible for any damage caused by defects in the functions provided in BPIManager.",
   "Help.G.2":"2. Do not perform the following actions when using the rival function built into this tool. Note that if there is a malicious violation in each section, the user ID may be suspended for a while or other measures deemed necessary will be wielded.",

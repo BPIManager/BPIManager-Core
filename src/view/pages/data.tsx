@@ -3,18 +3,17 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { FormattedMessage } from "react-intl";
-import {scoresDB, importer} from "../../components/indexedDB";
+import {scoresDB, importer} from "@/components/indexedDB";
 import TextField from '@material-ui/core/TextField';
-import importCSV from "../../components/import/csv";
-import bpiCalculator from "../../components/bpi";
-import { _currentStore, _isSingle, _currentStoreWithFullName } from '../../components/settings';
+import importCSV from "@/components/import/csv";
+import bpiCalculator from "@/components/bpi";
+import { _currentStore, _isSingle, _currentStoreWithFullName } from '@/components/settings';
 import { _autoSync } from '../../components/settings';
 import Link from '@material-ui/core/Link';
 import {Link as RLink, withRouter, RouteComponentProps} from "react-router-dom";
-import moment from "moment";
-import { scoreData } from '../../types/data';
-import fbActions from '../../components/firebase/actions';
-import importJSON from '../../components/import/json';
+import { scoreData } from '@/types/data';
+import fbActions from '@/components/firebase/actions';
+import importJSON from '@/components/import/json';
 import FormControl from '@material-ui/core/FormControl';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -22,10 +21,9 @@ import Radio from '@material-ui/core/Radio';
 import Paper from '@material-ui/core/Paper';
 import Alert from '@material-ui/lab/Alert/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
-import { config } from '../../config';
-import timeFormatter from '../../components/common/timeFormatter';
-import {AdShort} from "../components/slot";
-import Loader from '../components/common/loader';
+import { config } from '@/config';
+import timeFormatter, { timeCompare } from '@/components/common/timeFormatter';
+import Loader from "@/view/components/common/loader";
 
 interface P{
   global:any,
@@ -125,7 +123,7 @@ class Index extends React.Component<P&RouteComponentProps,{
           continue;
         }
         const item = all[result[i]["title"] + result[i]["difficulty"]];
-        if(item && ((item["exScore"] === 0 || Number.isNaN(item["exScore"])) || (item["exScore"] >= result[i]["exScore"] && item["clearState"] === result[i]["clearState"]) || moment(result[i]["updatedAt"]).diff(item["updatedAt"],"seconds") <= 0)){
+        if(item && ((item["exScore"] === 0 || Number.isNaN(item["exScore"])) || (item["exScore"] >= result[i]["exScore"] && item["clearState"] === result[i]["clearState"]) || timeCompare(result[i]["updatedAt"],item["updatedAt"]) <= 0)){
           ++skipped;
           continue;
         }
@@ -187,7 +185,7 @@ class Index extends React.Component<P&RouteComponentProps,{
                 disabled={isSaving}
                 style={{width:"100%",margin:"5px 0"}}>
                   <FormattedMessage id="Data.Execute"/><br/>
-                  (->{_currentStoreWithFullName() }&nbsp;/&nbsp;
+                  (-{">"}{_currentStoreWithFullName() }&nbsp;/&nbsp;
                   {_isSingle() === 1 ? "SP" : "DP"})
               </Button>
               {isSaving && <Loader isInner/>}
@@ -227,7 +225,6 @@ class Index extends React.Component<P&RouteComponentProps,{
                 <FormattedMessage id="Data.UpdateMes2"/>
             </Alert>
         </Paper>
-        <AdShort/>
         <Paper style={{padding:"15px",margin:"10px 0 0 0"}}>
             <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
               取り込み方

@@ -11,14 +11,14 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
-import {_setGreenPreference,_currentGreenPreference, buttonTextColor} from "../../../components/settings/";
-import {songData} from "../../../types/data";
-import {songsDB} from "../../../components/indexedDB";
-import {_prefixFromNum} from "../../../components/songs/filter";
+import {_setGreenPreference,_currentGreenPreference, buttonTextColor} from "@/components/settings/";
+import {songData} from "@/types/data";
+import {songsDB} from "@/components/indexedDB";
+import {_prefixFromNum} from "@/components/songs/filter";
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import Loader from '../common/loader';
+import Loader from '@/view/components/common/loader';
 
 interface S {
   [key:string]:any,

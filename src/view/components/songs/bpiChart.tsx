@@ -1,8 +1,8 @@
 import React from "react";
 
-import { scoreData, songData } from "../../../types/data";
+import { scoreData, songData } from "@/types/data";
 import {BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer, Label} from "recharts";
-import { _chartColor,_chartBarColor } from "../../../components/settings";
+import { _chartColor,_chartBarColor } from "@/components/settings";
 import { chartData } from "./detailsScreen";
 
 interface P{

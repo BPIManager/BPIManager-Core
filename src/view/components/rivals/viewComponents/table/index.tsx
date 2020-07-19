@@ -6,10 +6,10 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
-import { diffColor } from "../../../songs/common";
-import { _currentViewComponents, _traditionalMode } from "../../../../../components/settings";
+import { diffColor } from "@/view/components/songs/common";
+import { _currentViewComponents, _traditionalMode } from "@/components/settings";
 import Details from "./modal";
-import { withRivalData } from "../../../../../components/stats/radar";
+import { withRivalData } from "@/components/stats/radar";
 
 const columns = [
   { id: "difficultyLevel", label: "☆"},

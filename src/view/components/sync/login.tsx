@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FormattedMessage } from 'react-intl';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import fbActions from '../../../components/firebase/actions';
+import fbActions from '@/components/firebase/actions';
 import Paper from '@material-ui/core/Paper';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -13,7 +13,7 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import LockIcon from '@material-ui/icons/Lock';
 import Avatar from '@material-ui/core/Avatar';
-import { avatarFontColor, avatarBgColor } from '../../../components/common';
+import { avatarFontColor, avatarBgColor } from '@/components/common';
 
 class SyncLoginScreen extends React.Component<{
   mode:number

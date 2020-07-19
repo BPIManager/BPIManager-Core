@@ -4,10 +4,10 @@ import { injectIntl } from 'react-intl';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
-import Main from "../components/stats/main";
-import Scatter from "../components/stats/scatter";
-import MyBest from "../components/stats/mybest";
-import Radar from "../components/stats/radar";
+import Main from "@/view/components/stats/main";
+import Scatter from "@/view/components/stats/scatter";
+import MyBest from "@/view/components/stats/mybest";
+import Radar from "@/view/components/stats/radar";
 
 interface S {
   currentTab:number

@@ -166,18 +166,19 @@ legend.MuiFormLabel-root{
 }
 
 .loaderCentered{
-  display:flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  height:30vh;
+  display:flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-direction: column !important;
+  height:30vh !important;
 }
+
 .loaderCenteredOnly{
-  display:flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  margin:10px 0;
+  display:flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-direction: column !important;
+  margin:10px 0 !important;
 }
 
 @media screen and (min-width:992px){

@@ -12,7 +12,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
-import { buttonTextColor } from '../../../../components/settings';
+import { buttonTextColor } from '@/components/settings';
 
 interface P {
   handleToggle:()=>void,

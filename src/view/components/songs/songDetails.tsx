@@ -1,6 +1,6 @@
 import React from "react";
 
-import { scoreData, songData } from "../../../types/data";
+import { scoreData, songData } from "@/types/data";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableRow from "@material-ui/core/TableRow";
@@ -8,7 +8,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import { FormattedMessage } from "react-intl";
-import { lampCSVArray, getSongSuffixForIIDXInfo } from "../../../components/songs/filter";
+import { lampCSVArray, getSongSuffixForIIDXInfo } from "@/components/songs/filter";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";

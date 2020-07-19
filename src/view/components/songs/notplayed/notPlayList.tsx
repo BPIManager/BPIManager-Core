@@ -13,15 +13,15 @@ import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 
-import {songData} from "../../../../types/data";
-import { difficultyDiscriminator } from '../../../../components/songs/filter';
+import {songData} from "@/types/data";
+import { difficultyDiscriminator } from '@/components/songs/filter';
 import equal from 'fast-deep-equal'
 import Button from '@material-ui/core/Button';
 import SongsFilter, { B } from '../common/filter';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { bpmFilter,verArr } from '../common';
-import { commonFunc } from '../../../../components/common';
-import FilterByLevelAndDiff from '../../common/selector';
+import { commonFunc } from '@/components/common';
+import FilterByLevelAndDiff from '@/view/components/common/selector';
 
 interface stateInt {
   filterByName:string,

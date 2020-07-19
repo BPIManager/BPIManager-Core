@@ -1,8 +1,7 @@
 import Dexie from "dexie";
 import {scoreData,songData, rivalScoreData, DBRivalStoreData, historyData} from "../../types/data";
-import timeFormatter from "../common/timeFormatter";
+import timeFormatter, { timeCompare } from "../common/timeFormatter";
 import {_currentStore,_isSingle} from "../settings";
-import moment from "moment";
 import {difficultyDiscriminator, difficultyParser} from "../songs/filter";
 import bpiCalcuator from "../bpi";
 import {noimg} from "../common/"
@@ -648,7 +647,7 @@ export const scoreHistoryDB = class extends storageWrapper{
     try{
       const t = await this.scoreHistory.where("[title+storedAt+difficulty+isSingle]").equals(
         [item["title"],item["storedAt"],item["difficulty"],item["isSingle"]]
-      ).toArray().then((t)=>t.sort((a,b)=>moment(b.updatedAt).diff(moment(a.updatedAt))));
+      ).toArray().then((t)=>t.sort((a,b)=>timeCompare(b.updatedAt,a.updatedAt)));
       return {
         willUpdate:t.length === 0 ? true : Number(item.exScore) > Number(t[t.length - 1].exScore),
         lastScore:t.length === 0 ? -1 : t[t.length-1].exScore
@@ -700,7 +699,7 @@ export const scoreHistoryDB = class extends storageWrapper{
       return await this.scoreHistory.where(
         {storedAt:this.currentStore,isSingle:this.isSingle,title:song.title,difficulty:difficultyDiscriminator(song.difficulty)}
       ).toArray().then(t=>t.sort((a,b)=>{
-        return moment(b.updatedAt).diff(moment(a.updatedAt))
+        return timeCompare(b.updatedAt,a.updatedAt)
       }));
     }catch(e){
       console.error(e);

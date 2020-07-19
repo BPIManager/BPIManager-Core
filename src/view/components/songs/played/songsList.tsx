@@ -2,7 +2,7 @@ import * as React from 'react';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import { FormattedMessage } from "react-intl";
-import {songsDB} from "../../../../components/indexedDB";
+import {songsDB} from "@/components/indexedDB";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import { injectIntl } from "react-intl";
@@ -15,23 +15,22 @@ import FilterListIcon from '@material-ui/icons/FilterList';
 import SongsTable from "./tablePlayed";
 import Input from '@material-ui/core/Input';
 
-import {scoreData, songData} from "../../../../types/data";
+import {scoreData, songData} from "@/types/data";
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import { _prefix, _prefixFromNum } from '../../../../components/songs/filter';
+import { _prefix, _prefixFromNum } from '@/components/songs/filter';
 import equal from 'fast-deep-equal'
-import { _isSingle } from '../../../../components/settings';
-import moment from 'moment';
+import { _isSingle } from '@/components/settings';
 import Button from '@material-ui/core/Button';
-import SongsFilter, { B, BPIR } from '../common/filter';
 import { bpmFilter,bpiFilter,verArr } from '../common';
+import SongsFilter, { B, BPIR } from '../common/filter';
 import OrderControl from "../common/orders";
-import { commonFunc } from '../../../../components/common';
-import FilterByLevelAndDiff from '../../common/selector';
+import { commonFunc } from '@/components/common';
+import FilterByLevelAndDiff from '@/view/components/common/selector';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import Loader from '../../common/loader';
-import { toMoment } from '../../../../components/common/timeFormatter';
+import Loader from '@/view/components/common/loader';
+import { toMoment, isSameDay, isSameWeek, _isBetween, subtract, isBefore, timeCompare } from '@/components/common/timeFormatter';
 import TimeRangeDialog from '../common/timeRange';
 
 interface stateInt {
@@ -175,11 +174,11 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
 
     const evaluateRange = (data:scoreData):boolean=>{
       return r === 0 ? true :
-      r === 1 ? toMoment(data.updatedAt) === toMoment(new Date()) :
-      r === 2 ? toMoment(data.updatedAt) === toMoment(moment().subtract(1, 'day')) :
-      r === 3 ? moment(data.updatedAt).week() === moment(new Date()).week() :
-      r === 5 ? moment(data.updatedAt).isBetween(rb.from,rb.to,"day", '[]') :
-      moment(data.updatedAt).isBefore(moment().subtract(1, 'month'))
+      r === 1 ? isSameDay(data.updatedAt) :
+      r === 2 ? isSameDay(data.updatedAt,subtract(1, 'day')) :
+      r === 3 ? isSameWeek(data.updatedAt,new Date()) :
+      r === 5 ? _isBetween(data.updatedAt,rb.from,rb.to) :
+      isBefore(data.updatedAt);
     }
 
     const evaluateMode = (data:scoreData,max:number):boolean=>{
@@ -269,7 +268,7 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
         case 6:
         return a.exScore / aFull["notes"] * 2 - b.exScore / bFull["notes"] * 2;
         case 7:
-        return moment(a.updatedAt).diff(b.updatedAt);
+        return timeCompare(a.updatedAt,b.updatedAt);
         case 8:
         case 9:
         const isMaxBPM = 8;

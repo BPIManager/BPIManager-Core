@@ -5,14 +5,13 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import ShowSnackBar from '../snackBar';
-import { rivalListsDB } from '../../../components/indexedDB';
-import { DBRivalStoreData } from '../../../types/data';
-import { updateRivalScore } from "../../../components/rivals";
+import { rivalListsDB } from '@/components/indexedDB';
+import { DBRivalStoreData } from '@/types/data';
+import { updateRivalScore } from "@/components/rivals";
 import Backdrop from "@material-ui/core/Backdrop";
-import moment from "moment";
-import timeFormatter,{timeCompare} from "../../../components/common/timeFormatter";
-import Loader from '../common/loader';
-import { alternativeImg, avatarBgColor, avatarFontColor } from '../../../components/common';
+import timeFormatter,{timeCompare} from "@/components/common/timeFormatter";
+import Loader from '@/view/components/common/loader';
+import { alternativeImg, avatarBgColor, avatarFontColor } from '@/components/common';
 import Alert from '@material-ui/lab/Alert/Alert';
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
@@ -84,7 +83,7 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
     const {rivals} = this.state;
     let updated = 0;
     let lastUpdateTime = localStorage.getItem("lastBatchRivalUpdate") || "1970-01-01 00:00";
-    const timeDiff = (timeCompare(moment(),moment(lastUpdateTime)));
+    const timeDiff = (timeCompare(new Date(),lastUpdateTime));
     if(timeDiff < 60){
       return this.toggleSnack(updateMinuteError);
     }
@@ -150,7 +149,7 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
               </IconButton>
             </ListSubheader>
           }>
-          {rivals.sort((a,b)=>moment(b.updatedAt).diff(a.updatedAt)).map((item,i)=>(
+          {rivals.sort((a,b)=>timeCompare(b.updatedAt,a.updatedAt)).map((item,i)=>(
             <div key={item.uid} onClick={()=>this.props.showEachRival(item)}>
               <RivalComponent data={item}/>
               {i !== rivals.length - 1 && <Divider variant="middle" component="li" />}

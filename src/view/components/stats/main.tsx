@@ -1,20 +1,20 @@
 import * as React from 'react';
-import { songsDB } from '../../../components/indexedDB';
+import { songsDB } from '@/components/indexedDB';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import bpiCalcuator from '../../../components/bpi';
-import {_chartColor, _chartBarColor} from "../../../components/settings";
+import bpiCalcuator from '@/components/bpi';
+import {_chartColor, _chartBarColor} from "@/components/settings";
 import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, BarChart, ReferenceLine} from 'recharts';
-import _withOrd from '../../../components/common/ord';
+import _withOrd from '@/components/common/ord';
 import {FormControlLabel, FormControl, RadioGroup, Radio, FormLabel} from '@material-ui/core/';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '../common/loader';
-import { bpmDist } from '../../../components/stats/bpmDist';
-import { S } from '../../../types/stats';
-import { BPITicker, statMain } from '../../../components/stats/main';
+import { bpmDist } from '@/components/stats/bpmDist';
+import { S } from '@/types/stats';
+import { BPITicker, statMain } from '@/components/stats/main';
 
 class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
 

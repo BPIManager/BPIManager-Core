@@ -6,14 +6,14 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
-import Loader from '../../../common/loader';
+import Loader from '@/view/components/common/loader';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
-import { songData } from '../../../../../types/data';
-import { DiffsTable } from '../../../songs/songRivals';
-import { datasets, rivalShow } from "../../../../../components/rivals/letters";
-import { _prefixFromNum } from '../../../../../components/songs/filter';
+import { songData } from '@/types/data';
+import { DiffsTable } from '@/view/components/songs/songRivals';
+import { datasets, rivalShow } from "@/components/rivals/letters";
+import { _prefixFromNum } from '@/components/songs/filter';
 
 interface S {
   rowsPerPage:number,
@@ -189,7 +189,6 @@ class SongDetail extends React.Component<P2,{isLoading:boolean,dataset:datasets[
   async componentDidMount(){
     try{
       const {song,score} = this.props;
-      console.log(song,score);
       if(!song || !score){
         throw new Error();
       }

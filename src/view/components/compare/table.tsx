@@ -6,11 +6,11 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
-import DetailedSongInformation from "../../components/songs/detailsScreen";
-import { scoreData, songData } from '../../../types/data';
+import DetailedSongInformation from "@/view/components/songs/detailsScreen";
 import { diffColor } from "../songs/common";
 import Tooltip from '@material-ui/core/Tooltip';
-import { compareData } from '../../../types/compare';
+import { scoreData, songData } from '@/types/data';
+import { compareData } from '@/types/compare';
 import Loader from '../common/loader';
 
 interface S {
@@ -154,7 +154,7 @@ export default class Compare extends React.Component<P,S> {
         onChangeRowsPerPage={this.handleChangeRowsPerPage}
       />
       {isOpen &&
-        <DetailedSongInformation isOpen={isOpen} song={currentSongData} score={currentScoreData} handleOpen={this.handleOpen}/>
+        <DetailedSongInformation isOpen={(isOpen as boolean)} song={currentSongData} score={currentScoreData} handleOpen={this.handleOpen}/>
       }
     </Paper>
     );

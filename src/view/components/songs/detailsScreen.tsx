@@ -7,20 +7,18 @@ import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import TwitterIcon from '@material-ui/icons/Twitter';
-import { scoreData, songData } from "../../../types/data";
-import { _prefixFromNum, getSongSuffixForIIDXInfo } from "../../../components/songs/filter";
+import { _prefixFromNum, getSongSuffixForIIDXInfo } from "@/components/songs/filter";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
 import TextField from "@material-ui/core/TextField";
-import { FormattedMessage, injectIntl } from "react-intl";
+import { FormattedMessage } from "react-intl";
 import Paper from "@material-ui/core/Paper";
-import bpiCalcuator, { B } from "../../../components/bpi";
+import bpiCalcuator, { B } from "@/components/bpi";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import YouTubeIcon from '@material-ui/icons/YouTube';
 import ThumbsUpDownIcon from '@material-ui/icons/ThumbsUpDown';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
-import {scoresDB,scoreHistoryDB, songsDB} from "../../../components/indexedDB";
 import ShowSnackBar from "../snackBar";
 import {Button, Tooltip, Fab, List, ListItem, SwipeableDrawer, ListItemIcon, ListItemText, ListSubheader, Backdrop} from '@material-ui/core';
 import BPIChart from "./bpiChart";
@@ -28,19 +26,22 @@ import SongDetails from "./songDetails";
 import SongDiffs from "./songDiffs";
 import { UnregisterCallback } from "history";
 import TabPanel from "./common/tabPanel";
-import { _currentTheme,isEnableTweetButton, _area, _isSingle, _currentStore } from "../../../components/settings";
-import _djRank from "../../../components/common/djRank";
-import {rivalListsDB} from "../../../components/indexedDB";
+import {scoresDB,scoreHistoryDB, songsDB} from "@/components/indexedDB";
+import { _currentTheme,isEnableTweetButton, _area, _isSingle, _currentStore } from "@/components/settings";
+import _djRank from "@/components/common/djRank";
+import {rivalListsDB} from "@/components/indexedDB";
+import fbActions from "@/components/firebase/actions";
 import SongRivals from "./songRivals";
-import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
+import Loader from "../common/loader";
 import favLists from "./common/lists";
-import { DBLists } from "../../../types/lists";
+import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import Filter1Icon from '@material-ui/icons/Filter1';
-import fbActions from "../../../components/firebase/actions";
-import { config } from "../../../config";
-import Loader from "../common/loader";
+import { config } from "@/config";
+
+import { DBLists } from "@/types/lists";
+import { scoreData, songData } from "@/types/data";
 
 interface P{
   isOpen:boolean,
@@ -68,7 +69,7 @@ interface S{
   justSelectedList:string,
   successSnack:boolean,
   errorSnack:boolean,
-  errorSnackMessage:string|undefined,
+  errorSnackMessage:any,
   graphLastUpdated:number,
   isSaving:boolean,
   showBody:boolean,
@@ -244,8 +245,10 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       break;
       case 2:
         if(this.props.song.difficultyLevel !== "12"){
-          const {formatMessage} = this.props.intl;
-          this.setState({errorSnack:true,errorSnackMessage:formatMessage({id:"Details.ErrorIIDXInfo"})});
+          this.setState({
+            errorSnack:true,
+            errorSnackMessage:<FormattedMessage id="Details.ErrorIIDXInfo"/>
+          });
         }else{
           window.open(
             `https://iidx.info/songinfo/?title=${this.props.song.title}${getSongSuffixForIIDXInfo(this.props.song.title,this.props.song.difficulty)}`
@@ -329,7 +332,6 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
   handleMemo = (e:React.ChangeEvent<HTMLInputElement>)=> this.setState({hasModifiedMemo:true,newMemo:e.target.value || ""});
 
   render(){
-    const {formatMessage} = this.props.intl;
     const {isOpen,handleOpen,song,score} = this.props;
     const {
       isSaving,isLoading,isPreparing,newScore,newMemo,newBPI,newClearState,newMissCount,showCharts,chartData,
@@ -447,7 +449,8 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
               </div>
               <ShowSnackBar
                 message={
-                  (justFavorited ? formatMessage({id:"Details.FavButtonAdded"}) : formatMessage({id:"Details.FavButtonRemoved"})) +  ":" + justSelectedList}
+                  <span>{(justFavorited ? <FormattedMessage id="Details.FavButtonAdded"/> : <FormattedMessage id="Details.FavButtonRemoved"/>)}:{justSelectedList}</span>
+                }
                 variant="success" handleClose={this.toggleSuccessSnack} open={successSnack} autoHideDuration={3000}/>
             </Grid>
             <Grid item xs={1} style={{display:"flex",alignItems:"center",justifyContent:"flex-end"}}>
@@ -538,6 +541,4 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
   }
 }
 
-
-
-export default injectIntl(DetailedSongInformation);
+export default DetailedSongInformation;

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import User from "../../../pages/user";
-import { _currentTheme } from '../../../../components/settings';
+import User from "@/view/pages/user";
+import { _currentTheme } from '@/components/settings';
 import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -30,7 +30,6 @@ export default class ModalUser extends React.Component<{
     const c = _currentTheme();
     const {isOpen,handleOpen} = this.props;
     const {currentUserName} = this.state;
-    console.log(currentUserName);
     return (
       <Dialog
         id="detailedScreen"

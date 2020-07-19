@@ -7,10 +7,10 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 
-import {scoreData, songData} from "../../../../types/data";
+import {scoreData, songData} from "@/types/data";
 import DetailedSongInformation from "../detailsScreen";
-import { difficultyDiscriminator } from '../../../../components/songs/filter';
-import { _isSingle,_currentStore } from '../../../../components/settings';
+import { difficultyDiscriminator } from '@/components/songs/filter';
+import { _isSingle,_currentStore } from '@/components/settings';
 
 const columns = [
   { id: "difficultyLevel", label: "☆"},

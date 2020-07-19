@@ -1,5 +1,5 @@
-import { favsDB } from "../../../../components/indexedDB";
-import { DBLists } from "../../../../types/lists";
+import { favsDB } from "@/components/indexedDB";
+import { DBLists } from "@/types/lists";
 
 export default class favLists {
 

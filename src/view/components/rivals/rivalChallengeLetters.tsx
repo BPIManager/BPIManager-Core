@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { loader } from '../../../components/rivals/letters';
+import { loader } from '@/components/rivals/letters';
 import FilterByLevelAndDiff from '../common/selector';
 import LettersTable from './viewComponents/letters/table';
 import SongsFilter, {  B } from '../songs/common/filter';
 import { verArr, bpmFilter } from '../songs/common';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import BackspaceIcon from "@material-ui/icons/Backspace";
-import { difficultyDiscriminator } from '../../../components/songs/filter';
-import { songsDB } from '../../../components/indexedDB';
-import { commonFunc } from '../../../components/common';
-import { songData } from '../../../types/data';
+import { difficultyDiscriminator } from '@/components/songs/filter';
+import { songsDB } from '@/components/indexedDB';
+import { commonFunc } from '@/components/common';
+import { songData } from '@/types/data';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
@@ -18,10 +18,10 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
-import { _isSingle } from '../../../components/settings';
+import { _isSingle } from '@/components/settings';
 import OrderControl from "../songs/common/orders";
-import moment from 'moment';
 import Container from '@material-ui/core/Container/Container';
+import { timeCompare } from '@/components/common/timeFormatter';
 
 interface P{
 
@@ -169,7 +169,7 @@ class RivalChallengeLetters extends React.Component<P,stateInt> {
         default:
           return a.win - b.win;
         case 5:
-          return moment(a.updatedAt).diff(b.updatedAt);
+          return timeCompare(a.updatedAt,b.updatedAt);
       }
     });
     if(orderTitle === 0){
