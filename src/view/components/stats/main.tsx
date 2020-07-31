@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import bpiCalcuator from '@/components/bpi';
 import {_chartColor, _chartBarColor} from "@/components/settings";
-import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, BarChart, ReferenceLine} from 'recharts';
+import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, BarChart, ReferenceLine, Legend} from 'recharts';
 import _withOrd from '@/components/common/ord';
 import {FormControlLabel, FormControl, RadioGroup, Radio, FormLabel, IconButton, Dialog, DialogTitle, DialogContent, Checkbox, DialogActions, Button, FormGroup} from '@material-ui/core/';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
@@ -153,6 +153,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
                         }
                         return (null);
                       })}
+                      <Legend/>
                     </ComposedChart>
                   </ResponsiveContainer>
                 </div>
