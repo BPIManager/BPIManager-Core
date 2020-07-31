@@ -89,7 +89,6 @@ export interface chartData{
 class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
 
   private calc:bpiCalcuator = new bpiCalcuator();
-  private unlisten:UnregisterCallback|null = null;
 
   constructor(props:P & {intl?:any}){
     super(props);

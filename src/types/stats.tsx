@@ -13,7 +13,10 @@ export interface groupedByLevel extends groupedArray {
 export interface perDate {
   name:string,
   sum:number,
-  avg:number
+  avg:number,
+  max:number,
+  min:number,
+  med:number
 }
 
 export interface S {
@@ -27,4 +30,7 @@ export interface S {
   groupedByDJRank:groupedArray[],
   groupedByClearState:groupedArray[],
   targetLevel:number,
+  showDisplayDataConfig:boolean,
+  displayData:number[],
+  graphLastUpdated:number,
 }

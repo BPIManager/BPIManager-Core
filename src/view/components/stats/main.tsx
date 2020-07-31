@@ -9,12 +9,15 @@ import bpiCalcuator from '@/components/bpi';
 import {_chartColor, _chartBarColor} from "@/components/settings";
 import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, BarChart, ReferenceLine} from 'recharts';
 import _withOrd from '@/components/common/ord';
-import {FormControlLabel, FormControl, RadioGroup, Radio, FormLabel} from '@material-ui/core/';
+import {FormControlLabel, FormControl, RadioGroup, Radio, FormLabel, IconButton, Dialog, DialogTitle, DialogContent, Checkbox, DialogActions, Button, FormGroup} from '@material-ui/core/';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '../common/loader';
 import { bpmDist } from '@/components/stats/bpmDist';
 import { S } from '@/types/stats';
 import { BPITicker, statMain } from '@/components/stats/main';
+import SettingsIcon from '@material-ui/icons/Settings';
+import Alert from '@material-ui/lab/Alert/Alert';
+import AlertTitle from '@material-ui/lab/AlertTitle/AlertTitle';
 
 class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
 
@@ -31,6 +34,9 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
       groupedByDJRank:[],
       groupedByClearState:[],
       targetLevel:12,
+      displayData:[0,1],
+      showDisplayDataConfig:false,
+      graphLastUpdated:new Date().getTime(),
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
@@ -77,8 +83,12 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
     }
   }
 
+  applyDisplayConfig = (newData:number[])=> this.setState({displayData:newData,showDisplayDataConfig:false,graphLastUpdated:new Date().getTime()});
+  showDisplayDataConfig = ()=> this.setState({showDisplayDataConfig:true});
+  hasData = (name:number)=> this.state.displayData.indexOf(name) > -1;
+
   render(){
-    const {totalBPI,isLoading,perDate,targetLevel,groupedByBPM,totalRank,groupedByLevel,groupedByDJRank,groupedByClearState} = this.state;
+    const {totalBPI,isLoading,perDate,targetLevel,groupedByBPM,totalRank,groupedByLevel,groupedByDJRank,groupedByClearState,showDisplayDataConfig,displayData,graphLastUpdated} = this.state;
     const {formatMessage} = this.props.intl;
     const chartColor = _chartColor();
     const barColor = _chartBarColor("bar");
@@ -113,11 +123,16 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
             <Paper style={{padding:"15px",height:240}}>
               <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
                 <FormattedMessage id="Stats.EachDay"/>
+                <IconButton edge="end" style={{float:"right"}} size="small" aria-haspopup="true"
+                  onClick={this.showDisplayDataConfig}>
+                    <SettingsIcon />
+                </IconButton>
               </Typography>
               {perDate.length > 0 &&
                 <div style={{width:"95%",height:"100%",margin:"5px auto"}}>
                   <ResponsiveContainer width="100%">
                     <ComposedChart
+                      key={graphLastUpdated}
                       data={perDate}
                       margin={{
                         top: 5, right: 30, left: -30, bottom: 25,
@@ -126,8 +141,17 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
                       <XAxis dataKey="name" stroke={chartColor} />
                       <YAxis orientation="left" tickLine={false} axisLine={false} stroke={chartColor}/>
                       <Tooltip contentStyle={{color:"#333"}}/>
-                      <Bar dataKey="sum" name={formatMessage({id:"Stats.UpdatedSum"})} fill={barColor} />
-                      <Line dataKey="avg" name={formatMessage({id:"Stats.Average"})} stroke={lineColor} />
+                      {this.hasData(0) && <Bar dataKey="sum" name={formatMessage({id:"Stats.UpdatedSum"})} fill={barColor} />}
+                      {[
+                        {key:"avg",name:"Stats.Average",fillColor:lineColor,value:1},
+                        {key:"max",name:"Stats.Max",fillColor:_chartBarColor("line2"),value:2},
+                        {key:"min",name:"Stats.Min",fillColor:_chartBarColor("line3"),value:3},
+                        {key:"med",name:"Stats.Median",fillColor:_chartBarColor("line4"),value:4},
+                      ].map((item:any)=>{
+                        if(this.hasData(item.value)){
+                          return <Line dataKey={item.key} dot={false} name={formatMessage({id:item.name})} stroke={item.fillColor} />
+                        }
+                      })}
                     </ComposedChart>
                   </ResponsiveContainer>
                 </div>
@@ -136,6 +160,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
             </Paper>
           </Grid>
         </Grid>
+        {showDisplayDataConfig && <ChangeDisplayData currentData={displayData} applyAndClose={this.applyDisplayConfig} />}
         <Grid container spacing={3}>
           <Grid item xs={12} md={12} lg={12}>
             <Paper style={{padding:"15px",height:270}}>
@@ -283,5 +308,84 @@ class ChangeLevel extends React.Component<{targetLevel:number,changeLevel:(e:Rea
       </FormControl>
     </div>
     )
+  }
+}
+
+interface PDisplayData {currentData:number[],applyAndClose:(data:any)=>void};
+class ChangeDisplayData extends React.Component<PDisplayData,{
+  newData:number[]
+}>{
+
+
+  constructor(props:PDisplayData){
+    super(props);
+    this.state = {
+      newData:this.props.currentData || []
+    }
+  }
+
+  hasData = (name:number)=> this.state.newData.indexOf(name) > -1;
+  /*
+  0:更新楽曲数
+  1:平均
+  2:最高
+  3:最低
+  4:中央
+   */
+
+  handleNewData = (name:number)=>{
+    const {newData} = this.state;
+    if(this.hasData(name)){
+      return this.setState({newData:newData.filter((item:number)=>item !== name)});
+    }else{
+      newData.push(name);
+      return this.setState({newData:newData});
+    }
+  }
+  render(){
+    const {applyAndClose} = this.props;
+    const {newData} = this.state;
+    const config = [
+      {value:0,label:"更新楽曲数"},
+      {value:1,label:"平均値"},
+      {value:2,label:"最高値"},
+      {value:3,label:"最低値"},
+      {value:4,label:"中央値"}
+    ]
+    return (
+      <Dialog open={true} onClose={()=>applyAndClose(newData)}>
+        <DialogTitle>表示内容のカスタマイズ</DialogTitle>
+        <DialogContent>
+          <FormGroup>
+            {config.map((item:{value:number,label:string})=>(
+            <FormControlLabel
+              control={
+                <Checkbox
+                  key={item.value}
+                  checked={this.hasData(item.value)}
+                  onChange={()=>this.handleNewData(item.value)}
+                  value={item.value}
+                  color="primary"
+                />
+              }
+              label={item.label}
+            />
+          ))}
+          </FormGroup>
+          <Alert severity="info" style={{margin:"10px 0"}}>
+            <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>この画面について</AlertTitle>
+            <p>
+              日別情報に表示する内容をこの画面からカスタマイズすることができます。<br/>
+              この機能は後日、別の形で再実装する可能性があります。
+            </p>
+          </Alert>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={()=>applyAndClose(newData)} color="primary">
+            適用
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
   }
 }

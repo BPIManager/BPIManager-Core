@@ -111,6 +111,12 @@ export const _chartBarColor = (name:string)=>{
       return "#BF4C0A";
     }else if(name === "line"){
       return "#943300";
+    }else if(name === "line2"){
+      return "#8095ff";
+    }else if(name === "line3"){
+      return "#ff7979";
+    }else if(name === "line4"){
+      return "#7ee7ff";
     }else{
       return "#D9AFA0";
     }
@@ -120,6 +126,12 @@ export const _chartBarColor = (name:string)=>{
       return "#BF4C0A";
     }else if(name === "line"){
       return "#bbb";
+    }else if(name === "line2"){
+      return "#8095ff";
+    }else if(name === "line3"){
+      return "#ff7979";
+    }else if(name === "line4"){
+      return "#7ee7ff";
     }else{
       return "#aaa";
     }
@@ -129,6 +141,12 @@ export const _chartBarColor = (name:string)=>{
       return "#3E38F2";
     }else if(name === "line"){
       return "#5C73F2";
+    }else if(name === "line2"){
+      return "#4aff47";
+    }else if(name === "line3"){
+      return "#ff7a47";
+    }else if(name === "line4"){
+      return "#45ffee";
     }else{
       return "#829FD9";
     }

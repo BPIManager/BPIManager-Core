@@ -120,6 +120,13 @@ export const statMain = class {
       },0);
       return t;
     }
+    const getBPIArray = (item:historyData[]):number[]=>{
+      let t = item.reduce((array:number[],item:historyData)=>{
+        array.push(item.BPI);
+        return array;
+      },[]);
+      return t;
+    }
     Object.keys(allDiffs).map((item)=>{
       const p = allDiffs[item].reduce((a:number[],val:historyData)=>{
         if(val.BPI){
@@ -130,9 +137,13 @@ export const statMain = class {
       _bpi.allTwelvesLength = p.length;
       _bpi.allTwelvesBPI = p;
       const avg = _bpi.totalBPI();
+      const BPIsArray = getBPIArray(allDiffs[item]);
       eachDaySum.push({
         name : item,
         sum : allDiffs[item].length,
+        max:Math.max(...BPIsArray),
+        min:Math.min(...BPIsArray),
+        med:this.getMedian(BPIsArray),
         avg : avg ? avg : Math.round(total(allDiffs[item]) / allDiffs[item].length * 100) / 100
       });
       return 0;
@@ -140,8 +151,13 @@ export const statMain = class {
     return eachDaySum.sort((a,b)=> timeCompare(a.name,b.name)).slice(-10);
   }
 
-  at = ()=> this.bpiMapper(this.targetLevel === 12 ? this.twelves : this.elevens);
+  getMedian = (array:number[]) => {
+    const mid = Math.floor(array.length / 2),
+    nums = [...array].sort((a, b) => a - b);
+    return Math.round((array.length % 2 !== 0 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2) * 100) / 100;
+  };
 
+  at = ()=> this.bpiMapper(this.targetLevel === 12 ? this.twelves : this.elevens);
   songFinder = (level:string,title:string,difficulty:string)=>(
     level === "12" ? this.twelves : this.elevens
   ).find((elm:scoreData)=>( elm.title === title && elm.difficulty === difficultyDiscriminator(difficulty) ) )
