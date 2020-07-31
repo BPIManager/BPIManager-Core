@@ -24,7 +24,6 @@ import {Button, Tooltip, Fab, List, ListItem, SwipeableDrawer, ListItemIcon, Lis
 import BPIChart from "./bpiChart";
 import SongDetails from "./songDetails";
 import SongDiffs from "./songDiffs";
-import { UnregisterCallback } from "history";
 import TabPanel from "./common/tabPanel";
 import {scoresDB,scoreHistoryDB, songsDB} from "@/components/indexedDB";
 import { _currentTheme,isEnableTweetButton, _area, _isSingle, _currentStore } from "@/components/settings";

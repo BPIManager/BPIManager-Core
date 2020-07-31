@@ -151,6 +151,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
                         if(this.hasData(item.value)){
                           return <Line dataKey={item.key} dot={false} name={formatMessage({id:item.name})} stroke={item.fillColor} />
                         }
+                        return (null);
                       })}
                     </ComposedChart>
                   </ResponsiveContainer>
