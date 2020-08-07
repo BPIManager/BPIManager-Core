@@ -12,6 +12,7 @@ export interface groupedByLevel extends groupedArray {
 
 export interface perDate {
   name:string,
+  shiftedBPI:number,
   sum:number,
   avg:number,
   max:number,
@@ -23,7 +24,6 @@ export interface S {
   isLoading:boolean,
   totalBPI:number,
   totalRank:number,
-  perDate:perDate[],
   groupedByLevel:groupedByLevel[],
   groupedByDiff:groupedArray[],
   groupedByBPM:distBPMI[],
@@ -33,4 +33,14 @@ export interface S {
   showDisplayDataConfig:boolean,
   displayData:number[],
   graphLastUpdated:number,
+}
+
+export interface ShiftType {
+  isLoading:boolean,
+  perDate:perDate[],
+  targetLevel:number,
+  showDisplayDataConfig:boolean,
+  displayData:number[],
+  graphLastUpdated:number,
+  currentPeriod:number,
 }

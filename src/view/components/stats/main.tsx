@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { songsDB } from '@/components/indexedDB';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import { FormattedMessage, injectIntl } from 'react-intl';
@@ -7,17 +6,14 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import bpiCalcuator from '@/components/bpi';
 import {_chartColor, _chartBarColor} from "@/components/settings";
-import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, LineChart, BarChart, ReferenceLine, Legend} from 'recharts';
+import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, LineChart, BarChart, ReferenceLine} from 'recharts';
 import _withOrd from '@/components/common/ord';
-import {FormControlLabel, FormControl, RadioGroup, Radio, FormLabel, IconButton, Dialog, DialogTitle, DialogContent, Checkbox, DialogActions, Button, FormGroup} from '@material-ui/core/';
+import {FormControlLabel, FormControl, RadioGroup, Radio, FormLabel} from '@material-ui/core/';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '../common/loader';
 import { bpmDist } from '@/components/stats/bpmDist';
 import { S } from '@/types/stats';
 import { BPITicker, statMain } from '@/components/stats/main';
-import SettingsIcon from '@material-ui/icons/Settings';
-import Alert from '@material-ui/lab/Alert/Alert';
-import AlertTitle from '@material-ui/lab/AlertTitle/AlertTitle';
 
 class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
 
@@ -27,7 +23,6 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
       isLoading:true,
       totalBPI:0,
       totalRank:0,
-      perDate:[],
       groupedByLevel:[],
       groupedByDiff:[],
       groupedByBPM:[],
@@ -47,18 +42,13 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
 
   async updateScoreData(targetLevel = 12){
     const bpi = new bpiCalcuator();
-
     const exec = await new statMain(targetLevel).load();
-
-    const songsNum = await new songsDB().getSongsNum(String(targetLevel));
-
-    const totalBPI = bpi.setSongs(exec.at(),songsNum);
+    const totalBPI = bpi.setSongs(exec.at(),exec.at().length);
     //BPI別集計
     this.setState({
       isLoading:false,
       totalBPI:totalBPI,
       totalRank:bpi.rank(totalBPI,false),
-      perDate:await exec.eachDaySum(),
       groupedByLevel:await exec.groupedByLevel(),
       groupedByBPM:await bpmDist(String(targetLevel) as "11"|"12"),
       groupedByDJRank:await exec.songsByDJRank(),
@@ -88,15 +78,14 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
   hasData = (name:number)=> this.state.displayData.indexOf(name) > -1;
 
   render(){
-    const {totalBPI,isLoading,perDate,targetLevel,groupedByBPM,totalRank,groupedByLevel,groupedByDJRank,groupedByClearState,showDisplayDataConfig,displayData,graphLastUpdated} = this.state;
-    const {formatMessage} = this.props.intl;
+    const {totalBPI,isLoading,targetLevel,groupedByBPM,totalRank,groupedByLevel,groupedByDJRank,groupedByClearState} = this.state;
     const chartColor = _chartColor();
     const barColor = _chartBarColor("bar");
     const lineColor = _chartBarColor("line");
     if(isLoading){
       return (
         <Container fixed style={{padding:0}}>
-          <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel}/>
+          <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel} isFlexEnd/>
           <Loader/>
         </Container>
       );
@@ -104,7 +93,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
 
     return (
       <Container fixed style={{padding:0}}>
-        <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel}/>
+        <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel} isFlexEnd/>
         <Grid container spacing={3}>
           <Grid item xs={12} md={3} lg={3}>
             <Paper style={{padding:"15px"}} className="responsiveTotalBPI">
@@ -120,51 +109,6 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
             </Paper>
           </Grid>
           <Grid item xs={12} md={9} lg={9}>
-            <Paper style={{padding:"15px",height:240}}>
-              <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
-                <FormattedMessage id="Stats.EachDay"/>
-                <IconButton edge="end" style={{float:"right"}} size="small" aria-haspopup="true"
-                  onClick={this.showDisplayDataConfig}>
-                    <SettingsIcon />
-                </IconButton>
-              </Typography>
-              {perDate.length > 0 &&
-                <div style={{width:"95%",height:"100%",margin:"5px auto"}}>
-                  <ResponsiveContainer width="100%">
-                    <ComposedChart
-                      key={graphLastUpdated}
-                      data={perDate}
-                      margin={{
-                        top: 5, right: 30, left: -30, bottom: 25,
-                      }}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" stroke={chartColor} />
-                      <YAxis orientation="left" tickLine={false} axisLine={false} stroke={chartColor}/>
-                      <Tooltip contentStyle={{color:"#333"}}/>
-                      {this.hasData(0) && <Bar dataKey="sum" name={formatMessage({id:"Stats.UpdatedSum"})} fill={barColor} />}
-                      {[
-                        {key:"avg",name:"Stats.Average",fillColor:lineColor,value:1},
-                        {key:"max",name:"Stats.Max",fillColor:_chartBarColor("line2"),value:2},
-                        {key:"min",name:"Stats.Min",fillColor:_chartBarColor("line3"),value:3},
-                        {key:"med",name:"Stats.Median",fillColor:_chartBarColor("line4"),value:4},
-                      ].map((item:any)=>{
-                        if(this.hasData(item.value)){
-                          return <Line dataKey={item.key} dot={false} name={formatMessage({id:item.name})} stroke={item.fillColor} />
-                        }
-                        return (null);
-                      })}
-                      <Legend/>
-                    </ComposedChart>
-                  </ResponsiveContainer>
-                </div>
-              }
-              {perDate.length === 0 && <p>No data found.</p>}
-            </Paper>
-          </Grid>
-        </Grid>
-        {showDisplayDataConfig && <ChangeDisplayData currentData={displayData} applyAndClose={this.applyDisplayConfig} />}
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={12} lg={12}>
             <Paper style={{padding:"15px",height:270}}>
               <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
                 <FormattedMessage id="Stats.Distribution"/>
@@ -283,14 +227,14 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
 
 export default withRouter(injectIntl(Main));
 
-class ChangeLevel extends React.Component<{targetLevel:number,changeLevel:(e:React.ChangeEvent<HTMLInputElement>)=>void,isLoading:boolean},{}>{
+export class ChangeLevel extends React.Component<{targetLevel:number,changeLevel:(e:React.ChangeEvent<HTMLInputElement>)=>void,isLoading:boolean,isFlexEnd?:boolean},{}>{
 
   render(){
-    const {targetLevel,changeLevel,isLoading} = this.props;
+    const {targetLevel,changeLevel,isLoading,isFlexEnd} = this.props;
     return (
-      <div style={{display:"flex",justifyContent:"flex-end"}}>
+      <div style={isFlexEnd ? {display:"flex",justifyContent:"flex-end"} :  {}}>
       <FormControl component="fieldset">
-        <FormLabel component="legend">表示対象</FormLabel>
+        <FormLabel component="legend" color="primary">表示対象</FormLabel>
         <RadioGroup aria-label="position" name="position" value={targetLevel} onChange={changeLevel} row>
           <FormControlLabel
             value={11}
@@ -310,84 +254,5 @@ class ChangeLevel extends React.Component<{targetLevel:number,changeLevel:(e:Rea
       </FormControl>
     </div>
     )
-  }
-}
-
-interface PDisplayData {currentData:number[],applyAndClose:(data:any)=>void};
-class ChangeDisplayData extends React.Component<PDisplayData,{
-  newData:number[]
-}>{
-
-
-  constructor(props:PDisplayData){
-    super(props);
-    this.state = {
-      newData:this.props.currentData || []
-    }
-  }
-
-  hasData = (name:number)=> this.state.newData.indexOf(name) > -1;
-  /*
-  0:更新楽曲数
-  1:平均
-  2:最高
-  3:最低
-  4:中央
-   */
-
-  handleNewData = (name:number)=>{
-    const {newData} = this.state;
-    if(this.hasData(name)){
-      return this.setState({newData:newData.filter((item:number)=>item !== name)});
-    }else{
-      newData.push(name);
-      return this.setState({newData:newData});
-    }
-  }
-  render(){
-    const {applyAndClose} = this.props;
-    const {newData} = this.state;
-    const config = [
-      {value:0,label:"更新楽曲数"},
-      {value:1,label:"平均値"},
-      {value:2,label:"最高値"},
-      {value:3,label:"最低値"},
-      {value:4,label:"中央値"}
-    ]
-    return (
-      <Dialog open={true} onClose={()=>applyAndClose(newData)}>
-        <DialogTitle>表示内容のカスタマイズ</DialogTitle>
-        <DialogContent>
-          <FormGroup>
-            {config.map((item:{value:number,label:string})=>(
-            <FormControlLabel
-              control={
-                <Checkbox
-                  key={item.value}
-                  checked={this.hasData(item.value)}
-                  onChange={()=>this.handleNewData(item.value)}
-                  value={item.value}
-                  color="primary"
-                />
-              }
-              label={item.label}
-            />
-          ))}
-          </FormGroup>
-          <Alert severity="info" style={{margin:"10px 0"}}>
-            <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>この画面について</AlertTitle>
-            <p>
-              日別情報に表示する内容をこの画面からカスタマイズすることができます。<br/>
-              この機能は後日、別の形で再実装する可能性があります。
-            </p>
-          </Alert>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={()=>applyAndClose(newData)} color="primary">
-            適用
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
   }
 }

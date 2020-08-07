@@ -8,6 +8,7 @@ import Main from "@/view/components/stats/main";
 import Scatter from "@/view/components/stats/scatter";
 import MyBest from "@/view/components/stats/mybest";
 import Radar from "@/view/components/stats/radar";
+import Shift from '@/view/components/stats/shift';
 
 interface S {
   currentTab:number
@@ -18,7 +19,7 @@ class Stats extends React.Component<{intl:any},S> {
   constructor(props:{intl:any}){
     super(props);
     this.state ={
-      currentTab:0,
+      currentTab:2,
     }
   }
 
@@ -38,13 +39,15 @@ class Stats extends React.Component<{intl:any},S> {
         >
           <Tab label="基本" />
           <Tab label="レーダー" />
+          <Tab label="推移" />
           <Tab label="分布" />
           <Tab label="歴代" />
         </Tabs>
         {this.state.currentTab === 0 && <Main/>}
         {this.state.currentTab === 1 && <Radar/>}
-        {this.state.currentTab === 2 && <Scatter/>}
-        {this.state.currentTab === 3 && <MyBest/>}
+        {this.state.currentTab === 2 && <Shift/>}
+        {this.state.currentTab === 3 && <Scatter/>}
+        {this.state.currentTab === 4 && <MyBest/>}
       </Container>
     );
   }

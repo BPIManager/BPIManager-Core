@@ -22,6 +22,10 @@ const timeFormatter = (type = 0,date:string|Date = new Date()):string =>{
     return m.format("YYYY-MM-DD HH:mm:ss");
     case 4:
     return m.format("YYYY/MM/DD");
+    case 5:
+    return m.startOf("week").format("YYYY/MM/DD");
+    case 6:
+    return m.format("YYYY/MM");
   }
   return "";
 }

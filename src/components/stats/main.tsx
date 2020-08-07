@@ -9,6 +9,7 @@ import timeFormatter, { timeCompare } from "../common/timeFormatter";
 const isSingle = _isSingle();
 const currentStore = _currentStore();
 export const BPITicker = [-20,-10,0,10,20,30,40,50,60,70,80,90,100];
+interface shiftType {title:string,bpi:number};
 
 export const statMain = class {
 
@@ -98,12 +99,17 @@ export const statMain = class {
     return groupedByLevel;
   }
 
-  async eachDaySum():Promise<perDate[]>{
+  async eachDaySum(period:number):Promise<perDate[]>{
     let eachDaySum:perDate[] = [];
-
+    let eachDayShift:{[key:string]:shiftType[]} = {};
+    /*
+    {
+      day:[{songTitle:string,difficulty(another,etc.):string,bpi:number}],...
+    }
+     */
     const sortByDate = (data:historyData[]):{[key:string]:historyData[]}=>{
       return data.reduce((groups:{[key:string]:historyData[]}, item:historyData) => {
-        const date = timeFormatter(4,item.updatedAt);
+        const date = timeFormatter(period,item.updatedAt);
         if (!groups[date]) {
           groups[date] = [];
         }
@@ -111,7 +117,7 @@ export const statMain = class {
         return groups;
       }, {});
     }
-    const allDiffs = sortByDate(await new scoreHistoryDB().getAll(String(this.targetLevel)))
+    const allDiffs = this.objectSort(sortByDate(await new scoreHistoryDB().getAll(String(this.targetLevel))));
     const _bpi = new bpiCalcuator();
     const total = (item:historyData[]):number=>{
       let t = item.reduce((sum:number,item:historyData)=>{
@@ -127,20 +133,32 @@ export const statMain = class {
       },[]);
       return t;
     }
+    let lastDay:string;
     Object.keys(allDiffs).map((item)=>{
+      eachDayShift[item] = lastDay ? eachDayShift[lastDay].concat() : [];
       const p = allDiffs[item].reduce((a:number[],val:historyData)=>{
+        eachDayShift[item] = eachDayShift[item].filter((elm)=>{
+          return (elm.title !== String(val.title + val.difficulty));
+        }); //重複削除
+        eachDayShift[item].push({title:val.title + val.difficulty,bpi:val.BPI}); //改めて追加
         if(val.BPI){
           a.push(val.BPI);
         }
+        lastDay = item;
         return a;
       },[]);
       _bpi.allTwelvesLength = p.length;
       _bpi.allTwelvesBPI = p;
       const avg = _bpi.totalBPI();
+      const shift = this.getBPIShifts(eachDayShift[item]);
+      _bpi.allTwelvesLength = shift.length;
+      _bpi.allTwelvesBPI = shift;
+      const shiftBPI = _bpi.totalBPI();
       const BPIsArray = getBPIArray(allDiffs[item]);
       eachDaySum.push({
         name : item,
         sum : allDiffs[item].length,
+        shiftedBPI:shiftBPI,
         max:Math.max(...BPIsArray),
         min:Math.min(...BPIsArray),
         med:this.getMedian(BPIsArray),
@@ -149,6 +167,13 @@ export const statMain = class {
       return 0;
     });
     return eachDaySum.sort((a,b)=> timeCompare(a.name,b.name)).slice(-10);
+  }
+
+  getBPIShifts = (array:shiftType[])=>{
+    return array.reduce((groups:number[],val:shiftType)=>{
+      groups.push(val.bpi);
+      return groups;
+    },[])
   }
 
   getMedian = (array:number[]) => {
@@ -175,6 +200,21 @@ export const statMain = class {
       }
       return groups;
     }, {});
+  }
+
+  objectSort = (object:any)=> {
+    var sorted:any = {};
+    var array:string[] = [];
+    for (const key in object) {
+        if (object.hasOwnProperty(key)) {
+            array.push(key);
+        }
+    }
+    array.sort();
+    for (var i = 0; i < array.length; i++) {
+        sorted[array[i]] = object[array[i]];
+    }
+    return sorted;
   }
 
 }
