@@ -8,7 +8,7 @@ import bpiCalcuator from '@/components/bpi';
 import {_chartColor, _chartBarColor} from "@/components/settings";
 import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, LineChart, BarChart, ReferenceLine} from 'recharts';
 import _withOrd from '@/components/common/ord';
-import {FormControlLabel, FormControl, RadioGroup, Radio, FormLabel, Divider} from '@material-ui/core/';
+import {FormControlLabel, FormControl, RadioGroup, Radio, FormLabel} from '@material-ui/core/';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '../common/loader';
 import { bpmDist } from '@/components/stats/bpmDist';
