@@ -56,7 +56,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,{
     return (
       <Container fixed style={{padding:0}}>
         {(_isSingle() === 1 && radar && radar.length > 0) &&
-          <Grid container spacing={3}>
+          <Grid container>
             <Grid item xs={12} md={12} lg={12}>
               <Grid container spacing={0}>
                 <Grid item xs={12} md={12} lg={6} style={{height:"350px"}}>

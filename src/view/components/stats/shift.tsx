@@ -150,12 +150,12 @@ class Shift extends React.Component<{intl:any}&RouteComponentProps,ShiftType> {
             </ResponsiveContainer>
           </div>
         }
-        <Divider style={{margin:"15px 0"}}/>
-        <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
-          総合BPI推移
-        </Typography>
         {perDate.length > 0 &&
           <div style={{width:"95%",height:"450px",margin:"5px auto"}}>
+            <Divider style={{margin:"15px 0"}}/>
+            <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
+              総合BPI推移
+            </Typography>
             <ResponsiveContainer width="100%">
               <LineChart
                 key={graphLastUpdated}

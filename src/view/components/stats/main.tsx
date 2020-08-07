@@ -94,9 +94,9 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
     return (
       <Container fixed style={{padding:0}}>
         <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel} isFlexEnd/>
-        <Grid container spacing={3}>
+        <Grid container>
           <Grid item xs={12} md={3} lg={3}>
-            <Paper style={{padding:"15px"}} className="responsiveTotalBPI">
+            <Paper style={{padding:"15px"}} className="responsiveTotalBPI" elevation={0}>
               <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
                 <FormattedMessage id="Stats.TotalBPI"/>
               </Typography>
@@ -109,7 +109,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
             </Paper>
           </Grid>
           <Grid item xs={12} md={9} lg={9}>
-            <Paper style={{padding:"15px",height:270}}>
+            <Paper style={{padding:"15px",height:270}} elevation={0}>
               <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
                 <FormattedMessage id="Stats.Distribution"/>
               </Typography>
@@ -139,7 +139,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
         </Grid>
         <Grid container spacing={3}>
           <Grid item xs={12} md={12} lg={12}>
-            <Paper style={{padding:"15px",height:270}}>
+            <Paper style={{padding:"15px",height:270}} elevation={0}>
               <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
                 <FormattedMessage id="Stats.DistributionByBPM"/>
               </Typography>
@@ -168,7 +168,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
         </Grid>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6} lg={6}>
-            <Paper style={{padding:"15px",height:270}}>
+            <Paper style={{padding:"15px",height:270}} elevation={0}>
               <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
                 <FormattedMessage id="Stats.DistributionOfDJRank"/>
               </Typography>
@@ -194,7 +194,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
             </Paper>
           </Grid>
           <Grid item xs={12} md={6} lg={6}>
-            <Paper style={{padding:"15px",height:270}}>
+            <Paper style={{padding:"15px",height:270}} elevation={0}>
               <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
                 <FormattedMessage id="Stats.DistributionOfClearState"/>
               </Typography>

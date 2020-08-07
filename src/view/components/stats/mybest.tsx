@@ -149,7 +149,7 @@ class MyBest extends React.Component<{},S> {
     const {page,sort,isDesc,rowsPerPage,isLoading,targetLevel,scoreData} = this.state;
     return (
       <Container style={{padding:0}} fixed>
-        <Grid container spacing={3}>
+        <Grid container>
           <Grid item xs={12} md={12} lg={12}>
               <Grid container spacing={1} style={{margin:"5px -4px"}}>
                 <Grid item xs={12} lg={12}>
