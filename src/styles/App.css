@@ -489,6 +489,7 @@ div#root > div > .MuiContainer-root{
 .MuiAlert-message{
   width:100%;
 }
+/*
 
 .MuiContainer-root{
   padding-left: 4px !important;
@@ -502,6 +503,7 @@ div#root > div > .MuiContainer-root{
   }
 }
 
+ */
 html,body{
   width:100% !important;
   margin:0;
