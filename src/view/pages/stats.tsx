@@ -19,7 +19,7 @@ class Stats extends React.Component<{intl:any},S> {
   constructor(props:{intl:any}){
     super(props);
     this.state ={
-      currentTab:2,
+      currentTab:0,
     }
   }
 
