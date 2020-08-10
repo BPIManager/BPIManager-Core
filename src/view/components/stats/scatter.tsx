@@ -110,7 +110,7 @@ class ScatterGraph extends React.Component<{},S> {
     }
     const chartColor = _chartColor();
     return (
-      <Container style={{padding:0}} fixed>
+      <Container fixed  style={{padding:0}}>
         <Grid container>
           <Grid item xs={12} md={12} lg={12}>
             <Paper style={{padding:"15px"}} elevation={0}>

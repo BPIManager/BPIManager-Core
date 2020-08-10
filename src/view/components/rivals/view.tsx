@@ -99,7 +99,7 @@ class RivalView extends React.Component<P,S> {
       return (<Loader/>);
     }
     return (
-      <Container className="commonLayout" fixed>
+      <Container fixed  className="commonLayout">
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
           <Button onClick={backToMainPage} style={{minWidth:"auto",padding:"6px 0px"}}><ArrowBackIcon/></Button>
           &nbsp;{rivalMeta && this.rivalName()}

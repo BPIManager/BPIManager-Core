@@ -175,7 +175,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
   render(){
     const {filterByName,filterOpen,options,sort,isDesc,page,versions} = this.state;
     return (
-      <Container className="commonLayout" fixed id="songsVil">
+      <Container fixed  className="commonLayout" id="songsVil">
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom
           style={{display:"flex",justifyContent:"flex-end"}}>
           <Button

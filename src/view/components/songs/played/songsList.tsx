@@ -348,7 +348,7 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
       return (<Loader/>);
     }
     return (
-      <Container className="commonLayout" fixed id="songsVil">
+      <Container fixed  className="commonLayout" id="songsVil">
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom
           style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <div>

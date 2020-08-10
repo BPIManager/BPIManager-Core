@@ -47,14 +47,14 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,{
     const barColor = _chartBarColor("bar");
     if(isLoading){
       return (
-        <Container fixed style={{padding:0}}>
+        <Container fixed  style={{padding:0}}>
           <Loader/>
         </Container>
       );
     }
 
     return (
-      <Container fixed style={{padding:0}}>
+      <Container fixed  style={{padding:0}}>
         {(_isSingle() === 1 && radar && radar.length > 0) &&
           <Grid container>
             <Grid item xs={12} md={12} lg={12}>

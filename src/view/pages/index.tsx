@@ -16,12 +16,12 @@ import Alert from '@material-ui/lab/Alert/Alert';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { avatarFontColor, avatarBgColor } from '@/components/common';
 
-class Index extends React.Component<RouteComponentProps,{}> {
+class Index extends React.Component<RouteComponentProps&{global:any},{}> {
 
   render(){
     return (
       <div>
-        <IfNotOnTheHomeScreen history={this.props.history}/>
+        <IfNotOnTheHomeScreen history={this.props.history} global={this.props.global}/>
       </div>
     );
   }
@@ -61,7 +61,8 @@ class AddToHomeScreenTicker extends React.Component<{},{show:boolean}>{
 }
 
 class IfNotOnTheHomeScreen extends React.Component<{
-  history:any
+  history:any,
+  global:any,
 },{
   show:boolean,
   showUpdate:boolean,
@@ -69,7 +70,7 @@ class IfNotOnTheHomeScreen extends React.Component<{
   updateInfo:string,
 }>{
 
-  constructor(props:{history:any}){
+  constructor(props:{history:any,global:any}){
     super(props);
     const isStandAloneIn_iOS = () =>("standalone" in window.navigator) && (window.navigator["standalone"]);
     const isStandAloneInAndroid = ()=>window.matchMedia('(display-mode: standalone)').matches;
@@ -91,12 +92,14 @@ class IfNotOnTheHomeScreen extends React.Component<{
       const data = await versions.json();
       const currentVersion = _currentVersion();
       if(data.version !== currentVersion){
+        this.props.global.setMove(true);
         this.setState({
           showUpdate:true,
           latestVersion:data.version,
           updateInfo:data.updateInfo,
         });
       }
+
     }catch(e){
       console.log(e);
     }
@@ -123,7 +126,7 @@ class IfNotOnTheHomeScreen extends React.Component<{
     ]
     return (
       <div className="heroLayout">
-        <Container className="heroTitle">
+        <Container fixed  className="heroTitle">
           <Grid container style={{justifyContent:"center",alignItems:"center"}}>
             <Grid item xs={12} sm={3}>
               <img src="https://files.poyashi.me/bpim/icon.png" style={{margin:"0 auto",display:"block",borderRadius:"8%",maxWidth:"120px"}} alt="BPIManager"/>
@@ -196,7 +199,7 @@ class IfNotOnTheHomeScreen extends React.Component<{
         </List>
         </Grid>
         </Grid>
-        <Container>
+        <Container fixed >
           <div style={{marginTop:"20px"}}>
             <Grid container justify="center">
               <Grid item>

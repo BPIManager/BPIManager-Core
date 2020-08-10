@@ -46,7 +46,7 @@ export default class ReloadModal extends Component<{registration: ServiceWorkerR
       >
         <DialogTitle id="alert-dialog-title"></DialogTitle>
         <DialogContent>
-          <Container className="loaderCentered" style={{flexDirection:"column"}}>
+          <Container fixed  className="loaderCentered" style={{flexDirection:"column"}}>
             <CircularProgress />
             <p style={{marginTop:"15px"}}>アプリケーションの更新中...</p>
           </Container>

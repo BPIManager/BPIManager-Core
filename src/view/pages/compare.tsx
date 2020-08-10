@@ -68,10 +68,10 @@ export default class Compare extends React.Component<{},S> {
     const bpiMapper = (t:scoreData[])=>t.map((item:scoreData)=>item.currentBPI);
     const twelves = await db.getItemsBySongDifficulty("12");
     bpi12.allTwelvesBPI = bpiMapper(twelves);
-    bpi12.allTwelvesLength = await new songsDB().getAllTwelvesLength(isSingle);
+    bpi12.allTwelvesLength = await new songsDB().getSongsNum();
     const elevens = await db.getItemsBySongDifficulty("11");
     bpi11.allTwelvesBPI = bpiMapper(elevens);
-    bpi11.allTwelvesLength = await new songsDB().getAllTwelvesLength(isSingle,"11");
+    bpi11.allTwelvesLength = await new songsDB().getSongsNum("11");
     this.setState({
       total12BPI:bpi12.totalBPI(),
       total11BPI:bpi11.totalBPI()
@@ -243,7 +243,7 @@ export default class Compare extends React.Component<{},S> {
       return (null);
     }
     return (
-      <Container className="commonLayout" fixed  id="songsVil">
+      <Container fixed  className="commonLayout"  id="songsVil">
         <Grid container spacing={1} style={{margin:"5px 0"}}>
           <Grid item xs={6}>
             <FormControl style={{width:"100%"}}>

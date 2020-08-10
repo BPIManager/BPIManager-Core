@@ -10,6 +10,7 @@ interface S{
   goalBPI:number,
   goalPercentage:number,
   area:number,
+  update:boolean,
 }
 
 export default class GlobalContainer extends Container<S> {
@@ -23,6 +24,7 @@ export default class GlobalContainer extends Container<S> {
     this.setGoalBPI = this.setGoalBPI.bind(this);
     this.setGoalPercentage = this.setGoalPercentage.bind(this);
     this.setArea = this.setArea.bind(this);
+    this.setUpdateAvailable = this.setUpdateAvailable.bind(this);
   }
 
   state = {
@@ -33,6 +35,7 @@ export default class GlobalContainer extends Container<S> {
     goalBPI : _goalBPI(),
     goalPercentage : _goalPercentage(),
     area: _area(),
+    update:false,
     cannotMove: false
   }
 
@@ -66,7 +69,6 @@ export default class GlobalContainer extends Container<S> {
     this.setState({ area: newState });
   }
 
-
   setGoalPercentage(newState:number){
     localStorage.setItem("goalPercentage",String(newState));
     this.setState({ goalPercentage: newState });
@@ -74,6 +76,10 @@ export default class GlobalContainer extends Container<S> {
 
   setMove(newState:boolean) {
     this.setState({ cannotMove: newState })
+  }
+
+  setUpdateAvailable(newState:boolean) {
+    this.setState({ update: newState })
   }
 
 }

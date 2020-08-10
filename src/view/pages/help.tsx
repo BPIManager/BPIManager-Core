@@ -199,7 +199,7 @@ export default class Index extends React.Component<{},{}> {
   render(){
     return (
       <div>
-        <Container className="commonLayout" fixed>
+        <Container fixed  className="commonLayout">
         {helps.map(item=>{
           const {title,body} = item;
           return (

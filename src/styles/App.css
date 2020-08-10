@@ -152,10 +152,6 @@ legend.MuiFormLabel-root{
   white-space:nowrap;
 }
 
-#detailedScreen .MuiGrid-root.MuiGrid-container{
-  justify-content: space-around;
-}
-
 .deepSeaDetailedScreen .MuiTab-textColorPrimary.Mui-selected{
   color:#fff !important;
 }

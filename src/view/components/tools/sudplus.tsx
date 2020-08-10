@@ -84,7 +84,7 @@ class Cont extends React.Component<{},S> {
   render(){
     const {beforeBPM,afterBPM,result,pref,isDialogOpen} = this.state;
     return (
-      <Container fixed style={{padding:0}}>
+      <Container fixed  style={{padding:0}}>
         <Paper style={{padding:"15px"}}>
           <ButtonGroup fullWidth color="primary"  variant="outlined">
             <Button onClick={this.dialogToggle}

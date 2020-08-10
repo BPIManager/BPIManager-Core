@@ -142,7 +142,7 @@ class Shared extends React.Component<RouteComponentProps,S> {
     }
     if(!score || !song){
       return (
-        <Container className="commonLayout" fixed>
+        <Container fixed  className="commonLayout">
           <Paper>
             <div style={{textAlign:"center",padding:"15px"}}>
               <WarningIcon style={{color:"#555",fontSize:"45px"}}/>
@@ -159,7 +159,7 @@ class Shared extends React.Component<RouteComponentProps,S> {
     }
     window.document.title = `${song.title}(${_isSingle() ? "SP" : "DP"}${_prefixFull(score.difficulty)})のスコアデータ - BPIManager`;
     return (
-      <Container className="commonLayout" fixed>
+      <Container fixed  className="commonLayout">
         <Typography variant="h4" align="center">
           {song.title}({_isSingle() ? "SP" : "DP"}{_prefixFull(score.difficulty)})
         </Typography>

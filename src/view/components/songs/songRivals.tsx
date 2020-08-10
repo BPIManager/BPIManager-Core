@@ -57,7 +57,7 @@ class SongRivals extends React.Component<P,S> {
     }
     return (
       <div>
-        <Container>
+        <Container fixed >
           {
             isLoading && <Loader/>
           }

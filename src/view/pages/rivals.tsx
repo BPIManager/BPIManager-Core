@@ -44,7 +44,7 @@ class Stats extends React.Component<{intl:any},S> {
   render(){
     const {currentView,currentUser,message,showSnackBar,rivalMeta,descendingRivalData,lastVisible,arenaRank,recentView} = this.state;
     return (
-      <Container style={{margin:"20px auto"}} fixed>
+      <Container fixed  style={{margin:"20px auto"}}>
         {currentView === 0 && <RivalIndex showEachRival={this.showEachRival} compareUser={this.compareUser} backToRecentPage={recentView} last={lastVisible} arenaRank={arenaRank}/>}
         {(rivalMeta && currentView === 1) && <RivalView showAllScore={false} toggleSnack={this.toggleSnack} backToMainPage={this.backToMainPage} rivalData={currentUser} rivalMeta={rivalMeta}/>}
         {(rivalMeta && currentView === 2) && <RivalView showAllScore={false} toggleSnack={this.toggleSnack} backToMainPage={this.backToMainPage} rivalData={rivalMeta.uid} rivalMeta={rivalMeta} descendingRivalData={descendingRivalData} isNotRival={true}/>}

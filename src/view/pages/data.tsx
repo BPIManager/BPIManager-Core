@@ -24,6 +24,7 @@ import AlertTitle from '@material-ui/lab/AlertTitle';
 import { config } from '@/config';
 import timeFormatter, { timeCompare } from '@/components/common/timeFormatter';
 import Loader from "@/view/components/common/loader";
+import Divider from '@material-ui/core/Divider';
 
 interface P{
   global:any,
@@ -160,7 +161,7 @@ class Index extends React.Component<P&RouteComponentProps,{
     const spdp = _isSingle() ? "SP" : "DP";
     const {raw,stateText,errors,isSaving,displayName} = this.state;
     return (
-      <Container className="commonLayout" fixed>
+      <Container fixed  className="commonLayout">
         <Paper style={{padding:"15px"}}>
           <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
             <FormattedMessage id="Data.add"/>
@@ -220,6 +221,23 @@ class Index extends React.Component<P&RouteComponentProps,{
                 {errors.map(item=><span key={item}>{item}<br/></span>)}
               </Alert>
             }
+            <Divider style={{margin:"15px 0"}}/>
+            {(this.state.uid === "") && (
+              <Alert severity="error" style={{margin:"10px 0"}}>
+                <AlertTitle>ログインしていません</AlertTitle>
+                <p>Sync機能を用いることで、スコアデータをクラウドと同期することが可能です。<br/>
+                  不慮のデータ消失に備えるためにも、常にログイン状態を維持することをおすすめします。<RLink to="/sync" style={{textDecoration:"none"}}><Link color="secondary" component="span">こちらからログインしてください</Link></RLink>。
+                </p>
+              </Alert>
+            )}
+            {(!_autoSync() && this.state.uid !== "") && (
+              <Alert severity="warning" style={{margin:"10px 0"}}>
+                <AlertTitle>ご存知ですか？</AlertTitle>
+                <p>設定画面より「Auto-sync」を有効にすることで、最新のスコアデータをクラウドと自動同期できます。<br/>
+                  不慮のデータ消失に備えられるほか、新たなライバルを探すためにも有用です。<RLink to="/settings" style={{textDecoration:"none"}}><Link color="secondary" component="span">こちらから有効化してください</Link></RLink>。
+                </p>
+              </Alert>
+            )}
             <Alert severity="info" style={{margin:"8px 0"}}>
               <FormattedMessage id="Data.UpdateMes1"/><br/>
                 <FormattedMessage id="Data.UpdateMes2"/>

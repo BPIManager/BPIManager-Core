@@ -35,7 +35,7 @@ class SyncIndex extends React.Component<{},S> {
       return (<Loader hasMargin/>);
     }
     return (
-      <Container className="commonLayout" fixed>
+      <Container fixed  className="commonLayout">
         {!userData && <SyncLoginScreen mode={0}/>}
         {userData && <ControlTab userData={userData}/>}
       </Container>

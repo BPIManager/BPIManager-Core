@@ -55,7 +55,7 @@ class Settings extends React.Component<P,S> {
       return (<Loader/>);
     }
     return (
-      <Container fixed style={{padding:0}}>
+      <Container fixed  style={{padding:0}}>
         <Paper style={{padding:"15px"}}>
           <FormControl fullWidth>
             <FormLabel component="legend">楽曲リスト/補助表示</FormLabel>

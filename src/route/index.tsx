@@ -52,7 +52,7 @@ export default class Router extends React.Component<{},{}> {
             >
               <BrowserRouter>
                 <AppBar global={global}>
-                  <Route path="/" exact component={Index}/>
+                  <Route path="/" exact render={_props=><Index global={global}/>}/>
                   <Route path="/data" exact render={_props=><Data global={global} updateGlobal={this.globalUpdateScore}/>}/>
                   <Route path="/songs" exact component={Songs}/>
                   <Route path="/lists" exact component={Lists}/>

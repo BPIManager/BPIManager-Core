@@ -107,7 +107,7 @@ class Shift extends React.Component<{intl:any}&RouteComponentProps,ShiftType> {
     const lineColor = _chartBarColor("line");
     if(isLoading){
       return (
-        <Container fixed style={{padding:0}}>
+        <Container fixed  style={{padding:0}}>
           <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel}/>
           <Loader/>
         </Container>
@@ -115,7 +115,7 @@ class Shift extends React.Component<{intl:any}&RouteComponentProps,ShiftType> {
     }
 
     return (
-      <Container fixed style={{padding:0}}>
+      <Container fixed  style={{padding:0}}>
         <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel}/>
         <CheckBoxes title="プライマリグラフの表示項目" hasData={this.hasItems} handleNewData={this.handleItems} config={config}/>
         <CheckBoxes title="表示期間" hasData={this.currentPeriod} handleNewData={this.handlePeriod} config={period}/>

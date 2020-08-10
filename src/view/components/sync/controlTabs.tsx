@@ -27,7 +27,7 @@ class ControlTab extends React.Component<P&RouteComponentProps,{currentTab:numbe
 
   render(){
     return (
-      <Container className="commonLayout" id="stat" fixed>
+      <Container fixed  className="commonLayout" id="stat">
         <Tabs
           value={this.state.currentTab}
           onChange={this.handleChange}

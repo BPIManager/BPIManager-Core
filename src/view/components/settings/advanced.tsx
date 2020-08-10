@@ -151,7 +151,7 @@ class Settings extends React.Component<P,S> {
       return (<Loader/>);
     }
     return (
-      <Container fixed style={{padding:0}}>
+      <Container fixed  style={{padding:0}}>
         <Paper style={{padding:"15px"}}>
           <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
             従来の計算方式を利用

@@ -47,7 +47,7 @@ export default class UserCard extends React.Component<{
           subheader={<div onClick={()=>this.props.open(item.displayName)}>
             <span>
               <Chip size="small" style={{backgroundColor:arenaRankColor(item.arenaRank),color:"#fff",margin:"5px 0"}} label={item.arenaRank || "-"} />
-              {item.totalBPI && <Chip size="small" style={{backgroundColor:"green",color:"#fff",margin:"0 0 0 5px"}} label={"総合BPI:" + item.totalBPI} />}
+              {item.totalBPI && <Chip size="small" style={{backgroundColor:"green",color:"#fff",margin:"0 0 0 5px"}} label={item.totalBPI} />}
             </span>
             <span style={{display:"block"}}>{item.profile}</span>
           </div>}

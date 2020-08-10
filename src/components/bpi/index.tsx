@@ -34,6 +34,10 @@ export default class bpiCalcuator{
     return;
   }
 
+  defaultCoef(){
+    return this.traditionalMode === 1 ? 1.5 : 1.175
+  }
+
   setCoef(coef:number = 1.175){
     if(this.traditionalMode === 1){
       this.powCoef = 1.5;
@@ -54,7 +58,11 @@ export default class bpiCalcuator{
       this.k = data["avg"];
       this.z = data["wr"];
       this.m = data["notes"] * 2;
-      (data["coef"] && data["coef"] > 0 && data["difficultyLevel"] === "12" && data["dpLevel"] === "0") && this.setCoef(data["coef"]);
+      if(data["coef"] && data["coef"] > 0 && data["difficultyLevel"] === "12" && data["dpLevel"] === "0"){
+        this.setCoef(data["coef"]);
+      }else{
+        this.defaultCoef();
+      }
       return this.exec();
     }catch(e){
       return -15;
@@ -67,7 +75,11 @@ export default class bpiCalcuator{
       this.k = avg;
       this.z = wr;
       this.m = notes * 2;
-      this.powCoef = coef;
+      if(coef > 0){
+        this.powCoef = coef;
+      }else{
+        coef = this.defaultCoef();
+      }
       return this.exec();
     }catch(e){
       return -15;

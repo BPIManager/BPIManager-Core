@@ -190,7 +190,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
     const {mode} = this.props;
     return (
       <div>
-      <Container className="commonLayout" fixed>
+      <Container fixed  className="commonLayout">
         {mode === 2 && (
           <form noValidate autoComplete="off">
             <FormControl style={{float:"right",minWidth:"140px"}}>

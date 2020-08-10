@@ -84,7 +84,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
     const lineColor = _chartBarColor("line");
     if(isLoading){
       return (
-        <Container fixed style={{padding:0}}>
+        <Container fixed  style={{padding:0}}>
           <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel} isFlexEnd/>
           <Loader/>
         </Container>
@@ -92,7 +92,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
     }
 
     return (
-      <Container fixed style={{padding:0}}>
+      <Container fixed  style={{padding:0}}>
         <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel} isFlexEnd/>
         <Grid container>
           <Grid item xs={12} md={3} lg={3}>

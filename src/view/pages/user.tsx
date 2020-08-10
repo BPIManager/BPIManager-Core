@@ -253,12 +253,12 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     if(processing){
       return (<Loader/>);
     }
-    if(!userName){
+    if(!userName || !res){
       return <NoUserError match={this.props.match} alternativeId={alternativeId}/>;
     }
     if(currentView === 1){
       return (
-        <Container className="commonLayout" fixed>
+        <Container fixed  className="commonLayout">
           <RivalView toggleSnack={this.toggleSnack} backToMainPage={this.backToMainPage} showAllScore={true}
             rivalData={uid} rivalMeta={res} descendingRivalData={rivalData} isNotRival={true}/>
         </Container>
@@ -266,14 +266,14 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     }
     if(currentView === 2){
       return (
-        <Container className="commonLayout" fixed>
+        <Container fixed  className="commonLayout">
           <ClearLampView backToMainPage={this.backToMainPage}
             name={res.displayName} data={rivalData}/>
         </Container>
       )
     }
     const buttons = [
-      {icon:<ViewListIcon />,primary:"スコアを見る",secondary:res.displayName + "さんの登録スコアを表示します",onClick:()=>this.view(1)},
+      {icon:<ViewListIcon />,primary:"スコアを見る",secondary:(res.displayName) + "さんの登録スコアを表示します",onClick:()=>this.view(1)},
       {icon:<WbIncandescentIcon />,primary:"AAA達成表",secondary:"BPIに基づいたAAA達成難易度表を表示します",onClick:()=>this.view(2)},
     ]
     const themeColor = _currentTheme();
@@ -402,7 +402,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
                 this.recommended();
               }}>
                 <img src={tile.photoURL.replace("_normal","")} alt={tile.displayName}
-                  onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(res.displayName)}/>
+                  onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(tile.displayName)}/>
                 <GridListTileBar
                   title={tile.displayName}
                   subtitle={"総合BPI " + String(tile.totalBPI || "-")}
@@ -424,7 +424,7 @@ class NoUserError extends React.Component<{match:any,alternativeId:string},{}>{
   render(){
     const {match,alternativeId} = this.props;
     return (
-      <Container className="commonLayout" fixed>
+      <Container fixed  className="commonLayout">
         <Paper>
           <div style={{textAlign:"center",padding:"15px"}}>
             <WarningIcon style={{color:"#555",fontSize:"45px"}}/>

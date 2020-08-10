@@ -135,7 +135,7 @@ class Settings extends React.Component<P,S> {
     return (
       <Subscribe to={[GlobalContainer]}>
         {({state,setLang,setStore,setTheme,setIsSingle,setGoalBPI,setGoalPercentage,setArea}:GlobalContainer)=> (
-          <Container fixed style={{padding:0}}>
+          <Container fixed  style={{padding:0}}>
             <Paper style={{padding:"15px"}}>
               <FormControl>
                 <InputLabel><FormattedMessage id="Settings.language"/></InputLabel>

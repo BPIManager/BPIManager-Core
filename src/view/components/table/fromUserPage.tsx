@@ -29,7 +29,6 @@ class ClearLampView extends React.Component<P,S> {
           <Button onClick={backToMainPage} style={{minWidth:"auto",padding:"6px 0px"}}><ArrowBackIcon/></Button>
           &nbsp;{name}
         </Typography>
-        <p>表の見方: 左の数字がAAA+0におけるBPI、右の数字が表示中のユーザーの現在のBPI<br/>AAA達成時のBPIが高い順に5刻みでカテゴライズしています</p>
         <ClearLampTable data={data}/>
       </div>
     );

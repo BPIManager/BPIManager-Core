@@ -11,6 +11,8 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button'
 import Loader from '@/view/components/common/loader';
+import Alert from '@material-ui/lab/Alert';
+import AlertTitle from '@material-ui/lab/AlertTitle';
 
 interface S {
   [key:string]:any,
@@ -69,7 +71,7 @@ const bgColor = (gap:number)=>{
 
 class AAATable extends React.Component<P,S> {
 
-  private default:number[] = [50,45,40,35,30,25,20,15,10,5,0,-5,-10];
+  private default:number[] = [50,40,30,20,10,0,-10,-20];
   private defaultPM:number[] = [0,1,2]; //0:+ 1:-, 2:noplay
 
   constructor(props:P){
@@ -82,12 +84,12 @@ class AAATable extends React.Component<P,S> {
     }
   }
 
-  componentDidMount(){
-    this.setState({result:this.getTable()});
+  async componentDidMount(){
+    this.setState({result:await this.getTable()});
   }
 
-  getTable = ()=>{
-    const table = AAADifficulty;
+  getTable = async()=>{
+    const table = await AAADifficulty();
     const named = this.named();
     let result:CLInt = {};
     Object.keys(table).map((diffs:string)=>{
@@ -194,24 +196,26 @@ class AAATable extends React.Component<P,S> {
           )
         })}
         <Divider style={{margin:"15px 0"}}/>
-        <p>色分けについて</p>
-        <p>AAA-BPIとユーザーのBPIの差を基準に色付けしています</p>
-        <p>
-          -20未満:<span style={{color:bgColor(-31)}}>濃い赤</span><br/>
-          -20以上:<span style={{color:bgColor(-19)}}>更に濃いオレンジ</span><br/>
-          -15以上:<span style={{color:bgColor(-14)}}>濃いオレンジ</span><br/>
-          -10以上:<span style={{color:bgColor(-9)}}>薄いピンク</span><br/>
-          -5以上0未満:<span style={{color:bgColor(-1)}}>黄色</span><br/>
-          0以上+5以下:<span style={{color:bgColor(1)}}>薄い緑</span><br/>
-          +10以下:<span style={{color:bgColor(6)}}>濃い緑</span><br/>
-          +15以下:<span style={{color:bgColor(14)}}>濃い緑</span><br/>
-          +20以下:<span style={{color:bgColor(15)}}>薄水色</span><br/>
-          +30以下:<span style={{color:bgColor(25)}}>濃い薄水色</span><br/>
-          +40以下:<span style={{color:bgColor(35)}}>更に濃い薄水色</span><br/>
-          +50以下:<span style={{color:bgColor(45)}}>薄い青</span><br/>
-          +50より上:<span style={{color:bgColor(51)}}>青</span><br/>
-        </p>
-        <p>*AAA-BPIは改変定義式基準で算出されています</p>
+        <Alert severity="info">
+          <AlertTitle>色分けについて</AlertTitle>
+          <p>AAA-BPIとユーザーのBPIの差を基準に色付けしています</p>
+          <p>
+            -20未満:<span style={{color:bgColor(-31)}}>濃い赤</span><br/>
+            -20以上:<span style={{color:bgColor(-19)}}>更に濃いオレンジ</span><br/>
+            -15以上:<span style={{color:bgColor(-14)}}>濃いオレンジ</span><br/>
+            -10以上:<span style={{color:bgColor(-9)}}>薄いピンク</span><br/>
+            -5以上0未満:<span style={{color:bgColor(-1)}}>黄色</span><br/>
+            0以上+5以下:<span style={{color:bgColor(1)}}>薄い緑</span><br/>
+            +10以下:<span style={{color:bgColor(6)}}>濃い緑</span><br/>
+            +15以下:<span style={{color:bgColor(14)}}>濃い緑</span><br/>
+            +20以下:<span style={{color:bgColor(15)}}>薄水色</span><br/>
+            +30以下:<span style={{color:bgColor(25)}}>濃い薄水色</span><br/>
+            +40以下:<span style={{color:bgColor(35)}}>更に濃い薄水色</span><br/>
+            +50以下:<span style={{color:bgColor(45)}}>薄い青</span><br/>
+            +50より上:<span style={{color:bgColor(51)}}>青</span><br/>
+          </p>
+          <p>*AAA-BPIは改変定義式基準で算出されています</p>
+        </Alert>
       </div>
     );
   }

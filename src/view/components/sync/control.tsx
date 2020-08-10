@@ -17,6 +17,7 @@ import {Link, CircularProgress, Paper} from '@material-ui/core/';
 import {Link as RefLink} from "react-router-dom";
 import Alert from '@material-ui/lab/Alert';
 import { config } from '@/config';
+import AlertTitle from '@material-ui/lab/AlertTitle';
 
 class SyncControlScreen extends React.Component<{userData:any},{
   isLoading:boolean,
@@ -103,6 +104,11 @@ class SyncControlScreen extends React.Component<{userData:any},{
     this.setState({nameErrorMessage:["設定を反映しました"],isLoading:false,sentName:this.state.myName});
   }
 
+  isOlderVersion = ()=>{
+    const current = _currentStore();
+    return current === "26";
+  }
+
   render(){
     const {isLoading,scoreData,nameErrorMessage,myName,myProfile,arenaRank,sentName} = this.state;
     const nameError:boolean = myName.length !== 0 && (!/^[a-zA-Z0-9]+$/g.test(myName) || myName.length > 16);
@@ -143,13 +149,20 @@ class SyncControlScreen extends React.Component<{userData:any},{
         <ButtonGroup fullWidth color="secondary">
           <Button
             onClick={this.upload}
-            disabled={isLoading}
+            disabled={isLoading || this.isOlderVersion()}
           >Upload</Button>
           <Button
             onClick={this.download}
             disabled={isLoading}
             >Download</Button>
         </ButtonGroup>
+        {this.isOlderVersion() && (
+          <Alert severity="warning" style={{margin:"15px 0"}}>
+            <AlertTitle>アップロードできません</AlertTitle>
+            <p>現在選択中のIIDXバージョン(IIDX{_currentStore()})は過去のバージョンです。<br/>
+            このバージョンのスコアデータはダウンロード専用になり、新たにアップロードすることはできません。</p>
+          </Alert>
+        )}
         <Divider style={{margin:"10px 0"}}/>
         <Typography component="h5" variant="h5">
           公開設定

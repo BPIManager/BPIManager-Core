@@ -62,7 +62,8 @@ class SyncLoginScreen extends React.Component<{
             その他、ライバル機能やプッシュ通知などの追加機能が開放され、より便利に本サービスをお使いいただけます。
           </Typography>
           <Typography component="p" variant="caption" gutterBottom>
-            <FormattedMessage id="Sync.Login.description"/>
+            <FormattedMessage id="Sync.Login.description"/><br/>
+            サービスの利用規約や個人情報保護方針はヘルプより確認可能です。
           </Typography>
         </div>}
         {mode === 1 && <div>

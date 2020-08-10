@@ -77,7 +77,7 @@ class FavLists extends React.Component<{}&RouteComponentProps,S> {
       return (<Loader/>);
     }
     return (
-      <Container className="commonLayout" fixed>
+      <Container fixed  className="commonLayout">
         <List>
           {lists.map((item,i)=>{
             return (

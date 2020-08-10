@@ -808,24 +808,6 @@ export const songsDB = class extends storageWrapper{
     }
   }
 
-  async getAllTwelvesLength(isSingle:number = 1,diff = "12"):Promise<number>{
-    try{
-      const data = isSingle === 1 ?
-        await this.songs.where("dpLevel").equals("0").toArray() :
-        await this.songs.where("dpLevel").notEqual("0").toArray();
-      let matched = 0;
-      for(let i = 0; i < data.length; ++i){
-        if(data[i]["difficultyLevel"] === diff){
-          matched++;
-        }
-      }
-      return matched;
-    }catch(e){
-      console.error(e);
-      return 0;
-    }
-  }
-
   async deleteAll():Promise<void>{
     return await this.songs.clear();
   }

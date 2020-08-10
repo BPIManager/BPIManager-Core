@@ -45,7 +45,7 @@ class Cont extends React.Component<{},S> {
       {"label":"譜面係数","target":"coef","num":coef},
     ]
     return (
-      <Container fixed style={{padding:0}}>
+      <Container fixed  style={{padding:0}}>
         <Paper style={{padding:"15px"}}>
         {boxes.map(item=>
           <TextField

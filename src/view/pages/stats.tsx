@@ -29,19 +29,21 @@ class Stats extends React.Component<{intl:any},S> {
 
   render(){
     return (
-      <Container className="commonLayout" id="stat" fixed>
+      <Container fixed  className="commonLayout" id="stat">
         <Tabs
           value={this.state.currentTab}
           onChange={this.handleChange}
           indicatorColor="primary"
           textColor="secondary"
+          variant="scrollable"
+          scrollButtons="on"
           style={{margin:"5px 0"}}
         >
           <Tab label="基本" />
           <Tab label="レーダー" />
           <Tab label="推移" />
           <Tab label="分布" />
-          <Tab label="歴代" />
+          <Tab label="自己歴代" />
         </Tabs>
         {this.state.currentTab === 0 && <Main/>}
         {this.state.currentTab === 1 && <Radar/>}
