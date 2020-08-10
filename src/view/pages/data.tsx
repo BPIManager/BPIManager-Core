@@ -40,11 +40,13 @@ class Index extends React.Component<P&RouteComponentProps,{
   progress:number,
   uid:string,
   displayName:string,
+  isLoading:boolean,
 }> {
 
   constructor(props:P&RouteComponentProps){
     super(props);
     this.state = {
+      isLoading:true,
       raw: "",
       stateText:"Data.Success",
       errors:[],
@@ -63,8 +65,11 @@ class Index extends React.Component<P&RouteComponentProps,{
         const t = await new fbActions().setColName("users").setDocName(user.uid).load();
         this.setState({
           uid:user.uid,
+          isLoading:false,
           displayName: t ? t.displayName : ""
         });
+      }else{
+        this.setState({isLoading:false});
       }
     });
   }
@@ -159,7 +164,10 @@ class Index extends React.Component<P&RouteComponentProps,{
 
   render(){
     const spdp = _isSingle() ? "SP" : "DP";
-    const {raw,stateText,errors,isSaving,displayName} = this.state;
+    const {raw,stateText,errors,isSaving,displayName,isLoading} = this.state;
+    if(isLoading){
+      return (<Loader/>);
+    }
     return (
       <Container fixed  className="commonLayout">
         <Paper style={{padding:"15px"}}>
