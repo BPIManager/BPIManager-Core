@@ -176,21 +176,6 @@ import {Link as RefLink} from '@material-ui/core/';
         利用状況調査のため、本サービスではGoogle Analyticsを利用しています。Google AnalyticsはCookieを利用して利用情報を収集します。<br/>
         Google Analyticsの利用規約は、こちら（https://marketingplatform.google.com/about/analytics/terms/jp/）をご覧ください。<br/>
         </div>
-    },{
-      "title":"Help.Donations",
-      "body":
-        <div style={{wordBreak:"break-all"}}>
-          <p>
-            本サービスは非営利で運用されているファンメイドツールです。<br/>
-            もし本サービスを気に入っていただけているのであれば、継続的なサービス運用のため、以下の方法でご支援いただけますと非常に助かります。
-          </p>
-          <ul>
-            <li>ご友人にこのサービスをおすすめする</li>
-            <li>バグや不具合の報告、新規機能の要望や既存機能の改善案を<RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>宛や<RefLink color="secondary" href="https://forms.gle/yVCa8sP2ndEQNaxg8">アンケート</RefLink>で提出する</li>
-            <li>金銭的なサポート(Amazon ギフト券などをmsqkn310@gmail.comに送付)</li>
-          </ul>
-          <p>よろしくお願いいたします。</p>
-        </div>
     }
   ]
 
