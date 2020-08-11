@@ -13,12 +13,11 @@ import Button from '@material-ui/core/Button';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import * as H from 'history';
 import ListAdd from "./add";
-import Alert from '@material-ui/lab/Alert';
-import AlertTitle from '@material-ui/lab/AlertTitle';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
+import AdsCard from '@/components/ad';
 
 interface S {
   isLoading:boolean,
@@ -90,11 +89,7 @@ class FavLists extends React.Component<{}&RouteComponentProps,S> {
         <Button color="secondary" variant="outlined" fullWidth style={{marginTop:"10px"}} onClick={()=>this.toggleAddListScreen()}>
           新しいリストを作成
         </Button>
-
-        <Alert severity="info" style={{margin:"10px 0"}}>
-          <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>Tips</AlertTitle>
-          <p>リスト右側に表示されているギアアイコンをクリックして、リスト情報を編集したり、リストを削除できます。<br/>リストを作成できる数に上限はありません。</p>
-        </Alert>
+        <AdsCard/>
         {addList && <ListAdd isCreating={currentTarget === -1} target={currentTarget} toggleSnack={this.toggleSnack} handleToggle={this.toggleAddListScreen}/>}
       </Container>
     );

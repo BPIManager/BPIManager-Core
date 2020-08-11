@@ -25,6 +25,7 @@ import { config } from '@/config';
 import timeFormatter, { timeCompare } from '@/components/common/timeFormatter';
 import Loader from "@/view/components/common/loader";
 import Divider from '@material-ui/core/Divider';
+import AdsCard from '@/components/ad';
 
 interface P{
   global:any,
@@ -181,7 +182,7 @@ class Index extends React.Component<P&RouteComponentProps,{
             onChange={this.onChangeText}
             value={raw}
             style={{width:"100%"}}
-            label="Paste here"
+            label="ここに貼り付け(省略可能)"
             margin="dense"
             variant="outlined"
             multiline
@@ -199,58 +200,55 @@ class Index extends React.Component<P&RouteComponentProps,{
               </Button>
               {isSaving && <Loader isInner/>}
             </div>
-            {(errors.length > 0 && stateText !== "Data.Failed") &&
-              <Alert severity="success" style={{margin:"10px 0"}}>
-                <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>処理が終了しました</AlertTitle>
-                <div style={{width:"100%"}}>
-                  <Button
-                    fullWidth
-                    variant="outlined"
-                    color="secondary"
-                    onClick={()=>this.props.history.push("/songs")}
-                    style={{margin:"5px 0"}}>
-                      楽曲一覧を表示
-                  </Button>
-                  { ( _autoSync() && displayName ) &&
-                  <Button
-                    fullWidth
-                    variant="outlined"
-                    color="secondary"
-                    onClick={()=>window.open(`https://twitter.com/share?text=BPIManagerのスコアを更新しました&url=${config.baseUrl}/u/${displayName}%3Finit%3D${timeFormatter(1)}`)}
-                    style={{margin:"5px 0"}}>
-                      更新をツイート
-                  </Button>
-                  }
-                </div>
-              </Alert>
-            }
-            {errors.length > 0 &&
-              <Alert severity="error" style={{margin:"8px 0"}}>
-                {errors.map(item=><span key={item}>{item}<br/></span>)}
-              </Alert>
-            }
-            <Divider style={{margin:"15px 0"}}/>
-            {(this.state.uid === "") && (
-              <Alert severity="error" style={{margin:"10px 0"}}>
-                <AlertTitle>ログインしていません</AlertTitle>
-                <p>Sync機能を用いることで、スコアデータをクラウドと同期することが可能です。<br/>
-                  不慮のデータ消失に備えるためにも、常にログイン状態を維持することをおすすめします。<RLink to="/sync" style={{textDecoration:"none"}}><Link color="secondary" component="span">こちらからログインしてください</Link></RLink>。
-                </p>
-              </Alert>
-            )}
-            {(!_autoSync() && this.state.uid !== "") && (
-              <Alert severity="warning" style={{margin:"10px 0"}}>
-                <AlertTitle>ご存知ですか？</AlertTitle>
-                <p>設定画面より「Auto-sync」を有効にすることで、最新のスコアデータをクラウドと自動同期できます。<br/>
-                  不慮のデータ消失に備えられるほか、新たなライバルを探すためにも有用です。<RLink to="/settings" style={{textDecoration:"none"}}><Link color="secondary" component="span">こちらから有効化してください</Link></RLink>。
-                </p>
-              </Alert>
-            )}
-            <Alert severity="info" style={{margin:"8px 0"}}>
-              <FormattedMessage id="Data.UpdateMes1"/><br/>
-                <FormattedMessage id="Data.UpdateMes2"/>
-            </Alert>
         </Paper>
+        {(errors.length > 0 && stateText !== "Data.Failed") &&
+          <Alert severity="success" style={{margin:"10px 0"}}>
+            <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>処理が終了しました</AlertTitle>
+            <div style={{width:"100%"}}>
+              <Button
+                fullWidth
+                variant="outlined"
+                color="secondary"
+                onClick={()=>this.props.history.push("/songs")}
+                style={{margin:"5px 0"}}>
+                  楽曲一覧を表示
+              </Button>
+              { ( _autoSync() && displayName ) &&
+              <Button
+                fullWidth
+                variant="outlined"
+                color="secondary"
+                onClick={()=>window.open(`https://twitter.com/share?text=BPIManagerのスコアを更新しました&url=${config.baseUrl}/u/${displayName}%3Finit%3D${timeFormatter(1)}`)}
+                style={{margin:"5px 0"}}>
+                  更新をツイート
+              </Button>
+              }
+            </div>
+          </Alert>
+        }
+        {errors.length > 0 &&
+          <Alert severity="error" style={{margin:"8px 0"}}>
+            {errors.map(item=><span key={item}>{item}<br/></span>)}
+          </Alert>
+        }
+        <AdsCard/>
+        <Divider style={{margin:"15px 0"}}/>
+        {(this.state.uid === "") && (
+          <Alert severity="error" style={{margin:"10px 0"}}>
+            <AlertTitle>ログインしていません</AlertTitle>
+            <p>Sync機能を用いることで、スコアデータをクラウドと同期することが可能です。<br/>
+              不慮のデータ消失に備えるためにも、常にログイン状態を維持することをおすすめします。<RLink to="/sync" style={{textDecoration:"none"}}><Link color="secondary" component="span">こちらからログインしてください</Link></RLink>。
+            </p>
+          </Alert>
+        )}
+        {(!_autoSync() && this.state.uid !== "") && (
+          <Alert severity="warning" style={{margin:"10px 0"}}>
+            <AlertTitle>ご存知ですか？</AlertTitle>
+            <p>設定画面より「Auto-sync」を有効にすることで、最新のスコアデータをクラウドと自動同期できます。<br/>
+              不慮のデータ消失に備えられるほか、新たなライバルを探すためにも有用です。<RLink to="/settings" style={{textDecoration:"none"}}><Link color="secondary" component="span">こちらから有効化してください</Link></RLink>。
+            </p>
+          </Alert>
+        )}
         <Paper style={{padding:"15px",margin:"10px 0 0 0"}}>
             <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
               取り込み方

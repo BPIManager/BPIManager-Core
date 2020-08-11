@@ -13,6 +13,7 @@ import Button from '@material-ui/core/Button'
 import Loader from '@/view/components/common/loader';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
+import AdsCard from '@/components/ad';
 
 interface S {
   [key:string]:any,
@@ -182,6 +183,7 @@ class AAATable extends React.Component<P,S> {
           </FormGroup>
         </FormControl>
         </div>}
+        <AdsCard/>
         {checks.sort((a,b)=>b-a).map((key:number)=>{
           if(!result[key]){
             return (null);

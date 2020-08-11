@@ -173,8 +173,13 @@ import {Link as RefLink} from '@material-ui/core/';
       "title":"Help.PrivacyPolicy",
       "body":
         <div style={{wordBreak:"break-all"}}>
+          ・利用状況調査<br/>
         利用状況調査のため、本サービスではGoogle Analyticsを利用しています。Google AnalyticsはCookieを利用して利用情報を収集します。<br/>
-        Google Analyticsの利用規約は、こちら（https://marketingplatform.google.com/about/analytics/terms/jp/）をご覧ください。<br/>
+        Google Analyticsの利用規約は、こちら（https://marketingplatform.google.com/about/analytics/terms/jp/）をご覧ください。<br/><br/>
+        ・広告について<br/>
+        本サービスはGoogle及びGoogleのパートナーが提供する広告を設置しています。この広告配信にはCookieが使用されており、過去のWeb閲覧履歴に基づいた広告が配信されています。<br/>
+        これが不要である場合、Googleアカウントの広告設定ページ（https://adssettings.google.com/u/0/authenticated）からパーソナライズ広告を無効にできます。<br/>
+        また、aboutads.infoにアクセスしてパーソナライズ広告掲載に使用される第三者配信事業者のCookieを無効にできます。
         </div>
     }
   ]

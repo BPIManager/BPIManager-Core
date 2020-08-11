@@ -25,6 +25,7 @@ import {arenaRankColor, alternativeImg, avatarBgColor, avatarFontColor} from '@/
 import Loader from '@/view/components/common/loader';
 import { config } from '@/config';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import AdsCard from '@/components/ad';
 
 interface S {
   userName:string,
@@ -379,6 +380,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
         <div style={{width:"50%",margin:"10px auto"}}>
           <ShareButtons withTitle={true} url={url} text={res.displayName}/>
         </div>
+        <AdsCard/>
         <ShowSnackBar message={message} variant={message === "ライバルを追加しました" ? "success" : "error"}
           handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>
       {loadingRecommended && <Loader/>}

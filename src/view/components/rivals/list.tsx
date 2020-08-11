@@ -28,6 +28,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import SearchIcon from '@material-ui/icons/Search';
+import AdsCard from '@/components/ad';
 interface S {
   isAddOpen:boolean,
   showSnackBar:boolean,
@@ -161,6 +162,8 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
             まだライバルがいません。
           </Alert>
         )}
+        <Divider style={{margin:"10px 0"}}/>
+        <AdsCard/>
         <List
           subheader={
             <ListSubheader component="div" disableSticky>

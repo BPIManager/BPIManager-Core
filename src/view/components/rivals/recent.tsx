@@ -20,6 +20,7 @@ import ModalUser from './modal';
 import UserCard from './viewComponents/card';
 import SearchIcon from "@material-ui/icons/Search";
 import { timeCompare } from '@/components/common/timeFormatter';
+import AdsCard from '@/components/ad';
 
 interface P {
   compareUser:(rivalMeta:rivalStoreData,rivalBody:rivalScoreData[],last:rivalStoreData,arenaRank:string,currentPage:number)=>void,
@@ -227,13 +228,6 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
           <p>
             条件に合致するユーザーが見つかりませんでした。
           </p>
-          {mode === 1 && (
-            <p>
-              逆ライバルに表示されるユーザーは以下の条件を満たす場合に限られます。<br/>
-              ・BPIManager v0.0.4.2以降を使用している<br/>
-              ・ライバルデータを同期済み
-            </p>
-          )}
         </Alert>
       </div>}
       {res.map((item:rivalStoreData,i:number)=>{
@@ -253,6 +247,8 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
         </Grid>
       </Grid>
       }
+      <Divider style={{margin:"10px 0"}}/>
+      <AdsCard/>
       </Container>
       {isModalOpen && <ModalUser isOpen={isModalOpen} currentUserName={currentUserName} handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
       <ShowSnackBar message={message} variant={variant}
