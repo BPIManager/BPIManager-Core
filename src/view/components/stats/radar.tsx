@@ -9,7 +9,6 @@ import {Table, TableRow, TableCell, TableBody} from '@material-ui/core/';
 import { getRadar, Details, radarData } from '@/components/stats/radar';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '@/view/components/common/loader';
-import { Alert, AlertTitle } from '@material-ui/lab';
 import AdsCard from '@/components/ad';
 
 class Main extends React.Component<{intl:any}&RouteComponentProps,{
