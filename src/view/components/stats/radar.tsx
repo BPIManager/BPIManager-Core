@@ -10,6 +10,7 @@ import { getRadar, Details, radarData } from '@/components/stats/radar';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '@/view/components/common/loader';
 import { Alert, AlertTitle } from '@material-ui/lab';
+import AdsCard from '@/components/ad';
 
 class Main extends React.Component<{intl:any}&RouteComponentProps,{
   isLoading:boolean,
@@ -91,14 +92,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,{
             </Grid>
           </Grid>
         }
-        <Alert severity="info" style={{margin:"10px 0"}}>
-          <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>レーダーとは？</AlertTitle>
-          <p>
-            譜面傾向ごとにいくつかの楽曲をピックアップし、それらのBPIを指標にあなたの実力を可視化する機能です。<br/>
-            各カテゴリの対象になっている楽曲一覧およびそれらの楽曲に紐付いたスコアおよびBPIはテーブルの項目をクリックすることで確認可能です。<br/><br/>
-            対象楽曲については、ユーザーの皆様にいただいた声や楽曲の追加・無条件解禁状況を踏まえ、不定期に変更する場合があります。
-          </p>
-        </Alert>
+        <AdsCard/>
         {radarDetail !== "" && <Details closeModal={this.toggleRadarDetail} withRival={false} data={radar} title={radarDetail}/>}
       </Container>
     );

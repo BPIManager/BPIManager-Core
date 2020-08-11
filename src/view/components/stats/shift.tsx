@@ -10,6 +10,7 @@ import { statMain } from '@/components/stats/main';
 import Alert from '@material-ui/lab/Alert/Alert';
 import { ChangeLevel } from './main';
 import { injectIntl } from 'react-intl';
+import AdsCard from '@/components/ad';
 
 class Shift extends React.Component<{intl:any}&RouteComponentProps,ShiftType> {
 
@@ -180,6 +181,7 @@ class Shift extends React.Component<{intl:any}&RouteComponentProps,ShiftType> {
           </p>
         </Alert>
         )}
+        <AdsCard/>
       </Container>
     );
   }

@@ -14,7 +14,7 @@ export default function AdsCard() {
 
     return (
       <ins className="adsbygoogle"
-        style={{display:"block",margin:"0 auto"}}
+        style={{display:"flex",margin:"8px auto",justifyContent:"center"}}
         data-ad-client="ca-pub-9237861069664679"
         data-ad-slot="5844744770"
         data-ad-format="auto"
