@@ -138,7 +138,7 @@ export default class Compare extends React.Component<{},S> {
     const calc = new bpiCalcuator();
     const fData = await scores.getSpecificVersionAll();
     const goalBPI = _goalBPI(), goalPerc = _goalPercentage();
-    const {total11BPI,total12BPI,displayMode} = this.state;
+    const {displayMode} = this.state;
     for(let i =0; i < fData.length; ++i){
       let tScore = 0;
       const tData = await scores.getItem(fData[i]["title"],fData[i]["difficulty"],t,isSingle);
@@ -150,7 +150,7 @@ export default class Compare extends React.Component<{},S> {
         return Math.ceil(exScore / max * 10000) / 100;
       }
       if(!tData || tData.length === 0){
-        if (t !== "BPI" && t !== "PERCENTAGE" && t !== "WR" && t !== "AVERAGE" && t !== "COMPOSITE") continue;
+        if (t !== "BPI" && t !== "PERCENTAGE" && t !== "WR" && t !== "AVERAGE") continue;
         tScore = 0;
       }else{
         tScore = displayMode === "exScore" ? tData[0]["exScore"] :
@@ -176,12 +176,6 @@ export default class Compare extends React.Component<{},S> {
         tScore = displayMode === "exScore" ? Math.ceil(songData[0]["notes"] * 2 * goalPerc / 100) :
         displayMode === "bpi" ? calc.setPropData(songData[0],Math.ceil(songData[0]["notes"] * 2 * goalPerc / 100),isSingle) :
         displayMode === "percentage" ? goalPerc : 0;
-      }
-      if(t === "COMPOSITE"){
-        const tb = songData[0]["difficultyLevel"] === "12" ? total12BPI : total11BPI;
-        tScore = displayMode === "exScore" ? calc.calcFromBPI(tb,true) :
-        displayMode === "bpi" ? tb :
-        displayMode === "percentage" ? percentager(calc.calcFromBPI(tb,true)) : 0;
       }
       const percentage = percentager(fData[i]["exScore"]);
       const gap = (Math.ceil(
@@ -262,7 +256,6 @@ export default class Compare extends React.Component<{},S> {
                 <MenuItem value={"27"}>27 HEROIC VERSE</MenuItem>
                 <MenuItem value={"BPI"}>TARGET BPI</MenuItem>
                 <MenuItem value={"PERCENTAGE"}>TARGET PERCENTAGE</MenuItem>
-                <MenuItem value={"COMPOSITE"}>COMPOSITE BPI</MenuItem>
                 <MenuItem value={"WR"}>WORLD RECORD</MenuItem>
                 <MenuItem value={"AVERAGE"}>KAIDEN AVERAGE</MenuItem>
               </Select>

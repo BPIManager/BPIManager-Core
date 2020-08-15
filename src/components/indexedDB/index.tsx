@@ -4,7 +4,7 @@ import timeFormatter, { timeCompare } from "../common/timeFormatter";
 import {_currentStore,_isSingle} from "../settings";
 import {difficultyDiscriminator, difficultyParser} from "../songs/filter";
 import bpiCalcuator from "../bpi";
-import {noimg} from "../common/"
+import {noimg, alternativeImg} from "../common/"
 import { DBLists } from "../../types/lists";
 
 const storageWrapper = class extends Dexie{
@@ -115,7 +115,20 @@ const storageWrapper = class extends Dexie{
       scoreHistory : "&++num,[title+storedAt+difficulty+isSingle],[title+storedAt+difficulty+isSingle+updatedAt],title,difficulty,difficultyLevel,storedAt,exScore,BPI,isSingle,updatedAt",
       favLists : "&num,title,length,description,updatedAt",
       favSongs : "&[title+difficulty+listedOn],[title+difficulty],listedOn",
-    })
+    });
+    this.version(10).stores({
+      scores : "[title+difficulty+storedAt+isSingle],title,*difficulty,*difficultyLevel,currentBPI,exScore,missCount,clearState,storedAt,isSingle,updatedAt,lastScore",
+      songs : "&++num,title,*difficulty,*difficultyLevel,wr,avg,notes,bpm,textage,dpLevel,memo,[title+difficulty]",
+      rivals : "&[title+difficulty+storedAt+isSingle+rivalName],rivalName,title,*difficulty,*difficultyLevel,exScore,missCount,clearState,storedAt,isSingle,updatedAt",
+      rivalLists : "&uid,rivalName,lastUpdatedAt,updatedAt,[isSingle+storedAt],photoURL,profile",
+      scoreHistory : "&++num,[title+storedAt+difficulty+isSingle],[title+storedAt+difficulty+isSingle+updatedAt],title,difficulty,difficultyLevel,storedAt,exScore,BPI,isSingle,updatedAt",
+      favLists : "&num,title,length,description,icon,updatedAt",
+      favSongs : "&[title+difficulty+listedOn],[title+difficulty],listedOn",
+    }).upgrade(async(_tx) => {
+      this.favLists.toCollection().modify((item:any)=>{
+        item.icon = alternativeImg(item.title);
+      });
+    });;
     this.scores = this.table("scores");
     this.scoreHistory = this.table("scoreHistory");
     this.songs = this.table("songs");
@@ -171,12 +184,13 @@ export const favsDB = class extends storageWrapper{
     }
   }
 
-  async addList(title:string = "new list",description:string = ""){
+  async addList(title:string = "new list",description:string = "",icon:string = ""){
     try{
       return this.favLists.add({
         "num":new Date().getTime(),
         "title":title,
         "description":description,
+        "icon":icon || alternativeImg(title),
         "length":0,
         "updatedAt":timeFormatter(3),
       });
@@ -186,11 +200,12 @@ export const favsDB = class extends storageWrapper{
     }
   }
 
-  async editList(target:number,title:string = "new list",description:string = ""){
+  async editList(target:number,title:string = "new list",description:string = "",icon:string = ""){
     try{
       return this.favLists.where({num:target}).modify({
         "title":title,
         "description":description,
+        "icon":icon || alternativeImg(title),
         "updatedAt":timeFormatter(3),
       });
     }catch(e){

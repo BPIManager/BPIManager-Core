@@ -18,6 +18,10 @@ import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import AdsCard from '@/components/ad';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
+import { listNobi11, listNobi12 } from '@/components/lists';
 
 interface S {
   isLoading:boolean,
@@ -26,6 +30,7 @@ interface S {
   currentTarget:number,
   message:string,
   showSnackBar:boolean,
+  checked:boolean,
 }
 
 class FavLists extends React.Component<{}&RouteComponentProps,S> {
@@ -39,7 +44,9 @@ class FavLists extends React.Component<{}&RouteComponentProps,S> {
       currentTarget:-1,
       message:"",
       showSnackBar:false,
+      checked:localStorage.getItem("hideDefaultLists") === "true",
     }
+    console.log(localStorage.getItem("hideDefaultLists"))
     this.updateData = this.updateData.bind(this);
   }
 
@@ -51,7 +58,9 @@ class FavLists extends React.Component<{}&RouteComponentProps,S> {
     try{
       const db = new favsDB();
       const res = await db.getAllLists();
-      this.setState({isLoading:false,lists:res});
+      this.setState({isLoading:false,lists:this.state.checked ? res : [
+        listNobi11,listNobi12
+      ].concat(res)});
     }catch(e){
       console.log(e);
     }
@@ -69,6 +78,12 @@ class FavLists extends React.Component<{}&RouteComponentProps,S> {
   }
   toggleSnack = (message:string = "リストを追加しました")=> this.setState({message:message,showSnackBar:!this.state.showSnackBar});
 
+  handleChange = (_e:React.ChangeEvent,checked:boolean)=>{
+    localStorage.setItem("hideDefaultLists",String(checked));
+    this.setState({checked:checked});
+    this.updateData();
+  }
+
   render(){
     const {isLoading,lists,addList,currentTarget} = this.state;
 
@@ -77,6 +92,21 @@ class FavLists extends React.Component<{}&RouteComponentProps,S> {
     }
     return (
       <Container fixed  className="commonLayout">
+        <div style={{display:"flex",justifyContent:"flex-end"}}>
+        <FormControl component="fieldset">
+          <FormControlLabel
+            control={
+              <Switch
+                checked={this.state.checked}
+                onChange={this.handleChange}
+                name="デフォルトリストを非表示"
+                color="primary"
+              />
+            }
+            label="デフォルトリストを非表示"
+          />
+        </FormControl>
+      </div>
         <List>
           {lists.map((item,i)=>{
             return (
@@ -106,21 +136,25 @@ class ListComponent extends React.Component<CP,{}> {
 
   render(){
     const {data} = this.props;
-    const text = <span>{data.description || "No description"}<br/>最終更新: {data.updatedAt}</span>
+    const text = <span>{data.description || "No description"}{data.updatedAt !== "-1" && <span><br/>最終更新: {data.updatedAt}</span>}</span>
     return (
       <ListItem button>
         <ListItemAvatar>
           <Avatar>
-            <img src={alternativeImg(data.title)} style={{width:"100%",height:"100%"}}
+            <img src={data.icon || alternativeImg(data.title)}
+              style={{width:"100%",height:"100%",objectFit:"cover"}}
+              onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(data.title)}
               alt={data.title}/>
           </Avatar>
         </ListItemAvatar>
-        <ListItemText primary={`${data.title}(${data.length})`} secondary={text} onClick={()=>this.props.history.push("/lists/" + data.num)} />
+        <ListItemText primary={`${data.title}` + (data.length !== -1 ? `(${data.length})` : "")} secondary={text} onClick={()=>this.props.history.push("/lists/" + data.num)} />
+        {data.length !== -1 &&
         <ListItemSecondaryAction>
           <IconButton edge="end" aria-label="comments" onClick={()=>this.props.toggleEditListScreen(data.num)}>
             <SettingsIcon/>
           </IconButton>
         </ListItemSecondaryAction>
+        }
       </ListItem>
     );
   }

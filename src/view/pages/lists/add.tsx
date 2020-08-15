@@ -13,6 +13,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormLabel from '@material-ui/core/FormLabel';
+import { alternativeImg } from '@/components/common';
 
 interface P {
   handleToggle:(reload:boolean)=>void,
@@ -24,6 +25,7 @@ interface P {
 interface S {
   name:string,
   description:string,
+  icon:string,
   processing:boolean,
   willDelete:boolean,
   errorMessage:string,
@@ -36,6 +38,7 @@ class ListAdd extends React.Component<P,S> {
     this.state = {
       name:"",
       description:"",
+      icon:"",
       processing:false,
       willDelete:false,
       errorMessage:""
@@ -49,7 +52,8 @@ class ListAdd extends React.Component<P,S> {
       if(p){
         this.setState({
           name:p.title,
-          description:p.description
+          description:p.description,
+          icon:p.icon || alternativeImg(p.title)
         });
       }else{
         this.props.handleToggle(false);
@@ -58,7 +62,7 @@ class ListAdd extends React.Component<P,S> {
   }
 
   saveList = async():Promise<void>=>{
-    const {name,description,willDelete} = this.state;
+    const {name,description,willDelete,icon} = this.state;
     this.setState({processing:true});
     if(this.props.target && willDelete){
       await new favsDB().removeList(this.props.target);
@@ -67,9 +71,9 @@ class ListAdd extends React.Component<P,S> {
         return this.setState({processing:false,errorMessage:"リスト名が入力されていません"});
       }
       if(this.props.target && !this.props.isCreating){
-        await new favsDB().editList(this.props.target,name,description);
+        await new favsDB().editList(this.props.target,name,description,icon);
       }else{
-        await new favsDB().addList(name,description);
+        await new favsDB().addList(name,description,icon);
       }
     }
     this.props.toggleSnack();
@@ -83,7 +87,7 @@ class ListAdd extends React.Component<P,S> {
 
   render(){
     const {handleToggle,isCreating} = this.props;
-    const {name,description,processing,errorMessage,willDelete} = this.state;
+    const {name,description,icon,processing,errorMessage,willDelete} = this.state;
     return (
       <Dialog open={true}>
         <DialogTitle>リストの{isCreating ? "作成" : "編集"}</DialogTitle>
@@ -99,10 +103,18 @@ class ListAdd extends React.Component<P,S> {
           <TextField
             margin="dense"
             id="listDescription"
-            label="リストの説明文"
+            label="リストの説明文(オプション)"
             fullWidth
             value={description}
             onChange={(e)=>this.setState({description:e.target.value})}
+          />
+          <TextField
+            margin="dense"
+            id="listIcon"
+            label="リストのアイコンURL(オプション)"
+            fullWidth
+            value={icon}
+            onChange={(e)=>this.setState({icon:e.target.value})}
           />
           {!isCreating &&
             <FormControl fullWidth style={{margin:"10px 0"}}>

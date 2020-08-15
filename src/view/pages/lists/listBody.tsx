@@ -5,6 +5,7 @@ import { scoreData, songData } from '@/types/data';
 import { difficultyDiscriminator } from '@/components/songs/filter';
 import { _currentStore, _isSingle } from '@/components/settings';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { defaultLists, getListsForNobi } from '@/components/lists';
 
 interface S {
   full:scoreData[],
@@ -29,6 +30,11 @@ class FavBody extends React.Component<{}&RouteComponentProps,S> {
   async updateScoreData(){
     const db = new scoresDB();
     const num = Number((this.props.match.params as any).listTitle);
+    if(num < 0){
+      const listInfo = defaultLists(num);
+      const full = await getListsForNobi(-num);
+      return this.setState({full:full,title:listInfo ? listInfo.title : "List"});
+    }
     const songs:songData[] = await new favsDB().getAllItemsInAList(num);
     const listInfo = await new favsDB().getListFromNum(num);
     let full:scoreData[] = [];
