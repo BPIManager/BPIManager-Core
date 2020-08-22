@@ -368,16 +368,6 @@ th.MuiTableCell-root.MuiTableCell-head:first-child{
   color:#fff;
 }
 
-.scrollableSpacebetween button{
-  width:25% !important;
-}
-
-@media screen and (max-width:324px){
-  .scrollableSpacebetween button{
-    width:27% !important;
-  }
-}
-
 .heroTitle{
   margin:64px auto 10px auto;
 }
@@ -505,3 +495,5 @@ html,body{
   margin:0;
   padding:0;
 }
+
+.grecaptcha-badge { visibility: hidden; }

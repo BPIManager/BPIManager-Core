@@ -41,6 +41,7 @@ import { config } from "@/config";
 
 import { DBLists } from "@/types/lists";
 import { scoreData, songData } from "@/types/data";
+import SongNotes from "./songNotes";
 
 interface P{
   isOpen:boolean,
@@ -183,7 +184,9 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
     })
   }
 
-  handleTabChange = (_e:React.ChangeEvent<{}>, newValue:number)=> this.setState({currentTab:newValue});
+  handleTabChange = (_e:React.ChangeEvent<{}>, newValue:number)=>{
+    this.setState({currentTab:(newValue === 3 && !this.state.hasRival) ? 4 : newValue});
+  }
 
   toggleMenu = (willOpen:boolean = false)=>{
     this.setState({openShareMenu: willOpen });
@@ -505,12 +508,13 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
           textColor="primary"
           onChange={this.handleTabChange}
           variant="scrollable"
-          className={hasRival ? "scrollableSpacebetween sc4Items" : "scrollableSpacebetween sc3Items"}
-          scrollButtons="off">
+          scrollButtons="on"
+          className={hasRival ? "scrollableSpacebetween sc4Items" : "scrollableSpacebetween sc3Items"}>
           <Tab label={<FormattedMessage id="Details.Graph"/>} />
           <Tab label={<FormattedMessage id="Details.Details"/>} />
           <Tab label={<FormattedMessage id="Details.Diffs"/>} />
           {hasRival && <Tab label={<FormattedMessage id="Details.Rivals"/>} />}
+          <Tab label={<FormattedMessage id="Details.Notes"/>} />
         </Tabs>
         <TabPanel value={currentTab} index={0}>
           {showCharts &&
@@ -531,6 +535,9 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
         </TabPanel>
         <TabPanel value={currentTab} index={3}>
           <SongRivals song={song} score={score}/>
+        </TabPanel>
+        <TabPanel value={currentTab} index={4}>
+          <SongNotes song={song} score={score}/>
         </TabPanel>
         <ShowSnackBar message={errorSnackMessage} variant="warning"
             handleClose={this.toggleErrorSnack} open={errorSnack} autoHideDuration={3000}/>

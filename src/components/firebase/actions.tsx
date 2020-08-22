@@ -3,11 +3,12 @@ import timeFormatter from "../common/timeFormatter";
 import { scoresDB, scoreHistoryDB, songsDB } from "../indexedDB";
 import platform from "platform";
 import firebase from 'firebase/app';
-import { rivalStoreData, scoreData, DBRivalStoreData } from "../../types/data";
+import { rivalStoreData, scoreData, DBRivalStoreData, songData } from "../../types/data";
 import bpiCalcuator from '../bpi';
 import {getTotalBPI} from '../common';
 import { _currentStore } from "../settings";
 import { messanger } from "./message";
+import { difficultyDiscriminator } from "../songs/filter";
 
 export default class fbActions{
 
@@ -487,4 +488,21 @@ export default class fbActions{
     }
   }
   */
+
+
+  // user notes function
+
+  loadNotes(songInfo:songData,lastLoaded:any = null,mode:number = 0){
+    const orderBy = mode === 1 ? "userBPI" : "wroteAt";
+    if(lastLoaded){
+      return firestore.collection("notes").where("songName","==",songInfo.title).where("songDiff","==",difficultyDiscriminator(songInfo.difficulty)).orderBy(orderBy,"desc").startAfter(lastLoaded).get();
+    }else{
+      return firestore.collection("notes").where("songName","==",songInfo.title).where("songDiff","==",difficultyDiscriminator(songInfo.difficulty)).orderBy(orderBy,"desc").get();
+    }
+  }
+
+  getUserReference(id:string){
+    return firestore.collection("users").doc(id);
+  }
+
 }

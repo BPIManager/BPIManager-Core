@@ -72,6 +72,7 @@ const ja = {
   "Details.Details":"Details",
   "Details.Diffs":"Logs",
   "Details.Rivals":"Rivals",
+  "Details.Notes":"User Notes",
   "Details.ErrorIIDXInfo":"IIDXInfo is only available for level-12 songs.",
   "Common.Tweet":"Tweet",
   "SongDetail.SongDetailHead":"Song",

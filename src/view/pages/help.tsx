@@ -14,99 +14,65 @@ import {Link as RefLink} from '@material-ui/core/';
     {"title":"Help.AboutThisSite",
       "body":
       <div>
-        <FormattedMessage id="Help.A.1"/><br/>
-        <FormattedMessage id="Help.A.2"/><br/>
-        <FormattedMessage id="Help.A.3"/>
+        BPIManagerは、☆11および☆12のスコアを、BPI(を改変した定義式)という指標を用いながら管理することができるツールです。<br/>
+        本ツールは、スマートフォンのホーム画面に追加して利用することが想定されていますが、PCなどあらゆる端末でご利用いただけます。
       </div>
-    },{
-      "title":"Help.Functions",
-      "body":
-        <div>
-          <FormattedMessage id="Help.B.1"/><br/>
-          <FormattedMessage id="Help.B.2"/><br/>
-          <FormattedMessage id="Help.B.3"/><br/>
-          <FormattedMessage id="Help.B.4"/><br/>
-          <FormattedMessage id="Help.B.4.1"/>
-          <Divider style={{margin:"10px 0"}}/>
-          <FormattedMessage id="Help.B.5"/>
-        </div>
-    },{
-      "title":"Help.HowToUse",
-      "body":
-        <div>
-          <FormattedMessage id="Help.C.1"/>
-          <Divider style={{margin:"10px 0"}}/>
-          <FormattedMessage id="Help.C.2"/><br/>
-          <FormattedMessage id="Help.C.3"/><br/>
-          <FormattedMessage id="Help.C.4"/><br/>
-          <FormattedMessage id="Help.C.5"/><br/>
-          <FormattedMessage id="Help.C.6"/>
-          <Divider style={{margin:"10px 0"}}/>
-          <FormattedMessage id="Help.C.7"/><br/>
-          <FormattedMessage id="Help.C.8"/><br/>
-          <FormattedMessage id="Help.C.9"/><br/>
-          <FormattedMessage id="Help.C.10"/>
-          <FormattedMessage id="Help.C.11"/>
-        </div>
-    },{
-      "title":"Help.Settings",
-      "body":
-        <div>
-          <FormattedMessage id="Help.D.1"/><br/>
-          <FormattedMessage id="Help.D.1.1"/><br/>
-          <FormattedMessage id="Help.D.2"/><br/>
-          <FormattedMessage id="Help.D.2.1"/><br/>
-          <FormattedMessage id="Help.D.3"/><br/>
-          <FormattedMessage id="Help.D.3.1"/><br/>
-          <FormattedMessage id="Help.D.3.2"/><br/>
-          <FormattedMessage id="Help.D.4"/><br/>
-          <FormattedMessage id="Help.D.5"/><br/>
-          <FormattedMessage id="Help.D.6"/><br/>
-          <FormattedMessage id="Help.D.7"/><br/>
-          <FormattedMessage id="Help.D.8"/><br/>
-          <FormattedMessage id="Help.D.9"/><br/>
-          <FormattedMessage id="Help.D.10"/>
-        </div>
-    },{
-      "title":"Help.Sync",
-      "body":
-        <div>
-          <FormattedMessage id="Help.DD.1"/><br/>
-          <FormattedMessage id="Help.DD.2"/><br/>
-          <FormattedMessage id="Help.DD.3"/><br/>
-          <FormattedMessage id="Help.DD.4"/><br/>
-          <FormattedMessage id="Help.DD.5"/><br/>
-          <FormattedMessage id="Help.DD.6"/><br/>
-        </div>
     },{
       "title":"Help.AboutBPI",
       "body":
         <div>
-          <Typography variant="h6">BPIとは？</Typography>
-          BPIとは、<RefLink color="secondary" href="http://norimiso.web.fc2.com/aboutBPI.html">norimiso様が考案された</RefLink>、beatmaniaIIDXのスコア力を数値として表現する公式です。<br/>
+          BPIとは、norimiso様が考案された、beatmaniaIIDXのスコア力を数値として表現する公式です。<br/>
           皆伝平均を0、全国歴代1位を100として、あなたの実力を示します。<br/>
-          BPIに関する詳細は上記ウェブサイトをご確認ください。
+          <RefLink color="secondary" href="http://norimiso.web.fc2.com/aboutBPI.html">BPIに関する詳細はこちらのウェブサイトをご確認ください。</RefLink>
           <Divider style={{margin:"5px 0"}}/>
           <Typography variant="h6">BPI計算式の改変について</Typography>
-          BPIManagerでは、<RefLink color="secondary" href="http://norimiso.web.fc2.com/aboutBPI.html">こちらのページの記述</RefLink>を基準とした上で、定義を改変してIIDXの実力を推定しています。<br/>
+          BPIManagerでは、上記定義式を基準とした上で、一部を改変してIIDXの実力を推定しています。<br/>
           具体的には、次のような変更を施しています。
           <ul>
             <li>譜面ごとに、統計的に得られた譜面係数を設定し、当該値をBPI算出に使用</li>
             <li>一部楽曲については、上記譜面係数を補正</li>
           </ul>
-          <RefLink color="secondary" href="https://gist.github.com/potakusan/30004f4c05e6887399e779afe0fac4e6">これらの値の算出については、こちらのページに詳細を記載しています</RefLink>。<br/><br/>
-          このように、BPIManagerは本来の定義から逸れた算出方法を用いています。<br/>
-          意図としては、BPI考案時に比して全国トップのインフレが進行し、スコアが過小評価される状況を改善するためです。<br/>
-          そのため、客観的指標として実ランキングデータを用いた計算式の補正を行うことを決定いたしました。<br/><br/>
-          なお、設定画面に「従来の計算方式を利用する」オプションを追加済みです。<br/>
-          お好みに合わせてお使いいただきますよう、お願いいたします。<br/><br/>
-          より良い評価方法に関するアイディアをお持ちの方は、ぜひともTwitter(@BPIManager)までお寄せいただければ幸甚です。
+          <RefLink color="secondary" href="https://gist.github.com/potakusan/30004f4c05e6887399e779afe0fac4e6">これらの値の算出については、こちらのページに詳細を記載しています</RefLink>。<br/>
+          このようにBPIManagerが本来の定義から逸れた算出方法を用いている意図は、BPI考案時に比して全国トップのインフレが進行しスコアが過小評価される状況を改善するためです。<br/>
+          設定画面に、本来の定義を用いてBPIを計算する「従来の計算方式を利用する」オプションを追加済みですので、お好みに合わせてお使いいただきますようお願いいたします。<br/>
+          より良い評価方法に関するアイディアをお持ちの方は、ぜひともTwitter(@BPIManager)までお寄せください。
+        </div>
+    },{
+      "title":"Help.Functions",
+      "body":
+        <div>
+          本ツールでは「beatmaniaIIDXのスコア力向上」に必要な機能をBPIを軸として拡充しています。
+          <ul>
+            <li>☆11および☆12の楽曲のスコア管理（BPIによる実力推定や、統計機能による実力変遷の可視化）</li>
+            <li>バージョンをまたいだ自己スコアの比較、全1や皆伝平均との比較</li>
+            <li>レーダーを用いた得意な譜面傾向の分析など</li>
+            <li>ライバルとのスコア勝敗比較や、総合BPIを用いた実力の近いライバルの発掘</li>
+            <li>BPIに基づくAAA達成難易度表や、自由に楽曲を追加できるリスト機能によるKPI管理</li>
+            <li>楽曲に関する攻略情報の共有(楽曲一覧より個別楽曲画面を開き、「攻略情報」タブより自由に書き込み可能)</li>
+          </ul>
+        </div>
+    },{
+      "title":"Help.HowToUse",
+      "body":
+        <div>
+          eAMUSEMENTプレミアムコースに加入済みの場合は、「データ」より公式サイトからCSVをインポートしてください。<br/>
+          eAMUSEMENTベーシックコースに加入済みの場合は、「データ取り込み」ページ記載のブックマークレットをご使用ください。<br/>
+          有料サービスに加入していない場合は、「未プレイ楽曲」より各楽曲のスコアを個別に登録することができます。<br/><br/>
+          CSVやブックマークレットを用いたデータの一括インポートについては、「データ取り込み」ページに詳細が記載されています。
+        </div>
+    },{
+      "title":"Help.Sync",
+      "body":
+        <div>
+          本機能を用いることで、スコアデータをクラウド上に保管し不慮の事故による消失を防いだり、「ライバル」機能を用いて他の人にスコアを公開することができます。<br/>
+          TwitterまたはGoogleアカウントによるソーシャルログインに対応しています。
         </div>
     },{
       "title":"Help.Contact",
       "body":
         <div>
-          <FormattedMessage id="Help.E.1"/>
+          <FormattedMessage id="Help.E.1"/><br/>
+          (ダイレクトメッセージを解放しています)
         </div>
     },{
       "title":"Help.Requirements",
@@ -179,7 +145,9 @@ import {Link as RefLink} from '@material-ui/core/';
         ・広告について<br/>
         本サービスはGoogle及びGoogleのパートナーが提供する広告を設置しています。この広告配信にはCookieが使用されており、過去のWeb閲覧履歴に基づいた広告が配信されています。<br/>
         これが不要である場合、Googleアカウントの広告設定ページ（https://adssettings.google.com/u/0/authenticated）からパーソナライズ広告を無効にできます。<br/>
-        また、aboutads.infoにアクセスしてパーソナライズ広告掲載に使用される第三者配信事業者のCookieを無効にできます。
+        また、aboutads.infoにアクセスしてパーソナライズ広告掲載に使用される第三者配信事業者のCookieを無効にできます。<br/><br/>
+        ・reCAPTCHAについて<br/>
+        This site is protected by reCAPTCHA and the Google <RefLink color="secondary" href="https://policies.google.com/privacy">Privacy Policy</RefLink> and <RefLink color="secondary" href="https://policies.google.com/terms">Terms of Service</RefLink> apply.
         </div>
     }
   ]
