@@ -493,16 +493,81 @@ export default class fbActions{
   // user notes function
 
   loadNotes(songInfo:songData,lastLoaded:any = null,mode:number = 0){
-    const orderBy = mode === 1 ? "userBPI" : "wroteAt";
+    const orderBy = mode === 1 ? "userBPI" : mode === 0 ? "wroteAt" : "likeCount";
     if(lastLoaded){
-      return firestore.collection("notes").where("songName","==",songInfo.title).where("songDiff","==",difficultyDiscriminator(songInfo.difficulty)).orderBy(orderBy,"desc").startAfter(lastLoaded).get();
+      return firestore.collection("notes").where("isSingle","==",songInfo.dpLevel === "0").where("songName","==",songInfo.title).where("songDiff","==",difficultyDiscriminator(songInfo.difficulty)).orderBy(orderBy,"desc").startAfter(lastLoaded).get();
     }else{
-      return firestore.collection("notes").where("songName","==",songInfo.title).where("songDiff","==",difficultyDiscriminator(songInfo.difficulty)).orderBy(orderBy,"desc").get();
+      return firestore.collection("notes").where("isSingle","==",songInfo.dpLevel === "0").where("songName","==",songInfo.title).where("songDiff","==",difficultyDiscriminator(songInfo.difficulty)).orderBy(orderBy,"desc").get();
     }
+  }
+
+  loadRecentNotes(last = null){
+    if(last){
+      return firestore.collection("notes").orderBy("wroteAt","desc").limit(20).startAfter(last).get();
+    }
+    return firestore.collection("notes").orderBy("wroteAt","desc").limit(20).get();
+  }
+
+  loadMyNotes(){
+    const auth = this.authInfo();
+    if(!auth) return null;
+    const uid = auth.uid;
+    const doc = firestore.collection("users").doc(uid);
+    return firestore.collection("notes").where("uid","==",doc).orderBy("wroteAt","desc").get();
+  }
+
+  loadLikedNotes(){
+    const auth = this.authInfo();
+    if(!auth) return null;
+    const uid = auth.uid;
+    return firestore.collection("notesLiked").where("uid","==",uid).orderBy("likedAt","desc").limit(20).get();
   }
 
   getUserReference(id:string){
     return firestore.collection("users").doc(id);
+  }
+
+  async likeNotes(targetId:string):Promise<number>{
+    const auth = this.authInfo();
+    if(!auth) return 0;
+    try{
+      const target = firestore.collection("notes").doc(targetId);
+      const uid = auth.uid;
+      const alreadyExists = await firestore.collection("notesLiked").where("uid","==",uid).where("target","==",target).get();
+      const targetData = (await target.get()).data();
+      let batch = firestore.batch();
+      if(!targetData){
+        alert("対象データが存在しません。");
+        return 0;
+      }
+      if(alreadyExists.size === 0){
+        //add
+        const newLike = firestore.collection("notesLiked").doc();
+        batch.update(target,{likeCount:firebase.firestore.FieldValue.increment(1)});
+        batch.set(newLike,{
+          likedAt:this.time(),
+          isSingle:targetData.isSingle,
+          songDiff:targetData.songDiff,
+          songName:targetData.songName,
+          memo:targetData.memo,
+          target:target,
+          uid:uid,
+        });
+        batch.commit();
+        return 1;
+      }else{
+        //remove
+        batch.update(target,{likeCount:firebase.firestore.FieldValue.increment(-1)});
+        alreadyExists.forEach(function(doc) {
+            batch.delete(doc.ref);
+        });
+        batch.commit();
+        return -1;
+      }
+    }catch(e){
+      console.log(e);
+      return 0;
+    }
   }
 
 }

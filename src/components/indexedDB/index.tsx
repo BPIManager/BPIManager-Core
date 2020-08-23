@@ -836,9 +836,9 @@ export const songsDB = class extends storageWrapper{
     }
   }
 
-  async getOneItemIsSingle(title:string,difficulty:string):Promise<songData[]>{
+  async getOneItemIsSingle(title:string,difficulty:string,forcePlayMode:number = -1):Promise<songData[]>{
     const diffs = ():string=>{
-      const s = _isSingle();
+      const s = forcePlayMode !== -1 ? forcePlayMode : _isSingle();
       switch(difficulty){
         case "hyper":return s ? "3" : "8";
         case "another":return s ? "4" : "9";

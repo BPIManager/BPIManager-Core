@@ -37,6 +37,7 @@ import QueueMusicIcon from '@material-ui/icons/QueueMusic';
 import LanguageIcon from '@material-ui/icons/Language';
 import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
 import ThumbsUpDownIcon from '@material-ui/icons/ThumbsUpDown';
+import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
 
 interface navBars {
   to:string,
@@ -155,6 +156,8 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         return "GlobalNav.Settings";
         case "help":
         return "GlobalNav.Help";
+        case "notes":
+        return "GlobalNav.Notes";
         case "u":
         return page[2];
         case "share":
@@ -202,6 +205,11 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
     ]
     const social:navBars[] = [
       {
+        to:"/sync",
+        id:"GlobalNav.Sync",
+        icon:<SwapVerticalCircleIcon />
+      },
+      {
         to:"/rivals",
         id:"GlobalNav.Rivals",
         icon:<PeopleIcon />
@@ -212,10 +220,10 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         icon:<ThumbsUpDownIcon />
       },
       {
-        to:"/sync",
-        id:"GlobalNav.Sync",
-        icon:<SwapVerticalCircleIcon />
-      },
+        to:"/notes",
+        id:"GlobalNav.Notes",
+        icon:<SpeakerNotesIcon />
+      }
     ]
     const navBarTop:navBars[] = [
       {
@@ -290,8 +298,8 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
                 <MenuIcon />
               </IconButton>
               <Typography variant="h6">
-                {(page.length === 2 || page[1] === "lists") && <FormattedMessage id={currentPage()}/>}
-                {(page.length > 2 && page[1] !== "lists") && currentPage()}
+                {(page.length === 2 || page[1] === "lists" || page[1] === "notes") && <FormattedMessage id={currentPage()}/>}
+                {(page.length > 2 && page[1] !== "lists" && page[1] !== "notes") && currentPage()}
               </Typography>
             </Toolbar>
           </AppBar>

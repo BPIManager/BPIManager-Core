@@ -9,14 +9,17 @@ import AlertTitle from "@material-ui/lab/AlertTitle/AlertTitle";
 import Fab from "@material-ui/core/Fab";
 import EditIcon from '@material-ui/icons/Edit';
 import { Link } from "react-router-dom";
-import { Link as RLink, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Button, Divider, InputLabel, FormControl, Select, MenuItem } from "@material-ui/core/";
+import { Link as RLink, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Button, Divider, InputLabel, FormControl, Select, MenuItem, Grid, IconButton, withStyles, createStyles, Theme, Badge } from "@material-ui/core/";
 import timeFormatter from "@/components/common/timeFormatter";
 import ReCAPTCHA from "react-google-recaptcha";
 import { difficultyDiscriminator } from "@/components/songs/filter";
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import LinkIcon from '@material-ui/icons/Link';
 
 interface P{
   song:songData|null,
   score:scoreData|null,
+  isIndv?:boolean
 }
 
 interface S{
@@ -52,22 +55,36 @@ class SongNotes extends React.Component<P,S> {
   handleChange = (event: React.ChangeEvent<{ value: unknown }>)=> {
     if(typeof event.target.value !== "number"){return;}
     this.setState({currentSort:event.target.value,isLoading:true});
-    this.load(true);
+    this.load(true,event.target.value);
   }
 
-  async load(forceReload:boolean = false){
+  async load(forceReload:boolean = false,newSort = -1){
     const {song} = this.props;
     if(!song){return this.setState({isLoading:false,notes:[]})}
-    const notes = await this.fbActions.loadNotes(song,forceReload ? null : this.state.lastLoaded,0);
-    console.log(notes.docs);
+    const notes = await this.fbActions.loadNotes(song,forceReload ? null : this.state.lastLoaded,newSort === -1 ? this.state.currentSort : newSort);
     return this.setState(notes.docs.length > 0 ? {notes:notes.docs,lastLoaded:notes.docs[notes.docs.length - 1],isLoading:false} : {notes:[],lastLoaded:null,isLoading:false})
   }
 
   render(){
     const {isLoading,notes,isOpen,currentSort} = this.state;
+    const {isIndv,song} = this.props;
+    if(!song){return (null);}
     return (
       <div style={{margin:"15px 0"}}>
         <Container fixed>
+          {!isIndv && (
+            <div style={{marginBottom:"8px"}}>
+              <Button
+                fullWidth
+                variant="outlined"
+                color="secondary"
+                startIcon={<LinkIcon />}
+                onClick={()=>window.open(`/notes/${song.title}/${difficultyDiscriminator(song.difficulty)}/${song.dpLevel === "0" ? "sp" : "dp"}`)}
+                >
+                新しいタブで開く
+              </Button>
+            </div>
+          )}
           <FormControl style={{width:"100%"}}>
           <InputLabel shrink>
               並べ替え
@@ -78,6 +95,7 @@ class SongNotes extends React.Component<P,S> {
               displayEmpty>
                 <MenuItem value={0}>書き込み日時が新しい順</MenuItem>
                 <MenuItem value={1}>書き込み者の単曲BPIが高い順</MenuItem>
+                <MenuItem value={2}>いいねが多い順</MenuItem>
               </Select>
           </FormControl>
           {(!isLoading && notes.length === 0) && <NoNotes song={this.props.song}/>}
@@ -150,7 +168,9 @@ class WriteDialog extends React.Component<WP,{
           songDiff:difficultyDiscriminator(this.props.song.difficulty),
           memo:this.state.text,
           userBPI:this.props.score ? this.props.score.currentBPI : -15,
+          userScore:this.props.score ? this.props.score.exScore : 0,
           uid:authInfo ? authInfo.uid : null,
+          isSingle:this.props.song.dpLevel === "0",
           token:token,
         })
       });
@@ -159,7 +179,7 @@ class WriteDialog extends React.Component<WP,{
         this.props.close();
       }
     }else{
-      alert("No ReCaptcha Signature");
+      alert("No ReCaptcha Signature! Please reload this page and try again.");
     }
   }
 
@@ -169,7 +189,7 @@ class WriteDialog extends React.Component<WP,{
     const {score} = this.props;
     const {isLoading} = this.state;
     if(!score) return (null);
-    const tooLong = this.state.text.length > 200;
+    const tooLong = this.state.text.length > 500;
     return (
       <div>
         <Dialog open={true}>
@@ -184,8 +204,8 @@ class WriteDialog extends React.Component<WP,{
                   fullWidth
                   rows={4}
                   error={tooLong}
-                  helperText={tooLong ? "200文字を超えています！" : ""}
-                  placeholder={"一度に200文字まで入力できます"}
+                  helperText={tooLong ? "500文字を超えています！" : ""}
+                  placeholder={"一度に500文字まで入力できます"}
                   onChange={this.changeValue}
                   value={this.state.text}
                   variant="outlined"
@@ -197,7 +217,7 @@ class WriteDialog extends React.Component<WP,{
                 />
                 <DialogContentText>
                   <small><Link to="/help" style={{textDecoration:"none"}}><RLink color="secondary" component="span">免責事項・ご利用に関する注意</RLink></Link> | <RLink color="secondary" target="_blank" href="https://gist.github.com/potakusan/7281da1405d4381dc55e19ff8a43926f">この機能について</RLink><br/>
-                  Protected by reCAPTCHA</small>
+                  Protected by reCAPTCHA | 記録されるBPI:{score.currentBPI}</small>
                 </DialogContentText>
               </div>}
             </div>}
@@ -222,18 +242,82 @@ class WriteDialog extends React.Component<WP,{
 class NotesList extends React.Component<{
   list:any[]
 },{}>{
+
   render(){
     return (
       this.props.list.map((data:any)=>{
-        const item = data.data();
-        return (
-          <div>
-            <p>{item.memo}</p>
-            <small style={{display:"flex",justifyContent:"flex-end"}}>投稿者の単曲BPI:{item.userBPI}<br/>投稿日:{item.wroteAt ? timeFormatter(3,item.wroteAt.toDate()) : "たった今"}</small>
-            <Divider style={{margin:"10px 0"}}/>
-          </div>
-        )
+        return (<EachMemo item={data} key={data.id}/>);
       })
     );
   }
 }
+
+class EachMemo extends React.Component<{
+  item:any
+},{
+  memo:string,
+  likeCount:number,
+  wroteAt:any,
+  userBPI:number,
+}>{
+
+  constructor(props:{item:any}){
+    super(props);
+    const item = props.item.data();
+    this.state = {
+      memo:item.memo,
+      likeCount:item.likeCount || 0,
+      wroteAt:item.wroteAt,
+      userBPI:item.userBPI
+    }
+  }
+
+  favButton = async ()=>{
+    const fbA = new fbActions();
+    if(!this.props.item.id){
+      return;
+    }
+    const res = await fbA.likeNotes(this.props.item.id);
+    if(!res){
+      alert("いいねに失敗しました。\nSyncでログインしていない可能性があります。");
+      return;
+    }else{
+      return this.setState({
+        likeCount:this.state.likeCount + res
+      })
+    }
+  }
+
+  render(){
+    const {memo,likeCount,wroteAt,userBPI} = this.state;
+    return (
+      <div>
+        <p>{memo}</p>
+        <Grid container justify="space-around" alignItems="center">
+          <Grid item>
+            <IconButton aria-label="likeButton" onClick={this.favButton}>
+              <StyledBadge badgeContent={likeCount || 0} color="secondary">
+                <FavoriteBorderIcon />
+              </StyledBadge>
+            </IconButton>
+          </Grid>
+          <Grid item>
+            <small style={{display:"flex",justifyContent:"flex-end"}}>投稿者の単曲BPI:{userBPI}<br/>投稿日:{wroteAt ? timeFormatter(3,wroteAt.toDate()) : "たった今"}</small>
+          </Grid>
+        </Grid>
+        <Divider style={{margin:"10px 0"}}/>
+      </div>
+    );
+  }
+}
+
+const StyledBadge = withStyles((theme: Theme) =>
+  createStyles({
+    badge: {
+      right: -3,
+      top: 13,
+      border: `2px solid ${theme.palette.background.paper}`,
+      padding: '0 4px',
+    },
+  }),
+)(Badge);

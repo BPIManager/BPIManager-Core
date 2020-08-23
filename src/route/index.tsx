@@ -32,6 +32,8 @@ import SyncIndex from '../view/components/sync';
 import fbActions from '../components/firebase/actions';
 import { _currentStore, _isSingle } from '../components/settings';
 import RivalChallengeLetters from '../view/components/rivals/rivalChallengeLetters';
+import Note from '@/view/pages/note';
+import NoteIndv from '@/view/pages/noteIndv';
 
 export default class Router extends React.Component<{},{}> {
 
@@ -70,6 +72,8 @@ export default class Router extends React.Component<{},{}> {
                   <Route path="/share/:id" exact component={Shared}/>
                   <Route path="/u/" exact component={User}/>
                   <Route path="/u/:uid" exact component={User}/>
+                  <Route path="/notes" exact component={Note}/>
+                  <Route path="/notes/:title/:diff/:single" exact component={NoteIndv}/>
                 </AppBar>
               </BrowserRouter>
             </IntlProvider>
