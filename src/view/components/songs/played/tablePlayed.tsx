@@ -86,7 +86,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
       currentSongData:(row ? this.props.allSongsData[row.title + _prefix(row.difficulty)] : null) as songData,
       currentScoreData:(row ? row : null) as scoreData
     });
-    }, 300);
+    }, 600);
   }
 
   handleButtonRelease=()=>{

@@ -26,6 +26,8 @@ import Loader from '@/view/components/common/loader';
 import { config } from '@/config';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import AdsCard from '@/components/ad';
+import CommentIcon from '@material-ui/icons/Comment';
+import NotesView from '../components/notes/user';
 
 interface S {
   userName:string,
@@ -273,10 +275,21 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
         </Container>
       )
     }
+    if(currentView === 3){
+      return (
+        <Container fixed  className="commonLayout">
+          <NotesView backToMainPage={this.backToMainPage}
+            name={res.displayName} uid={uid}/>
+        </Container>
+      )
+    }
     const buttons = [
       {icon:<ViewListIcon />,primary:"スコアを見る",secondary:(res.displayName) + "さんの登録スコアを表示します",onClick:()=>this.view(1)},
       {icon:<WbIncandescentIcon />,primary:"AAA達成表",secondary:"BPIに基づいたAAA達成難易度表を表示します",onClick:()=>this.view(2)},
     ]
+    if(res.showNotes){
+      buttons.push({icon:<CommentIcon />,primary:"投稿ノート一覧",secondary:(res.displayName) + "さんが投稿した攻略情報一覧",onClick:()=>this.view(3)});
+    }
     const themeColor = _currentTheme();
     return (
       <div>
@@ -337,6 +350,9 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
               )
             })
           }
+          </List>
+          <Divider style={{margin:"5px 0 10px 0"}}/>
+          <List>
             <DefListCard onAction={()=>this.addUser()} disabled={myId === res.uid || add || processing || isAdded} icon={<GroupAddIcon/>}
               primaryText={"追加"} secondaryText={myId === res.uid ? ("自分を追加することはできません") : res.displayName + (isAdded ? "さんはすでにライバルです" : "さんをライバルに追加します")}/>
           </List>
@@ -378,7 +394,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
         }
         </List>
         <div style={{width:"50%",margin:"10px auto"}}>
-          <ShareButtons withTitle={true} url={url} text={res.displayName}/>
+          <ShareButtons withTitle={true} url={url} text={res.displayName + " 総合BPI:" + String(Number.isNaN(totalBPI) ? "-" : totalBPI)}/>
         </div>
         <AdsCard/>
         <ShowSnackBar message={message} variant={message === "ライバルを追加しました" ? "success" : "error"}

@@ -90,7 +90,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
       currentSongData:row ? row : null,
       currentScoreData:t
     });
-    }, 300);
+    }, 600);
   }
 
   handleButtonRelease=()=>{

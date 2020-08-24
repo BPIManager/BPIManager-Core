@@ -234,7 +234,7 @@ class Index extends React.Component<P&RouteComponentProps,{
                 fullWidth
                 variant="outlined"
                 color="secondary"
-                onClick={()=>window.open(`https://twitter.com/share?text=BPIManagerでスコアを${updated}件更新しました%0a総合BPI:${totalBPIBefore}→${totalBPIAfter}%0a&url=${config.baseUrl}/u/${displayName}}`)}
+                onClick={()=>window.open(`https://twitter.com/share?text=BPIManagerでスコアを${updated}件更新しました%0a総合BPI:${totalBPIBefore}→${totalBPIAfter}%0a&url=${config.baseUrl}/u/${displayName}`)}
                 style={{margin:"5px 0"}}>
                   更新をツイート
               </Button>

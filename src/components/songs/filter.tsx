@@ -23,6 +23,11 @@ export const convertClearState = (original:string|number,direction:number,simple
   }
 }
 
+export const _prefixWithPS = (diff:string,isSingle:boolean)=>{
+  const suffix = _prefixFull(diff);
+  return isSingle ? `(SP${suffix})` : `(DP${suffix})`;
+}
+
 export const _prefix = (diff:string):string=> diff === "hyper" ? "(H)" : diff === "leggendaria" ? "(†)" : "";
 export const _prefixFull = (diff:string):string=> diff === "hyper" ? "H" : diff === "leggendaria" ? "L" : "A";
 

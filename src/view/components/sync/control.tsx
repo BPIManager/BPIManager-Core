@@ -13,7 +13,7 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { scoresDB, scoreHistoryDB } from '@/components/indexedDB';
 import TextField from '@material-ui/core/TextField';
-import {Link, CircularProgress, Paper} from '@material-ui/core/';
+import {Link, CircularProgress, Paper, Switch, FormControlLabel} from '@material-ui/core/';
 import {Link as RefLink} from "react-router-dom";
 import Alert from '@material-ui/lab/Alert';
 import { config } from '@/config';
@@ -27,6 +27,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
   myName:string,
   myProfile:string,
   nameErrorMessage:string[],
+  showNotes:boolean,
   arenaRank:string,
 }> {
 
@@ -45,6 +46,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
       sentName:"",
       myProfile:"",
       arenaRank:"-",
+      showNotes:false,
       nameErrorMessage:[]
     }
   }
@@ -60,6 +62,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
       myName: t && t.displayName ? t.displayName : "",
       myProfile: t && t.profile ? t.profile : "",
       arenaRank: t && t.arenaRank ? t.arenaRank : "-",
+      showNotes: t && t.showNotes ? t.showNotes : false,
     })
   }
 
@@ -94,7 +97,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
       if(this.state.myName && this.state.scoreData === null){
         return this.setState({nameErrorMessage:["エラーが発生しました。次のような理由が挙げられます:"],isLoading:false});
       }
-      const res = await this.fbA.saveName(this.state.myName,this.state.myProfile,this.props.userData.photoURL,this.state.arenaRank);
+      const res = await this.fbA.saveName(this.state.myName,this.state.myProfile,this.props.userData.photoURL,this.state.arenaRank,this.state.showNotes);
       if(res.error){
         return this.setState({nameErrorMessage:["エラーが発生しました。次のような理由が挙げられます:","名前に使用できない文字列が含まれている、すでに使用されている名前である、アクセス権限がない"],isLoading:false});
       }
@@ -109,8 +112,12 @@ class SyncControlScreen extends React.Component<{userData:any},{
     return current === "26";
   }
 
+  handleShowNotes = (e:React.ChangeEvent<HTMLInputElement>)=>{
+    this.setState({showNotes:e.target.checked});
+  }
+
   render(){
-    const {isLoading,scoreData,nameErrorMessage,myName,myProfile,arenaRank,sentName} = this.state;
+    const {isLoading,scoreData,nameErrorMessage,myName,myProfile,arenaRank,sentName,showNotes} = this.state;
     const nameError:boolean = myName.length !== 0 && (!/^[a-zA-Z0-9]+$/g.test(myName) || myName.length > 16);
     const profError:boolean = myProfile.length > 140;
     return (
@@ -196,7 +203,13 @@ class SyncControlScreen extends React.Component<{userData:any},{
           error={profError}
           helperText={profError && "自己紹介が長すぎます"}
           onChange={(e)=>this.setState({myProfile:e.target.value})}
-          style={{width:"100%",margin:"8px 0"}}/>
+          style={{width:"100%",marginTop:"8px"}}/>
+        <FormControl fullWidth style={{margin:"8px 0"}}>
+          <FormControlLabel
+            control={<Switch size="small" checked={showNotes} onChange={this.handleShowNotes} name="showNotes" />}
+            label="プロフィールに投稿ノート一覧を表示"
+          />
+        </FormControl>
         <Button
           variant="outlined"
           color="secondary"

@@ -153,7 +153,7 @@ export default class fbActions{
     }
   }
 
-  async saveName(displayName:string,profile:string,photoURL:string,arenaRank:string){
+  async saveName(displayName:string,profile:string,photoURL:string,arenaRank:string,showNotes?:boolean){
     try{
       if(!this.name || !this.docName){return {error:true,date:null};}
       if(displayName.length > 16 || profile.length > 140){
@@ -187,6 +187,7 @@ export default class fbActions{
           profile:profile,
           photoURL:photoURL,
           arenaRank:arenaRank,
+          showNotes:showNotes || false,
           totalBPI:await this.totalBPI(),
         });
         firestore.collection("followings").where("from","==",from).get().then(async (querySnapshot)=>{
@@ -512,6 +513,11 @@ export default class fbActions{
     const auth = this.authInfo();
     if(!auth) return null;
     const uid = auth.uid;
+    const doc = firestore.collection("users").doc(uid);
+    return firestore.collection("notes").where("uid","==",doc).orderBy("wroteAt","desc").get();
+  }
+
+  loadUserNotes(uid:string){
     const doc = firestore.collection("users").doc(uid);
     return firestore.collection("notes").where("uid","==",doc).orderBy("wroteAt","desc").get();
   }

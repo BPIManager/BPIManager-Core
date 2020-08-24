@@ -5,7 +5,7 @@ import Loader from '@/view/components/common/loader';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import { _prefix } from '@/components/songs/filter';
+import { _prefixWithPS } from '@/components/songs/filter';
 import { updatedTime } from '@/components/common/timeFormatter';
 import ModalNotes from './modal';
 import Alert from '@material-ui/lab/Alert/Alert';
@@ -89,14 +89,14 @@ class NotesRecent extends React.Component<{},S> {
             }
             return (
               <ListItem button onClick={()=>this.onClick(data)} key={i}>
-                <ListItemText primary={<span>{!data.isSingle && "(DP)"}{data.songName + _prefix(data.songDiff)}&nbsp;<small>{updatedTime(data.wroteAt.toDate())}</small></span>} secondary={note} />
+                <ListItemText primary={<span>{data.songName + _prefixWithPS(data.songDiff,data.isSingle)}&nbsp;<small>{updatedTime(data.wroteAt.toDate())}</small></span>} secondary={note} />
               </ListItem>
             )
           })}
           </List>
           {!lastReached && <Button fullWidth variant="outlined" onClick={this.next}>次の20件を表示</Button>}
           {lastReached && <Button fullWidth disabled>すべて読み込みました</Button>}
-        {(isModalOpen && data) && <ModalNotes derived={data} isOpen={isModalOpen} handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
+          {(isModalOpen && data) && <ModalNotes derived={data} isOpen={isModalOpen} handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
       </Container>
     );
   }
