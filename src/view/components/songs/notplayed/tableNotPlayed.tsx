@@ -30,25 +30,27 @@ interface P{
 interface S{
   rowsPerPage:number,
   isOpen:boolean,
+  FV:number,
   currentSongData:songData | null,
   currentScoreData:scoreData | null
 }
 
 export default class SongsTable extends React.Component<Readonly<P>,S>{
+  private buttonPressTimer:number = 0;
 
   constructor(props:Readonly<P>){
     super(props);
     this.state = {
       rowsPerPage : 10,
       isOpen:false,
+      FV:0,
       currentSongData:null,
       currentScoreData:null
     }
   }
 
-  handleOpen = (updateFlag:boolean = false,row:songData|null,willDeleteItems:{title:string,difficulty:string}|null|undefined = {title:"",difficulty:""}):void=> {
-    if(updateFlag){this.props.updateScoreData(true, willDeleteItems || {title:"",difficulty:""});}
-    const t = row ? {
+  private default = (row:songData):scoreData=>{
+    const t = {
       difficulty:difficultyDiscriminator(row.difficulty),
       title:row.title,
       currentBPI:NaN,
@@ -59,8 +61,15 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
       clearState:7,
       lastScore:-1,
       updatedAt:"-",
-    } : null;
+    };
+    return t;
+  }
+
+  handleOpen = (updateFlag:boolean = false,row:songData|null,willDeleteItems:{title:string,difficulty:string}|null|undefined = {title:"",difficulty:""}):void=> {
+    if(updateFlag){this.props.updateScoreData(true, willDeleteItems || {title:"",difficulty:""});}
+    const t = row ? this.default(row) : null;
     return this.setState({
+      FV:0,
       isOpen:!this.state.isOpen,
       currentSongData:row ? row : null,
       currentScoreData:t
@@ -72,8 +81,24 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
     this.setState({rowsPerPage:+event.target.value});
   }
 
+  handleButtonPress=(row:songData|null)=>{
+    this.buttonPressTimer = window.setTimeout(() =>{
+    const t = row ? this.default(row) : null;
+    return this.setState({
+      isOpen:!this.state.isOpen,
+      FV:4,
+      currentSongData:row ? row : null,
+      currentScoreData:t
+    });
+    }, 300);
+  }
+
+  handleButtonRelease=()=>{
+    window.clearTimeout(this.buttonPressTimer);
+  }
+
   render(){
-    const {rowsPerPage,isOpen,currentSongData,currentScoreData} = this.state;
+    const {rowsPerPage,isOpen,currentSongData,currentScoreData,FV} = this.state;
     const {page,data,changeSort,sort,isDesc} = this.props;
     return (
       <Paper style={{width:"100%",overflowX:"auto"}}>
@@ -102,8 +127,16 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
               {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:songData,i:number) => {
                 return (
                   <TableRow
+                    onTouchStart={()=>this.handleButtonPress(row)}
+                    onTouchEnd={()=>this.handleButtonRelease()}
+                    onMouseDown={()=>this.handleButtonPress(row)}
+                    onMouseUp={()=>this.handleButtonRelease()}
+                    onMouseLeave={()=>this.handleButtonRelease()}
                     onClick={()=>this.handleOpen(false,row)}
-                    hover role="checkbox" tabIndex={-1} key={row.title + row.difficulty} className={ i % 2 ? "isOdd" : "isEven"}>
+                    onContextMenu={e => {
+                      e.preventDefault();
+                    }}
+                    hover role="checkbox" tabIndex={-1} key={row.title + row.difficulty} className={ i % 2 ? "songCell isOdd" : "songCell isEven"}>
                     {columns.map((column) => {
                       const d = difficultyDiscriminator(row.difficulty);
                       const prefix = d === "hyper" ? "(H)" : d === "leggendaria" ? "(†)" : "";
@@ -137,7 +170,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
           onChangeRowsPerPage={this.handleChangeRowsPerPage}
         />
         {isOpen &&
-          <DetailedSongInformation isOpen={isOpen} song={currentSongData} score={currentScoreData} handleOpen={this.handleOpen} willDelete={true}/>
+          <DetailedSongInformation isOpen={isOpen} song={currentSongData} score={currentScoreData} handleOpen={this.handleOpen} willDelete={true} firstView={FV}/>
         }
       </Paper>
     );

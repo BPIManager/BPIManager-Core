@@ -15,6 +15,7 @@ import QuestionAnswerIcon from '@material-ui/icons/QuestionAnswer';
 import Alert from '@material-ui/lab/Alert/Alert';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { avatarFontColor, avatarBgColor } from '@/components/common';
+import AlertTitle from '@material-ui/lab/AlertTitle';
 
 class Index extends React.Component<RouteComponentProps&{global:any},{}> {
 
@@ -150,6 +151,12 @@ class IfNotOnTheHomeScreen extends React.Component<{
               </div>
             </Grid>
           </Grid>
+          <Alert variant="outlined" severity="info" style={{margin:"10px 0"}}>
+            <AlertTitle>新機能のご紹介</AlertTitle>
+            <p>楽曲の攻略情報をシェアできる<b>「Notes」</b>をリリースしました。<br/>
+            <RefLink color="secondary" href="https://gist.github.com/potakusan/7281da1405d4381dc55e19ff8a43926f">詳細はこちら</RefLink>。
+            </p>
+          </Alert>
           {showUpdate && (
             <Alert variant="outlined" severity="info"
               action={

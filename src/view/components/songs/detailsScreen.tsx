@@ -48,7 +48,8 @@ interface P{
   song:songData|null,
   score:scoreData|null,
   handleOpen:(flag:boolean,row?:any,willDeleteItems?:{title:string,difficulty:string}|null)=>void,
-  willDelete?:boolean
+  willDelete?:boolean,
+  firstView?:number,
 }
 
 interface ListItemBody{title:string,num:number,description:string,length:number}
@@ -127,6 +128,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
     this.setState({
       hasRival:hasRivals.length > 0,
       isLoading:false,
+      currentTab:this.props.firstView || 0
     });
   }
 
@@ -185,7 +187,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
   }
 
   handleTabChange = (_e:React.ChangeEvent<{}>, newValue:number)=>{
-    this.setState({currentTab:(newValue === 3 && !this.state.hasRival) ? 4 : newValue});
+    this.setState({currentTab:newValue});
   }
 
   toggleMenu = (willOpen:boolean = false)=>{
@@ -513,7 +515,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
           <Tab label={<FormattedMessage id="Details.Graph"/>} />
           <Tab label={<FormattedMessage id="Details.Details"/>} />
           <Tab label={<FormattedMessage id="Details.Diffs"/>} />
-          {hasRival && <Tab label={<FormattedMessage id="Details.Rivals"/>} />}
+          <Tab label={<FormattedMessage id="Details.Rivals"/>} />
           <Tab label={<FormattedMessage id="Details.Notes"/>} />
         </Tabs>
         <TabPanel value={currentTab} index={0}>

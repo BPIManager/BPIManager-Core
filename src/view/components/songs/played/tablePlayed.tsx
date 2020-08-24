@@ -38,18 +38,21 @@ interface P{
 interface S{
   rowsPerPage:number,
   isOpen:boolean,
+  FV:number,
   currentSongData:songData | null,
   currentScoreData:scoreData | null,
   components:string[]
 }
 
 export default class SongsTable extends React.Component<Readonly<P>,S>{
+  private buttonPressTimer:number = 0;
 
   constructor(props:Readonly<P>){
     super(props);
     this.state = {
       rowsPerPage : 10,
       isOpen:false,
+      FV:0,
       currentSongData:null,
       currentScoreData:null,
       components:_currentViewComponents().split(","),
@@ -60,6 +63,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
     if(updateFlag){this.props.updateScoreData(row as songData);}
     return this.setState({
       isOpen:!this.state.isOpen,
+      FV:0,
       currentSongData:(row ? this.props.allSongsData[row.title + _prefix(row.difficulty)] : null) as songData,
       currentScoreData:(row ? row : null) as scoreData
     });
@@ -74,11 +78,26 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
     return this.state.components.indexOf(component) > -1;
   }
 
+  handleButtonPress=(row:songData|scoreData)=>{
+    this.buttonPressTimer = window.setTimeout(() =>{
+    return this.setState({
+      isOpen:!this.state.isOpen,
+      FV:4,
+      currentSongData:(row ? this.props.allSongsData[row.title + _prefix(row.difficulty)] : null) as songData,
+      currentScoreData:(row ? row : null) as scoreData
+    });
+    }, 300);
+  }
+
+  handleButtonRelease=()=>{
+    window.clearTimeout(this.buttonPressTimer);
+  }
+
   render(){
     const bpiCalc = new bpiCalcuator();
     const last = this.willBeRendered("last"), lastVer = this.willBeRendered("lastVer"),
     estRank = this.willBeRendered("estRank"), djLevel = this.willBeRendered("djLevel");
-    const {rowsPerPage,isOpen,currentSongData,currentScoreData} = this.state;
+    const {rowsPerPage,isOpen,currentSongData,currentScoreData,FV} = this.state;
     const {page,data,mode} = this.props;
     return (
       <Paper style={{width:"100%",overflowX:"auto"}} className={_traditionalMode() === 1 ? "traditionalMode" : ""}>
@@ -103,8 +122,16 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                 const max  = f["notes"] * 2;
                 return (
                   <TableRow
+                    onTouchStart={()=>this.handleButtonPress(row)}
+                    onTouchEnd={()=>this.handleButtonRelease()}
+                    onMouseDown={()=>this.handleButtonPress(row)}
+                    onMouseUp={()=>this.handleButtonRelease()}
+                    onMouseLeave={()=>this.handleButtonRelease()}
                     onClick={()=>this.handleOpen(false,row)}
-                    hover role="checkbox" tabIndex={-1} key={row.title + row.prefix + i} className={ i % 2 ? "isOdd" : "isEven"}>
+                    onContextMenu={e => {
+                      e.preventDefault();
+                    }}
+                    hover role="checkbox" tabIndex={-1} key={row.title + row.prefix + i} className={ i % 2 ? "songCell isOdd" : "songCell isEven"}>
                     {columns.map((column,j) => {
                       if(Number.isNaN(row.currentBPI)) return (null);
 
@@ -178,7 +205,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
           onChangeRowsPerPage={this.handleChangeRowsPerPage}
         />
         {isOpen &&
-          <DetailedSongInformation isOpen={isOpen} song={currentSongData} score={currentScoreData} handleOpen={this.handleOpen}/>
+          <DetailedSongInformation isOpen={isOpen} song={currentSongData} score={currentScoreData} handleOpen={this.handleOpen} firstView={FV}/>
         }
       </Paper>
     );

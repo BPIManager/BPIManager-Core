@@ -22,10 +22,12 @@ import Paper from '@material-ui/core/Paper';
 import Alert from '@material-ui/lab/Alert/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import { config } from '@/config';
-import timeFormatter, { timeCompare } from '@/components/common/timeFormatter';
+import { timeCompare } from '@/components/common/timeFormatter';
 import Loader from "@/view/components/common/loader";
 import Divider from '@material-ui/core/Divider';
 import AdsCard from '@/components/ad';
+import bpiCalcuator from '@/components/bpi';
+import { statMain } from '@/components/stats/main';
 
 interface P{
   global:any,
@@ -42,6 +44,9 @@ class Index extends React.Component<P&RouteComponentProps,{
   uid:string,
   displayName:string,
   isLoading:boolean,
+  updated:number,
+  totalBPIBefore:number,
+  totalBPIAfter:number,
 }> {
 
   constructor(props:P&RouteComponentProps){
@@ -55,7 +60,10 @@ class Index extends React.Component<P&RouteComponentProps,{
       currentState:"",
       progress:0,
       uid:"",
-      displayName:""
+      displayName:"",
+      updated:0,
+      totalBPIBefore:0,
+      totalBPIAfter:0,
     }
     this.execute = this.execute.bind(this);
   }
@@ -64,10 +72,15 @@ class Index extends React.Component<P&RouteComponentProps,{
     new fbActions().auth().onAuthStateChanged(async (user: any)=> {
       if(user){
         const t = await new fbActions().setColName("users").setDocName(user.uid).load();
+        const bpi = new bpiCalcuator();
+        const exec = await new statMain(12).load();
+        const totalBPI = bpi.setSongs(exec.at(),exec.at().length);
         this.setState({
           uid:user.uid,
           isLoading:false,
-          displayName: t ? t.displayName : ""
+          displayName: t ? t.displayName : "",
+          totalBPIBefore:totalBPI,
+          totalBPIAfter:0,
         });
       }else{
         this.setState({isLoading:false});
@@ -153,7 +166,10 @@ class Index extends React.Component<P&RouteComponentProps,{
       }
       this.props.global.setMove(false);
       errors.unshift(result.length + "件処理しました," + updated + "件更新しました," + skipped + "件スキップされました,"+ errorOccured + "件追加できませんでした");
-      return this.setState({isSaving:false,raw:"",stateText:"Data.Success",errors:errors});
+      const bpi = new bpiCalcuator();
+      const statsAPI = await new statMain(12).load();
+      const totalBPI = bpi.setSongs(statsAPI.at(),statsAPI.at().length);
+      return this.setState({isSaving:false,raw:"",stateText:"Data.Success",errors:errors,updated:updated,totalBPIAfter:totalBPI});
     }catch(e){
       console.log(e);
       this.props.global.setMove(false);
@@ -165,7 +181,7 @@ class Index extends React.Component<P&RouteComponentProps,{
 
   render(){
     const spdp = _isSingle() ? "SP" : "DP";
-    const {raw,stateText,errors,isSaving,displayName,isLoading} = this.state;
+    const {raw,stateText,errors,isSaving,displayName,isLoading,updated,totalBPIBefore,totalBPIAfter} = this.state;
     if(isLoading){
       return (<Loader/>);
     }
@@ -213,12 +229,12 @@ class Index extends React.Component<P&RouteComponentProps,{
                 style={{margin:"5px 0"}}>
                   楽曲一覧を表示
               </Button>
-              { ( _autoSync() && displayName ) &&
+              { ( displayName ) &&
               <Button
                 fullWidth
                 variant="outlined"
                 color="secondary"
-                onClick={()=>window.open(`https://twitter.com/share?text=BPIManagerのスコアを更新しました&url=${config.baseUrl}/u/${displayName}%3Finit%3D${timeFormatter(1)}`)}
+                onClick={()=>window.open(`https://twitter.com/share?text=BPIManagerでスコアを${updated}件更新しました%0a総合BPI:${totalBPIBefore}→${totalBPIAfter}%0a&url=${config.baseUrl}/u/${displayName}}`)}
                 style={{margin:"5px 0"}}>
                   更新をツイート
               </Button>

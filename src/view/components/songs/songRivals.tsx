@@ -10,6 +10,10 @@ import TableRow from "@material-ui/core/TableRow";
 import { alternativeImg } from "@/components/common";
 import Loader from "../common/loader";
 import { datasets, rivalShow } from "@/components/rivals/letters";
+import Alert from "@material-ui/lab/Alert/Alert";
+import AlertTitle from "@material-ui/lab/AlertTitle";
+import {Link as RLink} from "react-router-dom";
+import Button from "@material-ui/core/Button";
 
 interface P{
   song:songData|null,
@@ -82,7 +86,19 @@ export class DiffsTable extends React.Component<{scoreTable:datasets[],yourEx:nu
       { id: "exScore", label: "EX" },
       { id: "BPI", label: "BPI" },
     ];
-
+    if(this.props.scoreTable.length === 1){ //自分以外いない場合
+        return (
+        <div>
+          <Alert severity="warning" variant="outlined" style={{marginTop:"10px"}}>
+            <AlertTitle>ライバルがいません!</AlertTitle>
+            <p>総合BPIやアリーナランクなどの条件から、あなたと実力が拮抗しているライバルを探しましょう。</p>
+          </Alert>
+          <RLink to="/rivals" style={{textDecoration:"none"}}>
+            <Button variant="outlined" color="secondary" fullWidth style={{margin:"10px 0"}}>ライバルを探す</Button>
+          </RLink>
+        </div>
+      );
+    }
     return (
       <Table className="rivalTable forceWith">
         <TableHead>
