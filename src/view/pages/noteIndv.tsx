@@ -11,6 +11,7 @@ import Button from '@material-ui/core/Button';
 import Alert from '@material-ui/lab/Alert/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import timeFormatter from '@/components/common/timeFormatter';
+import { _prefixWithPS } from '@/components/songs/filter';
 
 class NoteIndv extends React.Component<RouteComponentProps,{
   song:songData|null,
@@ -35,6 +36,7 @@ class NoteIndv extends React.Component<RouteComponentProps,{
     const songDiff = params.diff || "";
     const isSingle = params.single === "sp";
     const score = await this.scoreFinder(songName,songDiff,isSingle);
+    document.title = `${songName}${_prefixWithPS(params.diff,params.single === "sp")} - BPIManager Notes`
     return this.setState({song:{
       title:songName,
       difficulty:songDiff,
@@ -59,6 +61,10 @@ class NoteIndv extends React.Component<RouteComponentProps,{
     return null;
   }
 
+  componentWillUnmount(){
+    document.title = "BPI Manager";
+  }
+
 
   render(){
     const themeColor = _currentTheme();
@@ -69,8 +75,7 @@ class NoteIndv extends React.Component<RouteComponentProps,{
       <div>
         <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover"}}>
           <div style={{background:themeColor === "light" ? "rgba(255,255,255,.1)" : "rgba(0,0,0,.4)",display:"flex",padding:"5vh 0",alignItems:"center",justifyContent:"center",flexDirection:"column"}}>
-            <Typography variant="h4" gutterBottom>{params.title}</Typography>
-            <Typography variant="h6">{String(params.diff).toUpperCase()} / {String(params.single).toUpperCase()}</Typography>
+            <Typography variant="h5" gutterBottom>{params.title}{_prefixWithPS(params.diff,params.single === "sp")}</Typography>
             <Button startIcon={<ArrowBackIosIcon/>} style={{margin:"8px 0"}} variant="outlined" onClick={()=>this.props.history.push("/notes")}>Notes</Button>
           </div>
         </div>

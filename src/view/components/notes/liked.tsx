@@ -33,8 +33,23 @@ class NotesLiked extends React.Component<{},S> {
 
   async componentDidMount(){
     const likedNotes = await this.fbA.loadLikedNotes();
-    this.setState({
-      likedNotes:!likedNotes ? [] : likedNotes.docs,
+    if(!likedNotes){
+      return this.setState({
+        likedNotes:[],
+        isLoading:false,
+      })
+    }
+    const docs = likedNotes.docs;
+    const res = [];
+    for(let i = 0;i < docs.length; ++i){
+      const data = docs[i].data();
+      const ref = data.target ? await data.target.get() : null;
+      if(ref){
+        res.push(ref);
+      }
+    }
+    return this.setState({
+      likedNotes:res,
       isLoading:false,
     })
   }
@@ -67,10 +82,11 @@ class NotesLiked extends React.Component<{},S> {
         >
           {likedNotes.map((item:any,i:number)=>{
             let data = item.data();
-            let note = data.memo || "";
+            if(!data) return (null);
+            let note = data.memo;
             return (
               <ListItem button onClick={()=>this.onClick(data)} key={i}>
-                <ListItemText primary={<span>{data.songName + _prefixWithPS(data.songDiff,data.isSingle)}&nbsp;<small>{updatedTime(data.likedAt.toDate())}</small></span>} secondary={note} />
+                <ListItemText primary={<span>{data.songName + _prefixWithPS(data.songDiff,data.isSingle)}&nbsp;<small>{updatedTime(data.wroteAt.toDate())}</small></span>} secondary={note} />
               </ListItem>
             )
           })}
