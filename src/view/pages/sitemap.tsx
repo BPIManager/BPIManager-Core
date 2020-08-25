@@ -15,6 +15,7 @@ export default class SitemapGen extends React.Component<{},{}> {
           t += "<url><loc>https://bpi.poyashi.me/u/" + encodeURI(p.displayName) + "</loc></url>\n";
         }
       }
+      return 0;
     });
     const notes = await fbA.loadNoteList();
     let songs:any[] = [];
@@ -23,6 +24,7 @@ export default class SitemapGen extends React.Component<{},{}> {
         const p = item.data();
         songs.push(p.songName + "/" + p.songDiff + "/" + (p.isSingle ? "sp" : "dp"));
       }
+      return 0;
     });
     const songsCert = songs.filter(function (x:any, i:any, self:any) {
       return self.indexOf(x) === i;
