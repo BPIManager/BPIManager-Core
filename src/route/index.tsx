@@ -34,6 +34,8 @@ import { _currentStore, _isSingle } from '../components/settings';
 import RivalChallengeLetters from '../view/components/rivals/rivalChallengeLetters';
 import Note from '@/view/pages/note';
 import NoteIndv from '@/view/pages/noteIndv';
+import HelpNotes from '@/view/pages/helpNotes';
+import SitemapGen from '@/view/pages/sitemap';
 
 export default class Router extends React.Component<{},{}> {
 
@@ -64,6 +66,7 @@ export default class Router extends React.Component<{},{}> {
                   <Route path="/compare" exact component={Compare}/>
                   <Route path="/settings" exact render={_props=><Settings global={global}/>}/>
                   <Route path="/help" exact component={Help}/>
+                  <Route path="/help/notes" exact component={HelpNotes}/>
                   <Route path="/sync" exact component={SyncIndex}/>
                   <Route path="/rivals" exact component={Rivals}/>
                   <Route path="/rivalCompare" exact component={RivalChallengeLetters}/>
@@ -74,6 +77,7 @@ export default class Router extends React.Component<{},{}> {
                   <Route path="/u/:uid" exact component={User}/>
                   <Route path="/notes" exact component={Note}/>
                   <Route path="/notes/:title/:diff/:single" exact component={NoteIndv}/>
+                  <Route path="/sitemap" exact component={SitemapGen}/>
                 </AppBar>
               </BrowserRouter>
             </IntlProvider>

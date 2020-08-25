@@ -298,8 +298,8 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
                 <MenuIcon />
               </IconButton>
               <Typography variant="h6">
-                {(page.length === 2 || page[1] === "lists" || page[1] === "notes") && <FormattedMessage id={currentPage()}/>}
-                {(page.length > 2 && page[1] !== "lists" && page[1] !== "notes") && currentPage()}
+                {(page.length === 2 || page[1] === "lists" || page[1] === "notes" || page[1] === "help") && <FormattedMessage id={currentPage()}/>}
+                {(page.length > 2 && page[1] !== "lists" && page[1] !== "notes" && page[1] !== "help") && currentPage()}
               </Typography>
             </Toolbar>
           </AppBar>

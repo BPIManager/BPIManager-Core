@@ -576,4 +576,24 @@ export default class fbActions{
     }
   }
 
+  // for sitemap generator
+
+  async loadUserList(){
+    const t = await firestore.collection("users").get();
+    if(t.size > 0){
+      return t.docs;
+    }else{
+      return [];
+    }
+  }
+
+  async loadNoteList(){
+    const t = await firestore.collection("notes").get();
+    if(t.size > 0){
+      return t.docs;
+    }else{
+      return [];
+    }
+  }
+
 }

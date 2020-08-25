@@ -3,7 +3,7 @@ import { _currentStore, _currentTheme } from '@/components/settings';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import SongNotes from '../components/songs/songNotes';
-import { songsDB, scoresDB } from '@/components/indexedDB';
+import { scoresDB } from '@/components/indexedDB';
 import { scoreData, songData } from '@/types/data';
 import Loader from '../components/common/loader';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
@@ -12,13 +12,15 @@ import Alert from '@material-ui/lab/Alert/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import timeFormatter from '@/components/common/timeFormatter';
 import { _prefixWithPS } from '@/components/songs/filter';
+import { Helmet } from 'react-helmet';
+import ContactSupportIcon from '@material-ui/icons/ContactSupport';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 
 class NoteIndv extends React.Component<RouteComponentProps,{
   song:songData|null,
   score:scoreData|null,
   isLoading:boolean,
 }> {
-  private songsDB = new songsDB();
   private scoresDB = new scoresDB();
 
   constructor(props:RouteComponentProps){
@@ -73,10 +75,18 @@ class NoteIndv extends React.Component<RouteComponentProps,{
     const params:any = match.params;
     return (
       <div>
+        <Helmet>
+          <meta name="description"
+            content={`beatmania IIDX・${params.title}${_prefixWithPS(params.diff,params.single === "sp")}に関する攻略情報一覧。当たり判別、譜面傾向、練習曲、ギアチェン方法などを自由に書き込んだり、閲覧することができます。`}
+          />
+        </Helmet>
         <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover"}}>
           <div style={{background:themeColor === "light" ? "rgba(255,255,255,.1)" : "rgba(0,0,0,.4)",display:"flex",padding:"5vh 0",alignItems:"center",justifyContent:"center",flexDirection:"column"}}>
             <Typography variant="h5" gutterBottom>{params.title}{_prefixWithPS(params.diff,params.single === "sp")}</Typography>
-            <Button startIcon={<ArrowBackIosIcon/>} style={{margin:"8px 0"}} variant="outlined" onClick={()=>this.props.history.push("/notes")}>Notes</Button>
+            <ButtonGroup color="secondary" style={{margin:"8px 0"}} variant="outlined">
+              <Button startIcon={<ArrowBackIosIcon/>} onClick={()=>this.props.history.push("/notes")}>楽曲一覧</Button>
+              <Button startIcon={<ContactSupportIcon/>} onClick={()=>this.props.history.push("/help/notes")}>Notesとは</Button>
+            </ButtonGroup>
           </div>
         </div>
         {isLoading && <Loader/>}

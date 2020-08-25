@@ -28,6 +28,7 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import AdsCard from '@/components/ad';
 import CommentIcon from '@material-ui/icons/Comment';
 import NotesView from '../components/notes/user';
+import { Helmet } from 'react-helmet';
 
 interface S {
   userName:string,
@@ -293,6 +294,11 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     const themeColor = _currentTheme();
     return (
       <div>
+        <Helmet>
+          <meta name="description"
+            content={`${res.displayName}さんのbeatmaniaIIDX スコアデータを閲覧できます。総合BPI:${totalBPI},アリーナランク:${res.arenaRank || "登録なし"}。${res.profile}`}
+          />
+        </Helmet>
         <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover"}}>
         <div style={{background:themeColor === "light" ? "rgba(255,255,255,.1)" : "rgba(0,0,0,.4)",display:"flex",padding:"5vh 0",alignItems:"center",justifyContent:"center"}}>
           <div style={{textAlign:"center",color:themeColor === "light" ? "#222" : "#fff",width:"75%"}}>

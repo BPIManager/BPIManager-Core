@@ -188,7 +188,6 @@ class WriteDialog extends React.Component<WP,{
   render(){
     const {score} = this.props;
     const {isLoading} = this.state;
-    if(!score) return (null);
     const tooLong = this.state.text.length > 500;
     return (
       <div>
@@ -197,8 +196,11 @@ class WriteDialog extends React.Component<WP,{
           <DialogContent>
             {isLoading && <Loader/>}
             {!isLoading && <div>
-              {Number.isNaN(score.currentBPI) && <span>プレイログがない楽曲に対してコメントを投稿することはできません。</span>}
-              {!Number.isNaN(score.currentBPI) && <div>
+              {(!score || (score && Number.isNaN(score.currentBPI))) && (
+                <span>プレイログがない楽曲に対してコメントを投稿することはできません。<br/>
+                  BPIManagerをはじめて使う場合、まずは<Link to="/data" style={{textDecoration:"none"}}><RLink color="secondary" component="span">データ取り込み</RLink></Link>からプレイデータをインポートしてください。
+                </span>)}
+              {(score && !Number.isNaN(score.currentBPI)) && <div>
                 <TextField
                   multiline
                   fullWidth
@@ -227,7 +229,7 @@ class WriteDialog extends React.Component<WP,{
             <Button onClick={this.props.close} color="primary">
               閉じる
             </Button>
-            {!Number.isNaN(score.currentBPI) && (
+            {(score && !Number.isNaN(score.currentBPI)) && (
             <Button onClick={this.exec} disabled={tooLong} color="primary">
               投稿
             </Button>)

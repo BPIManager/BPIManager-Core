@@ -89,22 +89,24 @@ import {Link as RefLink} from '@material-ui/core/';
       "title":"Help.Licenses",
       "body":
         <div>
-          material-ui : Copyright (c) 2014 Call-Em-All <RefLink color="secondary" href="https://opensource.org/licenses/mit-license.php" target="_blank" rel="noreferrer noopener">The MIT License (MIT)</RefLink><br/>
-          Dexie.js : Copyright (c) dfahlander <RefLink color="secondary" href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noreferrer noopener">Apache License</RefLink><br/>
-          fast-deep-equal : Copyright (c) epoberezkin MIT<br/>
-          firebase : Copyright (c) firebase Apache License<br/>
-          dayjs : Copyright (c) iamkun MIT<br/>
-          date-io Copyright (c) 2017 Dmitriy Kovalenko MIT<br/>
-          material-ui-pickers Copyright (c) 2017 Dmitriy Kovalenko MIT<br/>
-          react : Copyright (c) Facebook MIT<br/>
-          react-app-rewired : Copyright (c) 2016 Tim Arney MIT<br/>
-          react-dom : Copyright (c) 2017 Tylor Steinberger MIT<br/>
-          react-router : Copyright (c) React Training 2016-2018 MIT<br/>
+          material-ui : Copyright (c) 2014 Call-Em-All / <RefLink color="secondary" href="https://opensource.org/licenses/mit-license.php" target="_blank" rel="noreferrer noopener">The MIT License (MIT)</RefLink><br/>
+          Dexie.js : Copyright (c) dfahlander / <RefLink color="secondary" href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noreferrer noopener">Apache License</RefLink><br/>
+          fast-deep-equal : Copyright (c) epoberezkin / MIT<br/>
+          firebase : Copyright (c) firebase / Apache License<br/>
+          dayjs : Copyright (c) iamkun / MIT<br/>
+          date-io Copyright (c) 2017 Dmitriy Kovalenko / MIT<br/>
+          material-ui-pickers Copyright (c) 2017 Dmitriy Kovalenko / MIT<br/>
+          react : Copyright (c) Facebook / MIT<br/>
+          react-app-rewired : Copyright (c) 2016 Tim Arney / MIT<br/>
+          react-dom : Copyright (c) 2017 Tylor Steinberger / MIT<br/>
+          react-router : Copyright (c) React Training 2016-2018 / MIT<br/>
           react-share : Copyright (c) Klaus Nygard<br/>
-          react-intl : Copyright (c) Yahoo! BSD License<br/>
-          recharts : Copyright (c) recharts MIT<br/>
-          typescript : Copyright (c) Microsoft Apache License<br/>
-          unstated : Copyright (c) 2018-present James Kyle MIT
+          react-intl : Copyright (c) Yahoo! / BSD License<br/>
+          recharts : Copyright (c) recharts / MIT<br/>
+          typescript : Copyright (c) Microsoft / Apache License<br/>
+          unstated : Copyright (c) 2018-present James Kyle / MIT<br/>
+          react-google-recaptcha : Copyright (c) 2015 Hugo Dozois / MIT<br/>
+          react-helmet : Copyright (c) 2015 NFL / MIT
           <Divider style={{margin:"10px 0"}}/>
           Services used in BPIManager:<br/>
           <RefLink color="secondary" href="https://www.tinygraphs.com/">TinyGraphs</RefLink>

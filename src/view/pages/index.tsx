@@ -16,12 +16,18 @@ import Alert from '@material-ui/lab/Alert/Alert';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { avatarFontColor, avatarBgColor } from '@/components/common';
 import AlertTitle from '@material-ui/lab/AlertTitle';
+import {Helmet} from "react-helmet";
 
 class Index extends React.Component<RouteComponentProps&{global:any},{}> {
 
   render(){
     return (
       <div>
+        <Helmet>
+          <meta name="description"
+            content="beatmania IIDXのスコアをBPIという指標を用いて管理したり、ライバルとスコアを競ったりできるツールです。"
+          />
+        </Helmet>
         <IfNotOnTheHomeScreen history={this.props.history} global={this.props.global}/>
       </div>
     );

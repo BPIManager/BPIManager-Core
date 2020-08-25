@@ -74,7 +74,7 @@ class NotesRecent extends React.Component<{},S> {
         <Alert variant="outlined" severity="info" style={{margin:"8px 0"}}>
           <AlertTitle>Notesとは？</AlertTitle>
           <p>Notesとは、各楽曲について攻略に役立つノートを投稿することができる機能です。
-          (<Link href="https://gist.github.com/potakusan/7281da1405d4381dc55e19ff8a43926f" color="secondary">仕様の詳細</Link>)<br/>
+          (<RLink to="/help/notes"><Link color="secondary" component="span">使い方など</Link></RLink>)<br/>
           <b>ノートを投稿するには、<RLink to="/songs"><Link color="secondary" component="span">楽曲一覧</Link></RLink>からノートを投稿したい楽曲を長押しして書き込みしてください。</b><br/>
           「MYノート」から投稿済みノートを削除することができます。
         </p>
