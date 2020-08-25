@@ -11,7 +11,7 @@ import Button from '@material-ui/core/Button';
 import Alert from '@material-ui/lab/Alert/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import timeFormatter from '@/components/common/timeFormatter';
-import { _prefixWithPS } from '@/components/songs/filter';
+import { _prefixWithPS, difficultyParser } from '@/components/songs/filter';
 import { Helmet } from 'react-helmet';
 import ContactSupportIcon from '@material-ui/icons/ContactSupport';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
@@ -41,7 +41,7 @@ class NoteIndv extends React.Component<RouteComponentProps,{
     document.title = `${songName}${_prefixWithPS(params.diff,params.single === "sp")} - BPIManager Notes`
     return this.setState({song:{
       title:songName,
-      difficulty:songDiff,
+      difficulty:difficultyParser(songDiff,isSingle ? 1: 0),
       difficultyLevel:"-1",
       wr:0,
       avg:0,
