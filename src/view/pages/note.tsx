@@ -34,7 +34,7 @@ class Tools extends React.Component<{intl:any},S> {
           textColor="secondary"
           style={{margin:"5px 0"}}
         >
-          <Tab label="最近の書き込み" />
+          <Tab label="書き込みを探す" />
           <Tab label="いいね一覧" />
           <Tab label="Myノート" />
         </Tabs>

@@ -502,6 +502,13 @@ export default class fbActions{
     }
   }
 
+  loadFavedNotes(last = null){
+    if(last){
+      return firestore.collection("notes").orderBy("likeCount","desc").limit(20).startAfter(last).get();
+    }
+    return firestore.collection("notes").orderBy("likeCount","desc").limit(20).get();
+  }
+
   loadRecentNotes(last = null){
     if(last){
       return firestore.collection("notes").orderBy("wroteAt","desc").limit(20).startAfter(last).get();

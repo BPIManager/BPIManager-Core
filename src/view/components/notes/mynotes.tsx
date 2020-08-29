@@ -22,6 +22,10 @@ import { _currentStore } from '@/components/settings';
 import { scoreData } from '@/types/data';
 import { scoresDB } from '@/components/indexedDB';
 import firebase from 'firebase';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import IconButton from '@material-ui/core/IconButton';
+import { StyledBadge } from '../songs/songNotes';
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 
 interface S{
   isLoading:boolean,
@@ -160,6 +164,13 @@ class MyNotes extends React.Component<{},S> {
                   e.preventDefault();
                 }} key={i}>
                 <ListItemText primary={<span>{data.songName + _prefixWithPS(data.songDiff,data.isSingle)}&nbsp;<small>{updatedTime(data.wroteAt.toDate())}</small></span>} secondary={note} />
+                <ListItemSecondaryAction>
+                  <IconButton aria-label="likeButton" disabled>
+                    <StyledBadge badgeContent={data.likeCount || 0} color="secondary">
+                      <FavoriteBorderIcon />
+                    </StyledBadge>
+                  </IconButton>
+                </ListItemSecondaryAction>
               </ListItem>
             )
           })}

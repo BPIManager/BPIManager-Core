@@ -3,13 +3,10 @@ import Container from '@material-ui/core/Container';
 import fbActions from '@/components/firebase/actions';
 import Loader from '@/view/components/common/loader';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import { _prefixWithPS } from '@/components/songs/filter';
-import { updatedTime } from '@/components/common/timeFormatter';
 import ModalNotes from './modal';
 import Alert from '@material-ui/lab/Alert/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle/AlertTitle';
+import { EachMemo } from '../songs/songNotes';
 
 interface S{
   isLoading:boolean,
@@ -81,13 +78,8 @@ class NotesLiked extends React.Component<{},S> {
           component="nav"
         >
           {likedNotes.map((item:any,i:number)=>{
-            let data = item.data();
-            if(!data) return (null);
-            let note = data.memo;
             return (
-              <ListItem button onClick={()=>this.onClick(data)} key={i}>
-                <ListItemText primary={<span>{data.songName + _prefixWithPS(data.songDiff,data.isSingle)}&nbsp;<small>{updatedTime(data.wroteAt.toDate())}</small></span>} secondary={note} />
-              </ListItem>
+              <EachMemo item={item} listType noEllipsis onClick={this.onClick} key={i}/>
             )
           })}
         </List>

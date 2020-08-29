@@ -9,10 +9,10 @@ import AlertTitle from "@material-ui/lab/AlertTitle/AlertTitle";
 import Fab from "@material-ui/core/Fab";
 import EditIcon from '@material-ui/icons/Edit';
 import { Link } from "react-router-dom";
-import { Link as RLink, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Button, Divider, InputLabel, FormControl, Select, MenuItem, Grid, IconButton, withStyles, createStyles, Theme, Badge } from "@material-ui/core/";
-import timeFormatter from "@/components/common/timeFormatter";
+import { Link as RLink, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Button, Divider, InputLabel, FormControl, Select, MenuItem, Grid, IconButton, withStyles, createStyles, Theme, Badge, ListItem, ListItemText, ListItemSecondaryAction } from "@material-ui/core/";
+import timeFormatter, { updatedTime } from "@/components/common/timeFormatter";
 import ReCAPTCHA from "react-google-recaptcha";
-import { difficultyDiscriminator } from "@/components/songs/filter";
+import { difficultyDiscriminator, _prefixWithPS } from "@/components/songs/filter";
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import LinkIcon from '@material-ui/icons/Link';
 
@@ -254,8 +254,11 @@ class NotesList extends React.Component<{
   }
 }
 
-class EachMemo extends React.Component<{
-  item:any
+export class EachMemo extends React.Component<{
+  item:any,
+  listType?:boolean,
+  noEllipsis?:boolean,
+  onClick?:(val:any)=>void
 },{
   memo:string,
   likeCount:number,
@@ -292,6 +295,27 @@ class EachMemo extends React.Component<{
 
   render(){
     const {memo,likeCount,wroteAt,userBPI} = this.state;
+    if(this.props.listType){
+      const {onClick,noEllipsis} = this.props;
+      if(!onClick){ return (null); }
+      let note = memo;
+      const it = this.props.item.data();
+      if(note.length > 40 && !noEllipsis){
+        note = note.substr(0,40) + "...";
+      }
+      return (
+        <ListItem button onClick={()=>onClick(it)}>
+          <ListItemText primary={<span>{it.songName + _prefixWithPS(it.songDiff,it.isSingle)}&nbsp;<small>{updatedTime(wroteAt.toDate())}</small></span>} secondary={note} />
+          <ListItemSecondaryAction>
+            <IconButton aria-label="likeButton" onClick={this.favButton}>
+              <StyledBadge badgeContent={likeCount || 0} color="secondary">
+                <FavoriteBorderIcon />
+              </StyledBadge>
+            </IconButton>
+          </ListItemSecondaryAction>
+        </ListItem>
+      );
+    }
     return (
       <div>
         <p>{memo}</p>
@@ -313,7 +337,7 @@ class EachMemo extends React.Component<{
   }
 }
 
-const StyledBadge = withStyles((theme: Theme) =>
+export const StyledBadge = withStyles((theme: Theme) =>
   createStyles({
     badge: {
       right: -3,

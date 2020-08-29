@@ -3,23 +3,27 @@ import Container from '@material-ui/core/Container';
 import fbActions from '@/components/firebase/actions';
 import Loader from '@/view/components/common/loader';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import { _prefixWithPS } from '@/components/songs/filter';
-import { updatedTime } from '@/components/common/timeFormatter';
 import ModalNotes from './modal';
 import Alert from '@material-ui/lab/Alert/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button';
 import {Link as RLink} from "react-router-dom";
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import { EachMemo } from '../songs/songNotes';
 
 interface S{
   isLoading:boolean,
   recentNotes:any[],
   isModalOpen:boolean,
   lastReached:boolean,
-  data:any
+  data:any,
+  hide:boolean,
+  sort:number
 }
 
 class NotesRecent extends React.Component<{},S> {
@@ -33,13 +37,22 @@ class NotesRecent extends React.Component<{},S> {
       lastReached:false,
       recentNotes:[],
       data:null,
+      hide:!!localStorage.getItem("hideNotesInfo"),
+      sort:0
     }
   }
 
   async componentDidMount(){
-    const recentNotes = await this.fbA.loadRecentNotes();
+    this.changeSort();
+  }
+
+  async changeSort(newSort = 0){
+    this.setState({isLoading:true});
+    const sort = newSort;
+    const loaded = sort === 0 ? await this.fbA.loadRecentNotes() : await this.fbA.loadFavedNotes();
     this.setState({
-      recentNotes:recentNotes.docs,
+      recentNotes:loaded.docs,
+      lastReached:false,
       isLoading:false,
     })
   }
@@ -56,7 +69,7 @@ class NotesRecent extends React.Component<{},S> {
   next = async()=>{
     const{recentNotes} = this.state;
     const last = recentNotes[recentNotes.length - 1];
-    const next = await this.fbA.loadRecentNotes(last);
+    const next = this.state.sort === 0 ? await this.fbA.loadRecentNotes(last) : await this.fbA.loadFavedNotes(last);
     if(next.docs.length === 0){
       this.setState({lastReached:true});
     }else{
@@ -65,33 +78,47 @@ class NotesRecent extends React.Component<{},S> {
   }
 
   render(){
-    const {isLoading,recentNotes,isModalOpen,data,lastReached} = this.state;
+    const {isLoading,recentNotes,isModalOpen,data,lastReached,hide,sort} = this.state;
+    const sortDisp = [
+      "最近書き込まれた順",
+      "いいねが多い順"
+    ]
     if(isLoading){
       return (<Loader/>);
     }
     return (
       <Container fixed>
-        <Alert variant="outlined" severity="info" style={{margin:"8px 0"}}>
-          <AlertTitle>Notesとは？</AlertTitle>
-          <p>Notesとは、各楽曲について攻略に役立つノートを投稿することができる機能です。
-          (<RLink to="/help/notes"><Link color="secondary" component="span">使い方など</Link></RLink>)<br/>
-          <b>ノートを投稿するには、<RLink to="/songs"><Link color="secondary" component="span">楽曲一覧</Link></RLink>からノートを投稿したい楽曲を長押しして書き込みしてください。</b><br/>
-          「MYノート」から投稿済みノートを削除することができます。
-        </p>
-        </Alert>
+        {!hide && !localStorage.getItem("hideNotesInfo") &&
+          <Alert variant="outlined" severity="info" style={{margin:"8px 0"}}>
+            <AlertTitle>Notesとは？</AlertTitle>
+            <p>Notesとは、各楽曲について攻略に役立つノートを投稿することができる機能です。
+              (<RLink to="/help/notes"><Link color="secondary" component="span">使い方など</Link></RLink>)<br/>
+              <b>ノートを投稿するには、<RLink to="/songs"><Link color="secondary" component="span">楽曲一覧</Link></RLink>からノートを投稿したい楽曲を長押しして書き込みしてください。</b><br/>
+              「MYノート」から投稿済みノートを削除することができます。
+            </p>
+            <Button variant="outlined" startIcon={<VisibilityOffIcon />} onClick={()=>{
+              localStorage.setItem("hideNotesInfo","true");
+              this.setState({hide:true});
+            }}>再度表示しない</Button>
+          </Alert>
+        }
+        <FormControl fullWidth style={{marginTop:"8px"}}>
+          <InputLabel>並び替えを変更</InputLabel>
+          <Select fullWidth value={sort} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+            if(typeof e.target.value !== "number") return;
+            this.setState({sort:e.target.value});
+            this.changeSort(e.target.value);
+            }}
+          >
+            {[0,1].map(item=><MenuItem value={item} key={item}>{sortDisp[item]}</MenuItem>)}
+          </Select>
+        </FormControl>
         <List
           component="nav"
         >
           {recentNotes.map((item:any,i:number)=>{
-            let data = item.data();
-            let note = data.memo;
-            if(note.length > 40){
-              note = note.substr(0,40) + "...";
-            }
             return (
-              <ListItem button onClick={()=>this.onClick(data)} key={i}>
-                <ListItemText primary={<span>{data.songName + _prefixWithPS(data.songDiff,data.isSingle)}&nbsp;<small>{updatedTime(data.wroteAt.toDate())}</small></span>} secondary={note} />
-              </ListItem>
+              <EachMemo item={item} listType onClick={this.onClick} key={i}/>
             )
           })}
           </List>
