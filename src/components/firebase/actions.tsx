@@ -524,9 +524,10 @@ export default class fbActions{
     return firestore.collection("notes").where("uid","==",doc).orderBy("wroteAt","desc").get();
   }
 
-  loadUserNotes(uid:string){
+  loadUserNotes(uid:string,sort = 0){
+    const s = sort === 0 ? "wroteAt" : "likeCount";
     const doc = firestore.collection("users").doc(uid);
-    return firestore.collection("notes").where("uid","==",doc).orderBy("wroteAt","desc").get();
+    return firestore.collection("notes").where("uid","==",doc).orderBy(s,"desc").get();
   }
 
   loadLikedNotes(){

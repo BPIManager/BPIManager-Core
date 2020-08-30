@@ -4,8 +4,8 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { FormattedMessage } from "react-intl";
-import { withRouter, RouteComponentProps } from 'react-router-dom';
-import {Link as RefLink, ListItem, ListItemAvatar, Avatar, ListItemText, ListItemSecondaryAction, IconButton, List} from '@material-ui/core/';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
+import {Link as RefLink, ListItem, ListItemAvatar, Avatar, ListItemText, ListItemSecondaryAction, IconButton, List, ButtonGroup} from '@material-ui/core/';
 import { _lang, _currentVersion } from '@/components/settings';
 import PhonelinkSetupIcon from '@material-ui/icons/PhonelinkSetup';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
@@ -17,6 +17,8 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { avatarFontColor, avatarBgColor } from '@/components/common';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import {Helmet} from "react-helmet";
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import FavoriteIcon from '@material-ui/icons/Favorite';
 
 class Index extends React.Component<RouteComponentProps&{global:any},{}> {
 
@@ -75,6 +77,7 @@ class IfNotOnTheHomeScreen extends React.Component<{
   showUpdate:boolean,
   latestVersion:string,
   updateInfo:string,
+  hide:boolean
 }>{
 
   constructor(props:{history:any,global:any}){
@@ -90,6 +93,7 @@ class IfNotOnTheHomeScreen extends React.Component<{
       showUpdate:false,
       latestVersion:"",
       updateInfo:"",
+      hide:!!localStorage.getItem("hide20200829"),
     }
   }
 
@@ -113,7 +117,7 @@ class IfNotOnTheHomeScreen extends React.Component<{
   }
 
   render(){
-    const {show,showUpdate,latestVersion,updateInfo} = this.state;
+    const {show,showUpdate,latestVersion,updateInfo,hide} = this.state;
     const navBar = [
       {
         to:"/help",
@@ -157,12 +161,19 @@ class IfNotOnTheHomeScreen extends React.Component<{
               </div>
             </Grid>
           </Grid>
-          <Alert variant="outlined" severity="info" style={{margin:"10px 0"}}>
-            <AlertTitle>新機能のご紹介</AlertTitle>
-            <p>楽曲の攻略情報をシェアできる<b>「Notes」</b>をリリースしました。<br/>
-            <RefLink color="secondary" href="https://gist.github.com/potakusan/7281da1405d4381dc55e19ff8a43926f">詳細はこちら</RefLink>。
-            </p>
-          </Alert>
+          {!hide && !localStorage.getItem("hide20200829") &&
+            <Alert variant="outlined" severity="info" style={{margin:"10px 0"}}>
+              <AlertTitle>新機能のご紹介</AlertTitle>
+              <p>楽曲の攻略情報をシェアできる<b>「Notes」</b>をリリースしました。</p>
+              <ButtonGroup color="secondary" style={{margin:"8px 0"}} variant="outlined">
+              <Button startIcon={<FavoriteIcon />}><Link to="/help/notes" style={{textDecoration:"none",color:"inherit"}}>詳細</Link></Button>
+              <Button startIcon={<VisibilityOffIcon />} onClick={()=>{
+                localStorage.setItem("hide20200829","true");
+                this.setState({hide:true});
+              }}>再度表示しない</Button>
+              </ButtonGroup>
+            </Alert>
+          }
           {showUpdate && (
             <Alert variant="outlined" severity="info"
               action={

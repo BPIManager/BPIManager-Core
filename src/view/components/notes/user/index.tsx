@@ -6,19 +6,21 @@ import Button from '@material-ui/core/Button';
 import fbActions from '@/components/firebase/actions';
 import Loader from '../../common/loader';
 import List from '@material-ui/core/List';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
-import {  _prefixWithPS } from '@/components/songs/filter';
-import { updatedTime } from '@/components/common/timeFormatter';
 import ModalNotes from '../modal';
 import Alert from '@material-ui/lab/Alert/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
+import { EachMemo } from '../../songs/songNotes';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
 interface S {
   notes:any[],
   isLoading:boolean,
   isModalOpen:boolean,
-  data:any
+  data:any,
+  sort:number
 }
 
 interface P{
@@ -28,6 +30,7 @@ interface P{
 }
 
 class NotesView extends React.Component<P,S> {
+  private fbA:fbActions = new fbActions();
 
   constructor(props:P){
     super(props);
@@ -35,18 +38,23 @@ class NotesView extends React.Component<P,S> {
       isLoading:true,
       isModalOpen:false,
       notes:[],
-      data:null
+      data:null,
+      sort:0
     }
   }
 
   async componentDidMount(){
-    const fbA = new fbActions();
-    const notes = await fbA.loadUserNotes(this.props.uid);
+    this.changeSort();
+  }
+
+  async changeSort(newSort = 0){
+    const {uid} = this.props;
+    this.setState({isLoading:true});
+    const sort = newSort;
+    const loaded = sort === 0 ? await this.fbA.loadUserNotes(uid) : await this.fbA.loadUserNotes(uid,1);
     this.setState({
+      notes:loaded.docs,
       isLoading:false,
-      isModalOpen:false,
-      notes:notes.docs,
-      data:null,
     })
   }
 
@@ -61,7 +69,11 @@ class NotesView extends React.Component<P,S> {
 
   render(){
     const {backToMainPage,name} = this.props;
-    const {isLoading,notes,data,isModalOpen} = this.state;
+    const {isLoading,notes,data,isModalOpen,sort} = this.state;
+    const sortDisp = [
+      "最近書き込まれた順",
+      "いいねが多い順"
+    ]
     return (
       <div>
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
@@ -76,17 +88,26 @@ class NotesView extends React.Component<P,S> {
           </Alert>
         )}
         {!isLoading && (
-          <List component="nav">
-          {notes.map((item:any,i:number)=>{
-            let data = item.data();
-            let note = data.memo;
-            return (
-              <ListItem button onClick={()=>this.onClick(data)} key={i}>
-                <ListItemText primary={<span>{data.songName + _prefixWithPS(data.songDiff,data.isSingle)}&nbsp;<small>{updatedTime(data.wroteAt.toDate())}</small></span>} secondary={note} />
-              </ListItem>
-            )
-          })}
+          <div>
+            <FormControl fullWidth style={{marginTop:"8px"}}>
+              <InputLabel>並び替えを変更</InputLabel>
+              <Select fullWidth value={sort} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+                if(typeof e.target.value !== "number") return;
+                this.setState({sort:e.target.value});
+                this.changeSort(e.target.value);
+                }}
+              >
+                {[0,1].map(item=><MenuItem value={item} key={item}>{sortDisp[item]}</MenuItem>)}
+              </Select>
+            </FormControl>
+            <List component="nav">
+              {notes.map((item:any,i:number)=>{
+                return (
+                  <EachMemo item={item} listType onClick={this.onClick} key={i}/>
+                )
+              })}
           </List>
+          </div>
         )}
         {(isModalOpen && data) && <ModalNotes derived={data} isOpen={isModalOpen} handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
       </div>
