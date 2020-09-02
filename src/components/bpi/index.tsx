@@ -35,7 +35,7 @@ export default class bpiCalcuator{
   }
 
   defaultCoef(){
-    return this.traditionalMode === 1 ? 1.5 : 1.175
+    return this.traditionalMode === 1 ? 1.5 : 1.175;
   }
 
   setCoef(coef:number = 1.175){
@@ -43,9 +43,12 @@ export default class bpiCalcuator{
       this.powCoef = 1.5;
       return;
     }
+    if(coef === -1) this.powCoef = this.defaultCoef();
     if(coef !== -1) this.powCoef = coef;
     return;
   }
+
+  getCurrentCoef = ()=> this.powCoef;
 
   getTotalKaidens(){
     return this.totalKaidens;
