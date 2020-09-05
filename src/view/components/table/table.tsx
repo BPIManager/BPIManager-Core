@@ -14,6 +14,11 @@ import Loader from '@/view/components/common/loader';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import AdsCard from '@/components/ad';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import Radio from '@material-ui/core/Radio';
+import { _isSingle, _currentStore } from '@/components/settings';
+import { scoresDB } from '@/components/indexedDB';
+import SettingsIcon from '@material-ui/icons/Settings';
 
 interface S {
   [key:string]:any,
@@ -21,10 +26,12 @@ interface S {
   checks:number[],
   pm:number[],
   showChecks:boolean,
+  targetLevel:number,
+  isLoading:boolean,
 }
 
 interface P{
-  data:rivalScoreData[]|scoreData[]
+  data?:rivalScoreData[]
 }
 
 const bgColor = (gap:number)=>{
@@ -79,19 +86,29 @@ class AAATable extends React.Component<P,S> {
     super(props);
     this.state = {
       result:{},
+      targetLevel:12,
       checks:this.default,
       pm:this.defaultPM,
       showChecks:false,
+      isLoading:true,
     }
   }
 
   async componentDidMount(){
-    this.setState({result:await this.getTable()});
+    this.setState({result:await this.getTable(),isLoading:false});
   }
 
-  getTable = async()=>{
-    const table = await AAADifficulty();
-    const named = this.named();
+  changeLevel = async (e:React.ChangeEvent<HTMLInputElement>,)=>{
+    if(typeof e.target.value === "string"){
+      const targetLevel = Number(e.target.value);
+      this.setState({targetLevel:targetLevel,isLoading:true});
+      return this.setState({result:await this.getTable(targetLevel),isLoading:false});
+    }
+  }
+
+  getTable = async(targetLevel:number = 12)=>{
+    const table = await AAADifficulty(targetLevel);
+    const named = await this.named(targetLevel);
     let result:CLInt = {};
     Object.keys(table).map((diffs:string)=>{
       result[diffs] = [];
@@ -118,10 +135,18 @@ class AAATable extends React.Component<P,S> {
     return result;
   }
 
-  named = ()=>(this.props.data as any).filter((item:rivalScoreData|scoreData)=>item.difficultyLevel === "12").reduce((groups:{[key:string]:any},item:any)=>{
-    groups[item.title + item.difficulty] = item;
-    return groups;
-  },{})
+  named = async (targetLevel:number = 12)=>{
+    const fil = (t:any)=>t.filter((item:rivalScoreData|scoreData)=>item.difficultyLevel === String(targetLevel)).reduce((groups:{[key:string]:any},item:any)=>{
+      groups[item.title + item.difficulty] = item;
+      return groups;
+    },{});
+    if(this.props.data){
+      return fil(this.props.data);
+    }
+    const db = await new scoresDB(_isSingle(),_currentStore()).loadStore();
+    const full:scoreData[] = await db.getItemsBySongDifficulty(String(targetLevel));
+    return fil(full);
+  }
 
   isChecked = (input:number,target:number):boolean=>{
     const {checks,pm} = this.state;
@@ -147,27 +172,46 @@ class AAATable extends React.Component<P,S> {
   toggleChecks = ()=> this.setState({showChecks:!this.state.showChecks});
 
   render(){
-    if(this.props.data.length === 0){
-      return (<Loader/>);
-    }
-    const {result,checks,pm,showChecks} = this.state;
+    const {result,checks,pm,showChecks,targetLevel,isLoading} = this.state;
     return (
       <div>
-        <Button variant="outlined" color="secondary" onClick={this.toggleChecks} style={{marginBottom:"15px"}}>
+        <Button variant="outlined" color="secondary" onClick={this.toggleChecks} fullWidth startIcon={<SettingsIcon/>} style={{marginBottom:"5px"}}>
           フィルタ項目を{!showChecks ? "表示" : "非表示"}
         </Button>
-        {showChecks && <div>
+        {showChecks && <Alert variant="outlined" icon={false} severity="info">
+        <FormControl component="fieldset" fullWidth>
+          <FormLabel component="legend" color="primary">表示対象</FormLabel>
+          <RadioGroup aria-label="position" name="position" value={targetLevel} onChange={this.changeLevel} row>
+            <FormControlLabel
+              value={11}
+              control={<Radio color="secondary" />}
+              label="☆11"
+              labelPlacement="end"
+            />
+            <FormControlLabel
+              value={12}
+              control={<Radio color="secondary" />}
+              label="☆12"
+              labelPlacement="end"
+            />
+          </RadioGroup>
+        </FormControl>
         <FormControl>
-          <FormLabel component="legend" onClick={this.toggle} style={{cursor:"pointer"}}>難易度選択
+          <FormLabel component="legend" onClick={this.toggle} style={{cursor:"pointer"}}>範囲選択
             (<span style={{textDecoration:"underline"}}>ここをクリックで状態反転</span>)
           </FormLabel>
           <FormGroup row>
-            {this.default.map((item:number)=><FormControlLabel key={item}
-              control={
-                <Checkbox checked={this.isChecked(item,0)} onChange={()=>this.handleChange(item,0)} value={item} />
-              }
-              label={item}/>
-            )}
+            {this.default.map((item:number)=>{
+              if(result[item].length === 0) return (null);
+              return (
+                <FormControlLabel key={item}
+                  control={
+                    <Checkbox checked={this.isChecked(item,0)} onChange={()=>this.handleChange(item,0)} value={item} />
+                  }
+                  label={item}
+                />
+              )
+            })}
           </FormGroup>
         </FormControl>
         <FormControl>
@@ -182,15 +226,16 @@ class AAATable extends React.Component<P,S> {
             )}
           </FormGroup>
         </FormControl>
-        </div>}
+        </Alert>}
+        {isLoading && <Loader/>}
         <AdsCard/>
-        {checks.sort((a,b)=>b-a).map((key:number)=>{
-          if(!result[key]){
+        {!isLoading && checks.sort((a,b)=>b-a).map((key:number)=>{
+          if(!result[key] || result[key].length === 0){
             return (null);
           }
           return (
             <div key={key}>
-              <div style={{width:"100%",textAlign:"center",background:"#eaeaea",color:"#000",padding:"5px 0",border:"1px solid #ccc",margin:"15px 0 5px 0"}}>{key}</div>
+              <div style={{width:"100%",textAlign:"center",background:"#eaeaea",color:"#000",padding:"5px 0",margin:"15px 0 5px 0"}}>{key}</div>
               <Grid container>
                 {result[key].map((item:CLBody)=><GridItem key={item.title + item.difficulty} data={item} pm={pm}/>)}
               </Grid>
@@ -198,9 +243,10 @@ class AAATable extends React.Component<P,S> {
           )
         })}
         <Divider style={{margin:"15px 0"}}/>
-        <Alert severity="info">
+        <Alert severity="info" variant="outlined">
           <AlertTitle>色分けについて</AlertTitle>
-          <p>AAA-BPIとユーザーのBPIの差を基準に色付けしています</p>
+          <p>AAA+0におけるBPIと現在の登録スコアにおけるBPIの差を基準に、色の濃淡でスコアの差を可視化しています<br/>
+          (各楽曲の下に表示されている数値は、左側がAAA+0におけるBPIを、右側が現在の登録スコアにおけるBPIを表しています。)</p>
           <p>
             -20未満:<span style={{color:bgColor(-31)}}>濃い赤</span><br/>
             -20以上:<span style={{color:bgColor(-19)}}>更に濃いオレンジ</span><br/>
@@ -216,7 +262,6 @@ class AAATable extends React.Component<P,S> {
             +50以下:<span style={{color:bgColor(45)}}>薄い青</span><br/>
             +50より上:<span style={{color:bgColor(51)}}>青</span><br/>
           </p>
-          <p>*AAA-BPIは改変定義式基準で算出されています</p>
         </Alert>
       </div>
     );

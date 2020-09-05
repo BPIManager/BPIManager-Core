@@ -91,6 +91,7 @@ class Settings extends React.Component<P,S> {
       const promiseProducer = ()=>{
         return res.body.map((t:songData) => {
           return new Promise(resolve=>{
+            // t["deleted"]が存在する場合、削除曲判定(IIDX28より適用)
             const pfx = t["title"] + t["difficulty"] + (t["dpLevel"] === "0" ? "1" : "0");
             if(allSongs[pfx] && allSongs[pfx]["dpLevel"] === t["dpLevel"]){
               //既存曲

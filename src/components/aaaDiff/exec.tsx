@@ -3,12 +3,13 @@ import { CLOrigInt, CLOrigin } from "./data";
 import { songData } from "@/types/data";
 import bpiCalcuator from "../bpi";
 import { difficultyDiscriminator } from "../songs/filter";
+import { _traditionalMode } from "../settings";
 
 export default class aaaDiffCalc{
   private songsDB = new songsDB();
 
-  async exec():Promise<CLOrigInt>{
-    const songs:songData[] = (await this.songsDB.getAll()).filter((item:songData)=>item.difficultyLevel === "12");
+  async exec(diff:number = 12):Promise<CLOrigInt>{
+    const songs:songData[] = (await this.songsDB.getAll()).filter((item:songData)=>item.difficultyLevel === String(diff));
     let results:CLOrigInt = {
       "50":[],
       "40":[],
@@ -22,7 +23,8 @@ export default class aaaDiffCalc{
     const t = new bpiCalcuator()
     for(let i = 0; i < songs.length; ++i){
       const s = songs[i];
-      const res  = t.setManual(s.wr,s.avg,s.notes,Math.ceil((s.notes * 2) * 0.889),s.coef || -1);
+      const coef = _traditionalMode() ? 1.5 : s.coef || -1;
+      const res  = t.setManual(s.wr,s.avg,s.notes,Math.ceil((s.notes * 2) * 0.889),coef);
       const temp:CLOrigin = {
         "title":s.title,
         "difficulty":difficultyDiscriminator(s.difficulty),
