@@ -7,7 +7,6 @@ import { _currentTheme } from '@/components/settings';
 import ContactSupportIcon from '@material-ui/icons/ContactSupport';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import { Link } from 'react-router-dom';
-import ExtensionIcon from '@material-ui/icons/Extension';
 import MenuBookIcon from '@material-ui/icons/MenuBook';
 
 export default class HelpStart extends React.Component<{},{

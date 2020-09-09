@@ -105,7 +105,7 @@ const ja = {
   "Stats.Median":"中央値",
   "Stats.LethalWeapon":"武器曲",
   "Stats.PossibleToGetBetter":"伸びそうな曲",
-  "Stats.Distribution":"レベル別BPI分布",
+  "Stats.Distribution":"BPI分布",
   "Stats.DistributionByBPM":"BPM帯別総合BPI",
   "Stats.DistributionOfDJRank":"DJランク",
   "Stats.DistributionOfClearState":"クリアタイプ",

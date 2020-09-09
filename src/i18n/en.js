@@ -105,7 +105,7 @@ const ja = {
   "Stats.Min":"Min BPI",
   "Stats.Median":"Median",
   "Stats.PossibleToGetBetter":"Songs Possible to Get better",
-  "Stats.Distribution":"BPI Distributions by Lv.",
+  "Stats.Distribution":"BPI Distributions",
   "Stats.DistributionByBPM":"Composite BPI distributed per BPM",
   "Compare.Title":"Compare",
   "Compare.From":"Data source",

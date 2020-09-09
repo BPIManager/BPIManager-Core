@@ -3,7 +3,6 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 import bpiCalcuator from '@/components/bpi';
 import {_chartColor, _chartBarColor} from "@/components/settings";
 import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, LineChart, BarChart, ReferenceLine} from 'recharts';
@@ -104,7 +103,10 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
                 {totalBPI}
               </Typography>
               <Typography component="h5" variant="h5" color="textPrimary">
-                Est. Rank : {_withOrd(totalRank)}
+                推定順位 : {_withOrd(totalRank)}
+              </Typography>
+              <Typography component="p" variant="body1" color="textPrimary">
+                (皆伝上位{Math.round(totalRank / new bpiCalcuator().getTotalKaidens() * 1000000) / 10000}%)
               </Typography>
             </div>
           </Grid>
