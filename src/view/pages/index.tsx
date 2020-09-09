@@ -120,7 +120,7 @@ class IfNotOnTheHomeScreen extends React.Component<{
     const {show,showUpdate,latestVersion,updateInfo,hide} = this.state;
     const navBar = [
       {
-        to:"/help",
+        to:"/help/start",
         id:"Top.Help",
         icon:<HelpIcon />
       },

@@ -75,6 +75,7 @@ class Settings extends React.Component<P,S> {
       this.setState({disableUpdateBtn:true,message:""});
       const sdb = new songsDB();
       const schDB = new scoreHistoryDB();
+      const scDB = new scoresDB();
       const reducer = (t:songData[])=>t.reduce((result:{[key:string]:songData}, current:songData) => {result[current.title + current.difficulty + (current["dpLevel"] === "0" ? "1" : "0")] = current;return result;}, {});
       const allSongs = await sdb.getAllWithAllPlayModes().then(t=>reducer(t));
       const url = _currentDefinitionURL();
@@ -90,30 +91,35 @@ class Settings extends React.Component<P,S> {
       }
       const promiseProducer = ()=>{
         return res.body.map((t:songData) => {
-          return new Promise(resolve=>{
-            // t["deleted"]が存在する場合、削除曲判定(IIDX28より適用)
+          return new Promise(async(resolve)=>{
             const pfx = t["title"] + t["difficulty"] + (t["dpLevel"] === "0" ? "1" : "0");
             if(allSongs[pfx] && allSongs[pfx]["dpLevel"] === t["dpLevel"]){
               //既存曲
+              if(t["removed"]){
+                console.log(t);
+                await sdb.removeItem(t["title"]);
+                await scDB.removeSpecificItemAtAllStores(t["title"]);
+                await schDB.removeSpecificItemAtAllStores(t["title"]);
+                resolve();
+              }
               if(
                 allSongs[pfx]["wr"] !== Number(t["wr"]) || allSongs[pfx]["avg"] !== Number(t["avg"]) ||
                 (t["coef"] && allSongs[pfx]["coef"] && allSongs[pfx]["coef"] !== t["coef"]) ||
                 allSongs[pfx]["bpm"] !== t["bpm"] || allSongs[pfx]["notes"] !== Number(t["notes"])
               ){
                 updatedSongs.push(pfx);
-                sdb.updateItem(t).then(()=>resolve());
-              }else{
-                resolve();
+                await sdb.updateItem(t);
               }
+              resolve();
             }else{
               //新曲
-              sdb.setItem(t).then(()=>resolve());
+              await sdb.setItem(t);
+              resolve();
             }
           });
         });
       }
       await Promise.all(promiseProducer());
-      const scDB = new scoresDB();
       scDB.setNewSongsDBRawData(reducer(res.body));
       console.log("WillUpdated:",updatedSongs)
       await scDB.recalculateBPI(updatedSongs);

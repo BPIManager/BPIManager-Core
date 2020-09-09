@@ -38,6 +38,7 @@ export interface songData{
   updatedAt:string,
   coef?:number,
   memo?:string,
+  removed?:boolean,
 }
 
 export interface historyData{

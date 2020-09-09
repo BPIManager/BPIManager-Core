@@ -658,6 +658,10 @@ export const scoreHistoryDB = class extends storageWrapper{
     return await this.scoreHistory.where({storedAt:_currentStore(),BPI:NaN}).delete();
   }
 
+  async removeSpecificItemAtAllStores(title:string):Promise<number>{
+    return await this.scoreHistory.where({title:title}).delete();
+  }
+
   async check(item:scoreData):Promise<{willUpdate:boolean,lastScore:number}>{
     try{
       const t = await this.scoreHistory.where("[title+storedAt+difficulty+isSingle]").equals(

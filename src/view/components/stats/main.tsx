@@ -96,7 +96,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
         <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel} isFlexEnd/>
         <Grid container>
           <Grid item xs={12} md={3} lg={3}>
-            <Paper style={{padding:"15px"}} className="responsiveTotalBPI" elevation={0}>
+            <div style={{padding:"15px"}} className="responsiveTotalBPI">
               <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
                 <FormattedMessage id="Stats.TotalBPI"/>
               </Typography>
@@ -106,10 +106,10 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
               <Typography component="h5" variant="h5" color="textPrimary">
                 Est. Rank : {_withOrd(totalRank)}
               </Typography>
-            </Paper>
+            </div>
           </Grid>
           <Grid item xs={12} md={9} lg={9}>
-            <Paper style={{padding:"15px",height:270}} elevation={0}>
+            <div style={{padding:"15px",height:270}}>
               <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
                 <FormattedMessage id="Stats.Distribution"/>
               </Typography>
@@ -134,12 +134,12 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
                 </div>
               }
               {groupedByLevel.length === 0 && <p>No data found.</p>}
-            </Paper>
+            </div>
           </Grid>
         </Grid>
         <Grid container spacing={3}>
           <Grid item xs={12} md={12} lg={12}>
-            <Paper style={{padding:"15px",height:270}} elevation={0}>
+            <div style={{padding:"15px",height:270}}>
               <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
                 <FormattedMessage id="Stats.DistributionByBPM"/>
               </Typography>
@@ -163,12 +163,12 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
                 </div>
               }
               {groupedByLevel.length === 0 && <p>No data found.</p>}
-            </Paper>
+            </div>
           </Grid>
         </Grid>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6} lg={6}>
-            <Paper style={{padding:"15px",height:270}} elevation={0}>
+            <div style={{padding:"15px",height:270}}>
               <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
                 <FormattedMessage id="Stats.DistributionOfDJRank"/>
               </Typography>
@@ -191,10 +191,10 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
                 </div>
               }
               {groupedByDJRank.length === 0 && <p>No data found.</p>}
-            </Paper>
+            </div>
           </Grid>
           <Grid item xs={12} md={6} lg={6}>
-            <Paper style={{padding:"15px",height:270}} elevation={0}>
+            <div style={{padding:"15px",height:270}}>
               <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
                 <FormattedMessage id="Stats.DistributionOfClearState"/>
               </Typography>
@@ -217,7 +217,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
                 </div>
               }
               {groupedByClearState.length === 0 && <p>No data found.</p>}
-            </Paper>
+            </div>
           </Grid>
         </Grid>
       </Container>
