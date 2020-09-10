@@ -58,6 +58,18 @@ export const statMain = class {
     return songsByClearState.reverse();
   }
 
+  makeGraphSentence(data:groupedArray[]){
+    let res = [];
+    for(let i:number = 0;i < data.length; ++i){
+      const d = data[i];
+      const lev = "☆"+ String(this.targetLevel) as "☆11"|"☆12";
+      if(d[lev] !== 0){
+        res.push({"name":d["name"],[lev]:d[lev]})
+      }
+    }
+    return res;
+  }
+
   async songsByDJRank(){
 
     const songsByDJRank:groupedArray[] = [

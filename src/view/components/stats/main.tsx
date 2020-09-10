@@ -4,14 +4,14 @@ import Typography from '@material-ui/core/Typography';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import Grid from '@material-ui/core/Grid';
 import bpiCalcuator from '@/components/bpi';
-import {_chartColor, _chartBarColor} from "@/components/settings";
-import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, LineChart, BarChart, ReferenceLine} from 'recharts';
+import {_chartColor, _chartBarColor, pieColor} from "@/components/settings";
+import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, LineChart, BarChart, ReferenceLine, Pie, PieChart, Cell, Legend} from 'recharts';
 import _withOrd from '@/components/common/ord';
 import {FormControlLabel, FormControl, RadioGroup, Radio, FormLabel} from '@material-ui/core/';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '../common/loader';
 import { bpmDist } from '@/components/stats/bpmDist';
-import { S } from '@/types/stats';
+import { S, groupedArray } from '@/types/stats';
 import { BPITicker, statMain } from '@/components/stats/main';
 
 class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
@@ -53,6 +53,11 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
       groupedByDJRank:await exec.songsByDJRank(),
       groupedByClearState:await exec.songsByClearState(),
     });
+  }
+
+  makePieGraphData = (data:groupedArray[])=>{
+    const exec = new statMain(this.state.targetLevel);
+    return exec.makeGraphSentence(data);
   }
 
   onClickByLevel = (data:any,_index:any)=>{
@@ -159,7 +164,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
                       <XAxis stroke={chartColor} type="number" />
                       <YAxis stroke={chartColor} type="category" dataKey="name" />
                       <Tooltip contentStyle={{color:"#333"}}/>
-                      <Bar dataKey="BPI" fill={barColor} />
+                      <Bar dataKey="BPI" fill={lineColor} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -177,18 +182,18 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
               {(groupedByDJRank.length > 0) &&
                 <div style={{width:"95%",height:"100%",margin:"5px auto"}}>
                   <ResponsiveContainer width="100%">
-                    <BarChart
-                      data={groupedByDJRank}
-                      margin={{
-                        top: 5, right: 30, left: -30, bottom: 30,
-                      }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" stroke={chartColor} />
-                        <YAxis stroke={chartColor} />
-                        <Tooltip contentStyle={{color:"#333"}} />
-                        <Bar dataKey={"☆" + targetLevel} fill={barColor} />
-                      </BarChart>
+                      <PieChart>
+                        <Pie dataKey={"☆" + targetLevel} data={this.makePieGraphData(groupedByDJRank)} stroke="none" innerRadius="0" outerRadius="100%" fill={barColor}>
+                          {
+                            groupedByDJRank.map((_entry, index) => <Cell key={`cell-${index}`} fill={pieColor(index)} />)
+                          }
+                        </Pie>
+                        <Tooltip />
+                        <Legend
+                          wrapperStyle={{
+                            paddingTop: "15px"
+                          }}/>
+                      </PieChart>
                   </ResponsiveContainer>
                 </div>
               }
@@ -201,20 +206,20 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
                 <FormattedMessage id="Stats.DistributionOfClearState"/>
               </Typography>
               {(groupedByClearState.length > 0) &&
-                <div style={{width:"95%",height:"100%",margin:"5px auto"}}>
+                <div style={{width:"95%",height:"100%",margin:"5px auto 45px auto"}}>
                   <ResponsiveContainer width="100%">
-                    <BarChart
-                      data={groupedByClearState}
-                      margin={{
-                        top: 5, right: 30, left: -30, bottom: 30,
-                      }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" stroke={chartColor} />
-                        <YAxis stroke={chartColor}/>
-                        <Tooltip contentStyle={{color:"#333"}}/>
-                        <Bar dataKey={"☆" + targetLevel} fill={barColor} />
-                      </BarChart>
+                    <PieChart>
+                      <Pie dataKey={"☆" + targetLevel} data={this.makePieGraphData(groupedByClearState)} stroke="none" innerRadius="0" outerRadius="100%">
+                        {
+                          groupedByClearState.map((_entry, index) => <Cell key={`cell-${index}`} fill={pieColor(index)} />)
+                        }
+                      </Pie>
+                      <Tooltip />
+                      <Legend
+                        wrapperStyle={{
+                          paddingTop: "15px"
+                        }}/>
+                    </PieChart>
                   </ResponsiveContainer>
                 </div>
               }

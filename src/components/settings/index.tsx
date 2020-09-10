@@ -153,6 +153,22 @@ export const _chartBarColor = (name:string)=>{
   }
 }
 
+export const pieColor = (i:number)=>{
+  const c = _currentTheme();
+  let def = [0,0,0,0];
+  if(c === "light"){
+    def = [148,51,0,1];
+  }
+  if(c === "dark"){
+    def = [187,187,187,1];
+  }
+  if(c === "deepsea"){
+    def = [92,115,242,1];
+  }
+  const perf = (100 - (c === "light" ? i : 7 - i) * 13 ) / 100;
+  return `rgba(${def[0]},${def[1]},${def[2]},${def[3] * perf})`
+}
+
 export const buttonTextColor = ()=>{
   const c = _currentTheme();
   if(c !== "light"){

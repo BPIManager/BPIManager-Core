@@ -27,7 +27,7 @@ export default class HelpStart extends React.Component<{},{
       <div>
           <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover"}}>
             <div style={{background:themeColor === "light" ? "rgba(255,255,255,.1)" : "rgba(0,0,0,.4)",display:"flex",padding:"7vh 0",alignItems:"center",justifyContent:"center",flexDirection:"column"}}>
-              <Typography variant="h4">BPIManager</Typography>
+              <Typography variant="h4">はじめての方へ</Typography>
             </div>
           </div>
           <Container fixed style={{marginTop:"15px"}}>
