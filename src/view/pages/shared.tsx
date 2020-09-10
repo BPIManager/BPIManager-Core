@@ -22,6 +22,7 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import WarningIcon from "@material-ui/icons/Warning";
 import ShareButtons from '@/view/components/common/shareButtons';
 import Loader from '@/view/components/common/loader';
+import { getAltTwitterIcon } from '@/components/rivals';
 
 interface S {
   score:scoreData&{uid:string}|null,
@@ -242,7 +243,7 @@ class Shared extends React.Component<RouteComponentProps,S> {
                   <Avatar style={{width:"40px",height:"40px",border:"1px solid #ccc",margin:"15px auto"}}>
                     <img src={userData.photoURL ? userData.photoURL.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
                       alt={userData.displayName}
-                      onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(userData.displayName)}/>
+                      onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(userData) || alternativeImg(userData.displayName)}/>
                   </Avatar>
                 } title={userData.displayName} subheader="シェアした人"/>
               <CardContent style={{paddingTop:"5px",paddingBottom:"16px"}}>

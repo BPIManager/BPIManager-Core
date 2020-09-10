@@ -9,6 +9,7 @@ import Chip from "@material-ui/core/Chip";
 import AddIcon from "@material-ui/icons/Add";
 import CheckIcon from "@material-ui/icons/Check";
 import { updatedTime } from "@/components/common/timeFormatter";
+import { getTwitterName } from "@/components/rivals";
 
 export default class UserCard extends React.Component<{
   item:any,
@@ -39,7 +40,7 @@ export default class UserCard extends React.Component<{
             <Avatar onClick={()=>this.props.open(item.displayName)}>
               <img src={item.photoURL ? item.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
                 alt={item.displayName}
-                onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(item.displayName)}/>
+                onError={(e)=>(e.target as HTMLImageElement).src = getTwitterName(item.profile) ? "https://unavatar.now.sh/twitter/" + getTwitterName(item.profile) : alternativeImg(item.displayName)}/>
             </Avatar>
           }
           action={ myId === item.uid ? selfButton : normalButton}

@@ -90,6 +90,13 @@ export default class fbActions{
     return firebase.firestore.FieldValue.serverTimestamp();
   }
 
+  setTwitterId(id:string){
+    const docRef = firestore.collection(this.name).doc(this.docName);
+    return docRef.set({
+      twitter:id
+    },{merge:true});
+  }
+
   async save(isRegisteredAs = ""){
     if(!this.name || !this.docName){return {error:true,date:null};}
     console.log("writing",this.docName);

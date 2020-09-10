@@ -61,7 +61,8 @@ export interface rivalStoreData{
   profile:string,
   photoURL:string,
   arenaRank:string,
-  totalBPI?:string
+  totalBPI?:string,
+  twitter?:string,
 }
 
 export interface DBRivalStoreData{

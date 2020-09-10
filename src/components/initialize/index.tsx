@@ -1,5 +1,5 @@
 import * as React from 'react';
-import timeFormatter from "../common/timeFormatter";
+import timeFormatter, { isSameDay } from "../common/timeFormatter";
 import {songsDB, scoresDB, favsDB, scoreHistoryDB, rivalListsDB} from "../indexedDB";
 import WarningIcon from '@material-ui/icons/Warning';
 import Backdrop from "@material-ui/core/Backdrop";
@@ -33,9 +33,22 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
 
   async componentDidMount(){
     try{
-
-      if(!localStorage.getItem("isUploadedRivalData")){
-        new fbActions().auth().onAuthStateChanged(async(user: any)=> {
+      new fbActions().auth().onAuthStateChanged(async(user: any)=> {
+        if(user && user.providerData.length > 0 && user.providerData[0]["providerId"] === "twitter.com"){
+          const time = isSameDay(localStorage.getItem("lastTwitterSynced") || "1970/01/01 00:00:00",new Date());
+          if(!time){
+            console.log("** Twitter Sync Start **");
+            localStorage.setItem("lastTwitterSynced",new Date().toString());
+            const ax = await (await fetch("https://us-central1-bpim-d5971.cloudfunctions.net/getTwitterInfo?targetId=" + user.providerData[0]["uid"])).json();
+            const p = JSON.parse(ax.raw.body);
+            const u = new fbActions().setColName("users").setDocName(user.uid);
+            u.setTwitterId(p.screen_name);
+            console.log("** Twitter Sync Completed **");
+          }else{
+            console.log("** Last Twitter Sync Date : "+ localStorage.getItem("lastTwitterSynced") + " **");
+          }
+        }
+        if(!localStorage.getItem("isUploadedRivalData")){
           const t = await this.rivalListsDB.getAll();
           if(t.length > 0 && user){
             if((await this.fbA.syncLoadRival()).length === 0){
@@ -45,8 +58,8 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
             }
             localStorage.setItem("isUploadedRivalData","true");
           }
-        });
-      }
+        }
+      });
 
       // Close the world bug fix 2019/11/11 & 2019/12/08
         this.songsDB.removeItem("Close the World feat. a☆ru");

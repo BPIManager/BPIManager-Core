@@ -29,6 +29,7 @@ import AdsCard from '@/components/ad';
 import CommentIcon from '@material-ui/icons/Comment';
 import NotesView from '../components/notes/user';
 import { Helmet } from 'react-helmet';
+import { getTwitterName, getAltTwitterIcon } from '@/components/rivals';
 
 interface S {
   userName:string,
@@ -200,11 +201,6 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     return match ? match[0].replace(/[^\d]/g,"") : "";
   }
 
-  getTwitterName = (input:string)=>{
-    const match = input.match(/@[a-zA-Z0-9_]+/);
-    return match ? match[0].replace(/@/g,"") : "";
-  }
-
   addUser = async():Promise<void>=>{
     this.setState({add:true});
     const {res,uid} = this.state;
@@ -305,7 +301,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
             <Avatar style={{width:"150px",height:"150px",border:"1px solid #ccc",margin:"15px auto"}}>
               <img src={res.photoURL ? res.photoURL.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
                 alt={res.displayName}
-                onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(res.displayName)}/>
+                onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(res) || alternativeImg(res.displayName)}/>
             </Avatar>
             <Typography variant="h4">
               {res.displayName}
@@ -362,7 +358,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
             <DefListCard onAction={()=>this.addUser()} disabled={myId === res.uid || add || processing || isAdded} icon={<GroupAddIcon/>}
               primaryText={"追加"} secondaryText={myId === res.uid ? ("自分を追加することはできません") : res.displayName + (isAdded ? "さんはすでにライバルです" : "さんをライバルに追加します")}/>
           </List>
-        {(this.getIIDXId(res.profile) !== "" || this.getTwitterName(res.profile) !== "") && <Divider style={{margin:"5px 0 10px 0"}}/>}
+        {(this.getIIDXId(res.profile) !== "" || getTwitterName(res.profile) !== "") && <Divider style={{margin:"5px 0 10px 0"}}/>}
         <List>
         {this.getIIDXId(res.profile) !== "" &&
           <form method="post" name="rivalSearch" action="https://p.eagate.573.jp/game/2dx/27/rival/rival_search.html#rivalsearch">
@@ -383,14 +379,14 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
             </ListItem>
           </form>
         }
-        {this.getTwitterName(res.profile) !== "" &&
-          <ListItem component="a" button disabled={add || processing} href={`https://twitter.com/${this.getTwitterName(res.profile)}`}>
+        {getTwitterName(res.profile) !== "" &&
+          <ListItem component="a" button disabled={add || processing} href={`https://twitter.com/${getTwitterName(res.profile)}`}>
             <ListItemAvatar>
               <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
                 <TwitterIcon/>
               </Avatar>
             </ListItemAvatar>
-            <ListItemText primary={"Twitter"} secondary={`@${this.getTwitterName(res.profile)}`} />
+            <ListItemText primary={"Twitter"} secondary={`@${getTwitterName(res.profile)}`} />
             <ListItemSecondaryAction>
               <IconButton edge="end">
                 <ArrowForwardIosIcon />
@@ -426,7 +422,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
                 this.recommended();
               }}>
                 <img src={tile.photoURL.replace("_normal","")} alt={tile.displayName}
-                  onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(tile.displayName)}/>
+                  onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(tile) || alternativeImg(tile.displayName)}/>
                 <GridListTileBar
                   title={tile.displayName}
                   subtitle={"総合BPI " + String(tile.totalBPI || "-")}
