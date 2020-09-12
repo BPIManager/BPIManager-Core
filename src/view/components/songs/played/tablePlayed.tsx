@@ -45,7 +45,6 @@ interface S{
 }
 
 export default class SongsTable extends React.Component<Readonly<P>,S>{
-  private buttonPressTimer:number = 0;
 
   constructor(props:Readonly<P>){
     super(props);
@@ -78,21 +77,6 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
     return this.state.components.indexOf(component) > -1;
   }
 
-  handleButtonPress=(row:songData|scoreData)=>{
-    this.buttonPressTimer = window.setTimeout(() =>{
-    return this.setState({
-      isOpen:!this.state.isOpen,
-      FV:4,
-      currentSongData:(row ? this.props.allSongsData[row.title + _prefix(row.difficulty)] : null) as songData,
-      currentScoreData:(row ? row : null) as scoreData
-    });
-    }, 600);
-  }
-
-  handleButtonRelease=()=>{
-    window.clearTimeout(this.buttonPressTimer);
-  }
-
   render(){
     const bpiCalc = new bpiCalcuator();
     const last = this.willBeRendered("last"), lastVer = this.willBeRendered("lastVer"),
@@ -122,11 +106,6 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                 const max  = f["notes"] * 2;
                 return (
                   <TableRow
-                    onTouchStart={()=>this.handleButtonPress(row)}
-                    onTouchEnd={()=>this.handleButtonRelease()}
-                    onMouseDown={()=>this.handleButtonPress(row)}
-                    onMouseUp={()=>this.handleButtonRelease()}
-                    onMouseLeave={()=>this.handleButtonRelease()}
                     onClick={()=>this.handleOpen(false,row)}
                     onContextMenu={e => {
                       e.preventDefault();

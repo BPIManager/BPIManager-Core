@@ -1,5 +1,5 @@
 import * as React from 'react';
-import timeFormatter, { isSameDay } from "../common/timeFormatter";
+import timeFormatter from "../common/timeFormatter";
 import {songsDB, scoresDB, favsDB, scoreHistoryDB, rivalListsDB} from "../indexedDB";
 import WarningIcon from '@material-ui/icons/Warning';
 import Backdrop from "@material-ui/core/Backdrop";
@@ -35,8 +35,8 @@ export default class Initialize extends React.Component<{},{show:boolean,error:b
     try{
       new fbActions().auth().onAuthStateChanged(async(user: any)=> {
         if(user && user.providerData.length > 0 && user.providerData[0]["providerId"] === "twitter.com"){
-          const time = isSameDay(localStorage.getItem("lastTwitterSynced") || "1970/01/01 00:00:00",new Date());
-          if(!time){
+          //const time = isSameDay(localStorage.getItem("lastTwitterSynced") || "1970/01/01 00:00:00",new Date());
+          if(!localStorage.getItem("lastTwitterSynced")){
             console.log("** Twitter Sync Start **");
             localStorage.setItem("lastTwitterSynced",new Date().toString());
             const ax = await (await fetch("https://us-central1-bpim-d5971.cloudfunctions.net/getTwitterInfo?targetId=" + user.providerData[0]["uid"])).json();
