@@ -2,6 +2,7 @@ import fbActions from '../firebase/actions';
 import { _isSingle, _currentStore } from '../settings';
 import { rivalListsDB } from '../indexedDB';
 import { DBRivalStoreData, rivalStoreData } from '../../types/data';
+import { alternativeImg } from '../common';
 
 export const getTwitterName = (input:string)=>{
   const match = input.match(/@[a-zA-Z0-9_]+/);
@@ -20,7 +21,10 @@ export const getAltTwitterIcon = (data:rivalStoreData|DBRivalStoreData,isLocal:b
       return "https://unavatar.now.sh/twitter/" + data.twitter;
     }
   }
-  return getTwitterName(data.profile) ? "https://unavatar.now.sh/twitter/" + getTwitterName(data.profile) : null;
+  if(data.profile){
+    return getTwitterName(data.profile) ? "https://unavatar.now.sh/twitter/" + getTwitterName(data.profile) : null;
+  }
+  return alternativeImg(data.uid);
 }
 
 export const updateRivalScore = async (rivalMeta:DBRivalStoreData):Promise<string>=>{

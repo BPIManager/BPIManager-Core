@@ -11,6 +11,7 @@ interface S{
   goalPercentage:number,
   area:number,
   update:boolean,
+  userData:any,
 }
 
 export default class GlobalContainer extends Container<S> {
@@ -25,6 +26,7 @@ export default class GlobalContainer extends Container<S> {
     this.setGoalPercentage = this.setGoalPercentage.bind(this);
     this.setArea = this.setArea.bind(this);
     this.setUpdateAvailable = this.setUpdateAvailable.bind(this);
+    this.setUserData = this.setUserData.bind(this);
   }
 
   state = {
@@ -36,7 +38,12 @@ export default class GlobalContainer extends Container<S> {
     goalPercentage : _goalPercentage(),
     area: _area(),
     update:false,
-    cannotMove: false
+    cannotMove: false,
+    userData:null
+  }
+
+  setUserData(userData:any){
+    this.setState({ userData: userData })
   }
 
   setLang(newLang:string) {

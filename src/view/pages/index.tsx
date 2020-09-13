@@ -103,14 +103,12 @@ class IfNotOnTheHomeScreen extends React.Component<{
       const data = await versions.json();
       const currentVersion = _currentVersion();
       if(data.version !== currentVersion){
-        this.props.global.setMove(true);
         this.setState({
           showUpdate:true,
           latestVersion:data.version,
           updateInfo:data.updateInfo,
         });
       }
-
     }catch(e){
       console.log(e);
     }

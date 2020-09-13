@@ -7,14 +7,14 @@ import { _currentDefinitionURL } from '../settings';
 import fbActions from '../firebase/actions';
 import Loader from '@/view/components/common/loader';
 
-export default class Initialize extends React.Component<{},{show:boolean,error:boolean,errorMessage:string,consoleMes:string,p:number}>{
+export default class Initialize extends React.Component<{global:any},{show:boolean,error:boolean,errorMessage:string,consoleMes:string,p:number}>{
   private songsDB = new songsDB();
   private scoresDB = new scoresDB();
   private scoreHistoryDB = new scoreHistoryDB();
   private rivalListsDB = new rivalListsDB();
   private fbA:fbActions = new fbActions();
 
-  constructor(props:Object){
+  constructor(props:{global:any}){
     super(props);
     this.state = {
       show : true,

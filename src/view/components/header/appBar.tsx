@@ -14,7 +14,7 @@ import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import {Link as RefLink, Collapse} from '@material-ui/core/';
+import {Link as RefLink, Collapse, Avatar, Chip} from '@material-ui/core/';
 import LibraryMusicIcon from "@material-ui/icons/LibraryMusic";
 import TrendingUpIcon from "@material-ui/icons/TrendingUp";
 import SettingsIcon from "@material-ui/icons/Settings";
@@ -38,6 +38,11 @@ import LanguageIcon from '@material-ui/icons/Language';
 import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
 import ThumbsUpDownIcon from '@material-ui/icons/ThumbsUpDown';
 import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
+import { getAltTwitterIcon } from "@/components/rivals";
+import { alternativeImg } from "@/components/common";
+import fbActions from "@/components/firebase/actions";
+import {ReactComponent as Logo} from "@/assets/aix2f-q5h7x.svg";
+import LockOpenIcon from '@material-ui/icons/LockOpen';
 
 interface navBars {
   to:string,
@@ -103,7 +108,8 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
   isOpenSongs:boolean,
   isOpenMyStat:boolean,
   isOpenSocial:boolean,
-  errorSnack:boolean
+  errorSnack:boolean,
+  user:any,
 }>{
 
   constructor(props:{global:any,classes:any,theme:any,children:any} & HideOnScrollProps&RouteComponentProps){
@@ -113,7 +119,31 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
       isOpenSongs:true,
       isOpenMyStat: false,
       isOpenSocial: false,
-      errorSnack:false
+      errorSnack:false,
+      user:null,
+    }
+  }
+
+  async componentDidMount(){
+    this.userData();
+  }
+
+  userData = async ()=>{
+    if(localStorage.getItem("social")){
+      try{
+        return this.setState({user:JSON.parse(localStorage.getItem("social") || "[]")});
+      }catch(e){
+        return this.setState({user:null});
+      }
+    }else{
+        return new fbActions().auth().onAuthStateChanged(async(user: any)=> {
+          if(!user){return this.setState({user:null})}
+          const u = await new fbActions().setDocName(user.uid).getSelfUserData();
+          if(u.exists){
+            localStorage.setItem("social",JSON.stringify(u.data()))
+          }
+          return this.setState({user:u.data()});
+        });
     }
   }
 
@@ -124,7 +154,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
   toggleErrorSnack = ()=> this.setState({errorSnack:!this.state.errorSnack});
 
   render(){
-    const {isOpen,isOpenSongs,isOpenMyStat,isOpenSocial} = this.state;
+    const {isOpen,isOpenSongs,isOpenMyStat,isOpenSocial,user} = this.state;
     const page = this.props.location.pathname.split("/");
     const currentPage = ()=>{
       switch(page[1]){
@@ -244,11 +274,42 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         icon:<HelpIcon />
       }
     ]
-    const { classes,history,global } = this.props;
+    const { classes,history } = this.props;
     const drawer = (isPerment:boolean)=>(
       <div>
-        <img src={`https://files.poyashi.me/bpim/${global.state.theme === "light" ? "lightVersion" : "darkVersion"}.png`}
-         style={{width:"230px",userSelect:"none"}} alt="BPIM Logo"/>
+        <div style={{margin:"8px 0",padding:"0 8px"}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+            <Logo onClick={()=>{history.push("/");if(!isPerment){this.toggleNav()}}} style={{width:"44px",height:"44px"}}/>
+            {user && (
+              <Chip
+                avatar={(
+                  <Avatar style={{width:"32px",height:"32px"}}>
+                    <img src={user.photoURL ? user.photoURL.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
+                      alt={user.displayName || "Unpublished User"}
+                      onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(user) || alternativeImg(user.displayName)}/>
+                  </Avatar>
+                )}
+                onClick={()=>{history.push("/sync/settings");if(!isPerment){this.toggleNav()}}}
+                label={"アカウント設定"}
+                clickable
+                color="primary"
+              />
+            )}
+            {!user && (
+              <Chip
+                avatar={(
+                  <Avatar style={{width:"32px",height:"32px"}}>
+                    <LockOpenIcon/>
+                  </Avatar>
+                )}
+                onClick={()=>{history.push("/sync/settings");if(!isPerment){this.toggleNav()}}}
+                label={"ログイン"}
+                clickable
+                color="primary"
+              />
+            )}
+          </div>
+        </div>
         <Divider />
         {navBarTop.map(item=>(
           <ListItem key={item.id} onClick={()=>{history.push(item.to);if(!isPerment){this.toggleNav()}}} button>
@@ -298,8 +359,8 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
                 <MenuIcon />
               </IconButton>
               <Typography variant="h6">
-                {(page.length === 2 || page[1] === "lists" || page[1] === "notes" || page[1] === "help") && <FormattedMessage id={currentPage()}/>}
-                {(page.length > 2 && page[1] !== "lists" && page[1] !== "notes" && page[1] !== "help") && currentPage()}
+                {(page.length === 2 || page[1] === "lists" || page[1] === "notes" || page[1] === "help" || page[1] === "sync") && <FormattedMessage id={currentPage()}/>}
+                {(page.length > 2 && page[1] !== "lists" && page[1] !== "notes" && page[1] !== "help" && page[1] !== "sync") && currentPage()}
               </Typography>
             </Toolbar>
           </AppBar>

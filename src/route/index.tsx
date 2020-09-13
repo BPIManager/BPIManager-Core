@@ -37,6 +37,7 @@ import NoteIndv from '@/view/pages/noteIndv';
 import HelpNotes from '@/view/pages/helpNotes';
 import SitemapGen from '@/view/pages/sitemap';
 import HelpStart from '@/view/pages/helpStart';
+import SyncSettings from '@/view/components/syncSettings';
 
 export default class Router extends React.Component<{},{}> {
 
@@ -70,6 +71,7 @@ export default class Router extends React.Component<{},{}> {
                   <Route path="/help/notes" exact component={HelpNotes}/>
                   <Route path="/help/start" exact component={HelpStart}/>
                   <Route path="/sync" exact component={SyncIndex}/>
+                  <Route path="/sync/settings" exact component={SyncSettings}/>
                   <Route path="/rivals" exact component={Rivals}/>
                   <Route path="/rivalCompare" exact component={RivalChallengeLetters}/>
                   <Route path="/AAATable" exact component={AAATable}/>

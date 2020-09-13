@@ -52,7 +52,7 @@ export default class App extends React.Component<{},{}> {
             return (
               <ThemeProvider theme={c === "dark" ? Dark : c === "light" ? Light : DarkNavy}>
                 <CssBaseline />
-                <Initialize/>
+                <Initialize global={global}/>
                 <div id={c === "dark" ? "__dark" : c === "light" ? "__light" : "__deepsea"}>
                   <Router/>
                 </div>

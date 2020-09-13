@@ -179,8 +179,7 @@ class MyNotes extends React.Component<{},S> {
               <Alert severity="error">
                 <AlertTitle>まだノートを投稿していません</AlertTitle>
                 <p>あなたの知恵をノートとしてシェアしませんか？<br/>
-                <RLink to="/songs"><Link color="secondary">楽曲一覧</Link></RLink>からノートを投稿したい楽曲をタップし、「NOTES」タブを選択して書き込みしてください。<br/>
-                楽曲一覧上の楽曲名を長押しすることで、直接ノートページを開くこともできます。</p>
+                <RLink to="/songs"><Link color="secondary">楽曲一覧</Link></RLink>からノートを投稿したい楽曲をタップし、「NOTES」タブを選択して書き込みしてください。</p>
               </Alert>
             )}
         {(isModalOpen && data) && <ModalNotes derived={data} isOpen={isModalOpen} handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}

@@ -66,7 +66,12 @@ export default class fbActions{
   }
 
   logout():Promise<void>{
+    localStorage.removeItem("social");
     return fb.auth().signOut();
+  }
+
+  getSelfUserData(){
+    return firestore.collection("users").doc(this.docName).get();
   }
 
   private name:string = "";
@@ -93,7 +98,8 @@ export default class fbActions{
   setTwitterId(id:string){
     const docRef = firestore.collection(this.name).doc(this.docName);
     return docRef.set({
-      twitter:id
+      twitter:id,
+      uid:this.docName,
     },{merge:true});
   }
 
