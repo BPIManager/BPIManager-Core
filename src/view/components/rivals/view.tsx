@@ -18,6 +18,7 @@ interface S {
   isLoading:boolean,
   currentTab:number,
   full:withRivalData[],
+  rivalRawData:rivalScoreData[],
 }
 
 interface P {
@@ -37,7 +38,8 @@ class RivalView extends React.Component<P,S> {
     this.state = {
       isLoading:true,
       currentTab:0,
-      full:[]
+      full:[],
+      rivalRawData:[]
     }
   }
 
@@ -47,42 +49,12 @@ class RivalView extends React.Component<P,S> {
 
   loadRivalData = async()=>{
     this.setState({isLoading:true});
-    const {rivalData,showAllScore} = this.props;
-    const allScores = (await new scoresDB().getAll()).reduce((groups:{[key:string]:scoreData},item:scoreData)=>{
-      groups[item.title + item.difficulty] = item;
-      return groups;
-    },{});
-    const allRivalScores = (this.props.descendingRivalData || await new rivalListsDB().getAllScores(rivalData)).reduce((groups:{[key:string]:rivalScoreData},item:rivalScoreData)=>{
-      groups[item.title + item.difficulty] = item;
-      return groups;
-    },{});
+    const {rivalData,showAllScore,descendingRivalData} = this.props;
+    const raw = await fullData(descendingRivalData,rivalData);
     return this.setState({
       isLoading:false,
-      full:Object.keys(allRivalScores).reduce((groups:withRivalData[],key:string)=>{
-        const mine = allScores[key] || {
-          exScore:0,
-          missCount:NaN,
-          clearState:7,
-          updatedAt:"-",
-        };
-        if(showAllScore || mine.exScore !== 0){
-          const rival = allRivalScores[key];
-          groups.push({
-            title:mine.title,
-            difficulty:mine.difficulty,
-            difficultyLevel:mine.difficultyLevel,
-            myEx:mine.exScore,
-            rivalEx:rival.exScore,
-            myMissCount:mine.missCount,
-            rivalMissCount:rival.missCount,
-            myClearState:mine.clearState,
-            rivalClearState:rival.clearState,
-            myLastUpdate:mine.updatedAt,
-            rivalLastUpdate:rival.updatedAt,
-          });
-        }
-        return groups;
-      },[])
+      rivalRawData:raw,
+      full:await makeRivalStat(raw,showAllScore)
     });
   }
 
@@ -93,7 +65,7 @@ class RivalView extends React.Component<P,S> {
   rivalName = ()=> (this.props.isNotRival ? (this.props.rivalMeta as rivalStoreData).displayName : (this.props.rivalMeta as DBRivalStoreData).rivalName);
 
   render(){
-    const {isLoading,currentTab,full} = this.state;
+    const {isLoading,currentTab,full,rivalRawData} = this.state;
     const {backToMainPage,isNotRival,rivalMeta,showAllScore} = this.props;
     if(isLoading){
       return (<Loader/>);
@@ -104,23 +76,69 @@ class RivalView extends React.Component<P,S> {
           <Button onClick={backToMainPage} style={{minWidth:"auto",padding:"6px 0px"}}><ArrowBackIcon/></Button>
           &nbsp;{rivalMeta && this.rivalName()}
         </Typography>
-        <Tabs
-          value={this.state.currentTab}
-          onChange={this.handleChange}
-          indicatorColor="primary"
-          textColor="secondary"
-          style={{margin:"5px 0"}}
-        >
-          <Tab label="比較" />
-          <Tab label="統計" />
-          {!isNotRival && <Tab label="設定" />}
-        </Tabs>
-        {currentTab === 0 && <SongsUI rivalName={this.rivalName} showAllScore={showAllScore} type={0} full={full}/>}
-        {currentTab === 1 && <RivalStats full={full}/>}
-        {(rivalMeta && !isNotRival && currentTab === 2) && <Settings backToMainPage={this.props.backToMainPage} toggleSnack={this.props.toggleSnack} rivalMeta={rivalMeta as DBRivalStoreData}/>}
+        {(!rivalMeta || isNotRival) && <SongsUI rivalName={this.rivalName} showAllScore={showAllScore} type={0} full={full}/>}
+        {(rivalMeta && !isNotRival) && (
+          <div>
+            <Tabs
+              value={this.state.currentTab}
+              onChange={this.handleChange}
+              indicatorColor="primary"
+              textColor="secondary"
+              style={{margin:"5px 0"}}
+            >
+              <Tab label="比較" />
+              <Tab label="統計" />
+              {!isNotRival && <Tab label="設定" />}
+            </Tabs>
+            {currentTab === 0 && <SongsUI rivalName={this.rivalName} showAllScore={showAllScore} type={0} full={full}/>}
+            {currentTab === 1 && <RivalStats full={full} rivalRawData={rivalRawData}/>}
+            {currentTab === 2 && <Settings backToMainPage={this.props.backToMainPage} toggleSnack={this.props.toggleSnack} rivalMeta={rivalMeta as DBRivalStoreData}/>}
+          </div>
+        )}
       </Container>
     );
   }
 }
 
 export default RivalView;
+
+export const makeRivalStat = async(full:rivalScoreData[],showAllScore:boolean = false)=>{
+  const allScores = (await new scoresDB().getAll()).reduce((groups:{[key:string]:scoreData},item:scoreData)=>{
+    groups[item.title + item.difficulty] = item;
+    return groups;
+  },{});
+  const rivalRawData = full;
+  const allRivalScores = rivalRawData.reduce((groups:{[key:string]:rivalScoreData},item:rivalScoreData)=>{
+    groups[item.title + item.difficulty] = item;
+    return groups;
+  },{});
+  return Object.keys(allRivalScores).reduce((groups:withRivalData[],key:string)=>{
+    const mine = allScores[key] || {
+      exScore:0,
+      missCount:NaN,
+      clearState:7,
+      updatedAt:"-",
+    };
+    if(showAllScore || mine.exScore !== 0){
+      const rival = allRivalScores[key];
+      groups.push({
+        title:mine.title,
+        difficulty:mine.difficulty,
+        difficultyLevel:mine.difficultyLevel,
+        myEx:mine.exScore,
+        rivalEx:rival.exScore,
+        myMissCount:mine.missCount,
+        rivalMissCount:rival.missCount,
+        myClearState:mine.clearState,
+        rivalClearState:rival.clearState,
+        myLastUpdate:mine.updatedAt,
+        rivalLastUpdate:rival.updatedAt,
+      });
+    }
+    return groups;
+  },[]);
+}
+
+export const fullData = async(descendingRivalData:rivalScoreData[]|undefined,rivalData:string = ""):Promise<rivalScoreData[]>=>{
+  return (descendingRivalData || await new rivalListsDB().getAllScores(rivalData))
+}

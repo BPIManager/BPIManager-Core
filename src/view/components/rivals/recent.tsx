@@ -131,6 +131,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
       uid:meta.uid,
       photoURL:meta.photoURL,
       profile:meta.profile,
+      socialId:meta.twitter || "",
       updatedAt:meta.timeStamp,
       lastUpdatedAt:meta.timeStamp,
       isSingle:_isSingle(),

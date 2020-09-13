@@ -20,6 +20,7 @@ import Typography from '@material-ui/core/Typography';
 import firebase from 'firebase/app';
 import 'firebase/messaging';
 import Loader from '@/view/components/common/loader';
+import { getAltTwitterIcon } from '@/components/rivals';
 
 interface P {
 }
@@ -154,7 +155,7 @@ class PushSettings extends React.Component<P,S> {
                   <Avatar>
                     <img src={item.to.photoURL ? item.to.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
                       alt={item.to.displayName}
-                      onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(item.to.displayName)}/>
+                      onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(item.to) || alternativeImg(item.to.displayName)}/>
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText

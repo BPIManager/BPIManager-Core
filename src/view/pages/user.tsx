@@ -15,7 +15,7 @@ import TwitterIcon from '@material-ui/icons/Twitter';
 import ShareButtons from '@/view/components/common/shareButtons';
 import { rivalListsDB } from '@/components/indexedDB';
 import ShowSnackBar from '@/view/components/snackBar';
-import RivalView from '@/view/components/rivals/view';
+import RivalView, { makeRivalStat } from '@/view/components/rivals/view';
 import { rivalScoreData, rivalStoreData } from '@/types/data';
 import {Link, Chip, Divider, Grid, GridList, GridListTile, GridListTileBar, ListSubheader, List, ListItem, ListItemAvatar, ListItemText, ListItemSecondaryAction, IconButton} from '@material-ui/core/';
 import {Link as RefLink} from "react-router-dom";
@@ -30,6 +30,9 @@ import CommentIcon from '@material-ui/icons/Comment';
 import NotesView from '../components/notes/user';
 import { Helmet } from 'react-helmet';
 import { getTwitterName, getAltTwitterIcon } from '@/components/rivals';
+import EqualizerIcon from '@material-ui/icons/Equalizer';
+import { withRivalData } from '@/components/stats/radar';
+import RivalStatViewFromUserPage from '../components/rivals/viewComponents/statsFromUserPage';
 
 interface S {
   userName:string,
@@ -54,6 +57,7 @@ interface S {
   },
   limited:boolean,
   myId:string,
+  rivalStat:withRivalData[],
 }
 
 class User extends React.Component<{intl:any,currentUserName?:string,limited?:boolean,updateName?:(name:string)=>void}&RouteComponentProps,S> {
@@ -89,7 +93,8 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
         followings:0,
       },
       limited:props.limited || false,
-      myId:""
+      myId:"",
+      rivalStat:[],
     }
   }
 
@@ -135,7 +140,6 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
   search = async(forceUserName?:string):Promise<void>=>{
     let {userName} = this.state;
     const rivalScores = async(res:any)=>{
-      if(this.state.currentView !== 1) return [];
       try{
         const store = await this.fbStores.setDocName(res.uid).load();
         if(!store){
@@ -155,11 +159,13 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     if(res){
       const totalBPI = res.totalBPI || "-";
       this.countAsync(res.uid);
+      const scores = await rivalScores(res);
       return this.setState({
         userName:userName,res:res,uid:res.uid,
-        rivalData:await rivalScores(res),
+        rivalData:scores,
         totalBPI:totalBPI,
         rivalUids:await this.rivalListsDB.getAllRivalUid(),
+        rivalStat:await makeRivalStat(scores,true)
       });
     }else{
       return this.setState({userName:"", res:null,uid:""});
@@ -247,7 +253,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
   }
 
   render(){
-    const {processing,add,myId,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI,loadingRecommended,recommendUsers,counts,limited} = this.state;
+    const {processing,add,myId,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI,loadingRecommended,recommendUsers,counts,limited,rivalStat} = this.state;
     const url = config.baseUrl + "/u/" + encodeURI(userName);
     const isAdded = this.state.rivalUids.indexOf(uid) > -1;
     if(processing){
@@ -280,8 +286,16 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
         </Container>
       )
     }
+    if(currentView === 4){
+      return (
+        <Container fixed  className="commonLayout">
+          <RivalStatViewFromUserPage full={rivalStat} rivalRawData={rivalData} backToMainPage={this.backToMainPage} name={res.displayName}/>
+        </Container>
+      )
+    }
     const buttons = [
       {icon:<ViewListIcon />,primary:"スコアを見る",secondary:(res.displayName) + "さんの登録スコアを表示します",onClick:()=>this.view(1)},
+      {icon:<EqualizerIcon />,primary:"統計データを表示",secondary:(res.displayName) + "さんの統計データを表示します",onClick:()=>this.view(4)},
       {icon:<WbIncandescentIcon />,primary:"AAA達成表",secondary:"BPIに基づいたAAA達成難易度表を表示します",onClick:()=>this.view(2)},
     ]
     if(res.showNotes){

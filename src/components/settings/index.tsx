@@ -160,12 +160,12 @@ export const pieColor = (i:number)=>{
     def = [148,51,0,1];
   }
   if(c === "dark"){
-    def = [187,187,187,1];
+    def = [200,200,200,1];
   }
   if(c === "deepsea"){
     def = [92,115,242,1];
   }
-  const perf = (100 - (c === "light" ? i : 7 - i) * 13 ) / 100;
+  const perf = (100 - (c === "light" ? i : 7 - i) * 10 ) / 100;
   return `rgba(${def[0]},${def[1]},${def[2]},${def[3] * perf})`
 }
 

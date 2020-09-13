@@ -8,9 +8,17 @@ export const getTwitterName = (input:string)=>{
   return match ? match[0].replace(/@/g,"") : "";
 }
 
-export const getAltTwitterIcon = (data:rivalStoreData):string|null=>{
-  if(data.twitter){
-    return "https://unavatar.now.sh/twitter/" + getTwitterName(data.profile);
+export const getAltTwitterIcon = (data:rivalStoreData|DBRivalStoreData,isLocal:boolean = false):string|null=>{
+  if(isLocal){
+    data = data as DBRivalStoreData;
+    if(data.socialId){
+      return "https://unavatar.now.sh/twitter/" + data.socialId;
+    }
+  }else{
+    data = data as rivalStoreData;
+    if(data.twitter){
+      return "https://unavatar.now.sh/twitter/" + data.twitter;
+    }
   }
   return getTwitterName(data.profile) ? "https://unavatar.now.sh/twitter/" + getTwitterName(data.profile) : null;
 }
@@ -43,6 +51,7 @@ export const updateRivalScore = async (rivalMeta:DBRivalStoreData):Promise<strin
       rivalName:res.displayName,
       uid:res.uid,
       photoURL:res.photoURL,
+      socialId:res.twitter || "",
       profile:res.profile,
       updatedAt:res.timeStamp,
       lastUpdatedAt:rivalMeta.updatedAt,

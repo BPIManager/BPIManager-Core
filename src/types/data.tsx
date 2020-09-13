@@ -71,7 +71,8 @@ export interface DBRivalStoreData{
   updatedAt:string,
   lastUpdatedAt:string,
   photoURL:string,
-  profile:string
+  profile:string,
+  socialId?:string
 }
 
 export interface rivalScoreData extends scoreDataOrigin{

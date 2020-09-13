@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Switch from '@material-ui/core/Switch';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -8,8 +7,9 @@ import { getRadar, Details, radarData, withRivalData } from '@/components/stats/
 import { _isSingle,_chartColor } from '@/components/settings';
 import Grid from '@material-ui/core/Grid';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, PolarRadiusAxis } from 'recharts';
-import {Link as RefLink, Table, TableBody, TableRow, TableCell, TableHead} from '@material-ui/core/';
+import {Link as RefLink, Table, TableBody, TableRow, TableCell, TableHead, Divider} from '@material-ui/core/';
 import Loader from '@/view/components/common/loader';
+import { rivalScoreData } from '@/types/data';
 
 interface S {
   scoresAbout:number[],
@@ -29,6 +29,7 @@ interface S {
 
 interface P {
   full:withRivalData[],
+  rivalRawData:rivalScoreData[],
 }
 
 class RivalStats extends React.Component<P,S> {
@@ -112,87 +113,83 @@ class RivalStats extends React.Component<P,S> {
           label="パーセント表示"
         />
         <div className="clearBoth"/>
-        <Paper style={{padding:"15px",margin:"0 0 15px 0"}}>
-          <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
-            スコア勝敗
-          </Typography>
-          <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
-            全体
-          </Typography>
-          <Graph sum={sum} content={scoresAbout} p={percentage}/>
-          <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
-            ☆11
-          </Typography>
-          <Graph sum={sum11} content={scoresByLevel11} p={percentage}/>
-          <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
-            ☆12
-          </Typography>
-          <Graph sum={sum12} content={scoresByLevel12} p={percentage}/>
-        </Paper>
-        <Paper style={{padding:"15px",margin:"0 0 15px 0"}}>
-          <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
-            クリア勝敗
-          </Typography>
-          <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
-            全体
-          </Typography>
-          <Graph sum={sum} content={clearAbout} p={percentage}/>
-          <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
-            ☆11
-          </Typography>
-          <Graph sum={sum11} content={clearByLevel11} p={percentage}/>
-          <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
-            ☆12
-          </Typography>
-          <Graph sum={sum12} content={clearByLevel12} p={percentage}/>
-        </Paper>
+        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
+          スコア勝敗
+        </Typography>
+        <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
+          全体
+        </Typography>
+        <Graph sum={sum} content={scoresAbout} p={percentage}/>
+        <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
+          ☆11
+        </Typography>
+        <Graph sum={sum11} content={scoresByLevel11} p={percentage}/>
+        <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
+          ☆12
+        </Typography>
+        <Graph sum={sum12} content={scoresByLevel12} p={percentage}/>
+        <Divider style={{margin:"15px 0"}}/>
+        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
+          クリア勝敗
+        </Typography>
+        <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
+          全体
+        </Typography>
+        <Graph sum={sum} content={clearAbout} p={percentage}/>
+        <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
+          ☆11
+        </Typography>
+        <Graph sum={sum11} content={clearByLevel11} p={percentage}/>
+        <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
+          ☆12
+        </Typography>
+        <Graph sum={sum12} content={clearByLevel12} p={percentage}/>
+        <Divider style={{margin:"15px 0"}}/>
         {(_isSingle() === 1 && radar && radar.length > 0) &&
           <Grid container spacing={3}>
             <Grid item xs={12} md={12} lg={12}>
-              <Paper style={{padding:"15px",margin:"0 0 15px 0"}}>
-                <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
-                  RADAR(<RefLink color="secondary" target="_blank" rel="noopener noreferrer" href="https://gist.github.com/potakusan/6c570528a42b3583a807c88fd3627092">?</RefLink>)
-                </Typography>
-                <Grid container spacing={0}>
-                  <Grid item xs={12} md={12} lg={6} style={{height:"350px"}}>
-                    <div style={{width:"100%",height:"100%"}}>
-                      <ResponsiveContainer>
-                        <RadarChart outerRadius={110} data={radar}>
-                          <PolarGrid />
-                          <PolarAngleAxis dataKey="title" stroke={chartColor} />
-                          <PolarRadiusAxis />
-                          <Radar name="You" dataKey="TotalBPI" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.6} />
-                          <Radar name="Rival" dataKey="rivalTotalBPI" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-                        </RadarChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </Grid>
-                  <Grid item xs={12} md={12} lg={6}>
-                    <Table size="small" style={{minHeight:"350px"}}>
-                      <TableHead>
-                        <TableRow className="detailModalTableRow">
-                          <TableCell component="th">
-                            傾向
-                          </TableCell>
-                          <TableCell align="right">ライバル</TableCell>
-                          <TableCell align="right">あなた</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {radar.concat().sort((a,b)=>b.rivalTotalBPI - a.rivalTotalBPI).map(row => (
-                          <TableRow key={row.title} onClick={()=>this.toggleRadarDetail(row.title)}>
-                            <TableCell component="th">
-                              {row.title}
-                            </TableCell>
-                            <TableCell align="right">{row.rivalTotalBPI.toFixed(2)}</TableCell>
-                            <TableCell align="right">{row.TotalBPI.toFixed(2)}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </Grid>
+              <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
+                RADAR(<RefLink color="secondary" target="_blank" rel="noopener noreferrer" href="https://gist.github.com/potakusan/6c570528a42b3583a807c88fd3627092">?</RefLink>)
+              </Typography>
+              <Grid container spacing={0}>
+                <Grid item xs={12} md={12} lg={6} style={{height:"350px"}}>
+                  <div style={{width:"100%",height:"100%"}}>
+                    <ResponsiveContainer>
+                      <RadarChart outerRadius={110} data={radar}>
+                        <PolarGrid />
+                        <PolarAngleAxis dataKey="title" stroke={chartColor} />
+                        <PolarRadiusAxis />
+                        <Radar name="You" dataKey="TotalBPI" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.6} />
+                        <Radar name="Rival" dataKey="rivalTotalBPI" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+                      </RadarChart>
+                    </ResponsiveContainer>
+                  </div>
                 </Grid>
-              </Paper>
+                <Grid item xs={12} md={12} lg={6}>
+                  <Table size="small" style={{minHeight:"350px"}}>
+                    <TableHead>
+                      <TableRow className="detailModalTableRow">
+                        <TableCell component="th">
+                          傾向
+                        </TableCell>
+                        <TableCell align="right">ライバル</TableCell>
+                        <TableCell align="right">あなた</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {radar.concat().sort((a,b)=>b.rivalTotalBPI - a.rivalTotalBPI).map(row => (
+                        <TableRow key={row.title} onClick={()=>this.toggleRadarDetail(row.title)}>
+                          <TableCell component="th">
+                            {row.title}
+                          </TableCell>
+                          <TableCell align="right">{row.rivalTotalBPI.toFixed(2)}</TableCell>
+                          <TableCell align="right">{row.TotalBPI.toFixed(2)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         }

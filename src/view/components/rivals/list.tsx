@@ -7,7 +7,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ShowSnackBar from '../snackBar';
 import { rivalListsDB } from '@/components/indexedDB';
 import { DBRivalStoreData } from '@/types/data';
-import { updateRivalScore } from "@/components/rivals";
+import { updateRivalScore, getAltTwitterIcon } from "@/components/rivals";
 import Backdrop from "@material-ui/core/Backdrop";
 import timeFormatter,{timeCompare} from "@/components/common/timeFormatter";
 import Loader from '@/view/components/common/loader';
@@ -214,7 +214,7 @@ class RivalComponent extends React.Component<CP,{}> {
           <Avatar>
             <img src={data.photoURL ? data.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
               alt={data.rivalName}
-              onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(data.rivalName)}/>
+              onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(data,true) || alternativeImg(data.rivalName)}/>
           </Avatar>
         </ListItemAvatar>
         <ListItemText primary={data.rivalName} secondary={text} />

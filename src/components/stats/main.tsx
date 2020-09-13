@@ -1,6 +1,6 @@
 import { groupedArray, perDate } from "../../types/stats";
 import { songsDB, scoresDB, scoreHistoryDB } from "../indexedDB";
-import { songData, scoreData, historyData } from "../../types/data";
+import { songData, scoreData, historyData, rivalScoreData } from "../../types/data";
 import { _isSingle, _currentStore } from "../settings";
 import { _DiscriminateRanksByNumber } from "../common/djRank";
 import { difficultyDiscriminator } from "../songs/filter";
@@ -25,7 +25,7 @@ export const statMain = class {
     this.targetLevel = targetLevel;
   }
 
-  async load():Promise<this>{
+  async load(_derived?:rivalScoreData[]):Promise<this>{
     await this.db.loadStore();
     this.songs = await new songsDB().getAll(isSingle);
     this.twelves = await this.db.getItemsBySongDifficulty("12");

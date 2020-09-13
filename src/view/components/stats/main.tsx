@@ -13,10 +13,11 @@ import Loader from '../common/loader';
 import { bpmDist } from '@/components/stats/bpmDist';
 import { S, groupedArray } from '@/types/stats';
 import { BPITicker, statMain } from '@/components/stats/main';
+import { rivalScoreData } from '@/types/data';
 
-class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
+class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteComponentProps,S> {
 
-  constructor(props:{intl:any}&RouteComponentProps){
+  constructor(props:{intl:any,derived?:rivalScoreData[]}&RouteComponentProps){
     super(props);
     this.state ={
       isLoading:true,
@@ -41,7 +42,7 @@ class Main extends React.Component<{intl:any}&RouteComponentProps,S> {
 
   async updateScoreData(targetLevel = 12){
     const bpi = new bpiCalcuator();
-    const exec = await new statMain(targetLevel).load();
+    const exec = await new statMain(targetLevel).load(this.props.derived);
     const totalBPI = bpi.setSongs(exec.at(),exec.at().length);
     //BPI別集計
     this.setState({

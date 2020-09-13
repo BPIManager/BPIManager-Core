@@ -26,6 +26,7 @@ import Menu from '@material-ui/core/Menu';
 import Paper from '@material-ui/core/Paper';
 import ShowSnackBar from '../snackBar';
 import Loader from '@/view/components/common/loader';
+import { getAltTwitterIcon } from '@/components/rivals';
 
 interface P {
 }
@@ -213,7 +214,7 @@ class SyncRivalScreen extends React.Component<P,S> {
                   <Avatar>
                     <img src={item.to.photoURL ? item.to.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
                       alt={item.to.displayName}
-                      onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(item.to.displayName)}/>
+                      onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(item.to) || alternativeImg(item.to.displayName)}/>
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
@@ -241,7 +242,7 @@ class SyncRivalScreen extends React.Component<P,S> {
                   <Avatar>
                     <img src={item.photoURL ? item.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
                       alt={item.displayName}
-                      onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(item.rivalName)}/>
+                      onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(item,true) || alternativeImg(item.rivalName)}/>
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
