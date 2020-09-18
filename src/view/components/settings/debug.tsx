@@ -2,7 +2,6 @@ import * as React from 'react';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import { _currentViewComponents, _setCurrentViewComponents,isEnableTweetButton } from '@/components/settings';
 import Loader from '@/view/components/common/loader';
 import Link from '@material-ui/core/Link';
 import Divider from '@material-ui/core/Divider';
