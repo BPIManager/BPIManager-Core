@@ -12,7 +12,6 @@ export interface scoreDataOrigin{
   storedAt:string,
   updatedAt:string,
   isSingle:number,
-  isImported?:boolean,
   _isAvailable?:boolean,
   willModified?:boolean,
 }
@@ -33,8 +32,6 @@ export interface songData{
   textage:string,
   difficultyLevel:string,
   dpLevel:string,
-  isFavorited:boolean,
-  isCreated:boolean,
   updatedAt:string,
   coef?:number,
   memo?:string,

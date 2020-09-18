@@ -142,7 +142,7 @@ class SongDetails extends React.Component<P> {
             <TableBody>
               <TableRow>
                 <TableCell><FormattedMessage id="SongDetail.Coef"/></TableCell>
-                <TableCell>{song.coef || 1.175}</TableCell>
+                <TableCell>{song.coef || "設定されていません"}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Plot</TableCell>

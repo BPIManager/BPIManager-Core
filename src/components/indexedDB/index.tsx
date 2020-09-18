@@ -21,6 +21,7 @@ const storageWrapper = class extends Dexie{
 
   constructor(){
     super("ScoreCoach");
+    this.close();
     this.version(1).stores({
       scores : "[title+difficulty+storedAt+isSingle],title,*difficulty,*difficultyLevel,*version,currentBPI,exScore,Pgreat,great,missCount,clearState,lastPlayed,storedAt,isSingle,isImported,updatedAt,lastScore",
       songs : "&++num,title,*difficulty,*difficultyLevel,wr,avg,notes,bpm,textage,dpLevel,isCreated,isFavorited,[title+difficulty]",
@@ -138,6 +139,16 @@ const storageWrapper = class extends Dexie{
       favLists : "&num,title,length,description,icon,updatedAt",
       favSongs : "&[title+difficulty+listedOn],[title+difficulty],listedOn",
     });
+    // dummy update
+    this.version(20).stores({
+      scores : "[title+difficulty+storedAt+isSingle],title,*difficulty,*difficultyLevel,currentBPI,exScore,missCount,clearState,storedAt,isSingle,updatedAt,lastScore",
+      songs : "&++num,title,*difficulty,*difficultyLevel,wr,avg,notes,bpm,textage,dpLevel,memo,[title+difficulty]",
+      rivals : "&[title+difficulty+storedAt+isSingle+rivalName],rivalName,title,*difficulty,*difficultyLevel,exScore,missCount,clearState,storedAt,isSingle,updatedAt",
+      rivalLists : "&uid,rivalName,lastUpdatedAt,updatedAt,[isSingle+storedAt],photoURL,profile,socialId",
+      scoreHistory : "&++num,[title+storedAt+difficulty+isSingle],[title+storedAt+difficulty+isSingle+updatedAt],title,difficulty,difficultyLevel,storedAt,exScore,BPI,isSingle,updatedAt",
+      favLists : "&num,title,length,description,icon,updatedAt",
+      favSongs : "&[title+difficulty+listedOn],[title+difficulty],listedOn",
+    });
     this.scores = this.table("scores");
     this.scoreHistory = this.table("scoreHistory");
     this.songs = this.table("songs");
@@ -145,6 +156,7 @@ const storageWrapper = class extends Dexie{
     this.rivalLists = this.table("rivalLists");
     this.favLists = this.table("favLists");
     this.favSongs = this.table("favSongs");
+    this.open();
   }
 
   protected newSongs:{[key:string]:songData} = {};
@@ -801,6 +813,11 @@ export const scoreHistoryDB = class extends storageWrapper{
 
 export const songsDB = class extends storageWrapper{
   songs: Dexie.Table<any, any>;
+
+  getDBInfo = async ()=>{
+    const db = await this.open();
+    return db;
+  }
 
   constructor(){
     super();

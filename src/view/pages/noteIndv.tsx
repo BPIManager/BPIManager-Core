@@ -49,8 +49,6 @@ class NoteIndv extends React.Component<RouteComponentProps,{
       dpLevel:isSingle ? "0" : "12",
       bpm:"0",
       textage:"0",
-      isFavorited:false,
-      isCreated:false,
       updatedAt:timeFormatter()
     },score:score,isLoading:false});
   }

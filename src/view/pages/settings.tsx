@@ -7,6 +7,7 @@ import Tab from '@material-ui/core/Tab';
 import Basic from "@/view/components/settings/basic";
 import View from "@/view/components/settings/view";
 import Advanced from "@/view/components/settings/advanced";
+import DebugData from "@/view/components/settings/debug";
 
 interface S {
   currentTab:number
@@ -38,10 +39,12 @@ class Stats extends React.Component<{intl:any,global:any},S> {
           <Tab label="基本" />
           <Tab label="表示" />
           <Tab label="その他" />
+          <Tab label="デバッグ情報" />
         </Tabs>
         {this.state.currentTab === 0 && <Basic global={this.props.global}/>}
         {this.state.currentTab === 1 && <View global={this.props.global}/>}
         {this.state.currentTab === 2 && <Advanced global={this.props.global}/>}
+        {this.state.currentTab === 3 && <DebugData/>}
       </Container>
     );
   }

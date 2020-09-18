@@ -85,8 +85,6 @@ export default class Initialize extends React.Component<{global:any},{show:boole
       let p = [];
       for(let i=0;i < csv.body.length;++i){
         p.push(Object.assign(csv["body"][i],{
-          isFavorited:false,
-          isCreated:false,
           updatedAt:now,
         }));
       }
