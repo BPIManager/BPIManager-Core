@@ -162,8 +162,6 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
             まだライバルがいません。
           </Alert>
         )}
-        <Divider style={{margin:"10px 0"}}/>
-        <AdsCard/>
         <List
           subheader={
             <ListSubheader component="div" disableSticky>
@@ -192,6 +190,7 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
           })
         }
         </List>
+        <AdsCard/>
         <ShowSnackBar message={message} variant={message === updateMinuteError ? "warning" : "success"}
             handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>
       </div>

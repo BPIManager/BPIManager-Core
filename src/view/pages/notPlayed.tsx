@@ -5,6 +5,7 @@ import { difficultyDiscriminator } from '@/components/songs/filter';
 import { _isSingle,_currentStore } from '@/components/settings';
 import NotPlayList from '@/view/components/songs/notplayed/notPlayList';
 import Loader from '@/view/components/common/loader';
+import AdsCard from '@/components/ad';
 
 interface S {
   full:songData[]
@@ -57,6 +58,7 @@ export default class NotPlayed extends React.Component<{},S> {
     return (
       <div id="_notPlayed">
         <NotPlayList title="NotPlayed.Title" full={this.state.full} updateScoreData={this.updateScoreData}/>
+        <AdsCard/>
       </div>
     );
   }

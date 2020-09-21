@@ -72,7 +72,7 @@ import {Link as RefLink} from '@material-ui/core/';
       "body":
         <div>
           <FormattedMessage id="Help.E.1"/><br/>
-          (ダイレクトメッセージを解放しています)
+          なお、その際には設定画面「デバッグ情報」タブ記載の説明に従い、デバッグ情報を共有いただけますと早期の問題解決が可能です。
         </div>
     },{
       "title":"Help.Requirements",

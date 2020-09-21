@@ -52,6 +52,9 @@ export const getTotalBPI = async():Promise<number>=>{
 export const noimg = "https://files.poyashi.me/noimg.png"
 export const alternativeImg = (input:string) => {
   const namebased = ()=>{
+    if(!input){
+      return "frogideas";
+    }
     switch(input[0].toLowerCase()){
       case "a":
       case "k":

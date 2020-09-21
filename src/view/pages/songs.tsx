@@ -3,6 +3,7 @@ import SongsList from '@/view/components/songs/played/songsList';
 import { scoresDB } from '@/components/indexedDB';
 import { scoreData } from '@/types/data';
 import Loader from '@/view/components/common/loader';
+import AdsCard from '@/components/ad';
 
 interface S {
   full:scoreData[]
@@ -34,6 +35,7 @@ export default class Songs extends React.Component<{},S> {
     return (
       <div>
         <SongsList isFav={false} title="Songs.title" full={this.state.full} updateScoreData={this.updateScoreData}/>
+        <AdsCard/>
       </div>
     );
   }
