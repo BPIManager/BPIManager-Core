@@ -130,7 +130,7 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
               </Typography>
               <Typography component="h5" variant="h5" color="textPrimary">
                 推定順位 : {_withOrd(totalRank)}
-                <ShareOnTwitter text={`★${targetLevel}の総合BPI:${totalBPI}(推定順位:${totalRank}位,皆伝上位${rankPer}%)\n前週比:${addPrefix(lastWeek)} 前月同日比:${addPrefix(lastMonth)} #BPIM`} url={url}/>
+                <ShareOnTwitter text={`★${targetLevel}の総合BPI:${totalBPI}(推定順位:${totalRank}位,皆伝上位${rankPer}%)\n前週比:${addPrefix(lastWeek)} 前月同日比:${addPrefix(lastMonth)}`} url={url}/>
               </Typography>
               <Typography component="p" variant="body1" color="textPrimary">
                 (皆伝上位{rankPer}%)
