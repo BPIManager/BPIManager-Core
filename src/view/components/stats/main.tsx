@@ -14,6 +14,9 @@ import { bpmDist } from '@/components/stats/bpmDist';
 import { S, groupedArray } from '@/types/stats';
 import { BPITicker, statMain } from '@/components/stats/main';
 import { rivalScoreData } from '@/types/data';
+import { ShareOnTwitter } from '../common/shareButtons';
+import { config } from '@/config';
+import dayjs from 'dayjs';
 
 class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteComponentProps,S> {
 
@@ -32,6 +35,8 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
       displayData:[0,1],
       showDisplayDataConfig:false,
       graphLastUpdated:new Date().getTime(),
+      lastWeek:null,
+      lastMonth:null,
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
@@ -53,6 +58,8 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
       groupedByBPM:await bpmDist(String(targetLevel) as "11"|"12"),
       groupedByDJRank:await exec.songsByDJRank(),
       groupedByClearState:await exec.songsByClearState(),
+      lastWeek:await exec.eachDaySum(4,dayjs().subtract(1, 'week').format()),
+      lastMonth:await exec.eachDaySum(4,dayjs().subtract(1, 'month').format()),
     });
   }
 
@@ -83,10 +90,21 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
   hasData = (name:number)=> this.state.displayData.indexOf(name) > -1;
 
   render(){
-    const {totalBPI,isLoading,targetLevel,groupedByBPM,totalRank,groupedByLevel,groupedByDJRank,groupedByClearState} = this.state;
+    const {totalBPI,isLoading,targetLevel,groupedByBPM,totalRank,groupedByLevel,groupedByDJRank,groupedByClearState,lastWeek,lastMonth} = this.state;
     const chartColor = _chartColor();
     const barColor = _chartBarColor("bar");
     const lineColor = _chartBarColor("line");
+    const addPrefix = (m:any)=>{
+      const s = m[m.length - 1] ? m[m.length - 1]["shiftedBPI"] : -15;
+      if(totalBPI - s === 0){
+        return "変動なし";
+      }
+      if(totalBPI - s > 0){
+        return "+" + Math.round((totalBPI - s) * 1000) / 1000;
+      }
+      return Math.round((totalBPI - s) * 1000) / 1000;
+    }
+    console.log(lastWeek,lastMonth);
     if(isLoading){
       return (
         <Container fixed  style={{padding:0}}>
@@ -95,7 +113,9 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
         </Container>
       );
     }
-
+    const rankPer = Math.round(totalRank / new bpiCalcuator().getTotalKaidens() * 1000000) / 10000;
+    const social = JSON.parse(localStorage.getItem("social") || "{}");
+    const url = social ? config.baseUrl + "/u/" + social.displayName : config.baseUrl;
     return (
       <Container fixed  style={{padding:0}}>
         <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel} isFlexEnd/>
@@ -110,9 +130,10 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
               </Typography>
               <Typography component="h5" variant="h5" color="textPrimary">
                 推定順位 : {_withOrd(totalRank)}
+                <ShareOnTwitter text={`★${targetLevel}の総合BPI:${totalBPI}(推定順位:${totalRank}位,皆伝上位${rankPer}%)\n前週比:${addPrefix(lastWeek)} 前月同日比:${addPrefix(lastMonth)} #BPIM`} url={url}/>
               </Typography>
               <Typography component="p" variant="body1" color="textPrimary">
-                (皆伝上位{Math.round(totalRank / new bpiCalcuator().getTotalKaidens() * 1000000) / 10000}%)
+                (皆伝上位{rankPer}%)
               </Typography>
             </div>
           </Grid>

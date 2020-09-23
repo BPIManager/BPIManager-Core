@@ -6,6 +6,7 @@ import { _DiscriminateRanksByNumber } from "../common/djRank";
 import { difficultyDiscriminator } from "../songs/filter";
 import bpiCalcuator from "../bpi";
 import timeFormatter, { timeCompare } from "../common/timeFormatter";
+import dayjs from "dayjs";
 const isSingle = _isSingle();
 const currentStore = _currentStore();
 export const BPITicker = [-20,-10,0,10,20,30,40,50,60,70,80,90,100];
@@ -111,7 +112,7 @@ export const statMain = class {
     return groupedByLevel;
   }
 
-  async eachDaySum(period:number):Promise<perDate[]>{
+  async eachDaySum(period:number,last?:string|Date):Promise<perDate[]>{
     let eachDaySum:perDate[] = [];
     let eachDayShift:{[key:string]:shiftType[]} = {};
     /*
@@ -147,36 +148,38 @@ export const statMain = class {
     }
     let lastDay:string;
     Object.keys(allDiffs).map((item)=>{
-      eachDayShift[item] = lastDay ? eachDayShift[lastDay].concat() : [];
-      const p = allDiffs[item].reduce((a:number[],val:historyData)=>{
-        eachDayShift[item] = eachDayShift[item].filter((elm)=>{
-          return (elm.title !== String(val.title + val.difficulty));
-        }); //重複削除
-        eachDayShift[item].push({title:val.title + val.difficulty,bpi:val.BPI}); //改めて追加
-        if(val.BPI){
-          a.push(val.BPI);
+      if(!last || dayjs(item).isBefore(last)){
+        eachDayShift[item] = lastDay ? eachDayShift[lastDay].concat() : [];
+        const p = allDiffs[item].reduce((a:number[],val:historyData)=>{
+          eachDayShift[item] = eachDayShift[item].filter((elm)=>{
+            return (elm.title !== String(val.title + val.difficulty));
+          }); //重複削除
+          eachDayShift[item].push({title:val.title + val.difficulty,bpi:val.BPI}); //改めて追加
+          if(val.BPI){
+            a.push(val.BPI);
+          }
+          lastDay = item;
+          return a;
+        },[]);
+        _bpi.allTwelvesLength = p.length;
+        _bpi.allTwelvesBPI = p;
+        const avg = _bpi.totalBPI();
+        const shift = this.getBPIShifts(eachDayShift[item]);
+        _bpi.allTwelvesLength = shift.length;
+        _bpi.allTwelvesBPI = shift;
+        const shiftBPI = _bpi.totalBPI();
+        const BPIsArray = getBPIArray(allDiffs[item]);
+        eachDaySum.push({
+          name : item,
+          sum : allDiffs[item].length,
+          shiftedBPI:shiftBPI,
+          max:Math.max(...BPIsArray),
+          min:Math.min(...BPIsArray),
+          med:this.getMedian(BPIsArray),
+          avg : avg ? avg : Math.round(total(allDiffs[item]) / allDiffs[item].length * 100) / 100
+        });
+        return 0;
         }
-        lastDay = item;
-        return a;
-      },[]);
-      _bpi.allTwelvesLength = p.length;
-      _bpi.allTwelvesBPI = p;
-      const avg = _bpi.totalBPI();
-      const shift = this.getBPIShifts(eachDayShift[item]);
-      _bpi.allTwelvesLength = shift.length;
-      _bpi.allTwelvesBPI = shift;
-      const shiftBPI = _bpi.totalBPI();
-      const BPIsArray = getBPIArray(allDiffs[item]);
-      eachDaySum.push({
-        name : item,
-        sum : allDiffs[item].length,
-        shiftedBPI:shiftBPI,
-        max:Math.max(...BPIsArray),
-        min:Math.min(...BPIsArray),
-        med:this.getMedian(BPIsArray),
-        avg : avg ? avg : Math.round(total(allDiffs[item]) / allDiffs[item].length * 100) / 100
-      });
-      return 0;
     });
     return eachDaySum.sort((a,b)=> timeCompare(a.name,b.name)).slice(-10);
   }

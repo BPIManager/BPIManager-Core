@@ -33,6 +33,8 @@ export interface S {
   showDisplayDataConfig:boolean,
   displayData:number[],
   graphLastUpdated:number,
+  lastWeek:any,
+  lastMonth:any,
 }
 
 export interface ShiftType {
