@@ -178,8 +178,8 @@ export const statMain = class {
           med:this.getMedian(BPIsArray),
           avg : avg ? avg : Math.round(total(allDiffs[item]) / allDiffs[item].length * 100) / 100
         });
-        return 0;
-        }
+      }
+      return 0;
     });
     return eachDaySum.sort((a,b)=> timeCompare(a.name,b.name)).slice(-10);
   }
