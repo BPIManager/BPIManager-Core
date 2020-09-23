@@ -115,7 +115,7 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
     }
     const rankPer = Math.round(totalRank / new bpiCalcuator().getTotalKaidens() * 1000000) / 10000;
     const social = JSON.parse(localStorage.getItem("social") || "{}");
-    const url = social ? config.baseUrl + "/u/" + social.displayName : config.baseUrl;
+    const url = config.baseUrl + ((social && social.displayName) ? "/u/" + social.displayName : "");
     return (
       <Container fixed  style={{padding:0}}>
         <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel} isFlexEnd/>
