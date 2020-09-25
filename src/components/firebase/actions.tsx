@@ -238,7 +238,7 @@ export default class fbActions{
         });
       }
       if(!input || (input === "")){ return [];}
-      const inputID = input.replace(/\D/g,"") || ""; // 数字のみ絞り出し、数字が無い場合（=空欄）は検索しない
+      const inputID = zenToHan(input).replace(/\D/g,"") || ""; // 数字のみ絞り出し、数字が無い場合（=空欄）は検索しない
       const inputHN = zenToHan(input).toLowerCase();
       const res = await firestore.collection("users").orderBy("displayNameSearch").startAt(inputHN).endAt(inputHN + "\uf8ff").get();
       if(inputID){

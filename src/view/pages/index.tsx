@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { FormattedMessage } from "react-intl";
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import {Link as RefLink, ListItem, ListItemAvatar, Avatar, ListItemText, ListItemSecondaryAction, IconButton, List, ButtonGroup} from '@material-ui/core/';
+import {Link as RefLink, ListItem, ListItemAvatar, Avatar, ListItemText, ListItemSecondaryAction, IconButton, List, ButtonGroup, Dialog, DialogTitle, DialogContent, Divider} from '@material-ui/core/';
 import { _lang, _currentVersion } from '@/components/settings';
 import PhonelinkSetupIcon from '@material-ui/icons/PhonelinkSetup';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
@@ -19,6 +19,10 @@ import AlertTitle from '@material-ui/lab/AlertTitle';
 import {Helmet} from "react-helmet";
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import FavoriteIcon from '@material-ui/icons/Favorite';
+import UpdateIcon from '@material-ui/icons/Update';
+import Loader from '../components/common/loader';
+import { updateDefFile } from '@/components/settings/updateDef';
+import CheckIcon from '@material-ui/icons/Check';
 
 class Index extends React.Component<RouteComponentProps&{global:any},{}> {
 
@@ -74,9 +78,6 @@ class IfNotOnTheHomeScreen extends React.Component<{
   global:any,
 },{
   show:boolean,
-  showUpdate:boolean,
-  latestVersion:string,
-  updateInfo:string,
   hide:boolean
 }>{
 
@@ -90,32 +91,12 @@ class IfNotOnTheHomeScreen extends React.Component<{
 
     this.state = {
       show:isPC() ? true : (regEx(/iphone|ipad|ipod/) && !isStandAloneIn_iOS()) ? true : (regEx(/android/) && !isStandAloneInAndroid()) ? true : false,
-      showUpdate:false,
-      latestVersion:"",
-      updateInfo:"",
       hide:!!localStorage.getItem("hide20200829"),
     }
   }
 
-  async componentDidMount(){
-    try{
-      const versions = await fetch("https://proxy.poyashi.me/?type=bpiVersion");
-      const data = await versions.json();
-      const currentVersion = _currentVersion();
-      if(data.version !== currentVersion){
-        this.setState({
-          showUpdate:true,
-          latestVersion:data.version,
-          updateInfo:data.updateInfo,
-        });
-      }
-    }catch(e){
-      console.log(e);
-    }
-  }
-
   render(){
-    const {show,showUpdate,latestVersion,updateInfo,hide} = this.state;
+    const {show,hide} = this.state;
     const navBar = [
       {
         to:"/help/start",
@@ -172,17 +153,8 @@ class IfNotOnTheHomeScreen extends React.Component<{
               </ButtonGroup>
             </Alert>
           }
-          {showUpdate && (
-            <Alert variant="outlined" severity="info"
-              action={
-                <Button color="inherit" size="small" onClick={()=>window.open(updateInfo)}>
-                  詳細
-                </Button>
-              }>
-              最新の楽曲データを利用可能です({latestVersion})。<br/>設定からアップデートしてください。
-            </Alert>
-          )}
         </Container>
+        <UpdateDef/>
         <Grid container>
         <Grid item xs={12} sm={12} md={6}>
         {show && <AddToHomeScreenTicker/>}
@@ -227,8 +199,7 @@ class IfNotOnTheHomeScreen extends React.Component<{
               <Grid item>
                 <Typography align="center" color="textSecondary" paragraph variant="caption">
                   <FormattedMessage id="Index.notes1"/><br/>
-                  <FormattedMessage id="Index.notes2"/><br/>
-                  English ver. is now available! Go to settings and there you can change the language used in this app.
+                  <FormattedMessage id="Index.notes2"/>
                 </Typography>
               </Grid>
             </Grid>
@@ -240,3 +211,90 @@ class IfNotOnTheHomeScreen extends React.Component<{
 }
 
 export default withRouter(Index);
+
+class UpdateDef extends React.Component<{},{
+  showUpdate:boolean,
+  latestVersion:string,
+  updateInfo:string,
+  progress:number
+}>{
+
+  constructor(props:{}){
+    super(props);
+    this.state = {
+      showUpdate:false,
+      latestVersion:"",
+      updateInfo:"",
+      progress:0
+    }
+  }
+
+  async componentDidMount(){
+    try{
+      const versions = await fetch("https://proxy.poyashi.me/?type=bpiVersion");
+      const data = await versions.json();
+      const currentVersion = _currentVersion();
+      if(data.version !== currentVersion){
+        this.setState({
+          showUpdate:true,
+          latestVersion:data.version,
+          updateInfo:data.updateInfo,
+        });
+      }
+    }catch(e){
+      console.log(e);
+    }
+  }
+
+  updateButton = async()=>{
+    this.setState({progress:1});
+    await updateDefFile();
+    this.setState({progress:2});
+  }
+
+  handleToggle = ()=> this.setState({showUpdate:false});
+
+  render(){
+    const {showUpdate,latestVersion,updateInfo,progress} = this.state;
+    if(!showUpdate){
+      return (null);
+    }
+    return (
+      <Dialog open={true}>
+        <DialogTitle>定義データを更新</DialogTitle>
+        <DialogContent>
+          {progress === 0 && <div>
+            最新の楽曲データ(ver{latestVersion})が利用可能です。<br/>
+            「更新」ボタンをクリックして更新するか、「閉じる」ボタンをクリックして後で更新できます。<br/>
+            <RefLink href={updateInfo} target="_blank" color="secondary">ここをクリック</RefLink>して、最新の楽曲データにおける変更点を確認できます。
+            <Divider style={{margin:"8px 0"}}/>
+            <Button
+              fullWidth
+              variant="contained"
+              color="secondary"
+              size="large"
+              onClick={this.updateButton}
+              startIcon={<UpdateIcon/>}>
+              今すぐ更新
+            </Button>
+            <Button onClick={this.handleToggle} color="secondary" fullWidth style={{marginTop:"8px"}}>
+              閉じる
+            </Button>
+          </div>}
+          {progress === 1 && <div>
+            <Loader text={"更新しています"}/>
+          </div>}
+          {progress === 2 && <div>
+            <div style={{display:"flex",alignItems:"center",margin:"20px 0",flexDirection:"column"}}>
+              <CheckIcon style={{ fontSize: 60 }}/>
+              <span>更新完了</span>
+            </div>
+            <Button onClick={this.handleToggle} color="secondary" fullWidth style={{marginTop:"8px"}}>
+              閉じる
+            </Button>
+          </div>}
+        </DialogContent>
+      </Dialog>
+    );
+  }
+}

@@ -9,12 +9,12 @@ export default class ShareButtons extends React.Component<{withTitle:boolean,url
   render(){
     return (
     <Grid container spacing={1} justify="center">
-      <Grid item xs={2}>
+      <Grid item xs={2} style={{display:"flex",justifyContent:"center"}}>
         <Link target="_blank" href={`https://social-plugins.line.me/lineit/share?url=${this.props.url || window.location.href}`}>
             <LINEIcon style={{width:"20px",height:"20px"}} />
         </Link>
       </Grid>
-      <Grid item xs={2}>
+      <Grid item xs={2} style={{display:"flex",justifyContent:"center"}}>
         <Link target="_blank" href={`https://twitter.com/intent/tweet?url=${this.props.url || window.location.href}&text=${encodeURIComponent(this.props.withTitle ? (this.props.text || "BPIManagerを使っています:") : "")}&hashtags=BPIM&related=BPIManager`}>
             <TwitterIcon style={{width:"20px",height:"20px"}} />
         </Link>

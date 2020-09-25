@@ -336,7 +336,7 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
             <Button
               className="filterButton"
               fullWidth
-              onClick={this.handleToggleFilterScreen} variant="outlined" color="primary"
+              onClick={this.handleToggleFilterScreen} variant="outlined" color="secondary"
               style={{marginRight:"10px",padding:"5px 6px",height:"100%",minWidth:"auto"}}>
               <FilterListIcon/>
             </Button>

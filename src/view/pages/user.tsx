@@ -25,7 +25,6 @@ import {arenaRankColor, alternativeImg, avatarBgColor, avatarFontColor} from '@/
 import Loader from '@/view/components/common/loader';
 import { config } from '@/config';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import AdsCard from '@/components/ad';
 import CommentIcon from '@material-ui/icons/Comment';
 import NotesView from '../components/notes/user';
 import { Helmet } from 'react-helmet';
@@ -410,9 +409,9 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
         }
         </List>
         <div style={{width:"50%",margin:"10px auto"}}>
+          <p style={{textAlign:"center"}}>プロフィールをシェア</p>
           <ShareButtons withTitle={true} url={url} text={res.displayName + " 総合BPI:" + String(Number.isNaN(totalBPI) ? "-" : totalBPI)}/>
         </div>
-        <AdsCard/>
         <ShowSnackBar message={message} variant={message === "ライバルを追加しました" ? "success" : "error"}
           handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>
       {loadingRecommended && <Loader/>}
@@ -420,7 +419,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
         <div style={{display:"flex",flexWrap:"wrap",justifyContent:"space-around",overflow:"hidden",margin:"15px auto",width:"90%"}}>
           <GridList  cellHeight={180} style={{height:"400px",width:"100%"}}>
             <GridListTile key="Subheader" cols={2} style={{ height: 'auto' }}>
-              <ListSubheader component="div">このユーザーもおすすめです:</ListSubheader>
+              <ListSubheader component="div">実力が近いユーザー:</ListSubheader>
             </GridListTile>
             {recommendUsers.map((tile:rivalStoreData) => (
               <GridListTile key={tile.displayName} onClick={async()=>{

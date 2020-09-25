@@ -12,7 +12,6 @@ import { _autoSync } from '../../components/settings';
 import Link from '@material-ui/core/Link';
 import {Link as RLink, withRouter, RouteComponentProps} from "react-router-dom";
 import { scoreData } from '@/types/data';
-import fbActions from '@/components/firebase/actions';
 import importJSON from '@/components/import/json';
 import FormControl from '@material-ui/core/FormControl';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -68,24 +67,23 @@ class Index extends React.Component<P&RouteComponentProps,{
     this.execute = this.execute.bind(this);
   }
 
-  componentDidMount(){
-    new fbActions().auth().onAuthStateChanged(async (user: any)=> {
-      if(user){
-        const t = await new fbActions().setColName("users").setDocName(user.uid).load();
-        const bpi = new bpiCalcuator();
-        const exec = await new statMain(12).load();
-        const totalBPI = bpi.setSongs(exec.at(),exec.at().length);
-        this.setState({
-          uid:user.uid,
-          isLoading:false,
-          displayName: t ? t.displayName : "",
-          totalBPIBefore:totalBPI,
-          totalBPIAfter:0,
-        });
-      }else{
-        this.setState({isLoading:false});
-      }
-    });
+  async componentDidMount(){
+    const user = JSON.parse(localStorage.getItem("social") || "{}");
+    console.log(user);
+    if(user){
+      const bpi = new bpiCalcuator();
+      const exec = await new statMain(12).load();
+      const totalBPI = bpi.setSongs(exec.at(),exec.at().length);
+      this.setState({
+        uid:user.uid || user.photoURL,
+        isLoading:false,
+        displayName: user.displayName || "",
+        totalBPIBefore:totalBPI,
+        totalBPIAfter:0,
+      });
+    }else{
+      this.setState({isLoading:false});
+    }
   }
 
   isJSON = (arg:any)=>{

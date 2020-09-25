@@ -108,7 +108,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
             <Link color="secondary" href={`http://twitter.com/share?url=${config.baseUrl}${"/u/" + sentName}&text=${rivalData.displayName} 総合BPI:${String(Number.isNaN(rivalData.totalBPI) ? "-" : rivalData.totalBPI)}`}>Twitterでプロフィールを共有</Link>
           </span>);
       }else{
-        return ("");
+        return ("プロフィールは非公開です");
       }
     }
     return (

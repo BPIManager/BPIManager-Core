@@ -83,7 +83,9 @@ import {Link as RefLink} from '@material-ui/core/';
           <FormattedMessage id="Help.F.2"/><br/>
           <FormattedMessage id="Help.F.3"/><br/>
           <FormattedMessage id="Help.F.4"/><br/>
-          *iPhone 5,iPhone SEでは一部画面のレイアウトに崩れが生じる場合があります
+          *iPhone 5,iPhone SEでは一部画面のレイアウトに崩れが生じる場合があります。<br/>
+          プッシュ通知など一部機能はiOS端末ではお使いいただけません。<br/>
+          動作確認はAndroid 9、Google Chrome(Windows)、Firefox(Windows)で実施しています。
         </div>
     },{
       "title":"Help.Licenses",

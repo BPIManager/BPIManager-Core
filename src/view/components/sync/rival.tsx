@@ -117,6 +117,7 @@ class SyncRivalScreen extends React.Component<P,S> {
   refreshData = ()=>{
     this.setState({processing:true});
     return this.fbActions.auth().onAuthStateChanged(async(user: any)=> {
+      if(!user) return;
       this.fbActions.setDocName(user.uid);
       const p = user.uid ? (await this.fbActions.syncLoadRival(true)) as any : [];
       const uidList = p.reduce((groups:string[],item:any)=>{
@@ -271,7 +272,7 @@ class SyncRivalScreen extends React.Component<P,S> {
             注意点：<br/>
             ・サーバー上からライバルを削除しても、端末内にライバルのデータは残ります。<br/>
             ・端末からライバルを削除すると、サーバー上のライバルデータも削除されます。<br/>
-            ・v0.0.4.2へアップロード後、追加済みライバルは自動でサーバーに同期されます。<br/>
+            ・v0.0.4.2以降のバージョンでは、ライバルを追加すると同時に自動でサーバーに同期されます。<br/>
           </p>
         </Alert>
         <ShowSnackBar message={message} variant={variant}

@@ -248,7 +248,6 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
         </Grid>
       </Grid>
       }
-      <Divider style={{margin:"10px 0"}}/>
       <AdsCard/>
       </Container>
       {isModalOpen && <ModalUser isOpen={isModalOpen} currentUserName={currentUserName} handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
