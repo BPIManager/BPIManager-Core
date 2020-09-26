@@ -46,6 +46,7 @@ class Index extends React.Component<P&RouteComponentProps,{
   updated:number,
   totalBPIBefore:number,
   totalBPIAfter:number,
+  noName:boolean
 }> {
 
   constructor(props:P&RouteComponentProps){
@@ -63,6 +64,7 @@ class Index extends React.Component<P&RouteComponentProps,{
       updated:0,
       totalBPIBefore:0,
       totalBPIAfter:0,
+      noName:false,
     }
     this.execute = this.execute.bind(this);
   }
@@ -76,6 +78,7 @@ class Index extends React.Component<P&RouteComponentProps,{
       const totalBPI = bpi.setSongs(exec.at(),exec.at().length);
       this.setState({
         uid:user.uid || user.photoURL,
+        noName:!user.uid,
         isLoading:false,
         displayName: user.displayName || "",
         totalBPIBefore:totalBPI,
@@ -101,7 +104,7 @@ class Index extends React.Component<P&RouteComponentProps,{
 
   async execute(){
     try{
-      const {uid} = this.state;
+      const {uid,noName} = this.state;
       this.props.global.setMove(true);
       this.setState({isSaving:true});
       let errors = [];
@@ -159,7 +162,7 @@ class Index extends React.Component<P&RouteComponentProps,{
       }
       await new importer().setHistory(histories).setScores(scores).exec();
       // if autosync is enabled && already logged in
-      if(_autoSync() && uid !== ""){
+      if(_autoSync() && uid !== "" && !noName){
         this.props.updateGlobal(uid);
       }
       this.props.global.setMove(false);
