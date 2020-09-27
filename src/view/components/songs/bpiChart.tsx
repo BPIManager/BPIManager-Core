@@ -13,7 +13,8 @@ interface P{
   newScore:number,
 }
 
-class BPIChart extends React.Component<P,{}> {
+class BPIChart extends React.Component<P,{
+}> {
 
   render(){
     const chartColor = _chartColor();
@@ -25,21 +26,25 @@ class BPIChart extends React.Component<P,{}> {
     const CustomTooltip = (props:any) => {
       if (props.active && props.payload[0].payload) {
         const p = props.payload[0].payload;
+        const per = Math.round((p["EX SCORE"] / (song.notes * 2) ) * 10000) / 100;
         return (
           <div className="custom-tooltip">
           {(p.name !== "YOU" && p.name !== "RIVAL") && <div>
               <p>BPI{p.name}</p>
               <p>EX:{p["EX SCORE"]}</p>
+              <p>PER:{per}%</p>
               <p>GAP:{(!Number.isNaN(newScore) ? newScore : score.exScore) - p["EX SCORE"]}</p>
             </div>
           }
           {p.name === "RIVAL" && <div>
               <p>RIVAL SCORE</p>
               <p>EX:{p["EX SCORE"]}</p>
+              <p>PER:{per}%</p>
           </div>}
           {p.name === "YOU" && <div>
               <p>YOUR SCORE</p>
               <p>EX:{p["EX SCORE"]}</p>
+              <p>PER:{per}%</p>
           </div>}
           </div>
         );

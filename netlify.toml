@@ -4,3 +4,8 @@ command = "CI= npm run build"
   from = "/*"
   to = "/index.html"
   status = 200
+
+[[redirects]]
+  from = "/forceUpdate.html"
+  to = "/forceUpdate.html"
+  status = 200

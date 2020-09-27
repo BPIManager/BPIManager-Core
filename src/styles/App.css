@@ -510,3 +510,16 @@ html,body{
   -ms-user-select: none;
   -webkit-touch-callout: none;
 }
+
+.swipeableContentTab{
+  display: block;
+  width:25px;
+  height: 4px;
+  background: #fff;
+  opacity:.5;
+  margin:0 5px;
+}
+
+.swipeableContentTab.active{
+  opacity: 1 !important;
+}

@@ -386,7 +386,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
             </Drawer>
           </Hidden>
         </nav>
-        <main className={classes.content}>
+        <main className={classes.content} style={{width:"100%"}}>
           {this.props.children}
         </main>
         <ShowSnackBar message={"実行中の処理があるため続行できません"} variant="warning"

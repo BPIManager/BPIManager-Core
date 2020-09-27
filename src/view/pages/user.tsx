@@ -30,8 +30,10 @@ import NotesView from '../components/notes/user';
 import { Helmet } from 'react-helmet';
 import { getTwitterName, getAltTwitterIcon } from '@/components/rivals';
 import EqualizerIcon from '@material-ui/icons/Equalizer';
-import { withRivalData } from '@/components/stats/radar';
+import { withRivalData, radarData, getRadar } from '@/components/stats/radar';
 import RivalStatViewFromUserPage from '../components/rivals/viewComponents/statsFromUserPage';
+import SwipeableViews from 'react-swipeable-views';
+import Radar from '@/view/components/rivals/viewComponents/ui/radar';
 
 interface S {
   userName:string,
@@ -57,6 +59,8 @@ interface S {
   limited:boolean,
   myId:string,
   rivalStat:withRivalData[],
+  radar:radarData[],
+  index:number
 }
 
 class User extends React.Component<{intl:any,currentUserName?:string,limited?:boolean,updateName?:(name:string)=>void}&RouteComponentProps,S> {
@@ -94,6 +98,8 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
       limited:props.limited || false,
       myId:"",
       rivalStat:[],
+      radar:[],
+      index:0,
     }
   }
 
@@ -159,12 +165,14 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
       const totalBPI = res.totalBPI || "-";
       this.countAsync(res.uid);
       const scores = await rivalScores(res);
+      const rivalStat = await makeRivalStat(scores,true);
       return this.setState({
         userName:userName,res:res,uid:res.uid,
         rivalData:scores,
         totalBPI:totalBPI,
         rivalUids:await this.rivalListsDB.getAllRivalUid(),
-        rivalStat:await makeRivalStat(scores,true)
+        rivalStat:rivalStat,
+        radar:await getRadar(rivalStat),
       });
     }else{
       return this.setState({userName:"", res:null,uid:""});
@@ -251,8 +259,21 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     return arenaRankColor(rank);
   }
 
+  handleChangeIndex = (index:number) => {
+    this.setState({
+      index,
+    });
+  };
+
+  tabClasses = (num:number)=>{
+    if(this.state.index === num){
+      return "swipeableContentTab active";
+    }
+    return "swipeableContentTab";
+  }
+
   render(){
-    const {processing,add,myId,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI,loadingRecommended,recommendUsers,counts,limited,rivalStat} = this.state;
+    const {processing,add,myId,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI,loadingRecommended,recommendUsers,counts,limited,rivalStat,radar,index} = this.state;
     const url = config.baseUrl + "/u/" + encodeURI(userName);
     const isAdded = this.state.rivalUids.indexOf(uid) > -1;
     if(processing){
@@ -302,58 +323,69 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     }
     const themeColor = _currentTheme();
     return (
-      <div>
+      <div style={{width:"100%"}}>
         <Helmet>
           <meta name="description"
             content={`${res.displayName}さんのbeatmaniaIIDX スコアデータを閲覧できます。総合BPI:${totalBPI},アリーナランク:${res.arenaRank || "登録なし"}。${res.profile}`}
           />
         </Helmet>
-        <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover"}}>
-        <div style={{background:themeColor === "light" ? "rgba(255,255,255,.1)" : "rgba(0,0,0,.4)",display:"flex",padding:"5vh 0",alignItems:"center",justifyContent:"center"}}>
-          <div style={{textAlign:"center",color:themeColor === "light" ? "#222" : "#fff",width:"75%"}}>
-            <Avatar style={{width:"150px",height:"150px",border:"1px solid #ccc",margin:"15px auto"}}>
-              <img src={res.photoURL ? res.photoURL.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
-                alt={res.displayName}
-                onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(res) || alternativeImg(res.displayName)}/>
-            </Avatar>
-            <Typography variant="h4">
-              {res.displayName}
-            </Typography>
-            <Chip size="small" style={{backgroundColor:this.color(res.arenaRank),color:"#fff",margin:"5px 0"}} label={res.arenaRank || "-"} />
-            <Chip size="small" style={{backgroundColor:"green",color:"#fff",margin:"0 0 0 5px"}} label={"総合BPI:" + String(Number.isNaN(totalBPI) ? "-" : totalBPI)} />
-              <div style={{textAlign:"center",margin:"0 0 15px 0",padding: "20px"}}>
-                <Typography variant="body1" gutterBottom>
-                  {res.profile}
+        <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover",width:"100%"}}>
+        <div style={{background:themeColor === "light" ? "rgba(255,255,255,.1)" : "rgba(0,0,0,.4)",display:"flex",padding:"5vh 0",alignItems:"center",justifyContent:"center",width:"100%"}}>
+          <SwipeableViews style={{width:"90%"}} index={index} onChangeIndex={this.handleChangeIndex}>
+            <div style={{textAlign:"center",color:themeColor === "light" ? "#222" : "#fff"}}>
+              <div>
+                <Avatar style={{width:"150px",height:"150px",border:"1px solid #ccc",margin:"15px auto"}}>
+                  <img src={res.photoURL ? res.photoURL.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
+                    alt={res.displayName}
+                    onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(res) || alternativeImg(res.displayName)}/>
+                </Avatar>
+                <Typography variant="h4">
+                  {res.displayName}
                 </Typography>
-                <Typography variant="caption" component="p" gutterBottom style={{color:themeColor === "light" ? "#888" : "#aaa"}}>
-                  最終更新:{res.timeStamp}
-                </Typography>
+                <Chip size="small" style={{backgroundColor:this.color(res.arenaRank),color:"#fff",margin:"5px 0"}} label={res.arenaRank || "-"} />
+                <Chip size="small" style={{backgroundColor:"green",color:"#fff",margin:"0 0 0 5px"}} label={"総合BPI:" + String(Number.isNaN(totalBPI) ? "-" : totalBPI)} />
+                <div style={{textAlign:"center",margin:"0 0 15px 0",padding: "20px"}}>
+                  <Typography variant="body1" gutterBottom>
+                    {res.profile}
+                  </Typography>
+                  <Typography variant="caption" component="p" gutterBottom style={{color:themeColor === "light" ? "#888" : "#aaa"}}>
+                    最終更新:{res.timeStamp}
+                  </Typography>
+                </div>
+                {counts.loading && (
+                  <Loader text="ライバル情報を読み込み中"/>
+                )}
+                {!counts.loading && (
+                  <Grid container style={{marginTop:"15px",textAlign:"center"}}>
+                    <Grid item xs={6} lg={6}>
+                      <Typography component="h6" variant="h6" color="textSecondary">
+                        ライバル
+                      </Typography>
+                      <Typography component="h4" variant="h4" color="textPrimary">
+                        {counts.followings}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6} lg={6}>
+                      <Typography component="h6" variant="h6" color="textSecondary">
+                        逆ライバル
+                      </Typography>
+                      <Typography component="h4" variant="h4" color="textPrimary">
+                        {counts.followers}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                )}
+                <Divider style={{margin:"15px 0"}}/>
               </div>
-              {counts.loading && (
-              <Loader text="ライバル情報を読み込み中"/>
-              )}
-              {!counts.loading && (
-              <Grid container style={{marginTop:"15px",textAlign:"center"}}>
-                <Grid item xs={6} lg={6}>
-                  <Typography component="h6" variant="h6" color="textSecondary">
-                    ライバル
-                  </Typography>
-                  <Typography component="h4" variant="h4" color="textPrimary">
-                    {counts.followings}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6} lg={6}>
-                  <Typography component="h6" variant="h6" color="textSecondary">
-                    逆ライバル
-                  </Typography>
-                  <Typography component="h4" variant="h4" color="textPrimary">
-                    {counts.followers}
-                  </Typography>
-                </Grid>
-              </Grid>
-              )}
-              <Divider style={{margin:"15px 0"}}/>
-          </div>
+            </div>
+            <div style={{width:"100%",height:"100%",overflow:"hidden"}}>
+              <Radar radar={radar}/>
+            </div>
+          </SwipeableViews>
+        </div>
+        <div style={{background:themeColor === "light" ? "rgba(255,255,255,.1)" : "rgba(0,0,0,.4)",display:"flex",padding:"5px 0 30px 0",alignItems:"center",justifyContent:"center"}}>
+          <span className={this.tabClasses(0)} onClick={()=>this.handleChangeIndex(0)}></span>
+          <span className={this.tabClasses(1)} onClick={()=>this.handleChangeIndex(1)}></span>
         </div>
         </div>
         <div>

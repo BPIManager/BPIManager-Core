@@ -4,12 +4,12 @@ import Typography from '@material-ui/core/Typography';
 import Switch from '@material-ui/core/Switch';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { getRadar, Details, radarData, withRivalData } from '@/components/stats/radar';
-import { _isSingle,_chartColor } from '@/components/settings';
+import { _isSingle } from '@/components/settings';
 import Grid from '@material-ui/core/Grid';
-import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, PolarRadiusAxis } from 'recharts';
 import {Link as RefLink, Table, TableBody, TableRow, TableCell, TableHead, Divider} from '@material-ui/core/';
 import Loader from '@/view/components/common/loader';
 import { rivalScoreData } from '@/types/data';
+import Radar from "./ui/radar";
 
 interface S {
   scoresAbout:number[],
@@ -92,7 +92,6 @@ class RivalStats extends React.Component<P,S> {
 
   render(){
     const {radar,isLoading,scoresAbout,scoresByLevel11,scoresByLevel12,clearAbout,clearByLevel11,clearByLevel12,sum,sum11,sum12,percentage,radarDetail} = this.state;
-    const chartColor = _chartColor();
     if(isLoading){
       return (<Loader/>);
     }
@@ -153,17 +152,7 @@ class RivalStats extends React.Component<P,S> {
               </Typography>
               <Grid container spacing={0}>
                 <Grid item xs={12} md={12} lg={6} style={{height:"350px"}}>
-                  <div style={{width:"100%",height:"100%"}}>
-                    <ResponsiveContainer>
-                      <RadarChart outerRadius={110} data={radar}>
-                        <PolarGrid />
-                        <PolarAngleAxis dataKey="title" stroke={chartColor} />
-                        <PolarRadiusAxis />
-                        <Radar name="You" dataKey="TotalBPI" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.6} />
-                        <Radar name="Rival" dataKey="rivalTotalBPI" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-                      </RadarChart>
-                    </ResponsiveContainer>
-                  </div>
+                  <Radar radar={radar}/>
                 </Grid>
                 <Grid item xs={12} md={12} lg={6}>
                   <Table size="small" style={{minHeight:"350px"}}>

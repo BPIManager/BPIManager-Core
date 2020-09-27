@@ -216,7 +216,8 @@ class UpdateDef extends React.Component<{},{
   showUpdate:boolean,
   latestVersion:string,
   updateInfo:string,
-  progress:number
+  progress:number,
+  res:string,
 }>{
 
   constructor(props:{}){
@@ -225,7 +226,8 @@ class UpdateDef extends React.Component<{},{
       showUpdate:false,
       latestVersion:"",
       updateInfo:"",
-      progress:0
+      progress:0,
+      res:""
     }
   }
 
@@ -248,14 +250,14 @@ class UpdateDef extends React.Component<{},{
 
   updateButton = async()=>{
     this.setState({progress:1});
-    await updateDefFile();
-    this.setState({progress:2});
+    const p = await updateDefFile();
+    this.setState({progress:2,res:p.message});
   }
 
   handleToggle = ()=> this.setState({showUpdate:false});
 
   render(){
-    const {showUpdate,latestVersion,updateInfo,progress} = this.state;
+    const {showUpdate,latestVersion,updateInfo,progress,res} = this.state;
     if(!showUpdate){
       return (null);
     }
@@ -287,7 +289,7 @@ class UpdateDef extends React.Component<{},{
           {progress === 2 && <div>
             <div style={{display:"flex",alignItems:"center",margin:"20px 0",flexDirection:"column"}}>
               <CheckIcon style={{ fontSize: 60 }}/>
-              <span>更新完了</span>
+              <span>{res}</span>
             </div>
             <Button onClick={this.handleToggle} color="secondary" fullWidth style={{marginTop:"8px"}}>
               閉じる

@@ -81,7 +81,9 @@ class DebugData extends React.Component<P,S> {
       if(user){
         let p = JSON.parse(JSON.stringify(user));
         p.phoneNumber = "*SECRET*";
+        p.email = "*SECRET*";
         p.providerData[0].phoneNumber = "*SECRET*";
+        p.providerData[0].email = "*SECRET*";
         p.stsTokenManager.apiKey = "*SECRET*";
         p.stsTokenManager.refreshToken = "*SECRET*";
         p.stsTokenManager.accessToken = "*SECRET*";
