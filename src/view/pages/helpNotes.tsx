@@ -44,8 +44,8 @@ export default class HelpNotes extends React.Component<{},{}> {
             <div>
               <Typography variant="h6" style={{display: 'flex',alignItems: 'center'}}>投稿する</Typography>
               <b>書き込みはアカウント無しでも可能です(ただし<Link to="/data"><RefLink component="span" color="secondary">データ取り込み</RefLink></Link>から楽曲のプレイ状況を送信する必要があります)。</b><br/>
-              <Link to="/songs"><RefLink component="span" color="secondary">楽曲一覧</RefLink></Link>にアクセスし、情報を共有したい楽曲を長押ししてください。<br/>
-              「Notes」タブが開いたら、右下の書き込みボタンをタップして書き込みできます。<br/><br/>
+              <Link to="/songs"><RefLink component="span" color="secondary">楽曲一覧</RefLink></Link>にアクセスし、情報を共有したい楽曲をタップしてください。<br/>
+              「Notes」タブを開き、右下の書き込みボタンをタップして書き込みできます。<br/><br/>
               ログイン状態で書き込んだ投稿を削除したい場合、<Link to="/notes"><RefLink component="span" color="secondary">Notes</RefLink></Link>にアクセスし、「MYノート」から削除できます。<br/>
               (未ログインユーザーによる書き込みは削除できません。)
             </div>

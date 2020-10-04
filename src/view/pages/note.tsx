@@ -6,6 +6,7 @@ import Tab from '@material-ui/core/Tab';
 import NotesRecent from '../components/notes/recent';
 import NotesLiked from '../components/notes/liked';
 import MyNotes from '../components/notes/mynotes';
+import WriteNotes from '../components/notes/writeNotes';
 
 interface S {
   currentTab:number
@@ -32,15 +33,19 @@ class Tools extends React.Component<{intl:any},S> {
           onChange={this.handleChange}
           indicatorColor="primary"
           textColor="secondary"
+          variant="scrollable"
+          scrollButtons="on"
           style={{margin:"5px 0"}}
         >
-          <Tab label="書き込みを探す" />
-          <Tab label="いいね一覧" />
+          <Tab label="最新の投稿" />
+          <Tab label="書き込む・探す" />
+          <Tab label="いいねした投稿" />
           <Tab label="Myノート" />
         </Tabs>
         {this.state.currentTab === 0 && <NotesRecent/>}
-        {this.state.currentTab === 1 && <NotesLiked/>}
-        {this.state.currentTab === 2 && <MyNotes/>}
+        {this.state.currentTab === 1 && <WriteNotes/>}
+        {this.state.currentTab === 2 && <NotesLiked/>}
+        {this.state.currentTab === 3 && <MyNotes/>}
       </Container>
     );
   }

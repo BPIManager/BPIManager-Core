@@ -34,6 +34,7 @@ import { withRivalData, radarData, getRadar } from '@/components/stats/radar';
 import RivalStatViewFromUserPage from '../components/rivals/viewComponents/statsFromUserPage';
 import SwipeableViews from 'react-swipeable-views';
 import Radar from '@/view/components/rivals/viewComponents/ui/radar';
+import Alert from '@material-ui/lab/Alert/Alert';
 
 interface S {
   userName:string,
@@ -70,12 +71,13 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
 
   constructor(props:{intl:any,currentUserName?:string,limited?:boolean,updateName?:(name:string)=>void}&RouteComponentProps){
     super(props);
-    this.fbA.setColName("users");
-    this.fbStores.setColName(`${_currentStore()}_${_isSingle()}`);
     const search = new URLSearchParams(props.location.search);
     const initialView = search.get("init");
+    const params = (props.match.params as any);
+    this.fbA.v2SetUserCollection();
+    this.fbStores.setColName(`${_currentStore()}_${_isSingle()}`);
     this.state ={
-      userName:props.currentUserName || (props.match.params as any).uid || "",
+      userName:props.currentUserName || params.uid || "",
       processing:true,
       add:false,
       currentView:initialView ? 1 : 0,
@@ -105,7 +107,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
 
   async componentDidMount(){
     if(!this.state.userName){
-      new fbActions().auth().onAuthStateChanged(async (user: any)=> {
+      this.fbA.auth().onAuthStateChanged(async (user: any)=> {
         if(user){
           const t = await this.fbA.setDocName(user.uid).load();
           this.setState({
@@ -120,7 +122,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
         }
       });
     }else{
-      new fbActions().auth().onAuthStateChanged(async (user: any)=> {
+      this.fbA.auth().onAuthStateChanged(async (user: any)=> {
         if(user){
           const t = await this.fbA.setDocName(user.uid).load();
           this.setState({
@@ -162,7 +164,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     this.setState({processing:true});
     const res = await this.fbA.searchRival(userName);
     if(res){
-      const totalBPI = res.totalBPI || "-";
+      const totalBPI = res.totalBPIs ? res.totalBPIs[_currentStore()] : res.totalBPI || "-";
       this.countAsync(res.uid);
       const scores = await rivalScores(res);
       const rivalStat = await makeRivalStat(scores,true);
@@ -388,6 +390,12 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
           <span className={this.tabClasses(1)} onClick={()=>this.handleChangeIndex(1)}></span>
         </div>
         </div>
+        {(!res.totalBPIs || (res.totalBPIs && !res.totalBPIs[_currentStore()])) && (
+          <Alert severity="warning">
+            このユーザーは現在設定中のバージョン({_currentStore()})でスコアを登録していません。<br/>
+            <RefLink to={"/settings"} style={{textDecoration:"none"}}><Link color="secondary" component="span">設定</Link></RefLink>からほかのバージョンを指定の上、再度表示してください。
+          </Alert>
+        )}
         <div>
           <List>
             {buttons.map((item,i)=>{

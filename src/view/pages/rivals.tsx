@@ -5,6 +5,7 @@ import RivalView from "@/view/components/rivals/view";
 import ShowSnackBar from '@/view/components/snackBar';
 import RivalIndex from '@/view/components/rivals';
 import { rivalScoreData, rivalStoreData, DBRivalStoreData } from '@/types/data';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 interface S {
   currentView:number
@@ -18,10 +19,12 @@ interface S {
   recentView:number,
 }
 
-class Stats extends React.Component<{intl:any},S> {
+class Stats extends React.Component<{intl:any}&RouteComponentProps,S> {
 
-  constructor(props:{intl:any}){
+  constructor(props:{intl:any}&RouteComponentProps){
     super(props);
+    const search = new URLSearchParams(props.location.search);
+    const tab = Number(search.get("tab"));
     this.state ={
       currentView:0,
       currentUser:"",
@@ -29,7 +32,7 @@ class Stats extends React.Component<{intl:any},S> {
       showSnackBar:false,
       lastVisible:null,
       arenaRank:"すべて",
-      recentView:0,
+      recentView:tab || 0,
       rivalMeta:null,
     }
   }
@@ -55,4 +58,4 @@ class Stats extends React.Component<{intl:any},S> {
   }
 }
 
-export default injectIntl(Stats);
+export default withRouter(injectIntl(Stats));

@@ -32,7 +32,7 @@ export const updateRivalScore = async (rivalMeta:DBRivalStoreData):Promise<strin
   const fbA:fbActions = new fbActions();
   const fbStores:fbActions = new fbActions();
   const rdb = new rivalListsDB();
-  fbA.setColName("users");
+  fbA.v2SetUserCollection();
   fbStores.setColName(`${_currentStore()}_${_isSingle()}`);
 
   try{
@@ -41,7 +41,7 @@ export const updateRivalScore = async (rivalMeta:DBRivalStoreData):Promise<strin
     if(!res){
       throw new Error("対象ユーザーが見つかりませんでした");
     }
-    if(res.displayName === ""){
+    if(res.displayName === "" || (res.isPublic && res.isPublic === false)){
       throw new Error("対象ユーザーはデータを非公開に設定しています");
     }
     if(res.timeStamp === rivalMeta.updatedAt){

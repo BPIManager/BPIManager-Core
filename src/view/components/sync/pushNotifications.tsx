@@ -88,7 +88,7 @@ class PushSettings extends React.Component<P,S> {
       this.setState({
         uid:user.uid,
         processing:false,
-        userData:this.state.userData || await new fbActions().setColName("users").setDocName(user.uid).load(),
+        userData:this.state.userData || await new fbActions().v2SetUserCollection().setDocName(user.uid).load(),
         syncData:p,
         rivalAdded:(me && me.addedNotify === true) || false
       });

@@ -17,6 +17,8 @@ const ja = {
   "GlobalNav.Tools":"Tools",
   "GlobalNav.Settings": "Settings",
   "GlobalNav.Help": "Help",
+  "GlobalNav.AddRivals": "Find new rivals",
+  "GlobalNav.WriteNote": "Write/View Notes",
   "GlobalNav.RivalCompare":"Rival Win/Lose",
   "GlobalNav.Notes": "Notes",
   "Top.Survey":"Answer a survey",

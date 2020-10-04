@@ -21,7 +21,7 @@ export default class fbActions{
   }
 
   authInfo():firebase.User|null{
-    return fb.auth().currentUser;
+    return fb.auth().currentUser || JSON.parse(localStorage.getItem("social") || "{}");
   }
 
   currentIcon():string{
@@ -34,6 +34,7 @@ export default class fbActions{
   }
 
   async updateProfileIcon():Promise<firebase.auth.UserCredential|null>{
+    const self = this;
     return fb.auth().getRedirectResult().then(async function(_result) {
       if(_result && _result.user && _result.additionalUserInfo && _result.additionalUserInfo.profile){
         const pid = _result.additionalUserInfo.providerId;
@@ -44,7 +45,7 @@ export default class fbActions{
         }else if(pid === "twitter.com"){
           p = (_result.additionalUserInfo.profile as {profile_image_url_https:string}).profile_image_url_https;
         }
-        await firestore.collection("users").doc(_result.user.uid).set({
+        await self.setUserCollection().doc(_result.user.uid).set({
           photoURL:p
         },{merge: true});
         if(t){
@@ -71,7 +72,17 @@ export default class fbActions{
   }
 
   getSelfUserData(){
-    return firestore.collection("users").doc(this.docName).get();
+    return this.setUserCollection().doc(this.docName).get();
+  }
+
+  setUserCollection():firebase.firestore.CollectionReference{
+    this.v2SetUserCollection();
+    return firestore.collection(this.name);
+  }
+
+  v2SetUserCollection():this{
+    this.name = "users";
+    return this;
   }
 
   private name:string = "";
@@ -105,7 +116,7 @@ export default class fbActions{
 
   async save(isRegisteredAs = ""){
     if(!this.name || !this.docName){return {error:true,date:null};}
-    console.log("writing",this.docName);
+    console.log("writing",this.docName,this.name);
     const self = this;
     const s = await new scoresDB().getAll();
     const docRef = firestore.collection(self.name).doc(self.docName);
@@ -124,12 +135,16 @@ export default class fbActions{
         }else{
           transaction.set(docRef,newDoc);
         }
+        const v = "totalBPIs." + _currentStore();
+        const totalBPI = await self.totalBPI();
         console.log("signed as :"+isRegisteredAs);
         if(isRegisteredAs !== ""){
           transaction.update(userRef,{
             timeStamp: timeFormatter(3),
             serverTime:self.time(),
-            totalBPI:await self.totalBPI(),
+            totalBPI:totalBPI,
+            [v]:totalBPI,
+            versions:firebase.firestore.FieldValue.arrayUnion(_currentStore()),
           });
         }
       });
@@ -166,7 +181,7 @@ export default class fbActions{
     }
   }
 
-  async saveName(displayName:string,profile:string,photoURL:string,arenaRank:string,showNotes?:boolean){
+  async saveName(displayName:string,profile:string,photoURL:string,arenaRank:string,showNotes?:boolean,isPublic?:boolean){
     try{
       if(!this.name || !this.docName){return {error:true,date:null};}
       if(displayName.length > 16 || profile.length > 140){
@@ -180,9 +195,9 @@ export default class fbActions{
         throw new Error("already used error");
       }
       const batch = firestore.batch();
-      const from = firestore.collection("users").doc(this.docName);
-      if(displayName === ""){
-        await firestore.collection("users").doc(this.docName).delete();
+      const from = this.setUserCollection().doc(this.docName);
+      if(displayName === "" || !isPublic){
+        await this.setUserCollection().doc(this.docName).update({isPublic:false});
         firestore.collection("followings").where("from","==",from).get().then(async (querySnapshot)=>{
           querySnapshot.forEach(doc=>batch.update(doc.ref,{isPublic:false}));
           batch.commit();
@@ -190,8 +205,10 @@ export default class fbActions{
       }else{
         const idMatcher = profile.match(/(\d{4}-\d{4}|\d{8})/);
         const iidxId = idMatcher ? idMatcher[0].replace(/\D/g,"") : "";
-        await firestore.collection("users").doc(this.docName).set({
+        const v = "totalBPIs." + _currentStore();
+        await this.setUserCollection().doc(this.docName).update({
           timeStamp: timeFormatter(3),
+          isPublic:isPublic || false,
           serverTime:this.time(),
           uid:this.docName,
           iidxId:iidxId,
@@ -202,6 +219,8 @@ export default class fbActions{
           arenaRank:arenaRank,
           showNotes:showNotes || false,
           totalBPI:await this.totalBPI(),
+          [v]:await this.totalBPI(),
+          versions:firebase.firestore.FieldValue.arrayUnion(_currentStore()),
         });
         firestore.collection("followings").where("from","==",from).get().then(async (querySnapshot)=>{
           querySnapshot.forEach(doc=>batch.update(doc.ref,{isPublic:true,}));
@@ -218,7 +237,7 @@ export default class fbActions{
   async searchRival(input:string,saving:boolean = false){
     try{
       if(!input || (input === "" && saving !== true)){ return [0];}
-      const res = await firestore.collection("users").where("displayName","==",input).get();
+      const res = await this.setUserCollection().where("displayName","==",input).get();
       if(!res.empty && res.size === 1){
         return res.docs[0].data();
       }else{
@@ -240,9 +259,13 @@ export default class fbActions{
       if(!input || (input === "")){ return [];}
       const inputID = zenToHan(input).replace(/\D/g,"") || ""; // 数字のみ絞り出し、数字が無い場合（=空欄）は検索しない
       const inputHN = zenToHan(input).toLowerCase();
-      const res = await firestore.collection("users").orderBy("displayNameSearch").startAt(inputHN).endAt(inputHN + "\uf8ff").get();
+      let q1 = this.setUserCollection().orderBy("displayNameSearch").startAt(inputHN).endAt(inputHN + "\uf8ff");
+      q1 = this.versionQuery(q1);
+      const res = await q1.get();
       if(inputID){
-        const res2 = await firestore.collection("users").orderBy("iidxId").startAt(inputID).endAt(inputID + "\uf8ff").get();
+        let q2 = this.setUserCollection().orderBy("iidxId").startAt(inputID).endAt(inputID + "\uf8ff");
+        q2 = this.versionQuery(q2);
+        const res2 = await q2.get();
         if(!res.empty || !res2.empty){
           return res.docs.concat(res2.docs);
         }
@@ -255,10 +278,11 @@ export default class fbActions{
   }
 
   async recentUpdated(last:rivalStoreData|null,endAt:rivalStoreData|null,arenaRank:string):Promise<rivalStoreData[]>{
-    let query:firebase.firestore.Query = firestore.collection("users").orderBy("serverTime", "desc");
+    let query:firebase.firestore.Query = this.setUserCollection().orderBy("serverTime", "desc");
     if(arenaRank !== "すべて"){
       query = query.where("arenaRank","==",arenaRank);
     }
+    query = this.versionQuery(query);
     if(last){
       query = query.startAfter(last.serverTime);
     }
@@ -271,13 +295,18 @@ export default class fbActions{
     return await this.getUsers(query);
   }
 
+  versionQuery = (query:firebase.firestore.Query)=>{
+    return query.where("isPublic","==",true).where("versions","array-contains", _currentStore());
+  }
+
   async recommendedByBPI(exactBPI?:number){
-    let query:firebase.firestore.Query = firestore.collection("users").orderBy("totalBPI", "desc");
+    let query:firebase.firestore.Query = this.setUserCollection().orderBy("totalBPIs." + _currentStore(), "desc");
     const total = exactBPI || await getTotalBPI();
     const downLimit = total > 60 ? 50 : total - 5;
     const upLimit = total > 50 ? 100 : total + 5;
-    query = query.where("totalBPI",">=",downLimit);
-    query = query.where("totalBPI","<=",upLimit);
+    query = query.where("totalBPIs." + _currentStore(),">=",downLimit);
+    query = query.where("totalBPIs." + _currentStore(),"<=",upLimit);
+    query = this.versionQuery(query);
     query = query.limit(20);
     return (await this.getUsers(query)).sort((a,b)=>{
       return Math.abs(total - (Number(a.totalBPI) || -15)) - Math.abs(total - (Number(b.totalBPI) || -15))
@@ -290,7 +319,7 @@ export default class fbActions{
       if(!user || !user.uid){
         throw new Error("No UserData Has Been Retrieved");
       }
-      const to:firebase.firestore.DocumentReference = firestore.collection("users").doc(user.uid);
+      const to:firebase.firestore.DocumentReference = this.setUserCollection().doc(user.uid);
       let query:firebase.firestore.Query = firestore.collection("followings").orderBy("updatedAt", "desc");
       query = query.where("to","==",to).where("isPublic","==",true).where("version","==",_currentStore());
       query = query.limit(20);
@@ -336,7 +365,7 @@ export default class fbActions{
   async searchRivalByUid(input:string){
     try{
       if(!input || input === ""){ return [0]; }
-      const res = await firestore.collection("users").where("uid","==",input).get();
+      const res = await this.setUserCollection().where("uid","==",input).get();
       if(!res.empty && res.size === 1){
         return res.docs[0].data();
       }else{
@@ -361,7 +390,7 @@ export default class fbActions{
       if(!uid){
         throw new Error("Not logged in");
       }
-      let from:firebase.firestore.DocumentReference = firestore.collection("users").doc(uid);
+      let from:firebase.firestore.DocumentReference = this.setUserCollection().doc(uid);
       const res = await firestore.collection("followings").where("from","==",from).where("version","==",_currentStore()).get();
       if(!res.empty){
         let result:any[] = [];
@@ -384,7 +413,7 @@ export default class fbActions{
 
   async syncUploadRival(rivals:DBRivalStoreData[],willAdd = true,isPublic:string = ""){
     const uid = this.docName;
-    let from:firebase.firestore.DocumentReference = firestore.collection("users").doc(uid);
+    let from:firebase.firestore.DocumentReference = this.setUserCollection().doc(uid);
     const batch = firestore.batch();
     return firestore.collection("followings").where("from","==",from).get().then(async (querySnapshot)=>{
       querySnapshot.forEach(doc=>{
@@ -392,7 +421,7 @@ export default class fbActions{
       })
       if(willAdd){
         for(let i = 0; i < rivals.length; ++i){
-          let to:firebase.firestore.DocumentReference = firestore.collection("users").doc(rivals[i]["uid"]);
+          let to:firebase.firestore.DocumentReference = this.setUserCollection().doc(rivals[i]["uid"]);
           const target = firestore.collection("followings").doc();
           batch.set(target,{
             from:from,
@@ -416,8 +445,8 @@ export default class fbActions{
   async syncUploadOne(rivalId:string,isPublic:string = ""):Promise<boolean>{
     try{
       const uid = this.docName;
-      let from:firebase.firestore.DocumentReference = firestore.collection("users").doc(uid);
-      let to:firebase.firestore.DocumentReference = firestore.collection("users").doc(rivalId);
+      let from:firebase.firestore.DocumentReference = this.setUserCollection().doc(uid);
+      let to:firebase.firestore.DocumentReference = this.setUserCollection().doc(rivalId);
       const data = await firestore.collection("followings").where("from","==",from).where("to","==",to).get();
       if(!data.empty){
         return false;
@@ -437,8 +466,8 @@ export default class fbActions{
   }
 
   async syncNotificationItem(syncData:any):Promise<void>{
-    let from:firebase.firestore.DocumentReference = firestore.collection("users").doc(syncData.from.id);
-    let to:firebase.firestore.DocumentReference = firestore.collection("users").doc(syncData.to.uid);
+    let from:firebase.firestore.DocumentReference = this.setUserCollection().doc(syncData.from.id);
+    let to:firebase.firestore.DocumentReference = this.setUserCollection().doc(syncData.to.uid);
     const token = await new messanger().getToken();
     this.updateToken(syncData.from.id,token);
     return await firestore.collection("followings").where("from","==",from).where("to","==",to).get().then(async (query)=>{
@@ -456,8 +485,8 @@ export default class fbActions{
   async syncDeleteOne(rivalId:string):Promise<boolean>{
     try{
       const uid = this.docName;
-      let from:firebase.firestore.DocumentReference = firestore.collection("users").doc(uid);
-      let to:firebase.firestore.DocumentReference = firestore.collection("users").doc(rivalId);
+      let from:firebase.firestore.DocumentReference = this.setUserCollection().doc(uid);
+      let to:firebase.firestore.DocumentReference = this.setUserCollection().doc(rivalId);
       await firestore.collection("followings").where("from","==",from).where("to","==",to).get().then((querySnapshot)=>{
         querySnapshot.forEach((doc)=>doc.ref.delete());
       });
@@ -473,7 +502,7 @@ export default class fbActions{
       return await firestore.collection("notifyWhenAddedAsRivals").doc(uid).set({
         addedNotify:newState,
         uid:uid,
-        reference:firestore.collection("users").doc(uid)
+        reference:this.setUserCollection().doc(uid)
       });
     }catch(e){
       console.log(e);
@@ -483,16 +512,19 @@ export default class fbActions{
   async dBatch(){
     try{
       let batch = firestore.batch();
-      const snapshots = await firestore.collection("users").get();
+      const snapshots = await this.setUserCollection().get();
       snapshots.docs.map((doc,index)=>{
         if((index + 1) % 500 === 0){
           batch.commit();
           batch = firestore.batch();
         }
         const data = doc.data();
-        if(data.displayName){
+        if(data.displayName && data.totalBPI){
+          console.log(data.totalBPI);
+          const v = "totalBPIs.27";
           batch.update(doc.ref,{
-            displayNameSearch:data.displayName.toLowerCase(),
+            [v]:data.totalBPI,
+            versions:firebase.firestore.FieldValue.arrayUnion("27"),
           })
         }
       });
@@ -502,7 +534,6 @@ export default class fbActions{
     }
   }
   */
-
 
   // user notes function
 
@@ -533,13 +564,13 @@ export default class fbActions{
     const auth = this.authInfo();
     if(!auth) return null;
     const uid = auth.uid;
-    const doc = firestore.collection("users").doc(uid);
+    const doc = this.setUserCollection().doc(uid);
     return firestore.collection("notes").where("uid","==",doc).orderBy("wroteAt","desc").get();
   }
 
   loadUserNotes(uid:string,sort = 0){
     const s = sort === 0 ? "wroteAt" : "likeCount";
-    const doc = firestore.collection("users").doc(uid);
+    const doc = this.setUserCollection().doc(uid);
     return firestore.collection("notes").where("uid","==",doc).orderBy(s,"desc").get();
   }
 
@@ -551,7 +582,7 @@ export default class fbActions{
   }
 
   getUserReference(id:string){
-    return firestore.collection("users").doc(id);
+    return this.setUserCollection().doc(id);
   }
 
   async likeNotes(targetId:string):Promise<number>{
@@ -600,7 +631,7 @@ export default class fbActions{
   // for sitemap generator
 
   async loadUserList(){
-    const t = await firestore.collection("users").get();
+    const t = await this.setUserCollection().get();
     if(t.size > 0){
       return t.docs;
     }else{

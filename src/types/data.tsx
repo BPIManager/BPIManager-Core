@@ -21,6 +21,11 @@ export interface scoreData extends scoreDataOrigin{
   lastScore:number,
 }
 
+
+export interface scoreDataWithNotes extends scoreData{
+  wrote:boolean,
+}
+
 export interface songData{
   [key:string]:any,
   title:string,

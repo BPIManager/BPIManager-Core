@@ -10,7 +10,7 @@ import { songsDB, scoresDB } from '@/components/indexedDB';
 import { scoreData, songData } from '@/types/data';
 import { _currentStore } from '@/components/settings';
 import Loader from '../../common/loader';
-import { _prefix } from '@/components/songs/filter';
+import { _prefixFromNum } from '@/components/songs/filter';
 import SongNotes from '../../songs/songNotes';
 
 export default class ModalNotes extends React.Component<{
@@ -73,7 +73,7 @@ export default class ModalNotes extends React.Component<{
               <CloseIcon />
             </IconButton>
             <Typography variant="h6" className="be-ellipsis" style={{flexGrow:1}}>
-              {(!isLoading && song) && (song.title + _prefix(song.difficulty))}
+              {(!isLoading && song) && (song.title + _prefixFromNum(song.difficulty))}
               {(!isLoading && !song) && "Error"}
             </Typography>
           </Toolbar>

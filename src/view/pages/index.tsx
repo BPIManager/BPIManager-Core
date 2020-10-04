@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 import { FormattedMessage } from "react-intl";
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import {Link as RefLink, ListItem, ListItemAvatar, Avatar, ListItemText, ListItemSecondaryAction, IconButton, List, ButtonGroup, Dialog, DialogTitle, DialogContent, Divider} from '@material-ui/core/';
-import { _lang, _currentVersion } from '@/components/settings';
+import { _currentVersion } from '@/components/settings';
 import PhonelinkSetupIcon from '@material-ui/icons/PhonelinkSetup';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import LibraryMusicIcon from '@material-ui/icons/LibraryMusic';
@@ -23,6 +23,9 @@ import UpdateIcon from '@material-ui/icons/Update';
 import Loader from '../components/common/loader';
 import { updateDefFile } from '@/components/settings/updateDef';
 import CheckIcon from '@material-ui/icons/Check';
+import GroupAddIcon from '@material-ui/icons/GroupAdd';
+import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
+import TwitterIcon from '@material-ui/icons/Twitter';
 
 class Index extends React.Component<RouteComponentProps&{global:any},{}> {
 
@@ -101,17 +104,32 @@ class IfNotOnTheHomeScreen extends React.Component<{
       {
         to:"/help/start",
         id:"Top.Help",
+        desc:"仕様や使い方などはこちらを御覧ください",
         icon:<HelpIcon />
       },
       {
         to:"/data",
         id:"GlobalNav.Data",
+        desc:"CSVなどからスコアを一括登録",
         icon:<SaveAltIcon />
       },
       {
         to:"/songs",
         id:"GlobalNav.SongList",
+        desc:"登録済みのスコアとBPIを確認",
         icon:<LibraryMusicIcon />
+      },
+      {
+        to:"/rivals?tab=3",
+        id:"GlobalNav.AddRivals",
+        desc:"総合BPIから新たなライバルを見つける",
+        icon:<GroupAddIcon />
+      },
+      {
+        to:"/notes",
+        id:"GlobalNav.WriteNote",
+        desc:"他のユーザーと攻略情報を交換！",
+        icon:<SpeakerNotesIcon />
       }
     ]
     return (
@@ -128,14 +146,6 @@ class IfNotOnTheHomeScreen extends React.Component<{
                 </Typography>
                 <Typography component="h6" variant="body1" color="textPrimary" gutterBottom>
                   Score management tool for IIDX
-                </Typography>
-                <Typography color="textSecondary" paragraph variant="caption">
-                  {_lang() === "en" &&
-                  <span>Check out <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink> for update information.</span>
-                  }
-                  {_lang() === "ja" &&
-                    <span>最新情報を<RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink>にて発信中<br/></span>
-                  }<br/>
                 </Typography>
               </div>
             </Grid>
@@ -168,7 +178,7 @@ class IfNotOnTheHomeScreen extends React.Component<{
                 {item.icon}
               </Avatar>
             </ListItemAvatar>
-            <ListItemText primary={<FormattedMessage id={item.id}/>} secondary={""} />
+            <ListItemText primary={<FormattedMessage id={item.id}/>} secondary={item.desc} />
             <ListItemSecondaryAction>
               <IconButton edge="end">
                 <ArrowForwardIosIcon />
@@ -176,6 +186,7 @@ class IfNotOnTheHomeScreen extends React.Component<{
             </ListItemSecondaryAction>
           </ListItem>
         ))}
+        <Divider/>
         <ListItem button
           onClick={()=>window.open("https://docs.google.com/forms/d/e/1FAIpQLSfhJkZZp5K1ChbE5RH-f0hOIkGvGX-7tYCZMxzVlsHVAtZ6eg/viewform?usp=sf_link")}>
           <ListItemAvatar>
@@ -184,6 +195,20 @@ class IfNotOnTheHomeScreen extends React.Component<{
             </Avatar>
           </ListItemAvatar>
           <ListItemText primary={<FormattedMessage id="Top.Survey"/>} secondary={<FormattedMessage id="Top.SurveyMes"/>} />
+          <ListItemSecondaryAction>
+            <IconButton edge="end">
+              <ArrowForwardIosIcon />
+            </IconButton>
+          </ListItemSecondaryAction>
+        </ListItem>
+        <ListItem button
+          onClick={()=>window.open("https://twitter.com/BPIManager")}>
+          <ListItemAvatar>
+            <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
+              <TwitterIcon/>
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText primary={"Twitterで最新情報を発信中"} secondary={"@BPIManagerをフォロー"} />
           <ListItemSecondaryAction>
             <IconButton edge="end">
               <ArrowForwardIosIcon />

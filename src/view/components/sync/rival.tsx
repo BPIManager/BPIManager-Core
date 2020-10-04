@@ -129,7 +129,7 @@ class SyncRivalScreen extends React.Component<P,S> {
       },[]);
       this.setState({
         processing:false,
-        userData:this.state.userData || await new fbActions().setColName("users").setDocName(user.uid).load(),
+        userData:this.state.userData || await new fbActions().v2SetUserCollection().setDocName(user.uid).load(),
         syncData:p,
         notUploaded:(await this.rivalListsDB.getAll()).filter(item=>uidList.indexOf(item.uid) === -1)
       })

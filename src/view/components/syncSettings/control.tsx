@@ -8,19 +8,22 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
-import {Link, Switch, FormControlLabel, Avatar, CardHeader, Card, CardActions, CardContent, withStyles, Theme} from '@material-ui/core/';
-import {Link as RefLink} from "react-router-dom";
+import {Link, Switch, FormControlLabel, Avatar, CardHeader, Card, CardActions, CardContent, withStyles, Theme, Divider, List, ListItem, ListItemAvatar, ListItemText, Typography} from '@material-ui/core/';
+import {Link as RefLink, withRouter, RouteComponentProps} from "react-router-dom";
 import Alert from '@material-ui/lab/Alert';
 import { config } from '@/config';
 import Loader from '../common/loader';
-import { alternativeImg } from '@/components/common';
+import { alternativeImg, avatarBgColor, avatarFontColor } from '@/components/common';
 import { getAltTwitterIcon } from '@/components/rivals';
 import SaveIcon from '@material-ui/icons/Save';
 import { red } from '@material-ui/core/colors';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import CheckIcon from '@material-ui/icons/Check';
+import GroupAddIcon from '@material-ui/icons/GroupAdd';
+import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
+import BackupIcon from '@material-ui/icons/Backup';
 
-class SyncControlScreen extends React.Component<{userData:any},{
+class SyncControlScreen extends React.Component<{userData:any}&RouteComponentProps,{
   isLoading:boolean,
   scoreData:any,
   sentName:string,
@@ -31,16 +34,17 @@ class SyncControlScreen extends React.Component<{userData:any},{
   showNotes:boolean,
   arenaRank:string,
   rawUserData:any,
-  hideAlert:boolean
+  hideAlert:boolean,
+  isPublic:boolean,
 }> {
 
   private fbA:fbActions = new fbActions();
   private fbLoader:fbActions = new fbActions();
 
-  constructor(props:{userData:any}){
+  constructor(props:{userData:any}&RouteComponentProps){
     super(props);
     this.fbLoader.setColName(`${_currentStore()}_${_isSingle()}`).setDocName(props.userData.uid);
-    this.fbA.setColName("users").setDocName(props.userData.uid);
+    this.fbA.v2SetUserCollection().setDocName(props.userData.uid);
     this.state = {
       isLoading:true,
       scoreData:null,
@@ -52,12 +56,13 @@ class SyncControlScreen extends React.Component<{userData:any},{
       showNotes:false,
       nameErrorMessage:[],
       rawUserData:null,
-      hideAlert:false
+      hideAlert:false,
+      isPublic:false,
     }
   }
 
   async componentDidMount(){
-    return new fbActions().auth().onAuthStateChanged(async(user: any)=> {
+    return this.fbA.auth().onAuthStateChanged(async(user: any)=> {
       const t = await this.fbA.load();
       this.fbLoader.updateProfileIcon();
       this.setState({
@@ -70,6 +75,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
         myProfile: t && t.profile ? t.profile : "",
         arenaRank: t && t.arenaRank ? t.arenaRank : "-",
         showNotes: t && t.showNotes ? t.showNotes : false,
+        isPublic: t && t.isPublic ? t.isPublic : false,
       });
     });
   }
@@ -80,22 +86,26 @@ class SyncControlScreen extends React.Component<{userData:any},{
       if(this.state.myName && this.state.scoreData === null){
         return this.setState({nameErrorMessage:["エラーが発生しました。次のような理由が挙げられます:"],isLoading:false});
       }
-      const res = await this.fbA.saveName(this.state.myName,this.state.myProfile,this.props.userData.photoURL,this.state.arenaRank,this.state.showNotes);
+      const res = await this.fbA.saveName(this.state.myName,this.state.myProfile,this.props.userData.photoURL,this.state.arenaRank,this.state.showNotes,this.state.isPublic);
       if(res.error){
         return this.setState({nameErrorMessage:["エラーが発生しました。次のような理由が挙げられます:","名前に使用できない文字列が含まれている、すでに使用されている名前である、アクセス権限がない"],isLoading:false});
       }
     }catch(e){
       alert("エラーが発生しました。:" + e);
     }
-    this.setState({nameErrorMessage:["設定を反映しました"],isLoading:false,sentName:this.state.myName});
+    this.setState({nameErrorMessage:["設定を反映しました"],isLoading:false,sentName:this.state.myName,rivalData:await this.fbA.load()});
   }
 
   handleShowNotes = (e:React.ChangeEvent<HTMLInputElement>)=>{
     this.setState({showNotes:e.target.checked});
   }
 
+  handlePublic = (e:React.ChangeEvent<HTMLInputElement>)=>{
+    this.setState({isPublic:e.target.checked});
+  }
+
   render(){
-    const {isLoading,rivalData,scoreData,rawUserData,nameErrorMessage,myName,myProfile,arenaRank,sentName,showNotes,hideAlert} = this.state;
+    const {isLoading,rivalData,scoreData,rawUserData,nameErrorMessage,myName,myProfile,arenaRank,sentName,showNotes,hideAlert,isPublic} = this.state;
     const nameError:boolean = myName.length !== 0 && (!/^[a-zA-Z0-9]+$/g.test(myName) || myName.length > 16);
     const profError:boolean = myProfile.length > 140;
     if(isLoading) return <Loader/>
@@ -159,7 +169,6 @@ class SyncControlScreen extends React.Component<{userData:any},{
               value={myName}
               onChange={(e)=>this.setState({myName:e.target.value})}
               style={{width:"100%",margin:"0px 0px 8px 0"}}/>
-              <small>*空欄にしたまま保存することでプロフィールを非公開にできます</small>
             <FormControl fullWidth style={{margin:"8px 0"}}>
               <InputLabel>最高アリーナランク</InputLabel>
               <Select fullWidth value={arenaRank} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
@@ -184,6 +193,13 @@ class SyncControlScreen extends React.Component<{userData:any},{
                 control={<Switch size="small" checked={showNotes} onChange={this.handleShowNotes} name="showNotes" />}
                 label="投稿ノート一覧を公開"
               />
+            </FormControl>
+            <FormControl fullWidth style={{margin:"8px"}}>
+              <FormControlLabel
+                control={<Switch size="small" checked={isPublic} onChange={this.handlePublic} name="showNotes" />}
+                label="プロフィールを一般公開"
+              />
+              <small>プロフィールを非公開にすると、他の人はあなたのスコアデータを閲覧できなくなります。<br/>あなたをライバル登録している人も、非公開の間はあなたのスコアを追跡できなくなります。</small>
             </FormControl>
           </CardContent>
           <CardActions>
@@ -212,12 +228,50 @@ class SyncControlScreen extends React.Component<{userData:any},{
             {(scoreData === null && myName) && <span style={{color:"#ff0000"}}>スコアデータが送信されていません。「転送」→「アップロード」よりスコアデータを送信してください。</span>}
           </Alert>
         }
+        <Divider style={{margin:"8px 0"}}/>
+        <li style={{listStyleType:"none"}}>
+          <Typography
+            style={{padding:"4px 8px"}}
+            color="textSecondary"
+            display="block"
+            variant="caption"
+          >
+            プロフィールを公開したら...
+          </Typography>
+        </li>
+        <List>
+          <ListItem button onClick={()=>this.props.history.push("/rivals?tab=3")}>
+            <ListItemAvatar>
+              <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
+                <GroupAddIcon/>
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText primary={"ライバルを探す"} secondary={"実力が近いユーザーをライバル登録して、スコアを競えます"} />
+          </ListItem>
+          <ListItem button onClick={()=>this.props.history.push("/notes")}>
+            <ListItemAvatar>
+              <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
+                <SpeakerNotesIcon/>
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText primary={"ノートを投稿"} secondary={"楽曲の攻略情報をシェアしよう"} />
+          </ListItem>
+          <ListItem button onClick={()=>this.props.history.push("/sync")}>
+            <ListItemAvatar>
+              <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
+                <BackupIcon/>
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText primary={"スコアを送信"} secondary={"常に最新のスコアをアップロードすることをおすすめします"} />
+          </ListItem>
+        </List>
+
       </div>
     );
   }
 }
 
-export default SyncControlScreen;
+export default withRouter(SyncControlScreen);
 
 const ColorButton = withStyles((theme: Theme) => ({
   root: {

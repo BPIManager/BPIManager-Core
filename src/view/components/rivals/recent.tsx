@@ -59,9 +59,9 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
 
   constructor(props:P & RouteComponentProps){
     super(props);
-    this.fbA.setColName("users");
+    this.fbA.v2SetUserCollection();
     this.fbStores.setColName(`${_currentStore()}_${_isSingle()}`);
-    this.fbU.setColName("users");
+    this.fbU.v2SetUserCollection();
     this.state = {
       input:"",
       uid:"",
@@ -87,7 +87,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
   async componentDidMount(){
     let t:any = [];
     this.fbU.auth().onAuthStateChanged(async(user: any)=> {
-      t = await new fbActions().setColName("users").setDocName(user ? user.uid : "_dummy_").load();
+      t = await new fbActions().v2SetUserCollection().setDocName(user ? user.uid : "_dummy_").load();
       this.fbU.setDocName(user ? user.uid : "");
       this.setState(
         {
@@ -195,16 +195,21 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
       <Container fixed  className="commonLayout">
         {mode === 2 && (
           <form noValidate autoComplete="off">
-            <FormControl style={{float:"right",minWidth:"140px"}}>
-              <InputLabel>アリーナランク</InputLabel>
-              <Select value={arenaRank} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
-                if(typeof e.target.value !== "string") return;
-                this.setState({arenaRank:e.target.value,res:[],activated:false});
-                return searchInput ? this.incrementalSearch(searchInput,e.target.value) : this.search(null,null,e.target.value);
-              }}>
-                {["すべて","A1","A2","A3","A4","A5","B1","B2","B3","B4","B5"].map(item=><MenuItem value={item} key={item}>{item}</MenuItem>)}
-              </Select>
-            </FormControl>
+            <Grid container spacing={1} style={{margin:"5px 0"}}>
+              <Grid item xs={6}/>
+              <Grid item xs={6}>
+                <FormControl style={{width:"100%"}}>
+                  <InputLabel>アリーナランク</InputLabel>
+                  <Select value={arenaRank} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+                    if(typeof e.target.value !== "string") return;
+                    this.setState({arenaRank:e.target.value,res:[],activated:false});
+                    return searchInput ? this.incrementalSearch(searchInput,e.target.value) : this.search(null,null,e.target.value);
+                  }}>
+                    {["すべて","A1","A2","A3","A4","A5","B1","B2","B3","B4","B5"].map(item=><MenuItem value={item} key={item}>{item}</MenuItem>)}
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
             <FormControl fullWidth>
               <InputLabel htmlFor="searchForm">ユーザー名・IIDX IDで検索</InputLabel>
               <Input

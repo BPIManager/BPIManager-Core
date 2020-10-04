@@ -30,7 +30,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
   constructor(props:{userData:any}){
     super(props);
     this.fbLoader.setColName(`${_currentStore()}_${_isSingle()}`).setDocName(props.userData.uid);
-    this.fbA.setColName("users").setDocName(props.userData.uid);
+    this.fbA.v2SetUserCollection().setDocName(props.userData.uid);
     this.state = {
       isLoading:true,
       scoreData:null,

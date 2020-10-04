@@ -10,6 +10,7 @@ import AddIcon from "@material-ui/icons/Add";
 import CheckIcon from "@material-ui/icons/Check";
 import { updatedTime } from "@/components/common/timeFormatter";
 import { getAltTwitterIcon } from "@/components/rivals";
+import { _currentStore } from "@/components/settings";
 
 export default class UserCard extends React.Component<{
   item:any,
@@ -48,7 +49,7 @@ export default class UserCard extends React.Component<{
           subheader={<div onClick={()=>this.props.open(item.displayName)}>
             <span>
               <Chip size="small" style={{backgroundColor:arenaRankColor(item.arenaRank),color:"#fff",margin:"5px 0"}} label={item.arenaRank || "-"} />
-              {item.totalBPI && <Chip size="small" style={{backgroundColor:"green",color:"#fff",margin:"0 0 0 5px"}} label={item.totalBPI} />}
+              {item.totalBPI && <Chip size="small" style={{backgroundColor:"green",color:"#fff",margin:"0 0 0 5px"}} label={item.totalBPIs ? item.totalBPIs[_currentStore()] : item.totalBPI} />}
             </span>
             <span style={{display:"block"}}>{item.profile}</span>
           </div>}

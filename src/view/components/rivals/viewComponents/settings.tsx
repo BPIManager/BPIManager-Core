@@ -35,7 +35,7 @@ class RivalSettings extends React.Component<P,S> {
 
   constructor(props:P){
     super(props);
-    this.fbA.setColName("users");
+    this.fbA.v2SetUserCollection();
     this.fbStores.setColName(`${_currentStore()}_${_isSingle()}`);
     this.state = {
       isLoading1:false,

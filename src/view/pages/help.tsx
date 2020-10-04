@@ -2,9 +2,9 @@ import * as React from 'react';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import Accordion from '@material-ui/core/ExpansionPanel';
+import AccordionSummary from '@material-ui/core/ExpansionPanelSummary';
+import AccordionDetails from '@material-ui/core/ExpansionPanelDetails';
 import { FormattedMessage } from 'react-intl';
 import Divider from '@material-ui/core/Divider';
 import {Link as RefLink} from '@material-ui/core/';
@@ -165,16 +165,16 @@ export default class Index extends React.Component<{},{}> {
         {helps.map(item=>{
           const {title,body} = item;
           return (
-            <ExpansionPanel key={title}>
-              <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <Accordion key={title}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography>
                   <FormattedMessage id={title}/>
                 </Typography>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
+              </AccordionSummary>
+              <AccordionDetails>
               {body}
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
+              </AccordionDetails>
+            </Accordion>
           );
         })}
         </Container>

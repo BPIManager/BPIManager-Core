@@ -33,6 +33,7 @@ export default class Initialize extends React.Component<{global:any},{show:boole
 
   async componentDidMount(){
     try{
+      //new fbActions().dBatch();
       new fbActions().auth().onAuthStateChanged(async(user: any)=> {
         if(user && user.providerData.length > 0 && user.providerData[0]["providerId"] === "twitter.com"){
           //const time = isSameDay(localStorage.getItem("lastTwitterSynced") || "1970/01/01 00:00:00",new Date());
@@ -41,7 +42,7 @@ export default class Initialize extends React.Component<{global:any},{show:boole
             localStorage.setItem("lastTwitterSynced",new Date().toString());
             const ax = await (await fetch("https://us-central1-bpim-d5971.cloudfunctions.net/getTwitterInfo?targetId=" + user.providerData[0]["uid"])).json();
             const p = JSON.parse(ax.raw.body);
-            const u = new fbActions().setColName("users").setDocName(user.uid);
+            const u = new fbActions().v2SetUserCollection().setDocName(user.uid);
             u.setTwitterId(p.screen_name);
             console.log("** Twitter Sync Completed **");
           }else{
@@ -52,7 +53,7 @@ export default class Initialize extends React.Component<{global:any},{show:boole
           const t = await this.rivalListsDB.getAll();
           if(t.length > 0 && user){
             if((await this.fbA.syncLoadRival()).length === 0){
-              const u = await new fbActions().setColName("users").setDocName(user.uid).load();
+              const u = await new fbActions().v2SetUserCollection().setDocName(user.uid).load();
               this.fbA.setDocName(user.uid);
               this.fbA.syncUploadRival(t,true,u ? u.displayName : "");
             }

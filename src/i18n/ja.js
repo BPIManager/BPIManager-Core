@@ -17,6 +17,8 @@ const ja = {
   "GlobalNav.Settings": "設定",
   "GlobalNav.Help": "ヘルプ",
   "GlobalNav.Notes": "Notes",
+  "GlobalNav.AddRivals": "ライバルを探す",
+  "GlobalNav.WriteNote": "ノートを閲覧/投稿",
   "Top.Survey":"アンケートにご協力ください！",
   "Top.SurveyMes":"機能改善のため簡単なアンケートにご協力お願いします。",
   "GlobalNav.RivalCompare":"ライバル勝敗",

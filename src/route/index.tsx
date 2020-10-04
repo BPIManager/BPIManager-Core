@@ -43,7 +43,7 @@ export default class Router extends React.Component<{},{}> {
 
   async globalUpdateScore(uName:string){
     const f = new fbActions();
-    const t = await f.setColName("users").setDocName(uName).load();
+    const t = await f.v2SetUserCollection().setDocName(uName).load();
     await f.setColName(`${_currentStore()}_${_isSingle()}`).setDocName(uName).save((t && t.displayName) ? t.displayName : "");
   }
 
@@ -77,8 +77,7 @@ export default class Router extends React.Component<{},{}> {
                   <Route path="/AAATable" exact component={AAATable}/>
                   <Route path="/tools" exact component={Tools}/>
                   <Route path="/share/:id" exact component={Shared}/>
-                  <Route path="/u/" exact component={User}/>
-                  <Route path="/u/:uid" exact component={User}/>
+                  <Route path="/u/:uid/:version?" exact component={User}/>
                   <Route path="/notes" exact component={Note}/>
                   <Route path="/notes/:title/:diff/:single" exact component={NoteIndv}/>
                   <Route path="/sitemap" exact component={SitemapGen}/>
