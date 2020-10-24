@@ -19,7 +19,6 @@ import { scoresDB, scoreHistoryDB, songsDB, rivalListsDB } from '@/components/in
 import Divider from '@material-ui/core/Divider';
 import { Switch, Backdrop } from '@material-ui/core';
 import CachedIcon from '@material-ui/icons/Cached';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import Loader from '../common/loader';
 import fbActions from '@/components/firebase/actions';
 import ExportButton from '@/components/settings/exportButton';
@@ -146,7 +145,7 @@ class Settings extends React.Component<P,S> {
   }
 
   render(){
-    const {isLoading,isDialogOpen,message2,currentResetStore,disableDeleteBtn,traditionalMode,recalculating,initialT,usage,quota} = this.state;
+    const {isLoading,isDialogOpen,message2,currentResetStore,disableDeleteBtn,traditionalMode,recalculating,initialT} = this.state;
     if(isLoading){
       return (<Loader/>);
     }
