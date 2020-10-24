@@ -30,6 +30,7 @@ export const _prefixWithPS = (diff:string,isSingle:boolean)=>{
 
 export const _prefix = (diff:string):string=> diff === "hyper" ? "(H)" : diff === "leggendaria" ? "(†)" : "";
 export const _prefixFull = (diff:string):string=> diff === "hyper" ? "H" : diff === "leggendaria" ? "L" : "A";
+export const _prefixFullNum = (diff:string):string=> diff === "3" ? "H" : diff === "10" ? "L" : "A";
 
 export const _prefixFromNum = (difficulty:string,showAnother:boolean = false):string=>{
   let prefix:string = showAnother ? "(A)" : "";

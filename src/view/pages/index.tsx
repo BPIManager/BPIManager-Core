@@ -26,6 +26,7 @@ import CheckIcon from '@material-ui/icons/Check';
 import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
 import TwitterIcon from '@material-ui/icons/Twitter';
+import WarningIcon from '@material-ui/icons/Warning';
 
 class Index extends React.Component<RouteComponentProps&{global:any},{}> {
 
@@ -313,7 +314,8 @@ class UpdateDef extends React.Component<{},{
           </div>}
           {progress === 2 && <div>
             <div style={{display:"flex",alignItems:"center",margin:"20px 0",flexDirection:"column"}}>
-              <CheckIcon style={{ fontSize: 60 }}/>
+              {res === "定義データはすでに最新です" && <CheckIcon style={{ fontSize: 60 }}/>}
+              {res !== "定義データはすでに最新です" && <WarningIcon style={{ fontSize: 60 }}/>}
               <span>{res}</span>
             </div>
             <Button onClick={this.handleToggle} color="secondary" fullWidth style={{marginTop:"8px"}}>

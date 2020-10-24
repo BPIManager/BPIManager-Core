@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import Paper from '@material-ui/core/Paper';
 import FormControl from '@material-ui/core/FormControl';
 import { _currentViewComponents, _setCurrentViewComponents,isEnableTweetButton,setEnableTweetButton } from '@/components/settings';
@@ -58,7 +58,7 @@ class Settings extends React.Component<P,S> {
       <Container fixed  style={{padding:0}}>
         <Paper style={{padding:"15px"}}>
           <FormControl fullWidth>
-            <FormLabel component="legend">楽曲リスト/補助表示</FormLabel>
+            <FormLabel component="legend"><FormattedMessage id="Settings.View"/></FormLabel>
             <FormGroup>
               <FormControlLabel control={<Checkbox checked={this.indexOf("last")} onChange={this.changeView("last")} value="last" />} label="前回スコアからの更新点数"/>
             </FormGroup>
@@ -73,13 +73,11 @@ class Settings extends React.Component<P,S> {
             </FormGroup>
           </FormControl>
           <Typography variant="caption" display="block">
-            楽曲リストにおいて表示する内容を選択してください。<br/>
-            「前作スコアからの更新点数」表示は、マシンスペック・表示件数によってはページのレンダリングが遅延する可能性があります。
+            <FormattedMessage id="Settings.View1"/><br/>
+            <FormattedMessage id="Settings.View2"/>
           </Typography>
           <Divider style={{margin:"10px 0"}}/>
-          <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
-            楽曲画面/ツイートボタン
-          </Typography>
+          <FormLabel component="legend"><FormattedMessage id="Settings.View.TB"/></FormLabel>
           <Switch
             checked={isEnableTweetButton}
             onChange={(e:React.ChangeEvent<HTMLInputElement>,)=>{
@@ -90,7 +88,7 @@ class Settings extends React.Component<P,S> {
             }}
           />
           <Typography variant="caption" display="block">
-            個別楽曲ページの「グラフ」タブに、BPI伸びやEXスコアなどをツイートできるボタンを表示します。
+            <FormattedMessage id="Settings.View.TBCaption"/>
           </Typography>
         </Paper>
       </Container>

@@ -21,7 +21,7 @@ import Button from '@material-ui/core/Button';
 import { _currentStore } from '@/components/settings';
 import { scoreData } from '@/types/data';
 import { scoresDB } from '@/components/indexedDB';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import { StyledBadge } from '../songs/songNotes';

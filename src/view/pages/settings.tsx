@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Container from '@material-ui/core/Container';
-import { injectIntl } from 'react-intl';
+import { injectIntl, FormattedMessage } from 'react-intl';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
@@ -36,10 +36,10 @@ class Stats extends React.Component<{intl:any,global:any},S> {
           textColor="secondary"
           style={{margin:"5px 0"}}
         >
-          <Tab label="基本" />
-          <Tab label="表示" />
-          <Tab label="その他" />
-          <Tab label="デバッグ情報" />
+          <Tab label={<FormattedMessage id="Settings.Tabs.Common"/>} />
+          <Tab label={<FormattedMessage id="Settings.Tabs.View"/>} />
+          <Tab label={<FormattedMessage id="Settings.Tabs.Etc"/>} />
+          <Tab label={<FormattedMessage id="Settings.Tabs.Debug"/>} />
         </Tabs>
         {this.state.currentTab === 0 && <Basic global={this.props.global}/>}
         {this.state.currentTab === 1 && <View global={this.props.global}/>}

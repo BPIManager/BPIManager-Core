@@ -8,7 +8,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import { FormattedMessage } from "react-intl";
-import { lampCSVArray, getSongSuffixForIIDXInfo } from "@/components/songs/filter";
+import { lampCSVArray, _prefixFullNum } from "@/components/songs/filter";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
@@ -146,7 +146,7 @@ class SongDetails extends React.Component<P> {
               </TableRow>
               <TableRow>
                 <TableCell>Plot</TableCell>
-                <TableCell><img src={`https://files.poyashi.me/plots/`+ song.title.replace(/:|"|\*/g,"") + getSongSuffixForIIDXInfo(song.title,song.difficulty) + ".jpeg"}
+                <TableCell><img src={`https://files.poyashi.me/bpim/plots/27_end/`+ song.title.replace(/:|"|\*|†$/g,"") + "[" + _prefixFullNum(song.difficulty) + "].jpeg"}
                   alt="plot"
                   style={{maxWidth:"100%"}} onError={(e)=>(e.target as HTMLImageElement).src = 'https://files.poyashi.me/noimg.png'}/></TableCell>
               </TableRow>

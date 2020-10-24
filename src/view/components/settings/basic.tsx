@@ -121,7 +121,7 @@ class Settings extends React.Component<P,S> {
                 </Select>
               </FormControl>
               <Typography variant="caption" display="block">
-                Light / Dark / Deep Seaの3種類からお選びいただけます。
+                <FormattedMessage id="Settings.Themes"/>
               </Typography>
               <Divider style={{margin:"10px 0"}}/>
               <FormControl>
@@ -157,9 +157,9 @@ class Settings extends React.Component<P,S> {
                 }}
               />
               <Typography variant="caption" display="block">
-                CSVインポート時、自動でクラウドと同期します。<br/>
-                処理は非同期的に行われるため、インポート時間に影響はありません。<br/>
-                Syncにログインしていない場合、この設定は無視されます。
+                <FormattedMessage id="Settings.AutoSync1"/><br/>
+                <FormattedMessage id="Settings.AutoSync2"/><br/>
+                <FormattedMessage id="Settings.AutoSync3"/>
               </Typography>
               <Divider style={{margin:"10px 0"}}/>
               <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
@@ -241,7 +241,7 @@ class Settings extends React.Component<P,S> {
               {isURLDialogOpen && <URLDialog isDialogOpen={isURLDialogOpen} exec={this.changeDefinitionURL} close={this.toggleURLDialog}/>}
               <Divider style={{margin:"10px 0"}}/>
               <FormControl>
-                <InputLabel>地域</InputLabel>
+                <InputLabel><FormattedMessage id="Settings.AreaTitle"/></InputLabel>
                 <Select value={state.area} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
                   if(typeof e.target.value === "number"){
                     setArea(e.target.value)
@@ -251,7 +251,7 @@ class Settings extends React.Component<P,S> {
                 </Select>
               </FormControl>
               <Typography variant="caption" display="block">
-                所属地域を選択することで、楽曲詳細画面から該当楽曲/該当地域のTOP RANKERページを開くことができます。
+                <FormattedMessage id="Settings.Area"/>
               </Typography>
             </Paper>
           </Container>

@@ -213,7 +213,30 @@ const ja = {
   "Orders.asc":"昇順",
   "Orders.desc":"降順",
   "Help.Donation":"寄付のお願い",
-  "Help.PrivacyPolicy":"プライバシーポリシー"
+  "Help.PrivacyPolicy":"プライバシーポリシー",
+  /* 2020/10/18 */
+  "Settings.Themes":"Light / Dark / Deep Seaの3種類からお選びいただけます。",
+  "Settings.AutoSync1":"CSVインポート時、自動でクラウドと同期します。",
+  "Settings.AutoSync2":"処理は非同期的に行われるため、インポート時間に影響はありません。",
+  "Settings.AutoSync3":"Syncにログインしていない場合、この設定は無視されます。",
+  "Settings.AreaTitle":"地域",
+  "Settings.Area":"所属地域を選択することで、楽曲詳細画面から該当楽曲/該当地域のTOP RANKERページを開くことができます。",
+  "Settings.View":"楽曲リスト/補助表示",
+  "Settings.View1":"楽曲リストにおいて表示する内容を選択してください。",
+  "Settings.View2":"「前作スコアからの更新点数」表示は、マシンスペック・表示件数によってはページのレンダリングが遅延する可能性があります。",
+  "Settings.View.TB":"楽曲画面/ツイートボタン",
+  "Settings.View.TBCaption":"個別楽曲ページの「グラフ」タブに、BPI伸びやEXスコアなどをツイートできるボタンを表示します。",
+  "Settings.UseTraditional":"従来の計算方式を利用",
+  "Settings.UseTraditional1":"計算式上における係数を1.5に固定してBPIを計算します。",
+  "Settings.UseTraditional2":"全数値を再計算するため、変更の適用には時間がかかります。",
+  "Common.Apply":"適用",
+  "Settings.Export":"エクスポート",
+  "Common.CurrentVer":"現在のバージョン",
+  "Settings.ExportCaption":"登録されたスコアデータおよびメタデータをCSVで書き出します。",
+  "Settings.Tabs.Common":"基本",
+  "Settings.Tabs.View":"表示",
+  "Settings.Tabs.Etc":"その他",
+  "Settings.Tabs.Debug":"デバッグ情報",
 };
 
 export default ja;

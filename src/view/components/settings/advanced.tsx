@@ -154,7 +154,7 @@ class Settings extends React.Component<P,S> {
       <Container fixed  style={{padding:0}}>
         <Paper style={{padding:"15px"}}>
           <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
-            従来の計算方式を利用
+            <FormattedMessage id="Settings.UseTraditional"/>
           </Typography>
           <Switch
             checked={traditionalMode === 1 ? true : false}
@@ -166,8 +166,8 @@ class Settings extends React.Component<P,S> {
             }}
           />
           <Typography variant="caption" display="block">
-            計算式上における係数を1.5に固定してBPIを計算します。<br/>
-            全数値を再計算するため、変更の適用には時間がかかります。
+            <FormattedMessage id="Settings.UseTraditional1"/><br/>
+            <FormattedMessage id="Settings.UseTraditional2"/>
           </Typography>
           <Button
             variant="contained"
@@ -175,9 +175,10 @@ class Settings extends React.Component<P,S> {
             onClick={this.recalc}
             disabled={traditionalMode === initialT}
             startIcon={<CachedIcon />}>
-            適用
+            <FormattedMessage id="Common.Apply"/>
           </Button>
           <Divider style={{margin:"10px 0"}}/>
+          {/*
           <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
             ストレージ占有率
           </Typography>
@@ -202,6 +203,7 @@ class Settings extends React.Component<P,S> {
             永続化リクエスト
           </Button>
           <Divider style={{margin:"10px 0"}}/>
+          */}
           <FormControl>
             <InputLabel><FormattedMessage id="Settings.dataClear"/></InputLabel>
             <Select value={currentResetStore} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
@@ -232,11 +234,12 @@ class Settings extends React.Component<P,S> {
             </Typography>
             <Divider style={{margin:"10px 0"}}/>
             <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
-              エクスポート
+              <FormattedMessage id="Settings.Export"/>
             </Typography>
             <ExportButton/>
             <Typography variant="caption" display="block">
-              現在のバージョン({_currentStore()}/{_isSingle() ? "SP" : "DP"})に登録されたスコアデータおよびメタデータをCSVで書き出します。
+              <FormattedMessage id="Common.CurrentVer"/>:({_currentStore()}/{_isSingle() ? "SP" : "DP"})<br/>
+              <FormattedMessage id="Settings.ExportCaption"/>
             </Typography>
             <AlertDialog isDialogOpen={isDialogOpen} exec={this.deleteDef} close={this.toggleDialog} currentResetStore={currentResetStore}/>
             {disableDeleteBtn && <Loader/>}

@@ -265,7 +265,21 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
             <ListItemText primary={"スコアを送信"} secondary={"常に最新のスコアをアップロードすることをおすすめします"} />
           </ListItem>
         </List>
-
+        {/*
+        <Divider style={{margin:"8px 0"}}/>
+        <li style={{listStyleType:"none"}}>
+          <Typography
+            style={{padding:"4px 8px"}}
+            color="textSecondary"
+            display="block"
+            variant="caption"
+          >
+            高度な設定
+          </Typography>
+          <Button fullWidth color="secondary" variant="outlined" size="large" style={{margin:"10px 0"}}>再認証して表示</Button>
+          <small>アカウント削除などを実行するには、ソーシャルアカウントで再連携し、本人であることを確認する必要があります。</small>
+        </li>
+        */}
       </div>
     );
   }

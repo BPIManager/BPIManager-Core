@@ -3,6 +3,7 @@ import Button from '@material-ui/core/Button';
 import { scoresDB,songsDB } from '../indexedDB';
 import { _isSingle, _currentStore } from '.';
 import { difficultyDiscriminator, lampArray } from '../songs/filter';
+import { FormattedMessage } from 'react-intl';
 
 export default class ExportButton extends React.Component<{},{}> {
 
@@ -47,7 +48,7 @@ export default class ExportButton extends React.Component<{},{}> {
           style={{margin:"5px 0"}}
           variant="outlined"
           color="secondary">
-          エクスポート
+          <FormattedMessage id="Settings.Export"/>
         </Button>
       </div>
     );

@@ -252,7 +252,30 @@ const ja = {
   "Orders.My":"Your ",
   "Orders.Rival":"Rival's ",
   "Help.Donation":"About Donation",
-  "Help.PrivacyPolicy":"Privacy Policy"
+  "Help.PrivacyPolicy":"Privacy Policy",
+
+  "Settings.Themes":"Please choose app appearance from 3 themes: Light / Dark / Deep Sea",
+  "Settings.AutoSync1":"When turning on this config, automatically upload the latest score data to the server.",
+  "Settings.AutoSync2":"Since a sequence of processes is asynchronous, it does not affect the import time.",
+  "Settings.AutoSync3":"When you have not been logged into BPIManager, this configure will be ignored.",
+  "Settings.AreaTitle":"Region",
+  "Settings.Area":"By selecting the area you belong to, you can open the TOP RANKER page for the  corresponding area and song from the detail-screen.",
+  "Settings.View":"Sub display",
+  "Settings.View1":"Check out all components you want to display on the list of songs.",
+  "Settings.View2":"\"Updated diffs from the previous score\" may delay the rendering of the page depending on the machine spec and the number of items displayed.",
+  "Settings.View.TB":"Tweet button (on detail screen)",
+  "Settings.View.TBCaption":"Show a button on the Graph tab in detail-screen that allows you to tweet BPI growth, EX score, etc.",
+  "Settings.UseTraditional":"Use the legacy calculation formula",
+  "Settings.UseTraditional1":"計算式上における係数を1.5に固定してBPIを計算します。",
+  "Settings.UseTraditional2":"全数値を再計算するため、変更の適用には時間がかかります。",
+  "Common.Apply":"Apply",
+  "Settings.Export":"エクスポート",
+  "Common.CurrentVer":"現在のバージョン",
+  "Settings.ExportCaption":"登録されたスコアデータおよびメタデータをCSVで書き出します。",
+  "Settings.Tabs.Common":"Common",
+  "Settings.Tabs.View":"View",
+  "Settings.Tabs.Etc":"Advanced",
+  "Settings.Tabs.Debug":"Debug",
 };
 
 export default ja;

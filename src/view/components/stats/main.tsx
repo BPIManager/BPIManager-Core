@@ -104,7 +104,6 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
       }
       return Math.round((totalBPI - s) * 1000) / 1000;
     }
-    console.log(lastWeek,lastMonth);
     if(isLoading){
       return (
         <Container fixed  style={{padding:0}}>
