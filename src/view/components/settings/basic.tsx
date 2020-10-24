@@ -133,7 +133,7 @@ class Settings extends React.Component<P,S> {
                 }}>
                   <MenuItem value="26">26 Rootage</MenuItem>
                   <MenuItem value="27">27 HEROIC VERSE</MenuItem>
-                  {/*<MenuItem value="28">28 BISTROVER</MenuItem>*/}
+                  <MenuItem value="28">28 BISTROVER</MenuItem>
                   <MenuItem value="INF">INFINITAS</MenuItem>
                 </Select>
               </FormControl>

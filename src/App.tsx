@@ -12,9 +12,6 @@ import GlobalContainer from './components/context/global';
 import firebase from 'firebase/app';
 import 'firebase/messaging';
 import { pubkey, messanger } from './components/firebase/message';
-import { exec } from './test';
-
-exec();
 
 export default class App extends React.Component<{},{}> {
 

@@ -86,17 +86,17 @@ export const songs:{[key:string]:[string,string][]} = {
     ["灼熱Beach Side Bunny","another"],
     ["BLACK.by X-Cross Fade","another"],
     ["Red. by Jack Trance","another"],
-    ["Level One","another"],
+    ["Snake Stick","another"],
     ["火影","another"]
   ],
   "SOFLAN":[
     ["冥","another"],
-    ["ICARUS","leggendaria"],
     ["Fascination MAXX","another"],
-    ["JOMANDA","another"],
     ["PARANOiA ～HADES～","another"],
-    ["音楽","another"],
     ["DAY DREAM","another"],
+    ["音楽","another"],
+    ["ruin of opals","another"],
+    ["Concertino in Blue","another"]
   ],
   "DELAY":[
     ["Mare Nectaris","another"],
