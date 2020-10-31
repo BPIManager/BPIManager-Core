@@ -286,7 +286,12 @@ class AlertDialog extends React.Component<{isDialogOpen:boolean,exec:()=>void,cl
             <DialogContentText>
               <FormattedMessage id="Settings.DeleteDialogBody"/><br/>
               <FormattedMessage id="Settings.DeleteDialogBody2"/><br/>
-              {currentResetStore === "26" ? "26 Rootage" : currentResetStore === "27" ? "27 HEROIC VERSE" :  currentResetStore === "Songs Database" ? "Songs Database" : "Rivals"}
+              {
+                currentResetStore === "26" ? "26 Rootage" :
+                currentResetStore === "27" ? "27 HEROIC VERSE" :
+                currentResetStore === "28" ? "28 BISTROVER" :
+                currentResetStore === "INF" ? "INFINITAS" :
+                currentResetStore === "Songs Database" ? "Songs Database" : "Rivals"}
             </DialogContentText>
           </DialogContent>
           <DialogActions>
