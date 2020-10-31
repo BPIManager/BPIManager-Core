@@ -290,7 +290,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
                   </Avatar>
                 )}
                 onClick={()=>{history.push("/sync/settings");if(!isPerment){this.toggleNav()}}}
-                label={"アカウント設定"}
+                label={"Sync"}
                 clickable
                 color="primary"
               />
