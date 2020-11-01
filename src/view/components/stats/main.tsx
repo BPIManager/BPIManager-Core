@@ -7,7 +7,7 @@ import bpiCalcuator from '@/components/bpi';
 import {_chartColor, _chartBarColor, pieColor, _currentStore} from "@/components/settings";
 import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, LineChart, BarChart, ReferenceLine, Pie, PieChart, Cell, Legend} from 'recharts';
 import _withOrd from '@/components/common/ord';
-import {FormControlLabel, FormControl, RadioGroup, Radio, FormLabel, FormGroup, Checkbox} from '@material-ui/core/';
+import {FormControlLabel, FormControl, RadioGroup, Radio, FormLabel} from '@material-ui/core/';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '../common/loader';
 import { S, groupedArray } from '@/types/stats';
@@ -95,7 +95,7 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
   hasData = (name:number)=> this.state.displayData.indexOf(name) > -1;
 
   render(){
-    const {totalBPI,isLoading,targetLevel,groupedByBPM,totalRank,groupedByLevel,groupedByDJRank,groupedByClearState,lastWeek,lastMonth,lastVerTotalBPI,compareWithLastVer} = this.state;
+    const {totalBPI,isLoading,targetLevel,groupedByBPM,totalRank,groupedByLevel,groupedByDJRank,groupedByClearState,lastWeek,lastMonth,lastVerTotalBPI} = this.state;
     const chartColor = _chartColor();
     const barColor = _chartBarColor("bar");
     const lineColor = _chartBarColor("line");
