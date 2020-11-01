@@ -133,21 +133,6 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
     return (
       <Container fixed  style={{padding:0}}>
         <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel} isFlexEnd/>
-        {(compareWithLastVer !== undefined) &&
-        <FormGroup row>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={compareWithLastVer}
-                onClick={()=>this.changeCompareState(!compareWithLastVer)}
-                value={compareWithLastVer}
-                color="primary"
-              />
-            }
-            label={"前作との比較を表示"}
-          />
-        </FormGroup>
-      }
         <Grid container>
           <Grid item xs={12} md={3} lg={3}>
             <div style={{padding:"15px"}} className="responsiveTotalBPI">
