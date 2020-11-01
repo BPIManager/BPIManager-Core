@@ -99,8 +99,6 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
     const chartColor = _chartColor();
     const barColor = _chartBarColor("bar");
     const lineColor = _chartBarColor("line");
-    const linePrev = _chartBarColor("line3");
-
 
     const compareLastVer = ()=>{
       if(!lastVerTotalBPI){ return "0";}
