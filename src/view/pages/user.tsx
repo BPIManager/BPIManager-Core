@@ -21,7 +21,7 @@ import {Link, Chip, Divider, Grid, GridList, GridListTile, GridListTileBar, List
 import {Link as RefLink} from "react-router-dom";
 import ClearLampView from '@/view/components/table/fromUserPage';
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
-import {arenaRankColor, alternativeImg, avatarBgColor, avatarFontColor} from '@/components/common';
+import {arenaRankColor, alternativeImg, avatarBgColor, avatarFontColor, versionString} from '@/components/common';
 import Loader from '@/view/components/common/loader';
 import { config } from '@/config';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
@@ -164,7 +164,8 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     this.setState({processing:true});
     const res = await this.fbA.searchRival(userName);
     if(res){
-      const totalBPI = res.totalBPIs ? res.totalBPIs[_currentStore()] : res.totalBPI || "-";
+      console.log(res)
+      const totalBPI = (res.totalBPIs && res.totalBPIs[_currentStore()]) ? res.totalBPIs[_currentStore()] : "-";
       this.countAsync(res.uid);
       const scores = await rivalScores(res);
       const rivalStat = await makeRivalStat(scores,true);
@@ -351,7 +352,8 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
                     {res.profile}
                   </Typography>
                   <Typography variant="caption" component="p" gutterBottom style={{color:themeColor === "light" ? "#888" : "#aaa"}}>
-                    最終更新:{res.timeStamp}
+                    最終更新:{res.timeStamp}<br/>
+                    バージョン:{versionString(_currentStore())}
                   </Typography>
                 </div>
                 {counts.loading && (

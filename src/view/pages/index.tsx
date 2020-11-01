@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 import { FormattedMessage } from "react-intl";
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import {Link as RefLink, ListItem, ListItemAvatar, Avatar, ListItemText, ListItemSecondaryAction, IconButton, List, ButtonGroup, Dialog, DialogTitle, DialogContent, Divider} from '@material-ui/core/';
-import { _currentVersion } from '@/components/settings';
+import { _currentVersion, _currentStore } from '@/components/settings';
 import PhonelinkSetupIcon from '@material-ui/icons/PhonelinkSetup';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import LibraryMusicIcon from '@material-ui/icons/LibraryMusic';
@@ -82,7 +82,8 @@ class IfNotOnTheHomeScreen extends React.Component<{
   global:any,
 },{
   show:boolean,
-  hide:boolean
+  hide:boolean,
+  hideVerBR:boolean
 }>{
 
   constructor(props:{history:any,global:any}){
@@ -96,11 +97,12 @@ class IfNotOnTheHomeScreen extends React.Component<{
     this.state = {
       show:isPC() ? true : (regEx(/iphone|ipad|ipod/) && !isStandAloneIn_iOS()) ? true : (regEx(/android/) && !isStandAloneInAndroid()) ? true : false,
       hide:!!localStorage.getItem("hide20200829"),
+      hideVerBR:!!localStorage.getItem("hideTopBISTROVER")
     }
   }
 
   render(){
-    const {show,hide} = this.state;
+    const {show,hideVerBR} = this.state;
     const navBar = [
       {
         to:"/help/start",
@@ -133,6 +135,7 @@ class IfNotOnTheHomeScreen extends React.Component<{
         icon:<SpeakerNotesIcon />
       }
     ]
+    console.log(_currentStore())
     return (
       <div className="heroLayout">
         <Container fixed  className="heroTitle">
@@ -151,16 +154,18 @@ class IfNotOnTheHomeScreen extends React.Component<{
               </div>
             </Grid>
           </Grid>
-          {!hide && !localStorage.getItem("hide20200829") &&
+          {((!hideVerBR && !localStorage.getItem("hideTopBISTROVER")) && (_currentStore() !== "28" && _currentStore() !== "INF")) &&
             <Alert variant="outlined" severity="info" style={{margin:"10px 0"}}>
-              <AlertTitle>新機能のご紹介</AlertTitle>
-              <p>楽曲の攻略情報をシェアできる<b>「Notes」</b>をリリースしました。</p>
+              <AlertTitle>新バージョンへの切り替え</AlertTitle>
+              <p>
+                設定画面からスコアの保存先を「28 BISTROVER」に変更してください。
+              </p>
               <ButtonGroup color="secondary" style={{margin:"8px 0"}} variant="outlined">
-              <Button startIcon={<FavoriteIcon />}><Link to="/help/notes" style={{textDecoration:"none",color:"inherit"}}>詳細</Link></Button>
+              <Button startIcon={<FavoriteIcon />}><Link to="/settings" style={{textDecoration:"none",color:"inherit"}}>設定</Link></Button>
               <Button startIcon={<VisibilityOffIcon />} onClick={()=>{
-                localStorage.setItem("hide20200829","true");
+                localStorage.setItem("hideTopBISTROVER","true");
                 this.setState({hide:true});
-              }}>再度表示しない</Button>
+              }}>非表示</Button>
               </ButtonGroup>
             </Alert>
           }

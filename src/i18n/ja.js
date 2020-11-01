@@ -123,7 +123,7 @@ const ja = {
   "Settings.delete":"データのリセット",
   "Settings.noteLang":"UIに用いる言語を選択してください。",
   "Settings.noteMes1":"過去作スコアを登録することで、最新作とのデータ比較が可能です。",
-  "Settings.inaccurateMes":"過去作のスコアも今現在の最新全1,平均スコアでBPIが計算されます。参考程度にしてください。",
+  "Settings.inaccurateMes":"（ただし、過去作のスコアも今現在の最新全1,平均スコアでBPIが計算されます。）",
   "Settings.Update":"更新",
   "Settings.UpdateResourcePacks":"定義データの更新",
   "Settings.currentVersion":"現在の定義バージョン:",

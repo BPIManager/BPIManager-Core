@@ -71,10 +71,14 @@ class Settings extends React.Component<P,S> {
             <FormGroup>
               <FormControlLabel control={<Checkbox checked={this.indexOf("lastVer")} onChange={this.changeView("lastVer")} value="lastVer" />} label="前作スコアからの更新点数"/>
             </FormGroup>
+            <FormGroup>
+              <FormControlLabel control={<Checkbox checked={this.indexOf("percentage")} onChange={this.changeView("percentage")} value="percentage" />} label="単曲スコアレート"/>
+            </FormGroup>
           </FormControl>
           <Typography variant="caption" display="block">
             <FormattedMessage id="Settings.View1"/><br/>
-            <FormattedMessage id="Settings.View2"/>
+            <FormattedMessage id="Settings.View2"/><br/>
+            画面サイズ・補助表示の表示項目数・曲名の長さにより、項目の表示が重なることがあります。
           </Typography>
           <Divider style={{margin:"10px 0"}}/>
           <FormLabel component="legend"><FormattedMessage id="Settings.View.TB"/></FormLabel>

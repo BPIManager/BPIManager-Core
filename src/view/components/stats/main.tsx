@@ -4,13 +4,12 @@ import Typography from '@material-ui/core/Typography';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import Grid from '@material-ui/core/Grid';
 import bpiCalcuator from '@/components/bpi';
-import {_chartColor, _chartBarColor, pieColor} from "@/components/settings";
+import {_chartColor, _chartBarColor, pieColor, _currentStore} from "@/components/settings";
 import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, LineChart, BarChart, ReferenceLine, Pie, PieChart, Cell, Legend} from 'recharts';
 import _withOrd from '@/components/common/ord';
-import {FormControlLabel, FormControl, RadioGroup, Radio, FormLabel} from '@material-ui/core/';
+import {FormControlLabel, FormControl, RadioGroup, Radio, FormLabel, FormGroup, Checkbox} from '@material-ui/core/';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '../common/loader';
-import { bpmDist } from '@/components/stats/bpmDist';
 import { S, groupedArray } from '@/types/stats';
 import { BPITicker, statMain } from '@/components/stats/main';
 import { rivalScoreData } from '@/types/data';
@@ -25,6 +24,7 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
     this.state ={
       isLoading:true,
       totalBPI:0,
+      lastVerTotalBPI:null,
       totalRank:0,
       groupedByLevel:[],
       groupedByDiff:[],
@@ -37,6 +37,7 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
       graphLastUpdated:new Date().getTime(),
       lastWeek:null,
       lastMonth:null,
+      compareWithLastVer:false,
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
@@ -47,15 +48,17 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
 
   async updateScoreData(targetLevel = 12){
     const bpi = new bpiCalcuator();
-    const exec = await new statMain(targetLevel).load(this.props.derived);
-    const totalBPI = bpi.setSongs(exec.at(),exec.at().length);
+    let exec = await (await new statMain(targetLevel).load(this.props.derived)).setLastData(String(Number(_currentStore()) - 1));
+    const totalBPI = bpi.setSongs(exec.at(),exec.at().length) || -15;
+    const lastVerTotalBPI = bpi.setSongs(exec.at(true),exec.at(true).length);
     //BPI別集計
     this.setState({
       isLoading:false,
       totalBPI:totalBPI,
+      lastVerTotalBPI:lastVerTotalBPI || null,
       totalRank:bpi.rank(totalBPI,false),
       groupedByLevel:await exec.groupedByLevel(),
-      groupedByBPM:await bpmDist(String(targetLevel) as "11"|"12"),
+      groupedByBPM:await exec.bpmDist(String(targetLevel) as "11"|"12"),
       groupedByDJRank:await exec.songsByDJRank(),
       groupedByClearState:await exec.songsByClearState(),
       lastWeek:await exec.eachDaySum(4,dayjs().subtract(1, 'week').format()),
@@ -85,15 +88,29 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
     }
   }
 
+  changeCompareState = (newState:boolean)=> this.setState({compareWithLastVer:newState});
+
   applyDisplayConfig = (newData:number[])=> this.setState({displayData:newData,showDisplayDataConfig:false,graphLastUpdated:new Date().getTime()});
   showDisplayDataConfig = ()=> this.setState({showDisplayDataConfig:true});
   hasData = (name:number)=> this.state.displayData.indexOf(name) > -1;
 
   render(){
-    const {totalBPI,isLoading,targetLevel,groupedByBPM,totalRank,groupedByLevel,groupedByDJRank,groupedByClearState,lastWeek,lastMonth} = this.state;
+    const {totalBPI,isLoading,targetLevel,groupedByBPM,totalRank,groupedByLevel,groupedByDJRank,groupedByClearState,lastWeek,lastMonth,lastVerTotalBPI,compareWithLastVer} = this.state;
     const chartColor = _chartColor();
     const barColor = _chartBarColor("bar");
     const lineColor = _chartBarColor("line");
+    const linePrev = _chartBarColor("line3");
+
+
+    const compareLastVer = ()=>{
+      if(!lastVerTotalBPI){ return "0";}
+      const upPer = Math.abs(Math.round(((totalBPI - lastVerTotalBPI) / lastVerTotalBPI)  * 10000) / 100);
+      if(totalBPI >= lastVerTotalBPI){
+        return "+" + upPer + "%";
+      }else{
+        return "-" + upPer + "%";
+      }
+    }
     const addPrefix = (m:any)=>{
       const s = m[m.length - 1] ? m[m.length - 1]["shiftedBPI"] : -15;
       if(totalBPI - s === 0){
@@ -118,6 +135,21 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
     return (
       <Container fixed  style={{padding:0}}>
         <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel} isFlexEnd/>
+        {(compareWithLastVer !== undefined) &&
+        <FormGroup row>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={compareWithLastVer}
+                onClick={()=>this.changeCompareState(!compareWithLastVer)}
+                value={compareWithLastVer}
+                color="primary"
+              />
+            }
+            label={"前作との比較を表示"}
+          />
+        </FormGroup>
+      }
         <Grid container>
           <Grid item xs={12} md={3} lg={3}>
             <div style={{padding:"15px"}} className="responsiveTotalBPI">
@@ -132,7 +164,8 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
                 <ShareOnTwitter text={`★${targetLevel}の総合BPI:${totalBPI}(推定順位:${totalRank}位,皆伝上位${rankPer}%)\n前週比:${addPrefix(lastWeek)} 前月同日比:${addPrefix(lastMonth)}`} url={url}/>
               </Typography>
               <Typography component="p" variant="body1" color="textPrimary">
-                (皆伝上位{rankPer}%)
+                皆伝上位{rankPer}%<br/>
+                {lastVerTotalBPI && <span>前作総合BPI:{lastVerTotalBPI}(前作比{compareLastVer()})</span>}
               </Typography>
             </div>
           </Grid>
@@ -155,8 +188,10 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
                         <XAxis type={"number"} dataKey="name" stroke={chartColor} ticks={this.xAxisTicker()} domain={[-20,100]}/>
                         <YAxis stroke={chartColor}/>
                         <Tooltip contentStyle={{color:"#333"}}/>
+                        <Legend/>
                         <ReferenceLine x={totalBPI} stroke={barColor} isFront={true} />
                         <Line type="monotone" dataKey={"☆" + targetLevel} stroke={lineColor} activeDot={{ r: 8 }} />
+                        {/*<Line type="monotone" dataKey={"☆" + targetLevel + "(前作)"} stroke={linePrev} activeDot={{ r: 8 }} />*/}
                       </LineChart>
                   </ResponsiveContainer>
                 </div>

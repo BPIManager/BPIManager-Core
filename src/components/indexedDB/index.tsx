@@ -394,7 +394,7 @@ export const scoresDB = class extends storageWrapper{
   async loadStore():Promise<this>{
     try{
       this.currentData = await this.scores.where({
-        storedAt:_currentStore(),
+        storedAt:this.storedAt,
         isSingle:_isSingle(),
       }).toArray();
       return this;

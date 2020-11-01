@@ -119,17 +119,17 @@ export const makeRivalStat = async(full:rivalScoreData[],showAllScore:boolean = 
       clearState:7,
       updatedAt:"-",
     };
-    if(showAllScore || mine.exScore !== 0){
+    if(showAllScore){
       const rival = allRivalScores[key];
       groups.push({
-        title:mine.title,
-        difficulty:mine.difficulty,
-        difficultyLevel:mine.difficultyLevel,
-        myEx:mine.exScore,
+        title:rival.title,
+        difficulty:rival.difficulty,
+        difficultyLevel:rival.difficultyLevel,
+        myEx:mine.exScore || 0,
         rivalEx:rival.exScore,
-        myMissCount:mine.missCount,
+        myMissCount:mine.missCount || 0,
         rivalMissCount:rival.missCount,
-        myClearState:mine.clearState,
+        myClearState:mine.clearState || 7,
         rivalClearState:rival.clearState,
         myLastUpdate:mine.updatedAt,
         rivalLastUpdate:rival.updatedAt,

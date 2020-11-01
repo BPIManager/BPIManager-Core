@@ -11,7 +11,8 @@ import Link from '@material-ui/core/Link';
 import {Link as RLink} from "react-router-dom";
 
 interface S {
-  full:scoreData[]
+  full:scoreData[],
+  isLoading:boolean,
 }
 
 export default class Songs extends React.Component<{},S> {
@@ -19,7 +20,8 @@ export default class Songs extends React.Component<{},S> {
   constructor(props:Object){
     super(props);
     this.state ={
-      full:[]
+      full:[],
+      isLoading:true
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
@@ -30,11 +32,11 @@ export default class Songs extends React.Component<{},S> {
 
   async updateScoreData(){
     const full:scoreData[] = await new scoresDB().getAll();
-    this.setState({full:full});
+    this.setState({full:full,isLoading:false});
   }
 
   render(){
-    if(!this.state.full){
+    if(!this.state.full || this.state.isLoading){
       return (<Loader/>);
     }
     if(this.state.full.length === 0){

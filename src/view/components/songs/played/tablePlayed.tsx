@@ -1,4 +1,4 @@
-import React from "react";
+  import React from "react";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -80,7 +80,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
   render(){
     const bpiCalc = new bpiCalcuator();
     const last = this.willBeRendered("last"), lastVer = this.willBeRendered("lastVer"),
-    estRank = this.willBeRendered("estRank"), djLevel = this.willBeRendered("djLevel");
+    estRank = this.willBeRendered("estRank"), djLevel = this.willBeRendered("djLevel"), percentage = this.willBeRendered("percentage");
     const {rowsPerPage,isOpen,currentSongData,currentScoreData,FV} = this.state;
     const {page,data,mode} = this.props;
     return (
@@ -138,6 +138,14 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                           </span>
                           {(j === 3) &&
                             <span className={i % 2 ? "plusOverlayScoreBottom isOddOverLayed" : "plusOverlayScoreBottom isEvenOverLayed"}>
+                              {percentage &&
+                                <span>{Math.round((row.exScore / (f.notes * 2)) * 10000) / 100}%</span>
+                              }
+                              {(percentage && (estRank || djLevel)) &&
+                                <span>
+                                  &nbsp;/&nbsp;
+                                </span>
+                              }
                               {estRank &&
                                 <span>
                                   {bpiCalc.rank(row.currentBPI)}位

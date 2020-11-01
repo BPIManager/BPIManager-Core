@@ -23,6 +23,7 @@ export interface perDate {
 export interface S {
   isLoading:boolean,
   totalBPI:number,
+  lastVerTotalBPI:number|null,
   totalRank:number,
   groupedByLevel:groupedByLevel[],
   groupedByDiff:groupedArray[],
@@ -35,6 +36,7 @@ export interface S {
   graphLastUpdated:number,
   lastWeek:any,
   lastMonth:any,
+  compareWithLastVer:boolean,
 }
 
 export interface ShiftType {

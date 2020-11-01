@@ -15,6 +15,23 @@ export const commonFunc = class{
   clone = () => JSON.parse(JSON.stringify(this.s));
 }
 
+export const versionString = (input:string|number):string=>{
+  const i = String(input);
+  if(i === "28"){
+    return "28 BISTROVER"
+  }
+  if(i === "27"){
+    return "27 HEROIC VERSE"
+  }
+  if(i === "26"){
+    return "26 Rootage"
+  }
+  if(i === "INF"){
+    return "INFINITAS"
+  }
+  return "UNKNOWN";
+}
+
 export const arenaRankColor = (rank:string)=>{
   switch(rank){
     case "A1":
