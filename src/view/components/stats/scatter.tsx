@@ -119,6 +119,7 @@ class ScatterGraph extends React.Component<{},S> {
                   <FormControl style={{width:"100%"}}>
                     <InputLabel>比較元</InputLabel>
                     <Select value={currentVersion} onChange={this.handleChanger("currentVersion")}>
+                      <MenuItem value={"28"}>28 BISTROVER</MenuItem>
                       <MenuItem value={"27"}>27 HEROIC VERSE</MenuItem>
                       <MenuItem value={"26"}>26 Rootage</MenuItem>
                     </Select>
@@ -128,6 +129,7 @@ class ScatterGraph extends React.Component<{},S> {
                   <FormControl component="fieldset" style={{width:"100%"}}>
                     <InputLabel>比較先</InputLabel>
                     <Select value={targetVersion} onChange={this.handleChanger("targetVersion")}>
+                      <MenuItem value={"28"}>28 BISTROVER</MenuItem>
                       <MenuItem value={"27"}>27 HEROIC VERSE</MenuItem>
                       <MenuItem value={"26"}>26 Rootage</MenuItem>
                     </Select>

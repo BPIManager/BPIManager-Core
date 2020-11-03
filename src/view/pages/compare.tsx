@@ -50,8 +50,8 @@ export default class Compare extends React.Component<{},S> {
         pm:["+","-"],
       },
       filterByName:"",
-      compareFrom:"27",
-      compareTo:"26",
+      compareFrom:"28",
+      compareTo:"27",
       page:0,
       rowsPerPage:10,
       displayMode:"exScore",
@@ -243,8 +243,9 @@ export default class Compare extends React.Component<{},S> {
             <FormControl style={{width:"100%"}}>
               <InputLabel><FormattedMessage id="Compare.From"/></InputLabel>
               <Select value={compareFrom} onChange={this.handleChange("compareFrom")}>
-                <MenuItem value={"26"}>26 Rootage</MenuItem>
+                <MenuItem value={"28"}>28 BISTROVER</MenuItem>
                 <MenuItem value={"27"}>27 HEROIC VERSE</MenuItem>
+                <MenuItem value={"26"}>26 Rootage</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -252,8 +253,9 @@ export default class Compare extends React.Component<{},S> {
             <FormControl style={{width:"100%"}}>
               <InputLabel><FormattedMessage id="Compare.To"/></InputLabel>
               <Select value={compareTo} onChange={this.handleChange("compareTo")}>
-                <MenuItem value={"26"}>26 Rootage</MenuItem>
+                <MenuItem value={"28"}>28 BISTROVER</MenuItem>
                 <MenuItem value={"27"}>27 HEROIC VERSE</MenuItem>
+                <MenuItem value={"26"}>26 Rootage</MenuItem>
                 <MenuItem value={"BPI"}>TARGET BPI</MenuItem>
                 <MenuItem value={"PERCENTAGE"}>TARGET PERCENTAGE</MenuItem>
                 <MenuItem value={"WR"}>WORLD RECORD</MenuItem>
