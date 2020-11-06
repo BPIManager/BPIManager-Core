@@ -150,6 +150,12 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
     this.calc.setCoef(song.coef || -1);
     const bpiBasis = [0,10,20,30,40,50,60,70,80,90,100];
     const mybest = newScore ? newScore : score.exScore;
+    if(song.wr === -1){
+      dataInserter(0,"");
+      dataInserter(0,"");
+      dataInserter(mybest,"YOU");
+      return data;
+    }
     for(let i = 0;i < bpiBasis.length; ++i){
       const exScoreFromBPI:number = this.calc.calcFromBPI(bpiBasis[i],true);
       if(lastExScore < mybest && mybest <= exScoreFromBPI){
@@ -392,9 +398,12 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
                 BPI
               </Typography>
               <Typography component="h4" variant="h4" color="textPrimary">
-                {(score && Number.isNaN(newBPI) && !Number.isNaN(score.currentBPI)) && score.currentBPI}
-                {!Number.isNaN(newBPI) && newBPI}
-                {(Number.isNaN(score.currentBPI) && Number.isNaN(newBPI)) && <span>-</span>}
+                {song.wr === -1 && <span>-</span>}
+                {song.wr !== -1 && <div>
+                  {(score && Number.isNaN(newBPI) && !Number.isNaN(score.currentBPI)) && score.currentBPI}
+                  {!Number.isNaN(newBPI) && newBPI}
+                  {(Number.isNaN(score.currentBPI) && Number.isNaN(newBPI)) && <span>-</span>}
+                </div>}
               </Typography>
             </Grid>
             <Grid item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0"}}>
@@ -402,14 +411,17 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
                 RANK
               </Typography>
               <Typography component="h4" variant="h4" color="textPrimary">
-                {(!Number.isNaN(score.currentBPI) || !Number.isNaN(newBPI)) && <span>{this.calcRank()}</span>}
-                {(Number.isNaN(score.currentBPI) && Number.isNaN(newBPI)) && <span>-</span>}
+                {song.wr === -1 && <span>-</span>}
+                {song.wr !== -1 && <div>
+                  {(!Number.isNaN(score.currentBPI) || !Number.isNaN(newBPI)) && <span>{this.calcRank()}</span>}
+                  {(Number.isNaN(score.currentBPI) && Number.isNaN(newBPI)) && <span>-</span>}
+                </div>}
               </Typography>
             </Grid>
           </Grid>
           <Divider/>
           <Grid container>
-            <Grid item xs={9}>
+            <Grid item xs={10}>
               <form noValidate autoComplete="off" style={{margin:"10px 6px 0"}}>
                 <TextField
                   type="number"
@@ -522,7 +534,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
           {showCharts &&
             <BPIChart song={song} newScore={newScore} score={score} chartData={chartData} graphLastUpdated={this.state.graphLastUpdated}/>
           }
-          {isEnableTweetButton() &&
+          {(isEnableTweetButton() && song.wr !== -1) &&
             <Fab style={{position:"absolute","right":"20px","bottom":"50px",backgroundColor:"#55acee",color:"#fff"}} onClick={()=>this.jumpWeb(3)} aria-label="tweet">
               <TwitterIcon />
             </Fab>

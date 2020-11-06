@@ -141,8 +141,10 @@ export default class Compare extends React.Component<{},S> {
     const {displayMode} = this.state;
     for(let i =0; i < fData.length; ++i){
       let tScore = 0;
+      if(fData[i]["currentBPI"] === Infinity){continue;}
       const tData = await scores.getItem(fData[i]["title"],fData[i]["difficulty"],t,isSingle);
       const songData = await sdb.getOneItemIsSingle(fData[i]["title"],fData[i]["difficulty"]);
+      if(!songData[0]){continue;}
       const max = songData[0]["notes"] * 2;
       calc.setData(songData[0]["notes"] * 2,songData[0]["avg"],songData[0]["wr"]);
       calc.setCoef(songData[0]["coef"] || -1);

@@ -115,8 +115,8 @@ export default class NotPlayList extends React.Component<P,stateInt> {
 
   songFilter = (newState:stateInt = this.state) =>{
     const v = newState.versions;
-    const evaluateVersion = (song:string):boolean=>{
-      const songVer = song.split("/")[0];
+    const evaluateVersion = (song:songData):boolean=>{
+      const songVer = song.textage.split("/")[0];
       if(songVer === "s"){
         return v.indexOf(1.5) > -1;
       }
@@ -126,7 +126,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
     const b = newState.bpm;
     return this.props.full.filter((data)=>{
       return (
-        evaluateVersion(data.textage) &&
+        evaluateVersion(data) &&
         bpmFilter(data.bpm,b) &&
         newState["options"]["level"].some((item:string)=>{
           return item === data.difficultyLevel }) &&

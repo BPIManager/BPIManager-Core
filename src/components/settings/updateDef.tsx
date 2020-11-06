@@ -4,6 +4,10 @@ import { _currentDefinitionURL, _currentVersion } from ".";
 import { config } from "@/config";
 
 export const updateDefFile = async()=>{
+  let res = {version:"unknown",requireVersion:"unknown",body:[]};
+  const response = (mes:string)=>{
+    return {"message":mes,"newVersion":res.version};
+  }
   const sdb = new songsDB();
   const schDB = new scoreHistoryDB();
   const scDB = new scoresDB();
@@ -14,11 +18,12 @@ export const updateDefFile = async()=>{
   const allSongs = await sdb.getAllWithAllPlayModes().then(t=>reducer(t));
   const url = _currentDefinitionURL();
   const currentVersion = _currentVersion();
-  const res = await fetch(url).then(t=>t.json());
-  const updatedSongs:string[] = [];
-  const response = (mes:string)=>{
-    return {"message":mes,"newVersion":res.version};
+  try{
+    res = await fetch(url).then(t=>t.json());
+  }catch(e){
+    return response("定義データの取得に失敗しました");
   }
+  const updatedSongs:string[] = [];
   if(Number(res.requireVersion) > Number(config.versionNumber) ){
     return response("最新の定義データを導入するために本体を更新する必要があります:要求バージョン>="+ res.requireVersion);
   }
@@ -41,7 +46,8 @@ export const updateDefFile = async()=>{
           if(
             allSongs[pfx]["wr"] !== Number(t["wr"]) || allSongs[pfx]["avg"] !== Number(t["avg"]) ||
             (t["coef"] && allSongs[pfx]["coef"] && allSongs[pfx]["coef"] !== t["coef"]) ||
-            allSongs[pfx]["bpm"] !== t["bpm"] || allSongs[pfx]["notes"] !== Number(t["notes"])
+            allSongs[pfx]["bpm"] !== t["bpm"] || allSongs[pfx]["notes"] !== Number(t["notes"]) ||
+            allSongs[pfx]["textage"] !== t["textage"]
           ){
             updatedSongs.push(pfx);
             await sdb.updateItem(t);

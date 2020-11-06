@@ -115,8 +115,8 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                       if(Number.isNaN(row.currentBPI)) return (null);
 
                       return (
-                        <TableCell key={column.id + row.title + row.prefix + prefix} style={{backgroundColor : diffColor(j,row.clearState),position:"relative"}} >
-                          {(mode < 6 && column.id === "currentBPI") && <span className={j >= 2 ? "bodyNumber" : ""}>{Number(row[column.id]).toFixed(2)}</span>}
+                        <TableCell className={row.currentBPI === Infinity ? "isInfiniteBPI" : ""} key={column.id + row.title + row.prefix + prefix} style={{backgroundColor : diffColor(j,row.clearState),position:"relative"}} >
+                          {(mode < 6 && column.id === "currentBPI") && <span className={j >= 2 ? "bodyNumber" : ""}>{Number(row[column.id]) === Infinity ? "-" : Number(row[column.id]).toFixed(2)}</span>}
                           {column.id !== "currentBPI" && <span className={j >= 2 ? "bodyNumber" : ""}>{row[column.id]}</span>}
                           {column.id === "title" && <span>{prefix}</span>}
                           {(mode > 5 && column.id === "currentBPI") && bp(row.missCount || NaN)}
@@ -148,7 +148,8 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                               }
                               {estRank &&
                                 <span>
-                                  {bpiCalc.rank(row.currentBPI)}位
+                                  {row.currentBPI === Infinity && <span>-</span> }
+                                  {row.currentBPI !== Infinity && <span>{bpiCalc.rank(row.currentBPI)}位</span> }
                                 </span>
                               }
                               {(estRank && djLevel) &&

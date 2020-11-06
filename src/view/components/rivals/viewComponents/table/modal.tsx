@@ -60,12 +60,15 @@ export default class Details extends React.Component<P,{
   render(){
     const {showDetails,currentScoreData} = this.props;
     const {songData} = this.state;
+    const setInf = (item:number):number|"-"=>{
+      return item === Infinity ? "-" : item;
+    }
     if(!currentScoreData){
       return (null);
     }
     const items = [
       {title:"スコア",my:currentScoreData.myEx,rival:currentScoreData.rivalEx,isWin:currentScoreData.myEx - currentScoreData.rivalEx},
-      {title:"BPI",my:this.bpiCalc(currentScoreData.myEx),rival:this.bpiCalc(currentScoreData.rivalEx),isWin:currentScoreData.myEx - currentScoreData.rivalEx},
+      {title:"BPI",my:setInf(this.bpiCalc(currentScoreData.myEx)),rival:setInf(this.bpiCalc(currentScoreData.rivalEx)),isWin:currentScoreData.myEx - currentScoreData.rivalEx},
       {title:"％",my:this.percentage(currentScoreData.myEx),rival:this.percentage(currentScoreData.rivalEx),isWin:currentScoreData.myEx - currentScoreData.rivalEx},
       {title:"BP",
       my:isNaN(currentScoreData.myMissCount || NaN) ? "-" :currentScoreData.myMissCount,

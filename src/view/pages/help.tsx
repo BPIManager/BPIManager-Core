@@ -72,7 +72,8 @@ import {Link as RefLink} from '@material-ui/core/';
       "body":
         <div>
           <FormattedMessage id="Help.E.1"/><br/>
-          なお、その際には設定画面「デバッグ情報」タブ記載の説明に従い、デバッグ情報を共有いただけますと早期の問題解決が可能です。
+          なお、その際には設定画面「デバッグ情報」タブ記載の説明に従い、デバッグ情報を共有いただけますと早期の問題解決が可能です。<br/><br/>
+          <RefLink color="secondary" target="_blank" href="https://gist.github.com/potakusan/11b5322c732bfca4d41fc378dab9b992">よくある質問をまとめたページ</RefLink>もご用意しておりますので、こちらもご確認ください。
         </div>
     },{
       "title":"Help.Requirements",

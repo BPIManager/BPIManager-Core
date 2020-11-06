@@ -30,6 +30,14 @@ export const _area = ()=>{
   return Number(localStorage.getItem("area")) || 0;
 }
 
+export const _showLatestSongs = ()=>{
+  return localStorage.getItem("showLatestSongs") === "true";
+}
+
+export const _setShowLatestSongs = (newState:boolean)=>{
+  return localStorage.setItem("showLatestSongs",String(newState));
+}
+
 export const _currentViewComponents = ()=>{
   return localStorage.getItem("viewComponents") || "last,djLevel";
 }

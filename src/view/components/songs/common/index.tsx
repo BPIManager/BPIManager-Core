@@ -28,7 +28,7 @@ export const behindScore = (row:scoreData,allSongsData:{[key:string]:songData},m
 
 export const verArr = (include:boolean = true):number[]=>{
   let t = include ? [1.5] : [];
-  for (let i = 3; i < 28; ++i){
+  for (let i = 3; i < 29; ++i){
     t.push(i);
   }
   return t;
@@ -61,6 +61,7 @@ export const verNameArr = [
   "25 CANNON BALLERS",
   "26 Rootage",
   "27 HEROIC VERSE",
+  "28 BISTROVER",
 ]
 
 export const bp = (bp:number):string=>{
@@ -89,5 +90,6 @@ export const bpiFilter = (songBPI:number,b:BPIR):boolean=>{
   if(b.min !== "" && b.max !== ""){ //最小BPI判定&最大BPI判定
     return num >= b.min && num <= b.max;
   }
+  if((b.min !== "" || b.max !== "") && songBPI === Infinity){ return false;}
   return b.min !== "" ? num >= b.min : b.max !== "" ? num <= b.max : true;
 }

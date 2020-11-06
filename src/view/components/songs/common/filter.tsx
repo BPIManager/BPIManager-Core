@@ -16,11 +16,12 @@ import { buttonTextColor } from '@/components/settings';
 
 interface P {
   handleToggle:()=>void,
-  applyFilter:(state:{bpm:B,versions:number[],memo:boolean|null})=>void,
+  applyFilter:(state:{bpm:B,versions:number[],memo:boolean|null,showLatestOnly:boolean|null})=>void,
   bpm:B,
   bpi?:BPIR,
   memo?:boolean,
   versions:number[],
+  showLatestOnly?:boolean
 }
 
 interface S {
@@ -28,6 +29,7 @@ interface S {
   bpi:BPIR|null,
   versions:number[],
   memo:boolean|null,
+  showLatestOnly:boolean|null
 }
 
 export interface B {
@@ -48,6 +50,7 @@ class SongsFilter extends React.Component<P,S> {
     super(props);
     this.state = {
       memo:typeof props.memo !== "boolean" ? null : props.memo,
+      showLatestOnly:typeof props.showLatestOnly !== "boolean" ? null : props.showLatestOnly,
       bpm:props.bpm,
       versions:props.versions,
       bpi:props.bpi || null
@@ -75,6 +78,12 @@ class SongsFilter extends React.Component<P,S> {
   handleMemoChkBox = ()=> (event: React.ChangeEvent<HTMLInputElement>)=>{
     return this.setState({
       memo:event.target.checked
+    })
+  }
+
+  handleLatestChkBox = ()=> (event: React.ChangeEvent<HTMLInputElement>)=>{
+    return this.setState({
+      showLatestOnly:event.target.checked
     })
   }
 
@@ -114,7 +123,7 @@ class SongsFilter extends React.Component<P,S> {
 
   render(){
     const {handleToggle} = this.props;
-    const {bpm,versions,bpi,memo} = this.state;
+    const {bpm,versions,bpi,memo,showLatestOnly} = this.state;
     return (
       <Dialog open={true} onClose={handleToggle}>
         <DialogTitle>詳細フィルタ</DialogTitle>
@@ -196,6 +205,18 @@ class SongsFilter extends React.Component<P,S> {
           <Typography component="h6" variant="h6" style={{marginTop:"5px"}}>
             BPI
           </Typography>
+          {showLatestOnly !== null && (<div>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={showLatestOnly}
+                  onChange={this.handleLatestChkBox()}
+                  color="primary"
+                />
+              }
+              label="BPI表記非対応の楽曲のみを表示"
+            />
+          </div>)}
           <Grid container>
             <Grid item xs={6}>
               <form noValidate autoComplete="off" style={{margin:"10px 6px 0"}}>

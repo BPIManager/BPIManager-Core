@@ -43,7 +43,6 @@ export default class LettersTable extends React.Component<P,S> {
   }
 
   handleOpen = async(row:any):Promise<void>=> {
-    console.log(this.props.full)
     return this.setState({
       showDetail:!this.state.showDetail,
       currentScore:row,

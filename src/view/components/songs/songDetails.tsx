@@ -76,11 +76,17 @@ class SongDetails extends React.Component<P> {
               </TableRow>
               <TableRow>
                 <TableCell><FormattedMessage id="SongDetail.WorldRecord"/></TableCell>
-                <TableCell>{song.wr}({Math.floor(song.wr / max * 10000) / 100}%)</TableCell>
+                <TableCell>
+                  {song.wr > -1 && <span>{song.wr}({Math.floor(song.wr / max * 10000) / 100}%)</span>}
+                  {song.wr === -1 && <span>未登載</span>}
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell><FormattedMessage id="SongDetail.Average"/></TableCell>
-                <TableCell>{song.avg}({Math.floor(song.avg / max * 10000)  / 100}%)</TableCell>
+                <TableCell>
+                  {song.avg > -1 && <span>{song.avg}({Math.floor(song.avg / max * 10000)  / 100}%)</span>}
+                  {song.avg === -1 && <span>未登載</span>}
+                </TableCell>
               </TableRow>
               { !Number.isNaN(score.exScore) &&
                 <TableRow>

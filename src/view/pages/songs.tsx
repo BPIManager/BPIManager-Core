@@ -9,6 +9,7 @@ import Alert from '@material-ui/lab/Alert/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle/AlertTitle';
 import Link from '@material-ui/core/Link';
 import {Link as RLink} from "react-router-dom";
+import { _showLatestSongs } from '@/components/settings';
 
 interface S {
   full:scoreData[],
@@ -31,7 +32,10 @@ export default class Songs extends React.Component<{},S> {
   }
 
   async updateScoreData(){
-    const full:scoreData[] = await new scoresDB().getAll();
+    let full:scoreData[] = await new scoresDB().getAll();
+    if(!_showLatestSongs()){
+        full = full.filter((item)=>item.currentBPI !== Infinity);
+    }
     this.setState({full:full,isLoading:false});
   }
 

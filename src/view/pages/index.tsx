@@ -83,7 +83,8 @@ class IfNotOnTheHomeScreen extends React.Component<{
 },{
   show:boolean,
   hide:boolean,
-  hideVerBR:boolean
+  hideVerBR:boolean,
+  hide1106:boolean,
 }>{
 
   constructor(props:{history:any,global:any}){
@@ -97,12 +98,13 @@ class IfNotOnTheHomeScreen extends React.Component<{
     this.state = {
       show:isPC() ? true : (regEx(/iphone|ipad|ipod/) && !isStandAloneIn_iOS()) ? true : (regEx(/android/) && !isStandAloneInAndroid()) ? true : false,
       hide:!!localStorage.getItem("hide20200829"),
-      hideVerBR:!!localStorage.getItem("hideTopBISTROVER")
+      hideVerBR:!!localStorage.getItem("hideTopBISTROVER"),
+      hide1106:!!localStorage.getItem("hideTop20201106"),
     }
   }
 
   render(){
-    const {show,hideVerBR} = this.state;
+    const {show,hideVerBR,hide1106} = this.state;
     const navBar = [
       {
         to:"/help/start",
@@ -135,7 +137,6 @@ class IfNotOnTheHomeScreen extends React.Component<{
         icon:<SpeakerNotesIcon />
       }
     ]
-    console.log(_currentStore())
     return (
       <div className="heroLayout">
         <Container fixed  className="heroTitle">
@@ -164,6 +165,21 @@ class IfNotOnTheHomeScreen extends React.Component<{
               <Button startIcon={<FavoriteIcon />}><Link to="/settings" style={{textDecoration:"none",color:"inherit"}}>設定</Link></Button>
               <Button startIcon={<VisibilityOffIcon />} onClick={()=>{
                 localStorage.setItem("hideTopBISTROVER","true");
+                this.setState({hide:true});
+              }}>非表示</Button>
+              </ButtonGroup>
+            </Alert>
+          }
+          {(!hide1106 && !localStorage.getItem("hideTop20201106")) &&
+            <Alert variant="outlined" severity="info" style={{margin:"10px 0"}}>
+              <AlertTitle>新機能のご紹介</AlertTitle>
+              <p>
+                新曲のスコアをすぐにBPIManagerに登録できるようになりました。
+              </p>
+              <ButtonGroup color="secondary" style={{margin:"8px 0"}} variant="outlined">
+              <Button startIcon={<FavoriteIcon />}><RefLink href="https://gist.github.com/potakusan/b5768f3ec6c50556beec50dd14ebaf23" style={{textDecoration:"none",color:"inherit"}} target="_blank">詳細</RefLink></Button>
+              <Button startIcon={<VisibilityOffIcon />} onClick={()=>{
+                localStorage.setItem("hideTop20201106","true");
                 this.setState({hide:true});
               }}>非表示</Button>
               </ButtonGroup>
@@ -282,6 +298,7 @@ class UpdateDef extends React.Component<{},{
   updateButton = async()=>{
     this.setState({progress:1});
     const p = await updateDefFile();
+    console.log(p);
     this.setState({progress:2,res:p.message});
   }
 
@@ -319,9 +336,10 @@ class UpdateDef extends React.Component<{},{
           </div>}
           {progress === 2 && <div>
             <div style={{display:"flex",alignItems:"center",margin:"20px 0",flexDirection:"column"}}>
-              {res === "定義データはすでに最新です" && <CheckIcon style={{ fontSize: 60 }}/>}
-              {res !== "定義データはすでに最新です" && <WarningIcon style={{ fontSize: 60 }}/>}
+              {(res === "定義データはすでに最新です" || res === "更新完了") && <CheckIcon style={{ fontSize: 60 }}/>}
+              {(res !== "定義データはすでに最新です" && res !== "更新完了") && <WarningIcon style={{ fontSize: 60 }}/>}
               <span>{res}</span>
+              {(res !== "定義データはすでに最新です" && res !== "更新完了") && <span><RefLink href="https://gist.github.com/potakusan/11b5322c732bfca4d41fc378dab9b992" color="secondary" target="_blank">トラブルシューティングを表示</RefLink></span>}
             </div>
             <Button onClick={this.handleToggle} color="secondary" fullWidth style={{marginTop:"8px"}}>
               閉じる

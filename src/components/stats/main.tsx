@@ -43,18 +43,21 @@ export const statMain = class {
     return this.elevens;
   }
 
+  reduceData = (data:scoreData[])=> data.filter((item)=>item.currentBPI !== Infinity);
+
   async load(_derived?:rivalScoreData[]):Promise<this>{
     await this.db.loadStore();
-    this.songs = await new songsDB().getAll(isSingle);
-    this.twelves = await this.db.getItemsBySongDifficulty("12");
-    this.elevens = await this.db.getItemsBySongDifficulty("11");
+    this.songs = (await new songsDB().getAll(isSingle)).filter((item:songData)=>item.wr !== -1);
+    console.log(this.songs);
+    this.twelves = this.reduceData(await this.db.getItemsBySongDifficulty("12"));
+    this.elevens = this.reduceData(await this.db.getItemsBySongDifficulty("11"));
     return this;
   }
 
   async setLastData(version:string):Promise<this>{
     const db = await new scoresDB(isSingle, version).loadStore();
-    this.twelvesLast = await db.getItemsBySongDifficulty("12");
-    this.elevensLast = await db.getItemsBySongDifficulty("11");
+    this.twelvesLast = this.reduceData(await db.getItemsBySongDifficulty("12"));
+    this.elevensLast = this.reduceData(await db.getItemsBySongDifficulty("11"));
     return this;
   }
 
@@ -230,7 +233,7 @@ export const statMain = class {
     this.getData(Number(level))
   ).find((elm:scoreData)=>( elm.title === title && elm.difficulty === difficultyDiscriminator(difficulty) ) )
 
-  bpiMapper = (t:scoreData[])=>t.map((item:scoreData)=>item.currentBPI).filter(item=>!isNaN(item));
+  bpiMapper = (t:scoreData[])=>t.map((item:scoreData)=>item.currentBPI).filter(item=>!isNaN(item) && item !== Infinity);
 
   groupBy = (array:number[])=>{
     return array.reduce((groups:{[key:number]:number}, item:number) => {
@@ -286,14 +289,14 @@ export const statMain = class {
       "SOF":-15,
     }
     const sdb = new songsDB();
-    const allSongs:distSongs = (await sdb.getAll()).filter((item:songData)=>item.difficultyLevel === difficulty).reduce((groups:distSongs,item:songData)=>{
+    const allSongs:distSongs = (await sdb.getAll()).filter((item:songData)=>item.difficultyLevel === difficulty && item.wr !== -1).reduce((groups:distSongs,item:songData)=>{
       const b = bpmFilter(item.bpm);
       groups[item.title + item.difficulty] = b;
       numDistByBPM[b]++;
       return groups;
     },{});
     this.getData(Number(difficulty)).reduce((groups:distScores,item:scoreData)=>{
-      if(!isNaN(item.currentBPI)){
+      if(!isNaN(item.currentBPI) && isFinite(item.currentBPI) && allSongs[item.title + difficultyParser(item.difficulty,isSingle)]){
         distByBPM[allSongs[item.title + difficultyParser(item.difficulty,isSingle)]].push(item.currentBPI);
       }
       return groups;

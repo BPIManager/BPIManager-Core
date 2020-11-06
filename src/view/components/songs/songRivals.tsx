@@ -125,7 +125,7 @@ export class DiffsTable extends React.Component<{scoreTable:datasets[],yourEx:nu
                           alt={row.rivalName}
                           onError={(e)=>(e.target as HTMLImageElement).src = alternativeImg(row.rivalName)}/>
                       }
-                      {column.id !== "icon"  && row[column.id]}
+                      {column.id !== "icon"  && <span>{row[column.id] === Infinity ? "-" : row[column.id]}</span>}
                       {column.id === "exScore" &&
                         <span className={"plusOverlayScore"}>
                         {(row["exScore"] - this.props.yourEx > 0 && "+")}

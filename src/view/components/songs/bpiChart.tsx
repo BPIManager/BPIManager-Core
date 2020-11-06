@@ -2,8 +2,10 @@ import React from "react";
 
 import { scoreData, songData } from "@/types/data";
 import {BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer, Label} from "recharts";
-import { _chartColor,_chartBarColor } from "@/components/settings";
+import { _chartColor,_chartBarColor, _currentTheme } from "@/components/settings";
 import { chartData } from "./detailsScreen";
+import InfoIcon from '@material-ui/icons/Info';
+import Link from "@material-ui/core/Link";
 
 interface P{
   song:songData|null,
@@ -14,10 +16,21 @@ interface P{
 }
 
 class BPIChart extends React.Component<P,{
+  closeAlert:boolean
 }> {
+
+  constructor(props:P){
+    super(props);
+    this.state = {
+      closeAlert:false
+    }
+  }
+
+  closeAlert = ()=> this.setState({closeAlert:true});
 
   render(){
     const chartColor = _chartColor();
+    const {closeAlert} = this.state;
     const {chartData,song,score,graphLastUpdated,newScore} = this.props;
     if(!song || !score){
       return (null);
@@ -51,8 +64,24 @@ class BPIChart extends React.Component<P,{
       }
       return (null);
     }
+
     return (
-      <div style={{width:"95%",height:"100%",margin:"5px auto"}}>
+      <div style={{width:"95%",height:"100%",margin:"5px auto",display:"flex",justifyContent:"center"}}>
+        {((song.avg === -1 || song.wr === -1) && !closeAlert) && (
+          <div className="noBPIAlert">
+            <div style={{display:"flex",alignItems:"center",flexDirection:"column"}}>
+              <InfoIcon style={{ fontSize: 40 }} />
+              <p>BPI非対応楽曲です</p>
+            </div>
+            <div>
+              <p style={{textAlign:"center",fontSize:8}}>
+                この楽曲はスコアログの保存のみ対応しています。<br/>
+                設定画面「表示」タブより表示の有無を切り替えできます。<br/><br/>
+                <Link href="https://gist.github.com/potakusan/b5768f3ec6c50556beec50dd14ebaf23" target="_blank" color="secondary">詳細はこちら</Link>&nbsp;|&nbsp;<Link color="secondary"><span onClick={this.closeAlert}>閉じる</span></Link>
+              </p>
+            </div>
+          </div>
+          )}
         <ResponsiveContainer width="100%">
           <BarChart data={chartData} key={graphLastUpdated}>
             <CartesianGrid strokeDasharray="3 3" />

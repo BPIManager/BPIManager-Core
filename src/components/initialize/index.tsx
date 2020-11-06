@@ -61,6 +61,9 @@ export default class Initialize extends React.Component<{global:any},{show:boole
           }
         }
       });
+      if(!localStorage.getItem("showLatestSongs")){
+        localStorage.setItem("showLatestSongs","true");
+      }
 
       // Close the world bug fix 2019/11/11 & 2019/12/08
         this.songsDB.removeItem("Close the World feat. a☆ru");

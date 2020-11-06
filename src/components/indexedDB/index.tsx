@@ -838,7 +838,7 @@ export const songsDB = class extends storageWrapper{
   async getSongsNum(level = "12"){
     try{
       return this.getAll(_isSingle()).then(result=>{
-        return result.filter((item:songData)=>item.difficultyLevel === level).length;
+        return result.filter((item:songData)=>item.difficultyLevel === level && item.wr !== -1).length;
       })
     }catch(e){
       return 1;

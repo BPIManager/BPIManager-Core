@@ -67,7 +67,7 @@ const ja = {
   "Songs.legend":"凡例および使用方法を確認する場合は、ここをクリックしてヘルプを表示してください",
   "Songs.updatedToday":"本日更新分のみ表示",
   "Details.SaveButton":"保存",
-  "Details.typeNewScore":"あなたの自己ベスト",
+  "Details.typeNewScore":"自己ベストを入力",
   "Details.FavButton":"お気に入り",
   "Details.FavButtonRemove":"お気に入り解除",
   "Details.FavButtonRemoved":"次のリストから削除",

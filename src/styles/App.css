@@ -165,6 +165,10 @@ legend.MuiFormLabel-root{
   border:1px solid #737373;
 }
 
+.songCell td.isInfiniteBPI:nth-child(2) {
+    color: #ff4242;
+}
+
 .loaderCentered{
   display:flex !important;
   align-items: center !important;
@@ -526,4 +530,27 @@ html,body{
 
 .MuiPagination-ul{
   justify-content: center;
+}
+
+.noBPIAlert{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  position: absolute;
+  bottom:60px;
+  z-index: 9999;
+  width: 85%;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.deepSeaDetailedScreen .noBPIAlert,
+.darkDetailedScreen .noBPIAlert{
+  background: #00000090;
+  border: 1px solid #222;
+}
+
+.lightDetailedScreen .noBPIAlert{
+  background: #ffffff90;
+  border: 1px solid #ececec;
 }

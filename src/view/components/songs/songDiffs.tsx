@@ -52,17 +52,15 @@ class SongDiffs extends React.Component<P,S> {
     const {song} = this.props;
     if(!song){return};
     const s = new scoreHistoryDB();
-    if(newState === 0){
-      return this.setState({
-        dataset:await s.getWithinVersion(song),
-        isLoading:false,
-      })
-    }else{
-      return this.setState({
-        dataset:await s.getAcrossVersion(song),
-        isLoading:false,
-      })
-    }
+    let set = newState === 0 ? await s.getWithinVersion(song) : await s.getAcrossVersion(song);
+    return this.setState({
+      dataset:set.reduce((groups,item)=>{
+        item.currentBPI = item.BPI === Infinity ? "-" : item.BPI;
+        groups.push(item);
+        return groups;
+      },[]),
+      isLoading:false,
+    })
   }
 
   render(){
@@ -108,7 +106,7 @@ class DiffsTable extends React.Component<{scoreTable:historyData[],type:number},
     const columns = [
       this.props.type === 0 ? { id: "updatedAt", label: "Date"} : { id: "storedAt", label: "Version"},
       { id: "exScore", label: "EX" },
-      { id: "BPI", label: "BPI" },
+      { id: "currentBPI", label: "BPI" },
     ];
     const {type} = this.props;
 
