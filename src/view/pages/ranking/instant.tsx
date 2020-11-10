@@ -16,6 +16,7 @@ import AlertTitle from '@material-ui/lab/AlertTitle';
 import { RouteComponentProps, withRouter, Link as RLink } from 'react-router-dom';
 import Link from '@material-ui/core/Link';
 import { ShareOnTwitter } from '@/view/components/common/shareButtons';
+import { _currentStore } from '@/components/settings';
 
 interface S {
   isLoading:boolean,
@@ -74,7 +75,8 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
         cId:onGoingId,
         title:song.title,
         difficulty:song.difficulty,
-        score:score
+        score:score,
+        version:_currentStore(),
       };
       const p = await functions.httpsCallable("joinRanking")(data);
       if(p.data.error){
@@ -84,6 +86,7 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
         cId:onGoingId,
         includeRank:false,
         currentUser:true,
+        version:_currentStore(),
       });
       this.setState({rank:res.data})
       return {error:false,errorMessage:""};

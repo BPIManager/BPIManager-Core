@@ -4,7 +4,7 @@ import { injectIntl } from 'react-intl';
 import weeklyStore from '@/components/firebase/ranking';
 import Typography from '@material-ui/core/Typography';
 import { _prefixFullNum, difficultyDiscriminator } from '@/components/songs/filter';
-import { _currentTheme } from '@/components/settings';
+import { _currentTheme, _currentStore } from '@/components/settings';
 import timeFormatter, { untilDate, _isBetween } from '@/components/common/timeFormatter';
 import Button from '@material-ui/core/Button';
 import TouchAppIcon from '@material-ui/icons/TouchApp';
@@ -88,6 +88,7 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
         includeRank:true,
         currentUser:true,
         page:0,
+        version:_currentStore(),
       });
       this.setState({onGoing:d,onGoingId:current.id,isLoading:false,song:songData,score:score.length > 0 ? score[0] : null,page:0,rank:this.calcBPI(res.data,songData)});
     }
@@ -103,7 +104,8 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
         cId:onGoingId,
         title:song.title,
         difficulty:song.difficulty,
-        score:score
+        score:score,
+        version:_currentStore(),
       };
       const p = await functions.httpsCallable("joinRanking")(data);
       if(p.data.error){
