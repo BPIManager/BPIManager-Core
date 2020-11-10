@@ -36,7 +36,6 @@ interface S{
 }
 
 export default class SongsTable extends React.Component<Readonly<P>,S>{
-  private buttonPressTimer:number = 0;
 
   constructor(props:Readonly<P>){
     super(props);
@@ -81,22 +80,6 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
     this.setState({rowsPerPage:+event.target.value});
   }
 
-  handleButtonPress=(row:songData|null)=>{
-    this.buttonPressTimer = window.setTimeout(() =>{
-    const t = row ? this.default(row) : null;
-    return this.setState({
-      isOpen:!this.state.isOpen,
-      FV:4,
-      currentSongData:row ? row : null,
-      currentScoreData:t
-    });
-    }, 600);
-  }
-
-  handleButtonRelease=()=>{
-    window.clearTimeout(this.buttonPressTimer);
-  }
-
   render(){
     const {rowsPerPage,isOpen,currentSongData,currentScoreData,FV} = this.state;
     const {page,data,changeSort,sort,isDesc} = this.props;
@@ -127,11 +110,6 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
               {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:songData,i:number) => {
                 return (
                   <TableRow
-                    onTouchStart={()=>this.handleButtonPress(row)}
-                    onTouchEnd={()=>this.handleButtonRelease()}
-                    onMouseDown={()=>this.handleButtonPress(row)}
-                    onMouseUp={()=>this.handleButtonRelease()}
-                    onMouseLeave={()=>this.handleButtonRelease()}
                     onClick={()=>this.handleOpen(false,row)}
                     onContextMenu={e => {
                       e.preventDefault();

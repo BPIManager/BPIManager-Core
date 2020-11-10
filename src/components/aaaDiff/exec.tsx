@@ -30,6 +30,9 @@ export default class aaaDiffCalc{
         "difficulty":difficultyDiscriminator(s.difficulty),
         "bpi":res
       }
+      if(res === Infinity){
+        continue;
+      }
       if(res > 50){
         results["50"].push(temp);
       }else{

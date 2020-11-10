@@ -13,6 +13,7 @@ const ja = {
   "GlobalNav.compare": "Compare",
   "GlobalNav.Sync":"Sync",
   "GlobalNav.Rivals":"Rivals",
+  "GlobalNav.Weekly":"Ranking",
   "GlobalNav.AAATable":"AAA Table",
   "GlobalNav.Tools":"Tools",
   "GlobalNav.Settings": "Settings",

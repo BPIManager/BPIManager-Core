@@ -27,6 +27,7 @@ import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
 import TwitterIcon from '@material-ui/icons/Twitter';
 import WarningIcon from '@material-ui/icons/Warning';
+import InstantWRView from "@/view/pages/ranking/instant";
 
 class Index extends React.Component<RouteComponentProps&{global:any},{}> {
 
@@ -139,7 +140,7 @@ class IfNotOnTheHomeScreen extends React.Component<{
     ]
     return (
       <div className="heroLayout">
-        <Container fixed  className="heroTitle">
+        <Container fixed className="heroTitle">
           <Grid container style={{justifyContent:"center",alignItems:"center"}}>
             <Grid item xs={12} sm={3}>
               <img src="https://files.poyashi.me/bpim/icon.png" style={{margin:"0 auto",display:"block",borderRadius:"8%",maxWidth:"120px"}} alt="BPIManager"/>
@@ -155,6 +156,9 @@ class IfNotOnTheHomeScreen extends React.Component<{
               </div>
             </Grid>
           </Grid>
+        </Container>
+        <InstantWRView/>
+        <Container fixed className="heroTitle">
           {((!hideVerBR && !localStorage.getItem("hideTopBISTROVER")) && (_currentStore() !== "28" && _currentStore() !== "INF")) &&
             <Alert variant="outlined" severity="info" style={{margin:"10px 0"}}>
               <AlertTitle>新バージョンへの切り替え</AlertTitle>

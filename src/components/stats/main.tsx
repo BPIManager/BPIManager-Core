@@ -48,7 +48,6 @@ export const statMain = class {
   async load(_derived?:rivalScoreData[]):Promise<this>{
     await this.db.loadStore();
     this.songs = (await new songsDB().getAll(isSingle)).filter((item:songData)=>item.wr !== -1);
-    console.log(this.songs);
     this.twelves = this.reduceData(await this.db.getItemsBySongDifficulty("12"));
     this.elevens = this.reduceData(await this.db.getItemsBySongDifficulty("11"));
     return this;

@@ -6,6 +6,10 @@
   text-align: center;
 }
 
+a {
+    text-decoration: none;
+}
+
 .App-logo {
   height: 40vmin;
 }
@@ -30,8 +34,10 @@
   text-decoration: none !important;
 }
 
-.heroLayout{
-  margin:40px 0 0 0;
+@media screen and (min-width:768px){
+  .heroLayout{
+    margin:8px 0 0 0;
+  }
 }
 
 .commonLayout{

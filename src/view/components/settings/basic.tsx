@@ -12,7 +12,7 @@ import { Subscribe } from 'unstated';
 import GlobalContainer from '@/components/context/global';
 import Button from '@material-ui/core/Button';
 import UpdateIcon from '@material-ui/icons/Update';
-import { _currentVersion, _currentDefinitionURL, _setCurrentDefinitionURL, _setAutoSync, _autoSync } from '@/components/settings';
+import { _currentVersion, _currentDefinitionURL, _setCurrentDefinitionURL, _setAutoSync, _autoSync, _weeklyRanking } from '@/components/settings';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -36,6 +36,7 @@ interface S {
   isDialogOpen:boolean,
   isURLDialogOpen:boolean,
   autoSync:boolean,
+  weeklyRanking:boolean
 }
 
 interface P{
@@ -58,6 +59,7 @@ class Settings extends React.Component<P,S> {
       isDialogOpen:false,
       isURLDialogOpen:false,
       autoSync:_autoSync(),
+      weeklyRanking:_weeklyRanking(),
     }
   }
 
@@ -84,7 +86,7 @@ class Settings extends React.Component<P,S> {
   }
 
   render(){
-    const {isLoading,isURLDialogOpen,disableUpdateBtn,message,autoSync} = this.state;
+    const {isLoading,isURLDialogOpen,disableUpdateBtn,message,autoSync,weeklyRanking} = this.state;
     if(isLoading){
       return (<Loader/>);
     }
@@ -152,7 +154,7 @@ class Settings extends React.Component<P,S> {
                 onChange={(e:React.ChangeEvent<HTMLInputElement>,)=>{
                   if(typeof e.target.checked === "boolean"){
                     _setAutoSync(e.target.checked);
-                    return this.setState({autoSync:e.target.checked})
+                    return this.setState({autoSync:e.target.checked,weeklyRanking:e.target.checked ? weeklyRanking : false});
                   }
                 }}
               />
@@ -161,6 +163,27 @@ class Settings extends React.Component<P,S> {
                 <FormattedMessage id="Settings.AutoSync2"/><br/>
                 <FormattedMessage id="Settings.AutoSync3"/>
               </Typography>
+              {/*
+              <Divider style={{margin:"10px 0"}}/>
+              <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
+                ウィークリーランキングへの参加
+              </Typography>
+              <Switch
+                disabled={!autoSync}
+                checked={weeklyRanking}
+                onChange={(e:React.ChangeEvent<HTMLInputElement>,)=>{
+                  if(typeof e.target.checked === "boolean"){
+                    _setWeeklyRanking(e.target.checked);
+                    return this.setState({weeklyRanking:e.target.checked})
+                  }
+                }}
+              />
+              <Typography variant="caption" display="block">
+                オンにすると、BPIManagerで開催されているウィークリーランキングに自動的に参加します。<br/>
+                「データ取り込み」画面からスコアをインポートした際に、ウィークリーランキングの対象曲となっている楽曲のスコアが登録されます。<br/>
+                WRへの参加は、スコアデータの一般公開が有効かつAutoSyncが有効である場合に限定されます。
+              </Typography>
+              */}
               <Divider style={{margin:"10px 0"}}/>
               <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
                 <FormattedMessage id="Settings.DPMode"/>(beta)

@@ -23,7 +23,6 @@ import BorderColorIcon from '@material-ui/icons/BorderColor';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 import FilterNoneIcon from '@material-ui/icons/FilterNone';
 import HelpIcon from '@material-ui/icons/Help';
-import SwapVerticalCircleIcon from '@material-ui/icons/SwapVerticalCircle';
 import { FormattedMessage } from "react-intl";
 import PeopleIcon from '@material-ui/icons/People';
 import Slide from "@material-ui/core/Slide";
@@ -43,6 +42,8 @@ import { alternativeImg } from "@/components/common";
 import fbActions from "@/components/firebase/actions";
 import {ReactComponent as Logo} from "@/assets/aix2f-q5h7x.svg";
 import LockOpenIcon from '@material-ui/icons/LockOpen';
+import EventNoteIcon from '@material-ui/icons/EventNote';
+import { _currentVersion } from "@/components/settings";
 
 interface navBars {
   to:string,
@@ -128,6 +129,14 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
     this.userData();
   }
 
+  componentDidUpdate(prevProps:any) {
+    if (
+      this.props.location.pathname !== prevProps.location.pathname
+    ) {
+      window.scrollTo(0, 0);
+    }
+  }
+
   userData = async ()=>{
     if(localStorage.getItem("social")){
       try{
@@ -188,6 +197,8 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         return "GlobalNav.Help";
         case "notes":
         return "GlobalNav.Notes";
+        case "ranking":
+        return "GlobalNav.Weekly";
         case "u":
         return page[2];
         case "share":
@@ -235,11 +246,6 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
     ]
     const social:navBars[] = [
       {
-        to:"/sync",
-        id:"GlobalNav.Sync",
-        icon:<SwapVerticalCircleIcon />
-      },
-      {
         to:"/rivals",
         id:"GlobalNav.Rivals",
         icon:<PeopleIcon />
@@ -253,6 +259,11 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         to:"/notes",
         id:"GlobalNav.Notes",
         icon:<SpeakerNotesIcon />
+      },
+      {
+        to:"/ranking/ongoing",
+        id:"GlobalNav.Weekly",
+        icon:<EventNoteIcon />
       }
     ]
     const navBarTop:navBars[] = [
@@ -335,7 +346,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
           </ListItem>
         ))}
         <Divider />
-        <Typography align="center" variant="caption" style={{margin:"8px 0",width:"100%",display:"block"}}>
+        <Typography align="center" variant="caption" style={{margin:"8px 0",width:"100%",display:"block",paddingBottom:"15px"}}>
           {config.versionString}&nbsp;
           {config.lastUpdate}<br/>
           <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink><br/>
@@ -359,8 +370,8 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
                 <MenuIcon />
               </IconButton>
               <Typography variant="h6">
-                {(page.length === 2 || page[1] === "lists" || page[1] === "notes" || page[1] === "help" || page[1] === "sync") && <FormattedMessage id={currentPage()}/>}
-                {(page.length > 2 && page[1] !== "lists" && page[1] !== "notes" && page[1] !== "help" && page[1] !== "sync") && currentPage()}
+                {(page.length === 2 || page[1] === "lists" || page[1] === "notes" || page[1] === "help" || page[1] === "sync" || page[1] === "ranking") && <FormattedMessage id={currentPage()}/>}
+                {(page.length > 2 && page[1] !== "lists" && page[1] !== "notes" && page[1] !== "help" && page[1] !== "sync" && page[1] !== "ranking") && currentPage()}
               </Typography>
             </Toolbar>
           </AppBar>
@@ -386,9 +397,14 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
             </Drawer>
           </Hidden>
         </nav>
-        <main className={classes.content} style={{width:"100%"}}>
+        <main className={classes.content} style={{width:"100%",marginBottom:"15px"}}>
           {this.props.children}
         </main>
+        <div style={{position:"fixed",bottom:"0",zIndex:10001,textAlign:"center",padding:"5px 0",background:"#000",color:"#fff",width:"100%",fontSize:"9px"}}>
+          {user && user.displayName}&nbsp;
+          {(user && user.twitter) && <span>(@{user.twitter})</span>}&nbsp;
+          定義:v{_currentVersion()}
+        </div>
         <ShowSnackBar message={"実行中の処理があるため続行できません"} variant="warning"
             handleClose={this.toggleErrorSnack} open={this.state.errorSnack} autoHideDuration={3000}/>
       </div>

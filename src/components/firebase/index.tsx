@@ -1,7 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth'
-
+import "firebase/functions";
 const fb = firebase.initializeApp({
   apiKey: "AIzaSyDSy7KvNgPa42c8aiILI6o7jknMCq72Saw",
   authDomain: "bpim-d5971.firebaseapp.com",
@@ -18,3 +18,5 @@ export const auth = fb.auth();
 export const twitter = new firebase.auth.TwitterAuthProvider();
 export const google = new firebase.auth.GoogleAuthProvider();
 export default fb;
+
+export const functions = fb.functions();

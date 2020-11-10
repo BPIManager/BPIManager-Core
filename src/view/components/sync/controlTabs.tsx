@@ -6,12 +6,13 @@ import SyncControlScreen from './control';
 import SyncRivalScreen from './rival';
 import PushSettings from "./pushNotifications";
 import { RouteComponentProps, withRouter } from 'react-router-dom';
+import ControlTab from '../syncSettings/control';
 
 interface P {
   userData:any
 }
 
-class ControlTab extends React.Component<P&RouteComponentProps,{currentTab:number}> {
+class SyncControlTab extends React.Component<P&RouteComponentProps,{currentTab:number}> {
 
   constructor(props:P&RouteComponentProps){
     super(props);
@@ -33,18 +34,22 @@ class ControlTab extends React.Component<P&RouteComponentProps,{currentTab:numbe
           onChange={this.handleChange}
           indicatorColor="primary"
           textColor="secondary"
+          variant="scrollable"
+          scrollButtons="on"
           style={{margin:"5px 0"}}
         >
-          <Tab label="基本" />
+          <Tab label="プロフィール" />
+          <Tab label="データ" />
           <Tab label="ライバル" />
           <Tab label="プッシュ通知" />
         </Tabs>
-        {this.state.currentTab === 0 && <SyncControlScreen userData={this.props.userData}/>}
-        {this.state.currentTab === 1 && <SyncRivalScreen/>}
-        {this.state.currentTab === 2 && <PushSettings/>}
+        {this.state.currentTab === 0 && <ControlTab userData={this.props.userData}/>}
+        {this.state.currentTab === 1 && <SyncControlScreen userData={this.props.userData}/>}
+        {this.state.currentTab === 2 && <SyncRivalScreen/>}
+        {this.state.currentTab === 3 && <PushSettings/>}
       </Container>
     );
   }
 }
 
-export default withRouter(ControlTab);
+export default withRouter(SyncControlTab);

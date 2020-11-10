@@ -239,6 +239,21 @@ export default class fbActions{
     }
   }
 
+  async searchByExactId(input:string){
+    try{
+      if(!input){ return [0];}
+      const res = await this.setUserCollection().doc(input).get();
+      if(res.exists){
+        return res.data();
+      }else{
+        return null;
+      }
+    }catch(e){
+      console.log(e);
+      return null;
+    }
+  }
+
   async searchRival(input:string,saving:boolean = false){
     try{
       if(!input || (input === "" && saving !== true)){ return [0];}

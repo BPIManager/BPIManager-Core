@@ -9,7 +9,7 @@ export const getTwitterName = (input:string)=>{
   return match ? match[0].replace(/@/g,"") : "";
 }
 
-export const getAltTwitterIcon = (data:rivalStoreData|DBRivalStoreData,isLocal:boolean = false):string|null=>{
+export const getAltTwitterIcon = (data:rivalStoreData|DBRivalStoreData,isLocal:boolean = false):string=>{
   if(isLocal){
     data = data as DBRivalStoreData;
     if(data.socialId){
@@ -22,7 +22,7 @@ export const getAltTwitterIcon = (data:rivalStoreData|DBRivalStoreData,isLocal:b
     }
   }
   if(data.profile){
-    return getTwitterName(data.profile) ? "https://unavatar.now.sh/twitter/" + getTwitterName(data.profile) : null;
+    return getTwitterName(data.profile) ? "https://unavatar.now.sh/twitter/" + getTwitterName(data.profile) : alternativeImg(data.uid);
   }
   return alternativeImg(data.uid);
 }

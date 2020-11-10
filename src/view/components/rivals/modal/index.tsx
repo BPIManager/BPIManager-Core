@@ -11,14 +11,14 @@ import CloseIcon from "@material-ui/icons/Close";
 export default class ModalUser extends React.Component<{
   isOpen:boolean,
   handleOpen:(flag:boolean)=>void,
-  currentUserName:string
+  currentUserName:string,
+  exact?:boolean
 },{
   currentUserName:string,
 }>{
 
   constructor(props:{isOpen:boolean,handleOpen:(flag:boolean)=>void,currentUserName:string}){
     super(props);
-    console.log(props);
     this.state = {
       currentUserName:props.currentUserName
     }
@@ -46,7 +46,7 @@ export default class ModalUser extends React.Component<{
           </Toolbar>
         </AppBar>
         <Toolbar/>
-        <User currentUserName={currentUserName} limited={true} updateName={this.updateName}/>
+        <User currentUserName={currentUserName} limited={true} exact={this.props.exact || false} updateName={this.updateName}/>
       </Dialog>
     )
   }

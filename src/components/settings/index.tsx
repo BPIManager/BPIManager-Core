@@ -80,6 +80,9 @@ export const _autoSync = ()=>{
 }
 
 export const _setAutoSync = (isEnable:boolean)=>{
+  if(!isEnable){
+    _setWeeklyRanking(false);
+  }
   return isEnable ? localStorage.setItem("autoSync","true") : localStorage.removeItem("autoSync");
 }
 
@@ -99,6 +102,14 @@ export const setEnableTweetButton = (newState:boolean)=>{
 export const _currentStoreWithFullName = ()=>{
   const t:string = localStorage.getItem("currentStore") || "27";
   return t === "26" ? "26 Rootage" : t === "27" ? "27 HEROIC VERSE" : t === "INF" ? "INFINITAS" : "28 BISTROVER"
+}
+
+export const _weeklyRanking = ()=>{
+  return localStorage.getItem("weeklyRanking") ? true : false;
+}
+
+export const _setWeeklyRanking = (isEnable:boolean)=>{
+  return isEnable ? localStorage.setItem("weeklyRanking","true") : localStorage.removeItem("weeklyRanking");
 }
 
 export const _chartColor = ()=>{

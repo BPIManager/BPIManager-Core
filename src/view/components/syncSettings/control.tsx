@@ -22,6 +22,7 @@ import CheckIcon from '@material-ui/icons/Check';
 import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
 import BackupIcon from '@material-ui/icons/Backup';
+import TouchAppIcon from '@material-ui/icons/TouchApp';
 
 class SyncControlScreen extends React.Component<{userData:any}&RouteComponentProps,{
   isLoading:boolean,
@@ -247,6 +248,14 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
               </Avatar>
             </ListItemAvatar>
             <ListItemText primary={"ライバルを探す"} secondary={"実力が近いユーザーをライバル登録して、スコアを競えます"} />
+          </ListItem>
+          <ListItem button onClick={()=>this.props.history.push("/weekly/ongoing")}>
+            <ListItemAvatar>
+              <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
+                <TouchAppIcon/>
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText primary={"WRに参加"} secondary={"他のユーザーとスコアを競おう。ライバル探しにも!"} />
           </ListItem>
           <ListItem button onClick={()=>this.props.history.push("/notes")}>
             <ListItemAvatar>

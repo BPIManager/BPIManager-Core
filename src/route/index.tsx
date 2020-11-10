@@ -37,9 +37,11 @@ import NoteIndv from '@/view/pages/noteIndv';
 import HelpNotes from '@/view/pages/helpNotes';
 import SitemapGen from '@/view/pages/sitemap';
 import HelpStart from '@/view/pages/helpStart';
-import SyncSettings from '@/view/components/syncSettings';
+import WeeklyOnGoing from '@/view/pages/ranking/ongoing';
+import WeeklyList from '@/view/pages/ranking/list';
+import HelpWR from '@/view/pages/helpWR';
 
-export default class Router extends React.Component<{},{}> {
+class Router extends React.Component<{},{}> {
 
   async globalUpdateScore(uName:string){
     const f = new fbActions();
@@ -70,17 +72,20 @@ export default class Router extends React.Component<{},{}> {
                   <Route path="/help" exact component={Help}/>
                   <Route path="/help/notes" exact component={HelpNotes}/>
                   <Route path="/help/start" exact component={HelpStart}/>
-                  <Route path="/sync" exact component={SyncIndex}/>
-                  <Route path="/sync/settings" exact component={SyncSettings}/>
+                  <Route path="/help/ranking" exact component={HelpWR}/>
+                  <Route path="/sync/settings" exact component={SyncIndex}/>
                   <Route path="/rivals" exact component={Rivals}/>
                   <Route path="/rivalCompare" exact component={RivalChallengeLetters}/>
                   <Route path="/AAATable" exact component={AAATable}/>
                   <Route path="/tools" exact component={Tools}/>
                   <Route path="/share/:id" exact component={Shared}/>
-                  <Route path="/u/:uid/:version?" exact component={User}/>
+                  <Route path="/u/:uid/:exactId?" exact component={User}/>
                   <Route path="/notes" exact component={Note}/>
                   <Route path="/notes/:title/:diff/:single" exact component={NoteIndv}/>
                   <Route path="/sitemap" exact component={SitemapGen}/>
+                  <Route path="/ranking/id/:id" exact component={WeeklyOnGoing}/>
+                  <Route path="/ranking/ongoing" exact component={WeeklyOnGoing}/>
+                  <Route path="/ranking/list" exact component={WeeklyList}/>
                 </AppBar>
               </BrowserRouter>
             </IntlProvider>
@@ -91,3 +96,5 @@ export default class Router extends React.Component<{},{}> {
   }
 
 }
+
+export default Router;

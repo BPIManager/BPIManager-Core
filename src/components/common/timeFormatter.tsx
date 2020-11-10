@@ -9,7 +9,7 @@ dayjs.extend(isBetween);
 dayjs.extend(weekOfYear);
 dayjs.extend(relativeTime);
 
-const timeFormatter = (type = 0,date:string|Date = new Date()):string =>{
+const timeFormatter = (type = 0,date:string|Date|number = new Date()):string =>{
   const m = dayjs(date);
   switch (type){
     case 0:
@@ -32,6 +32,9 @@ const timeFormatter = (type = 0,date:string|Date = new Date()):string =>{
 
 export const timeCompare = (from:dayjs.Dayjs|string|Date,to:dayjs.Dayjs|string) =>{
   return dayjs(from).diff(to,"s");
+}
+export const untilDate = (to:dayjs.Dayjs|string|number) =>{
+  return Math.abs(dayjs().diff(to,"d"));
 }
 
 export const toMoment = (t:string|Date|dayjs.Dayjs)=>dayjs(t).format("YYYYMMDD");

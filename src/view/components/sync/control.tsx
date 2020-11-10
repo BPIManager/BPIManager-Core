@@ -146,11 +146,6 @@ class SyncControlScreen extends React.Component<{userData:any},{
           </Alert>
         )}
         <Divider style={{margin:"10px 0"}}/>
-        <Typography component="h5" variant="h5">
-          公開設定
-        </Typography>
-        <p><RefLink to="/sync/settings" style={{textDecoration:"none"}}><Link color="secondary" component="span">公開プロフィールを設定する場合、こちらから変更してください。</Link></RefLink></p>
-        <Divider style={{margin:"10px 0"}}/>
         <Typography component="p" variant="caption" style={{textAlign:"right"}}>
           current configures:[version:{_currentStore()}] [mode:{_isSingle() === 1 ? "Single Play" : "Double Play"}] [autoSync:{_autoSync() ? "enabled" : "disabled"}]<br/>
           userId: {this.props.userData.uid}<br/>

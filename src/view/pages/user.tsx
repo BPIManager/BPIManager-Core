@@ -35,6 +35,8 @@ import RivalStatViewFromUserPage from '../components/rivals/viewComponents/stats
 import SwipeableViews from 'react-swipeable-views';
 import Radar from '@/view/components/rivals/viewComponents/ui/radar';
 import Alert from '@material-ui/lab/Alert/Alert';
+import EventNoteIcon from '@material-ui/icons/EventNote';
+import WeeklyList from '@/view/pages/ranking/list';
 
 interface S {
   userName:string,
@@ -64,12 +66,12 @@ interface S {
   index:number
 }
 
-class User extends React.Component<{intl:any,currentUserName?:string,limited?:boolean,updateName?:(name:string)=>void}&RouteComponentProps,S> {
+class User extends React.Component<{intl:any,currentUserName?:string,limited?:boolean,exact?:boolean,updateName?:(name:string)=>void}&RouteComponentProps,S> {
   private fbA:fbActions = new fbActions();
   private fbStores:fbActions = new fbActions();
   private rivalListsDB = new rivalListsDB();
 
-  constructor(props:{intl:any,currentUserName?:string,limited?:boolean,updateName?:(name:string)=>void}&RouteComponentProps){
+  constructor(props:{intl:any,currentUserName?:string,limited?:boolean,exact?:boolean,updateName?:(name:string)=>void}&RouteComponentProps){
     super(props);
     const search = new URLSearchParams(props.location.search);
     const initialView = search.get("init");
@@ -146,6 +148,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
 
   search = async(forceUserName?:string):Promise<void>=>{
     let {userName} = this.state;
+    const exactId = (this.props.match.params as any).exactId || this.props.exact;
     const rivalScores = async(res:any)=>{
       try{
         const store = await this.fbStores.setDocName(res.uid).load();
@@ -162,12 +165,22 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
       userName = forceUserName;
     }
     this.setState({processing:true});
-    const res = await this.fbA.searchRival(userName);
+    const res = (exactId && !forceUserName) ? await this.fbA.searchByExactId(userName) : await this.fbA.searchRival(userName);
     if(res){
-      console.log(res)
+      if(res.isPublic === false){
+        return this.setState({userName:"",res:null});
+      }
+      if(exactId){
+        userName = res.displayName;
+        if(!this.props.exact){
+          this.props.history.replace("/u/" + userName);
+        }else{
+          if(this.props.updateName) this.props.updateName(userName);
+        }
+      }
+      const scores = await rivalScores(res);
       const totalBPI = (res.totalBPIs && res.totalBPIs[_currentStore()]) ? res.totalBPIs[_currentStore()] : "-";
       this.countAsync(res.uid);
-      const scores = await rivalScores(res);
       const rivalStat = await makeRivalStat(scores,true);
       return this.setState({
         userName:userName,res:res,uid:res.uid,
@@ -287,10 +300,8 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     }
     if(currentView === 1){
       return (
-        <Container fixed  className="commonLayout">
-          <RivalView toggleSnack={this.toggleSnack} backToMainPage={this.backToMainPage} showAllScore={true}
-            rivalData={uid} rivalMeta={res} descendingRivalData={rivalData} isNotRival={true}/>
-        </Container>
+        <RivalView toggleSnack={this.toggleSnack} backToMainPage={this.backToMainPage} showAllScore={true}
+          rivalData={uid} rivalMeta={res} descendingRivalData={rivalData} isNotRival={true}/>
       )
     }
     if(currentView === 2){
@@ -311,8 +322,13 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     }
     if(currentView === 4){
       return (
+        <RivalStatViewFromUserPage full={rivalStat} rivalRawData={rivalData} backToMainPage={this.backToMainPage} name={res.displayName}/>
+      )
+    }
+    if(currentView === 5){
+      return (
         <Container fixed  className="commonLayout">
-          <RivalStatViewFromUserPage full={rivalStat} rivalRawData={rivalData} backToMainPage={this.backToMainPage} name={res.displayName}/>
+          <WeeklyList viewInUser backToMainPage={this.backToMainPage} uid={uid} name={res.displayName}/>
         </Container>
       )
     }
@@ -320,6 +336,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
       {icon:<ViewListIcon />,primary:"スコアを見る",secondary:(res.displayName) + "さんの登録スコアを表示します",onClick:()=>this.view(1)},
       {icon:<EqualizerIcon />,primary:"統計データを表示",secondary:(res.displayName) + "さんの統計データを表示します",onClick:()=>this.view(4)},
       {icon:<WbIncandescentIcon />,primary:"AAA達成表",secondary:"BPIに基づいたAAA達成難易度表を表示します",onClick:()=>this.view(2)},
+      {icon:<EventNoteIcon />,primary:"ウィークリーランキング",secondary:"BPIManager内WRの参加履歴を表示します",onClick:()=>this.view(5)},
     ]
     if(res.showNotes){
       buttons.push({icon:<CommentIcon />,primary:"投稿ノート一覧",secondary:(res.displayName) + "さんが投稿した攻略情報一覧",onClick:()=>this.view(3)});
@@ -507,7 +524,8 @@ class NoUserError extends React.Component<{match:any,alternativeId:string},{}>{
               Error!
             </Typography>
             <Typography variant="body2" gutterBottom>
-              指定されたユーザーは見つかりませんでした
+              指定されたユーザーは見つかりませんでした<br/>
+              プロフィールが非公開か、表示名が変更された可能性があります。
             </Typography>
             {(!(match.params as any).uid && alternativeId) &&
             <Typography variant="body2" gutterBottom>
