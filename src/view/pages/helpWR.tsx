@@ -23,7 +23,7 @@ class HelpWR extends React.Component<RouteComponentProps,{}> {
             </div>
           </div>
           <Container fixed style={{marginTop:"15px"}}>
-            <Typography variant="h5" style={{display: 'flex',alignItems: 'center'}}><ContactSupportIcon/>&nbsp;WRについて</Typography>
+            <Typography variant="h5" style={{display: 'flex',alignItems: 'center'}}><ContactSupportIcon/>&nbsp;ランキングについて</Typography>
             <p>
               ランキングは、参加を通して実力の近いユーザーを見つけるなど、交流促進を目的とした機能です。<br/>
               BPIManagerにアカウントを登録しており、プロフィールを一般公開していれば誰でも参加できます。<br/>
@@ -33,7 +33,7 @@ class HelpWR extends React.Component<RouteComponentProps,{}> {
             <Typography variant="h5" style={{display: 'flex',alignItems: 'center',marginBottom:"5px"}}><FavoriteIcon/>&nbsp;参加方法・ルール</Typography>
             <b>参加方法</b>
               <ul>
-                <li>トップページまたは「ソーシャル」→「WR」より、開催中のWRにスコアを送信することができます。</li>
+                <li>トップページまたは「ソーシャル」→「ランキング」より、開催中のランキングにスコアを送信することができます。</li>
                 <li>ランキングは原則として毎月2回、2週間ごとに曲目が変更されます。</li>
                 <li>ランキング対象楽曲は☆11および☆12のBPI対象楽曲から無作為に選出され、同一バージョン内で選曲が被ることはありません。</li>
               </ul>

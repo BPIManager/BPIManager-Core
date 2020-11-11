@@ -79,7 +79,7 @@ class JoinModal extends React.Component<P,S> {
             fullWidth
             label={`${song.title}${_prefixFromNum(song.difficulty,true)}`}
             type="number"
-            value={score}
+            value={score || ""}
             onChange={(e)=>this.setState({score:Number(e.target.value)})}
           />
           {errorMessage && (

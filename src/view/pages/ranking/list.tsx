@@ -58,7 +58,7 @@ class WeeklyList extends React.Component<{intl:any,viewInUser?:boolean,backToMai
         {(viewInUser && backToMainPage) && (
           <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
             <Button onClick={backToMainPage} style={{minWidth:"auto",padding:"6px 0px"}}><ArrowBackIcon/></Button>
-            &nbsp;{name}さんのWR参加履歴
+            &nbsp;{name}さんのランキング参加履歴
           </Typography>
         )}
         <Container fixed  className="commonLayout">
@@ -74,8 +74,8 @@ class WeeklyList extends React.Component<{intl:any,viewInUser?:boolean,backToMai
               )}
               {list.info.length === 0 && (
                 <Alert severity="warning">
-                  {viewInUser && <span>このユーザーはまだWRに一度も参加していません。</span>}
-                  {!viewInUser && <span>表示するWRが見つかりませんでした。</span>}
+                  {viewInUser && <span>このユーザーはまだランキングに一度も参加していません。</span>}
+                  {!viewInUser && <span>表示するランキングが見つかりませんでした。</span>}
                 </Alert>
               )}
               {!list.error && (

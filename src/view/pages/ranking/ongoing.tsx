@@ -34,6 +34,7 @@ import Alert from '@material-ui/lab/Alert/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import Badge from '@material-ui/core/Badge';
 import { verNameArr } from '@/view/components/songs/common';
+import DeleteModal from '@/view/components/ranking/modal/delete';
 
 interface S {
   isLoading:boolean,
@@ -46,6 +47,7 @@ interface S {
   rank:any,
   contentLoading:boolean,
   isModalOpen:boolean,
+  isDeleteModalOpen:boolean,
   currentUserName:string,
 }
 
@@ -64,6 +66,7 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
       rank:null,
       contentLoading:false,
       isModalOpen:false,
+      isDeleteModalOpen:false,
       currentUserName:"",
     }
   }
@@ -90,6 +93,7 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
         page:0,
         version:_currentStore(),
       });
+      if(res.data.error){return;}
       this.setState({onGoing:d,onGoingId:current.id,isLoading:false,song:songData,score:score.length > 0 ? score[0] : null,page:0,rank:this.calcBPI(res.data,songData)});
     }
   }
@@ -119,6 +123,27 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
     }
   }
 
+  deleteExec = async():Promise<{error:boolean,errorMessage:string}>=>{
+    const {onGoingId,song} = this.state;
+    if(!song){return {error:true,errorMessage:"楽曲データが見つかりません"};}
+    try{
+      const data = {
+        cId:onGoingId,
+        version:_currentStore(),
+      };
+      const p = await functions.httpsCallable("deleteFromRanking")(data);
+      if(p.data.error){
+        throw new Error(p.data.errorMessage);
+      }
+      this.pageLoad();
+      return {error:false,errorMessage:""};
+    }catch(e){
+      console.log(e);
+      return {error:true,errorMessage:e.message};
+    }
+
+  }
+
   pageLoad = async(page:number = 0)=>{
     this.setState({contentLoading:true});
     const res = await functions.httpsCallable("viewRanking")({
@@ -126,7 +151,9 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
       includeRank:true,
       currentUser:true,
       page:page,
+      version:_currentStore(),
     });
+    if(res.data.error){return;}
     this.setState({contentLoading:false,page:page,rank:this.calcBPI(res.data)});
   }
 
@@ -149,10 +176,12 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
   }
 
   handleModalOpen = (flag:boolean)=> this.setState({isModalOpen:flag});
+  deleteScore = (flag:boolean)=>this.setState({isDeleteModalOpen:flag});
   open = (uid:string)=> this.setState({isModalOpen:true,currentUserName:uid})
 
+
   render(){
-    const {onGoing,isLoading,onGoingId,joinModal,song,score,page,rank,contentLoading,isModalOpen,currentUserName} = this.state;
+    const {onGoing,isLoading,onGoingId,joinModal,song,score,page,rank,contentLoading,isModalOpen,currentUserName,isDeleteModalOpen} = this.state;
     const themeColor = _currentTheme();
     const pager = ()=>{
       const p = [];
@@ -182,7 +211,6 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
           </Select>
         </FormControl>
       </div>);
-
     return (
       <div>
         <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover"}}>
@@ -218,7 +246,7 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
           )}
           {!rank.error && (
             <div>
-              {(rank.info.rank !== -1 && rank.info.rank && rank.info.detail) && (
+              {(rank.info.rank && rank.info.rank !== -1 && rank.info.detail) && (
               <Typography component="h5" variant="h5" color="textPrimary" gutterBottom style={{textAlign:"center"}}>
                 <span>{rank.info.rank}位 / {rank.info.users}人中</span>
                 <ShareOnTwitter
@@ -237,11 +265,15 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
                 <div>
                 {paging}
                 <List>
-                  {rank.info.rankBody.map((item:any,i:number)=>{
+                  {rank.info.rankBody.map((item:any,_i:number)=>{
                     return (
                       <ListItem key={item.name} button onClick={()=>this.open(item.uid)}>
                         <ListItemAvatar>
-                          <Badge badgeContent={(i + 1) + (page * 50) + "位"} color="secondary">
+                          <Badge
+                            anchorOrigin={{
+                              vertical: 'top',
+                              horizontal: 'left',
+                            }} badgeContent={item.rank + "位"} color="primary">
                             <Avatar>
                               <img src={item.icon ? item.icon.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
                                 alt={item.name}
@@ -255,6 +287,12 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
                   })}
                 </List>
                 {paging}
+                {(rank.info.rank && rank.info.rank !== -1 && onGoing.ongoing === true) && (
+                  <div style={{textAlign:"center"}}>
+                    <Divider style={{margin:"10px 0"}}/>
+                    <Link color="secondary" component="span" onClick={()=>this.deleteScore(true)}>登録済みのスコアを削除</Link>
+                  </div>
+                )}
                 </div>
               )}
               {(!contentLoading && rank.info.users === 0) && (
@@ -271,6 +309,7 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
         </Container>
         {isModalOpen && <ModalUser isOpen={isModalOpen} currentUserName={currentUserName} exact handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
         {joinModal && <JoinModal handleToggle={this.handleToggle} joinExec={this.joinExec} song={song} score={score}/>}
+        {isDeleteModalOpen && <DeleteModal handleToggle={()=>this.deleteScore(!isDeleteModalOpen)} exec={this.deleteExec}/>}
       </div>
     );
   }
