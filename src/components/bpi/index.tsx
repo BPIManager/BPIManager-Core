@@ -174,3 +174,14 @@ export default class bpiCalcuator{
     return this.totalBPI();
   }
 }
+
+export const showBpiDist = (totalBPI:number,m:any)=>{
+  const s = m[m.length - 1] ? m[m.length - 1]["shiftedBPI"] : -15;
+  if(totalBPI - s === 0){
+    return "変動なし";
+  }
+  if(totalBPI - s > 0){
+    return "+" + Math.round((totalBPI - s) * 1000) / 1000;
+  }
+  return Math.round((totalBPI - s) * 1000) / 1000;
+}

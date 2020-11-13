@@ -14,6 +14,7 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import LockIcon from '@material-ui/icons/Lock';
 import Avatar from '@material-ui/core/Avatar';
 import { avatarFontColor, avatarBgColor } from '@/components/common';
+import Alert from '@material-ui/lab/Alert/Alert';
 
 class SyncLoginScreen extends React.Component<{
   mode:number
@@ -22,15 +23,16 @@ class SyncLoginScreen extends React.Component<{
   private fbA:fbActions = new fbActions();
 
   render(){
-    const {mode} = this.props;
     return (
+    <div>
       <Paper style={{padding:"15px"}}>
         <Avatar style={{background:avatarBgColor,color:avatarFontColor,margin:"10px auto",padding:"35px",fontSize:"25px"}}>
           <LockIcon fontSize="large"/>
         </Avatar>
-        <Typography component="h6" variant="h6" color="textPrimary" style={{textAlign:"center"}}>
-          <FormattedMessage id="Sync.Login.needLogin"/>
+        <Typography component="h5" variant="h5" style={{textAlign:"center",marginTop:"10px"}}>
+          ログイン
         </Typography>
+        <Divider style={{margin:"10px 0"}}/>
         <List
           subheader={
             <ListSubheader component="div" disableSticky>
@@ -43,7 +45,7 @@ class SyncLoginScreen extends React.Component<{
           ].map((item,i)=>{
             return (
               <ListItem key={i} button onClick={item.func}>
-                <ListItemText primary={item.name} secondary={item.desc} />
+                <ListItemText primary={<span>{item.name}でログイン</span>} secondary={item.desc} />
                 <ListItemSecondaryAction onClick={item.func}>
                   <IconButton edge="end">
                     <ArrowForwardIosIcon />
@@ -54,28 +56,24 @@ class SyncLoginScreen extends React.Component<{
           })
         }
         </List>
-        {mode === 0 && <div>
-          <Divider style={{margin:"10px 0"}}/>
-          <Typography component="p" variant="caption" gutterBottom>
-            デバイス内に蓄積されたスコアデータやスコアの更新履歴をWeb上に保管します。<br/>
-            アップロードされたデータは、いつ・どの端末からでもダウンロードし使用することが可能です。<br/>
-            その他、ライバル機能やプッシュ通知などの追加機能が開放され、より便利に本サービスをお使いいただけます。
-          </Typography>
-          <Typography component="p" variant="caption" gutterBottom>
-            <FormattedMessage id="Sync.Login.description"/><br/>
-            サービスの利用規約や個人情報保護方針はヘルプより確認可能です。
-          </Typography>
-        </div>}
-        {mode === 1 && <div>
-          <Divider style={{margin:"10px 0"}}/>
-          <Typography component="p" variant="caption" gutterBottom>
-            ライバル機能をご利用いただくためには、SNSとの連携が必要です。
-          </Typography>
-          <Typography component="p" variant="caption" gutterBottom>
-            <FormattedMessage id="Sync.Login.description"/>
-          </Typography>
-        </div>}
+        <Divider style={{margin:"10px 0"}}/>
+        <Typography component="p" variant="caption" gutterBottom>
+          <b>ログインでできること</b>
+        </Typography>
+          <ul className="MuiTypography-caption">
+            <li>スコアデータのクラウドへの永久保存</li>
+            <li>BPIやアリーナランクに基づき、実力の近いライバルを探す</li>
+            <li>Notesやウィークリーランキングへの参加を通した他ユーザーとの交流、モチベーションの向上</li>
+          </ul>
+        <Alert severity="info">
+        <Typography component="p" variant="caption" gutterBottom>
+          TwitterまたはGoogleを通したOAuthログインに対応しています。連携したSNSアカウントのデータはユーザー識別に用いられ、連携先アカウントにおいて自動的に投稿を作成したり、プロフィールを編集する権限はありません。<br/>
+          BPIManagerアカウントの作成に際し、利用規約およびプライバシーポリシーへの同意があったものとみなします。<br/>
+          利用規約等の確認事項は「ヘルプ」よりご確認いただけます。
+        </Typography>
+        </Alert>
       </Paper>
+      </div>
     );
   }
 }

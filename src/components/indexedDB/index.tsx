@@ -1008,6 +1008,14 @@ export const rivalListsDB = class extends storageWrapper{
     }
   }
 
+  async getRivalLength():Promise<number>{
+    try{
+      return (await this.rivalLists.where("[isSingle+storedAt]").equals([_isSingle(),_currentStore()]).toArray()).length;
+    }catch(e){
+      return 0;
+    }
+  }
+
   async getAllUserScores():Promise<rivalScoreData[]>{
     try{
       return this.rivals.where({isSingle:_isSingle(),storedAt:_currentStore()}).toArray();

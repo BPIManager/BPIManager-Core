@@ -62,7 +62,7 @@ class WeeklyList extends React.Component<{intl:any,viewInUser?:boolean,backToMai
           </Typography>
         )}
         <Container fixed  className="commonLayout">
-          {isLoading && <Loader/>}
+          {isLoading && <Loader text="ランキング一覧を取得中"/>}
           {!isLoading && (
             <div>
               {list.error && (

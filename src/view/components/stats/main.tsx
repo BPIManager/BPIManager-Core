@@ -3,7 +3,7 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import Grid from '@material-ui/core/Grid';
-import bpiCalcuator from '@/components/bpi';
+import bpiCalcuator, { showBpiDist } from '@/components/bpi';
 import {_chartColor, _chartBarColor, pieColor, _currentStore} from "@/components/settings";
 import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, LineChart, BarChart, ReferenceLine, Pie, PieChart, Cell, Legend} from 'recharts';
 import _withOrd from '@/components/common/ord';
@@ -109,16 +109,6 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
         return "-" + upPer + "%";
       }
     }
-    const addPrefix = (m:any)=>{
-      const s = m[m.length - 1] ? m[m.length - 1]["shiftedBPI"] : -15;
-      if(totalBPI - s === 0){
-        return "変動なし";
-      }
-      if(totalBPI - s > 0){
-        return "+" + Math.round((totalBPI - s) * 1000) / 1000;
-      }
-      return Math.round((totalBPI - s) * 1000) / 1000;
-    }
     if(isLoading){
       return (
         <Container fixed  style={{padding:0}}>
@@ -144,7 +134,7 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
               </Typography>
               <Typography component="h5" variant="h5" color="textPrimary">
                 推定順位 : {_withOrd(totalRank)}
-                <ShareOnTwitter text={`★${targetLevel}の総合BPI:${totalBPI}(推定順位:${totalRank}位,皆伝上位${rankPer}%)\n前週比:${addPrefix(lastWeek)} 前月同日比:${addPrefix(lastMonth)}`} url={url}/>
+                <ShareOnTwitter text={`★${targetLevel}の総合BPI:${totalBPI}(推定順位:${totalRank}位,皆伝上位${rankPer}%)\n前週比:${showBpiDist(totalBPI,lastWeek)} 前月同日比:${showBpiDist(totalBPI,lastMonth)}`} url={url}/>
               </Typography>
               <Typography component="p" variant="body1" color="textPrimary">
                 皆伝上位{rankPer}%<br/>

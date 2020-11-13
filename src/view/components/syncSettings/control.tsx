@@ -109,7 +109,7 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
     const {isLoading,rivalData,scoreData,rawUserData,nameErrorMessage,myName,myProfile,arenaRank,sentName,showNotes,hideAlert,isPublic} = this.state;
     const nameError:boolean = myName.length !== 0 && (!/^[a-zA-Z0-9]+$/g.test(myName) || myName.length > 16);
     const profError:boolean = myProfile.length > 140;
-    if(isLoading) return <Loader/>
+    if(isLoading) return <Loader text="プロファイルを取得中"/>
     const profileAvailable = ()=>{
       if(!isLoading && sentName){
         return (

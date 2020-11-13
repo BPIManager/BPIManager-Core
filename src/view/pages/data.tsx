@@ -6,7 +6,7 @@ import { FormattedMessage } from "react-intl";
 import {scoresDB, importer} from "@/components/indexedDB";
 import TextField from '@material-ui/core/TextField';
 import importCSV from "@/components/import/csv";
-import bpiCalculator from "@/components/bpi";
+import bpiCalculator, { showBpiDist } from "@/components/bpi";
 import { _currentStore, _isSingle, _currentStoreWithFullName } from '@/components/settings';
 import { _autoSync } from '../../components/settings';
 import Link from '@material-ui/core/Link';
@@ -27,6 +27,7 @@ import Divider from '@material-ui/core/Divider';
 import AdsCard from '@/components/ad';
 import bpiCalcuator from '@/components/bpi';
 import { statMain } from '@/components/stats/main';
+import dayjs from 'dayjs';
 
 interface P{
   global:any,
@@ -46,7 +47,8 @@ class Index extends React.Component<P&RouteComponentProps,{
   updated:number,
   totalBPIBefore:number,
   totalBPIAfter:number,
-  noName:boolean
+  noName:boolean,
+  updatedText:string,
 }> {
 
   constructor(props:P&RouteComponentProps){
@@ -65,6 +67,7 @@ class Index extends React.Component<P&RouteComponentProps,{
       totalBPIBefore:0,
       totalBPIAfter:0,
       noName:false,
+      updatedText:"",
     }
     this.execute = this.execute.bind(this);
   }
@@ -170,7 +173,12 @@ class Index extends React.Component<P&RouteComponentProps,{
       const bpi = new bpiCalcuator();
       const statsAPI = await new statMain(12).load();
       const totalBPI = bpi.setSongs(statsAPI.at(),statsAPI.at().length);
-      return this.setState({isSaving:false,raw:"",stateText:"Data.Success",errors:errors,updated:updated,totalBPIAfter:totalBPI});
+      const lastDay = await statsAPI.eachDaySum(4,dayjs().subtract(1, 'day').format());
+      const lastWeek = await statsAPI.eachDaySum(4,dayjs().subtract(1, 'week').format());
+      const rank = bpi.rank(totalBPI,false);
+      const rankPer = Math.round(rank / bpi.getTotalKaidens() * 1000000) / 10000;
+      const updatedText = `BPIManagerでスコアを${updated}件更新しました%0a総合BPI:${totalBPI}(前日比:${showBpiDist(totalBPI,lastDay)},前週比:${showBpiDist(totalBPI,lastWeek)})%0a推定順位:${rank}位,皆伝上位${rankPer}％`;
+      return this.setState({isSaving:false,raw:"",stateText:"Data.Success",errors:errors,updated:updated,updatedText:updatedText});
     }catch(e){
       console.log(e);
       this.props.global.setMove(false);
@@ -182,7 +190,7 @@ class Index extends React.Component<P&RouteComponentProps,{
 
   render(){
     const spdp = _isSingle() ? "SP" : "DP";
-    const {raw,stateText,errors,isSaving,displayName,isLoading,updated,totalBPIBefore,totalBPIAfter} = this.state;
+    const {raw,stateText,errors,isSaving,displayName,isLoading,updatedText} = this.state;
     if(isLoading){
       return (<Loader/>);
     }
@@ -199,7 +207,7 @@ class Index extends React.Component<P&RouteComponentProps,{
             onChange={this.onChangeText}
             value={raw}
             style={{width:"100%"}}
-            label="ここに貼り付け(省略可能)"
+            label={<span>ここに貼り付け(省略可能)</span>}
             margin="dense"
             variant="outlined"
             multiline
@@ -235,7 +243,7 @@ class Index extends React.Component<P&RouteComponentProps,{
                 fullWidth
                 variant="outlined"
                 color="secondary"
-                onClick={()=>window.open(`https://twitter.com/share?text=BPIManagerでスコアを${updated}件更新しました%0a総合BPI:${totalBPIBefore}→${totalBPIAfter}%0a&url=${config.baseUrl}/u/${displayName}`)}
+                onClick={()=>window.open(`https://twitter.com/share?text=${updatedText}%0a&url=${config.baseUrl}/u/${displayName}`)}
                 style={{margin:"5px 0"}}>
                   更新をツイート
               </Button>

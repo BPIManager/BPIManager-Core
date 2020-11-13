@@ -3,7 +3,7 @@ export const _isSingle = ()=>{
 }
 
 export const _currentStore = ()=>{
-  return localStorage.getItem("currentStore") || "27";
+  return localStorage.getItem("currentStore") || "28";
 }
 
 export const _lang = ()=>{

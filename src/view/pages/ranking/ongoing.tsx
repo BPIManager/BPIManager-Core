@@ -91,7 +91,7 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
         includeRank:true,
         currentUser:true,
         page:0,
-        version:_currentStore(),
+        version:d.version,
       });
       if(res.data.error){return;}
       this.setState({onGoing:d,onGoingId:current.id,isLoading:false,song:songData,score:score.length > 0 ? score[0] : null,page:0,rank:this.calcBPI(res.data,songData)});
@@ -101,7 +101,7 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
   handleToggle = ()=>this.setState({joinModal:!this.state.joinModal});
 
   joinExec = async (score:number):Promise<{error:boolean,errorMessage:string}>=>{
-    const {onGoingId,song} = this.state;
+    const {onGoingId,song,onGoing} = this.state;
     if(!song){return {error:true,errorMessage:"楽曲データが見つかりません"};}
     try{
       const data = {
@@ -109,7 +109,7 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
         title:song.title,
         difficulty:song.difficulty,
         score:score,
-        version:_currentStore(),
+        version:onGoing.version,
       };
       const p = await functions.httpsCallable("joinRanking")(data);
       if(p.data.error){
@@ -124,12 +124,12 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
   }
 
   deleteExec = async():Promise<{error:boolean,errorMessage:string}>=>{
-    const {onGoingId,song} = this.state;
+    const {onGoingId,song,onGoing} = this.state;
     if(!song){return {error:true,errorMessage:"楽曲データが見つかりません"};}
     try{
       const data = {
         cId:onGoingId,
-        version:_currentStore(),
+        version:onGoing.version,
       };
       const p = await functions.httpsCallable("deleteFromRanking")(data);
       if(p.data.error){
@@ -151,7 +151,7 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
       includeRank:true,
       currentUser:true,
       page:page,
-      version:_currentStore(),
+      version:this.state.onGoing.version,
     });
     if(res.data.error){return;}
     this.setState({contentLoading:false,page:page,rank:this.calcBPI(res.data)});

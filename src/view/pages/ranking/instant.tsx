@@ -68,7 +68,7 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
   handleToggle = ()=>this.setState({joinModal:!this.state.joinModal});
 
   joinExec = async (score:number):Promise<{error:boolean,errorMessage:string}>=>{
-    const {onGoingId,song} = this.state;
+    const {onGoingId,song,onGoing} = this.state;
     if(!song){return {error:true,errorMessage:"楽曲データが見つかりません"};}
     try{
       const data = {
@@ -76,7 +76,7 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
         title:song.title,
         difficulty:song.difficulty,
         score:score,
-        version:_currentStore(),
+        version:onGoing.version,
       };
       const p = await functions.httpsCallable("joinRanking")(data);
       if(p.data.error){
@@ -86,7 +86,7 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
         cId:onGoingId,
         includeRank:false,
         currentUser:true,
-        version:_currentStore(),
+        version:onGoing.version,
       });
       this.setState({rank:res.data})
       return {error:false,errorMessage:""};
@@ -119,7 +119,7 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
               <AlertTitle>開催中ランキング<small>(<RLink to="/help/ranking"><Link color="secondary" component="span">ヘルプ</Link></RLink>)</small></AlertTitle>
               <p>
                 楽曲:<b>{onGoing.title}{_prefixFromNum(onGoing.difficulty,true)}</b><br/>
-                ステータス:<b>{rank.info.rank === -1 ? "未参加" : "参加済"}{rank.info.rank !== -1 && <span>({rank.info.rank}位/{rank.info.users}人中)</span>}</b>
+                ステータス:<b>{rank.info.rank === -1 ? `未参加` : "参加済"}{rank.info.rank !== -1 && <span>({rank.info.rank}位/{rank.info.users}人中)</span>}</b>
                 {rank.info.rank !== -1 && (
                   <ShareOnTwitter
                   text={`BPIMスコアタに参加中！\n対象楽曲：${onGoing.title}(${_prefixFullNum(onGoing.difficulty)})\n登録スコア：${rank.info.detail.exScore}\n現在の順位：${rank.info.users}人中${rank.info.rank}位\n`}

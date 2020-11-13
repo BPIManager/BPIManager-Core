@@ -122,6 +122,10 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
 
   addUser = async(meta:rivalStoreData):Promise<void>=>{
     this.setState({processing:true});
+    const rivalLen = await this.rivalListsDB.getRivalLength();
+    if(rivalLen >= 5){
+      return this.toggleSnack(`ライバル登録数が上限を超えています。`,"warning");
+    }
     const data = await this.fbStores.setDocName(meta.uid).load();
     if(!data){
       return this.toggleSnack("該当ユーザーは当該バージョン/モードにおけるスコアを登録していません。","warning");
