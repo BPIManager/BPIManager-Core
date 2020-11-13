@@ -4,7 +4,7 @@ import { injectIntl } from 'react-intl';
 import weeklyStore from '@/components/firebase/ranking';
 import Typography from '@material-ui/core/Typography';
 import { _prefixFullNum, difficultyDiscriminator } from '@/components/songs/filter';
-import { _currentTheme, _currentStore } from '@/components/settings';
+import { _currentTheme } from '@/components/settings';
 import timeFormatter, { untilDate, _isBetween } from '@/components/common/timeFormatter';
 import Button from '@material-ui/core/Button';
 import TouchAppIcon from '@material-ui/icons/TouchApp';

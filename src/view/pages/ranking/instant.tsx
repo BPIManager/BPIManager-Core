@@ -16,7 +16,6 @@ import AlertTitle from '@material-ui/lab/AlertTitle';
 import { RouteComponentProps, withRouter, Link as RLink } from 'react-router-dom';
 import Link from '@material-ui/core/Link';
 import { ShareOnTwitter } from '@/view/components/common/shareButtons';
-import { _currentStore } from '@/components/settings';
 
 interface S {
   isLoading:boolean,
