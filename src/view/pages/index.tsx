@@ -62,7 +62,7 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
               color="secondary"
             />
           )}
-          {!user && <div></div>}
+          {!user && <div style={{width:"150px"}}></div>}
           <div>
             <Button startIcon={<MenuIcon />} onClick={this.props.toggleNav} color="secondary" size="large" style={{position:"relative",bottom:"2px",borderRadius:"0",borderBottom:"2px solid " + borderColor()}}>
               MENU
