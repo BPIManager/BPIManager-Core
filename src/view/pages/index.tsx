@@ -84,7 +84,7 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
                   IMPORT
                 </Button>
                 <Button startIcon={<ArrowRightIcon />} onClick={()=>this.props.history.push("/songs")} size="large" variant="text">
-                  SONG LIST
+                  SONGS
                 </Button>
               </ButtonGroup>
               <Link to="/help/start"><RefLink component="span" color="secondary">How to Use / はじめての方</RefLink></Link>
