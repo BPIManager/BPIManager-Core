@@ -104,9 +104,6 @@ export default class Initialize extends React.Component<{global:any},{show:boole
   }
 
   render(){
-    if(!this.state.show){
-      return (null);
-    }
     if(this.state.error){
       return (<Backdrop open>
         <div>
@@ -119,7 +116,7 @@ export default class Initialize extends React.Component<{global:any},{show:boole
     }
 
     return (
-      <Backdrop open style={{flexDirection:"column"}}>
+      <Backdrop open={this.state.show} style={{flexDirection:"column"}}>
         <div>
           <Loader/>
         </div>

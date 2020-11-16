@@ -15,7 +15,9 @@ import {Link as RefLink} from '@material-ui/core/';
       "body":
       <div>
         BPIManagerは、☆11および☆12のスコアを、BPI(を改変した定義式)という指標を用いながら管理することができるツールです。<br/>
-        本ツールは、スマートフォンのホーム画面に追加して利用することが想定されていますが、PCなどあらゆる端末でご利用いただけます。
+        本ツールは、スマートフォンのホーム画面に追加して利用することが想定されていますが、PCなどあらゆる端末でご利用いただけます。<br/><br/>
+        <FormattedMessage id="Index.notes1"/><br/>
+        <FormattedMessage id="Index.notes2"/>
       </div>
     },{
       "title":"Help.AboutBPI",

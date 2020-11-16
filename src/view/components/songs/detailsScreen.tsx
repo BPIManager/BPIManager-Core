@@ -354,7 +354,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
     }
     const c = _currentTheme();
     return (
-      <Dialog id="detailedScreen" className={c === "dark" ? "darkDetailedScreen" : c === "light" ? "lightDetailedScreen" : "deepSeaDetailedScreen"} fullScreen open={isOpen} onClose={handleOpen} style={{overflowX:"hidden",width:"100%",zIndex:10002}}>
+      <Dialog id="detailedScreen" className={c === "dark" ? "darkDetailedScreen" : c === "light" ? "lightDetailedScreen" : "deepSeaDetailedScreen"} fullScreen open={isOpen} onClose={handleOpen} style={{overflowX:"hidden",width:"100%"}}>
         <AppBar>
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={()=>handleOpen(false)} aria-label="close">

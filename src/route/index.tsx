@@ -1,7 +1,6 @@
 import * as React from 'react';
 import AppBar from "../view/components/header/appBar";
 import { IntlProvider } from 'react-intl'
-import Index from "../view/pages";
 import Data from "../view/pages/data";
 import Songs from "../view/pages/songs";
 import ListsBody from "../view/pages/lists/listBody";
@@ -14,7 +13,6 @@ import Help from "../view/pages/help";
 import Rivals from "../view/pages/rivals";
 import User from "../view/pages/user";
 import AAATable from "../view/pages/AAATable";
-import Tools from "../view/pages/tools";
 import Shared from "../view/pages/shared";
 import {BrowserRouter, Route} from "react-router-dom";
 
@@ -60,7 +58,6 @@ class Router extends React.Component<{},{}> {
             >
               <BrowserRouter>
                 <AppBar global={global}>
-                  <Route path="/" exact render={_props=><Index global={global}/>}/>
                   <Route path="/data" exact render={_props=><Data global={global} updateGlobal={this.globalUpdateScore}/>}/>
                   <Route path="/songs" exact component={Songs}/>
                   <Route path="/lists" exact component={Lists}/>
@@ -77,7 +74,6 @@ class Router extends React.Component<{},{}> {
                   <Route path="/rivals" exact component={Rivals}/>
                   <Route path="/rivalCompare" exact component={RivalChallengeLetters}/>
                   <Route path="/AAATable" exact component={AAATable}/>
-                  <Route path="/tools" exact component={Tools}/>
                   <Route path="/share/:id" exact component={Shared}/>
                   <Route path="/u/:uid/:exactId?" exact component={User}/>
                   <Route path="/notes" exact component={Note}/>

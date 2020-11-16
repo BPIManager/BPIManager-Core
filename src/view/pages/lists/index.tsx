@@ -46,7 +46,6 @@ class FavLists extends React.Component<{}&RouteComponentProps,S> {
       showSnackBar:false,
       checked:localStorage.getItem("hideDefaultLists") === "true",
     }
-    console.log(localStorage.getItem("hideDefaultLists"))
     this.updateData = this.updateData.bind(this);
   }
 

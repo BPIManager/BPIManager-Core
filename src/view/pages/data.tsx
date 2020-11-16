@@ -196,6 +196,15 @@ class Index extends React.Component<P&RouteComponentProps,{
     }
     return (
       <Container fixed  className="commonLayout">
+        {(_currentStore() !== config.latestStore && _currentStore() !== "INF") && (
+          <Alert severity="error" style={{margin:"10px 0"}}>
+            <AlertTitle>スコア保存先をご確認ください</AlertTitle>
+            <p>
+              スコアデータの保存先が最新のIIDXバージョンではありません。保存先が間違っていませんか？<br/>
+              <RLink to="/settings" style={{textDecoration:"none"}}><Link color="secondary" component="span">設定画面からスコアの保存先を変更する</Link></RLink>。
+            </p>
+          </Alert>
+        )}
         <Paper style={{padding:"15px"}}>
           <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
             <FormattedMessage id="Data.add"/>

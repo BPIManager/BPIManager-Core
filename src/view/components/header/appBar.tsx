@@ -44,6 +44,7 @@ import {ReactComponent as Logo} from "@/assets/aix2f-q5h7x.svg";
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import EventNoteIcon from '@material-ui/icons/EventNote';
 import { _currentVersion } from "@/components/settings";
+import Index from "@/view/pages/";
 
 interface navBars {
   to:string,
@@ -237,12 +238,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         to:"/AAATable",
         id:"GlobalNav.AAATable",
         icon:<WbIncandescentIcon />
-      },
-      {
-        to:"/tools",
-        id:"GlobalNav.Tools",
-        icon:<BallotIcon />
-      },
+      }
     ]
     const social:navBars[] = [
       {
@@ -354,6 +350,24 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         </Typography>
       </div>
     );
+    if(page[1] === ""){
+      return (
+        <div>
+          <nav className={classes.drawer}>
+            <Drawer open={isOpen} onClose={this.toggleNav}
+              classes={{
+                paper: classes.drawerPaper,
+            }}>
+              {drawer(false)}
+            </Drawer>
+          </nav>
+          <main style={{width:"100%"}}>
+            <Index toggleNav={this.toggleNav}/>
+          </main>
+        </div>
+      );
+    }
+
     return (
       <div className={classes.root}>
         <HideOnScroll {...this.props}>
@@ -400,7 +414,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         <main className={classes.content} style={{width:"100%",marginBottom:"15px"}}>
           {this.props.children}
         </main>
-        <div style={{position:"fixed",bottom:"0",zIndex:10001,textAlign:"center",padding:"5px 0",background:"#000",color:"#fff",width:"100%",fontSize:"9px"}}>
+        <div style={{position:"fixed",bottom:"0",zIndex:1000,textAlign:"center",padding:"5px 0",background:"#000",color:"#fff",width:"100%",fontSize:"9px"}}>
           {user && user.displayName}&nbsp;
           {(user && user.twitter) && <span>(@{user.twitter})</span>}&nbsp;
           定義:v{_currentVersion()}

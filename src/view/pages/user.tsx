@@ -437,14 +437,14 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
         {(this.getIIDXId(res.profile) !== "" || getTwitterName(res.profile) !== "") && <Divider style={{margin:"5px 0 10px 0"}}/>}
         <List>
         {this.getIIDXId(res.profile) !== "" &&
-          <form method="post" name="rivalSearch" action="https://p.eagate.573.jp/game/2dx/27/rival/rival_search.html#rivalsearch">
+          <form method="post" name="rivalSearch" action={`https://p.eagate.573.jp/game/2dx/${_currentStore()}/rival/rival_search.html#rivalsearch`}>
             <input type="hidden" name="iidxid" value={this.getIIDXId(res.profile)}/>
             <input type="hidden" name="mode" value="1"/>
             <ListItem component="button" type="submit" button disabled={add || processing}>
               <ListItemAvatar>
                 <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
                   <ExitToAppIcon/>
-                </Avatar>
+                </Avatar> 
               </ListItemAvatar>
               <ListItemText primary={"eAMUSEMENT"} secondary="IIDX公式サイトでユーザー情報を表示します" />
               <ListItemSecondaryAction>

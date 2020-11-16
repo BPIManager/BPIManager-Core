@@ -191,7 +191,7 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
       return p;
     }
     if(isLoading){
-      return (<Loader/>);
+      return (<div style={{marginTop:"50px"}}><Loader text="ランキングを読込中"/></div>);
     }
     if(!song){
       return (<p>ランキング情報が見つかりませんでした。<br/>しばらく待ってから再度お試しください。</p>);

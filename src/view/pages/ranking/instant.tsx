@@ -13,9 +13,12 @@ import ModalUser from '@/view/components/rivals/modal';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Alert from '@material-ui/lab/Alert/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
-import { RouteComponentProps, withRouter, Link as RLink } from 'react-router-dom';
+import { withRouter,RouteComponentProps, Link as RLink } from 'react-router-dom';
 import Link from '@material-ui/core/Link';
 import { ShareOnTwitter } from '@/view/components/common/shareButtons';
+import { _currentTheme } from '@/components/settings';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import fbActions from '@/components/firebase/actions';
 
 interface S {
   isLoading:boolean,
@@ -28,9 +31,12 @@ interface S {
   sum:number,
   isModalOpen:boolean,
   currentUserName:string,
+  auth:any
 }
 
 class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
+
+  private fbA:fbActions = new fbActions();
 
   constructor(props:{intl:any}&RouteComponentProps){
     super(props);
@@ -45,6 +51,7 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
       sum:0,
       isModalOpen:false,
       currentUserName:"",
+      auth:null,
     }
   }
 
@@ -61,7 +68,7 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
     }
     const song = await sdb.getOneItemIsSingle(res.data.info.wrInfo.title,res.data.info.wrInfo.difficulty);
     const songData = song.length > 0 ? song[0] : null;
-    this.setState({onGoing:res.data.info.wrInfo,onGoingId:res.data.info.wrId,isLoading:false,song:songData,rank:res.data,loggedIn:true});
+    this.setState({onGoing:res.data.info.wrInfo,onGoingId:res.data.info.wrId,isLoading:false,song:songData,rank:res.data,loggedIn:true,auth:res.data.auth});
   }
 
   handleToggle = ()=>this.setState({joinModal:!this.state.joinModal});
@@ -99,23 +106,61 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
   open = (uid:string)=> this.setState({isModalOpen:true,currentUserName:uid})
 
   render(){
-    const {onGoing,isLoading,joinModal,song,rank,isModalOpen,currentUserName,onGoingId} = this.state;
+    const {onGoing,isLoading,joinModal,song,rank,isModalOpen,currentUserName,onGoingId,auth} = this.state;
+    const borderColor = ():string=>{
+      const t = _currentTheme();
+      if(t === "light"){
+        return "#ddd";
+      }
+      if(t === "dark"){
+        return "#222";
+      }
+      return "#0095ff";
+    }
+    const fontColor = ():string=>{
+      const t = _currentTheme();
+      if(t === "light"){
+        return "#222";
+      }
+      return "#fff";
+    }
     if(isLoading){
       return (
-        <Alert icon={false} severity="info" variant="outlined" style={{borderLeft:"0",borderRight:"0",borderRadius:"0px"}}>
-          <Loader text="ランキングを取得中"/>
+        <Alert icon={false} severity="info" variant="outlined" style={{borderLeft:"0",borderRight:"0",borderRadius:"0px",borderBottom:"0",borderTopRightRadius:"10px",borderTopLeftRadius:"10px",backdropFilter:"blur(5px)",borderColor:borderColor()}}>
+          <Loader text="Fetching Credentials"/>
         </Alert>
       );
+    }
+    if(!auth){
+      return (
+        <Alert icon={false} severity="info" variant="outlined" style={{borderLeft:"0",borderRight:"0",borderRadius:"0px",borderBottom:"0",borderTopRightRadius:"10px",borderTopLeftRadius:"10px",backdropFilter:"blur(5px)",borderColor:borderColor()}}>
+          <AlertTitle style={{textAlign:"center"}}>Sign in</AlertTitle>
+          <p style={{textAlign:"center"}}>ログインして全機能を開放</p>
+          <ButtonGroup fullWidth>
+            {[
+              {name:"Twitter",func:()=>this.fbA.authWithTwitter()},
+              {name:"Google",func:()=>this.fbA.authWithGoogle()}
+            ].map((item,i)=>{
+              return (
+                <Button startIcon={<ArrowRightIcon />} key={i} onClick={item.func}>
+                  {item.name}
+                </Button>
+              )
+            })
+          }
+          </ButtonGroup>
+        </Alert>
+      )
     }
     if(!song){
       return (null);
     }
     return (
       <div>
-        <Alert icon={false} severity="info" variant="outlined" style={{borderLeft:"0",borderRight:"0",borderRadius:"0px"}}>
+        <Alert icon={false} severity="info" variant="outlined" style={{borderLeft:"0",borderRight:"0",borderRadius:"0px",borderBottom:"0",borderTopRightRadius:"10px",borderTopLeftRadius:"10px",backdropFilter:"blur(5px)",borderColor:borderColor(),color:fontColor(),}}>
           {(!isLoading && onGoing) && (
             <div>
-              <AlertTitle>開催中ランキング<small>(<RLink to="/help/ranking"><Link color="secondary" component="span">ヘルプ</Link></RLink>)</small></AlertTitle>
+              <AlertTitle style={{textAlign:"center"}}><b>ランキング開催中</b><small>(<RLink to="/help/ranking"><Link color="secondary" component="span">ヘルプ</Link></RLink>)</small></AlertTitle>
               <p>
                 楽曲:<b>{onGoing.title}{_prefixFromNum(onGoing.difficulty,true)}</b><br/>
                 ステータス:<b>{rank.info.rank === -1 ? `未参加` : "参加済"}{rank.info.rank !== -1 && <span>({rank.info.rank}位/{rank.info.users}人中)</span>}</b>
@@ -124,7 +169,7 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
                   text={`BPIMスコアタに参加中！\n対象楽曲：${onGoing.title}(${_prefixFullNum(onGoing.difficulty)})\n登録スコア：${rank.info.detail.exScore}\n現在の順位：${rank.info.users}人中${rank.info.rank}位\n`}
                   url={`https://bpi.poyashi.me/ranking/id/${onGoingId}`}/>)}
                 <br/>
-                開催期間:残り{untilDate(onGoing.until._seconds * 1000)}日(~{timeFormatter(4,onGoing.until._seconds * 1000)})
+                開催期間:<span style={{color:untilDate(onGoing.until._seconds * 1000) < 5 ? "#ff5151" : "inherit"}}>残り{untilDate(onGoing.until._seconds * 1000)}日</span>(~{timeFormatter(4,onGoing.until._seconds * 1000)})
               </p>
               <ButtonGroup fullWidth>
                   <Button startIcon={<TouchAppIcon/>} size="small" color="secondary" variant="outlined" onClick={this.handleToggle}>
