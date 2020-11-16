@@ -3,7 +3,7 @@ import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import {Link as RefLink, Dialog, DialogTitle, DialogContent, Divider, Typography, ButtonGroup, Chip, Avatar} from '@material-ui/core/';
-import { _currentVersion, _currentStore, _currentTheme } from '@/components/settings';
+import { _currentVersion, _currentTheme } from '@/components/settings';
 import MenuIcon from '@material-ui/icons/Menu';
 import UpdateIcon from '@material-ui/icons/Update';
 import Loader from '../components/common/loader';
