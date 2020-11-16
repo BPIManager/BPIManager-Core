@@ -249,7 +249,7 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
             </ListItemAvatar>
             <ListItemText primary={"ライバルを探す"} secondary={"実力が近いユーザーをライバル登録して、スコアを競えます"} />
           </ListItem>
-          <ListItem button onClick={()=>this.props.history.push("/weekly/ongoing")}>
+          <ListItem button onClick={()=>this.props.history.push("/ranking/ongoing")}>
             <ListItemAvatar>
               <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
                 <TouchAppIcon/>
