@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import Paper from '@material-ui/core/Paper';
 import FormControl from '@material-ui/core/FormControl';
-import { _currentViewComponents, _setCurrentViewComponents,isEnableTweetButton,setEnableTweetButton, _setShowLatestSongs, _showLatestSongs } from '@/components/settings';
+import { _currentViewComponents, _setCurrentViewComponents, _setShowLatestSongs, _showLatestSongs } from '@/components/settings';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -16,7 +16,6 @@ import Loader from '@/view/components/common/loader';
 interface S {
   isLoading:boolean,
   currentVersion:string[],
-  isEnableTweetButton:boolean,
   showLatestSongs:boolean
 }
 
@@ -32,7 +31,6 @@ class Settings extends React.Component<P,S> {
     this.state ={
       isLoading:false,
       currentVersion:_currentViewComponents().split(","),
-      isEnableTweetButton:isEnableTweetButton(),
       showLatestSongs:_showLatestSongs(),
     }
   }
@@ -52,7 +50,7 @@ class Settings extends React.Component<P,S> {
   }
 
   render(){
-    const {isLoading,isEnableTweetButton,showLatestSongs} = this.state;
+    const {isLoading,showLatestSongs} = this.state;
     if(isLoading){
       return (<Loader/>);
     }
@@ -97,20 +95,6 @@ class Settings extends React.Component<P,S> {
             リリースされたばかりの楽曲を楽曲リストに表示します。<br/>
             これらの楽曲はBPIが算出されませんが、スコアログの記録には対応しています。<br/><br/>
             (リストから非表示にしても、内部的にスコアは記録され続けます)
-          </Typography>
-          <Divider style={{margin:"10px 0"}}/>
-          <FormLabel component="legend"><FormattedMessage id="Settings.View.TB"/></FormLabel>
-          <Switch
-            checked={isEnableTweetButton}
-            onChange={(e:React.ChangeEvent<HTMLInputElement>,)=>{
-              if(typeof e.target.checked === "boolean"){
-                setEnableTweetButton(e.target.checked);
-                return this.setState({isEnableTweetButton:e.target.checked})
-              }
-            }}
-          />
-          <Typography variant="caption" display="block">
-            <FormattedMessage id="Settings.View.TBCaption"/>
           </Typography>
         </Paper>
       </Container>

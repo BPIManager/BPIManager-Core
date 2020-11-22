@@ -159,7 +159,8 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
         </List>
         {rivals.length === 0 && (
           <Alert severity="warning">
-            まだライバルがいません。
+            まだライバルがいません。<br/>
+            ライバルを追加すると、最新のスコアを追跡したり、自分のスコアと比較できます。
           </Alert>
         )}
         <List

@@ -20,13 +20,13 @@ import YouTubeIcon from '@material-ui/icons/YouTube';
 import ThumbsUpDownIcon from '@material-ui/icons/ThumbsUpDown';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import ShowSnackBar from "../snackBar";
-import {Button, Tooltip, Fab, List, ListItem, SwipeableDrawer, ListItemIcon, ListItemText, ListSubheader, Backdrop} from '@material-ui/core';
+import {Button, Tooltip, List, ListItem, SwipeableDrawer, ListItemIcon, ListItemText, ListSubheader, Backdrop} from '@material-ui/core';
 import BPIChart from "./bpiChart";
 import SongDetails from "./songDetails";
 import SongDiffs from "./songDiffs";
 import TabPanel from "./common/tabPanel";
 import {scoresDB,scoreHistoryDB, songsDB} from "@/components/indexedDB";
-import { _currentTheme,isEnableTweetButton, _area, _isSingle, _currentStore } from "@/components/settings";
+import { _currentTheme, _area, _isSingle, _currentStore } from "@/components/settings";
 import _djRank from "@/components/common/djRank";
 import {rivalListsDB} from "@/components/indexedDB";
 import fbActions from "@/components/firebase/actions";
@@ -533,11 +533,6 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
         <TabPanel value={currentTab} index={0}>
           {showCharts &&
             <BPIChart song={song} newScore={newScore} score={score} chartData={chartData} graphLastUpdated={this.state.graphLastUpdated}/>
-          }
-          {(isEnableTweetButton() && song.wr !== -1) &&
-            <Fab style={{position:"absolute","right":"20px","bottom":"50px",backgroundColor:"#55acee",color:"#fff"}} onClick={()=>this.jumpWeb(3)} aria-label="tweet">
-              <TwitterIcon />
-            </Fab>
           }
         </TabPanel>
         <TabPanel value={currentTab} index={1}>

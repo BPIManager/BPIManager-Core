@@ -90,15 +90,6 @@ export const _setTraditionalMode = (newState:number = 0)=>{
   return localStorage.setItem("traditionalMode",String(newState));
 }
 
-export const isEnableTweetButton = ()=>{
-  const t = localStorage.getItem("isEnableTweetButton");
-  return t ? (t === "true" ? true : false) : true;
-}
-
-export const setEnableTweetButton = (newState:boolean)=>{
-  return localStorage.setItem("isEnableTweetButton",String(newState));
-}
-
 export const _currentStoreWithFullName = ()=>{
   const t:string = localStorage.getItem("currentStore") || "27";
   return t === "26" ? "26 Rootage" : t === "27" ? "27 HEROIC VERSE" : t === "INF" ? "INFINITAS" : "28 BISTROVER"

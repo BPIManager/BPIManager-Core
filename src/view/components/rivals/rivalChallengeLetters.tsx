@@ -22,6 +22,21 @@ import { _isSingle } from '@/components/settings';
 import OrderControl from "../songs/common/orders";
 import Container from '@material-ui/core/Container/Container';
 import { timeCompare } from '@/components/common/timeFormatter';
+import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
+import Loader from '../common/loader';
+import ListItem from '@material-ui/core/ListItem';
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import Avatar from '@material-ui/core/Avatar';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import SearchIcon from '@material-ui/icons/Search';
+import { avatarBgColor, avatarFontColor } from '@/components/common';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
+import List from '@material-ui/core/List';
 
 interface P{
 
@@ -43,9 +58,9 @@ interface stateInt {
   userData:any
 }
 
-class RivalChallengeLetters extends React.Component<P,stateInt> {
+class RivalChallengeLetters extends React.Component<P&RouteComponentProps,stateInt> {
 
-  constructor(props:P){
+  constructor(props:P&RouteComponentProps){
     super(props);
     this.state = {
       isLoading:true,
@@ -193,7 +208,7 @@ class RivalChallengeLetters extends React.Component<P,stateInt> {
   }
 
   render(){
-    const {isLoading,options,page,full,filterOpen,versions,filterByName,orderMode,orderTitle} = this.state;
+    const {isLoading,scoreData,options,page,full,filterOpen,versions,filterByName,orderMode,orderTitle} = this.state;
     const orders = [
       "勝率",
       "勝利数",
@@ -202,8 +217,51 @@ class RivalChallengeLetters extends React.Component<P,stateInt> {
       "レベル",
       "最終更新日時",
     ];
+    if(isLoading){
+      return (<Loader/>)
+    }
+    if(!isLoading && (!scoreData || scoreData.length === 0)){
+      return (
+        <Container fixed className="commonLayout">
+          <div style={{display:"flex",alignItems:"center",flexDirection:"column"}}>
+            <PersonAddIcon style={{fontSize:80,marginBottom:"8px"}}/>
+            <Typography variant="h4">
+              ライバルを追加
+            </Typography>
+          </div>
+          <Divider style={{margin:"10px 0"}}/>
+          <p>
+            このページでは、各楽曲ごとにライバルとの勝敗比較を行うことができます。<br/>
+            まずは実力の近いユーザーを探して、ライバルとして追加しましょう！<br/>
+          </p>
+          <List>
+            {[
+              {name:"おすすめユーザー",func:()=>this.props.history.push("/rivals?tab=1"),desc:"総合BPIが近いユーザーを表示します",icon:<ThumbUpIcon/>},
+              {name:"探す",func:()=>this.props.history.push("/rivals?tab=3"),desc:"様々な条件からユーザーを検索します",icon:<SearchIcon/>}
+            ].map((item,i)=>{
+              return (
+              <ListItem key={i} button onClick={item.func}>
+                <ListItemAvatar>
+                  <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
+                    {item.icon}
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={item.name} secondary={item.desc} />
+                <ListItemSecondaryAction onClick={item.func}>
+                  <IconButton edge="end">
+                    <ArrowForwardIosIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+              )
+            })
+          }
+          </List>
+        </Container>
+      );
+    }
     return (
-      <Container fixed  className="commonLayout">
+      <Container fixed className="commonLayout">
         <Grid container style={{margin:"5px 0"}}>
           <Grid item xs={10}>
             <FormControl component="fieldset" style={{width:"100%"}}>
@@ -248,4 +306,4 @@ class RivalChallengeLetters extends React.Component<P,stateInt> {
   }
 }
 
-export default RivalChallengeLetters;
+export default withRouter(RivalChallengeLetters);

@@ -55,7 +55,7 @@ class Settings extends React.Component<P,S> {
       currentVersion:_currentVersion(),
       message:"",
       message2:"",
-      currentResetStore:"27",
+      currentResetStore:"28",
       disableDeleteBtn:false,
       isDialogOpen:false,
       isURLDialogOpen:false,

@@ -38,15 +38,15 @@ export default class NotPlayed extends React.Component<{},S> {
         return false;
       })});
     }
-    const currentStore = _currentStore();
     const isSingle = _isSingle();
     const songs:songData[] = await new songsDB().getAll(isSingle);
     const db = new scoresDB();
+    const scores = await db.getSpecificVersionAll();
     let full:songData[] = [];
     for(let i =0;i < songs.length;++i){
       let song = songs[i];
-      const res = await db.getItem(song.title,difficultyDiscriminator(song.difficulty),currentStore,isSingle);
-      if(res.length === 0){
+      const res = scores.find((item)=>item.title === song.title && item.difficulty === difficultyDiscriminator(song.difficulty) && item.isSingle === isSingle);
+      if(!res){
         if(song.wr === -1 && !_showLatestSongs()){
           continue;
         }

@@ -579,3 +579,11 @@ html,body{
     padding-top:25vh !important;
   }
 }
+
+#__deepsea .MuiTableCell-root{
+  border-bottom:1px solid #000;
+}
+
+#__deepsea .MuiTableBody-root .MuiTableCell-root:not(:first-child) {
+    border-left: 1px dotted rgb(0 0 0 / 30%);
+}
