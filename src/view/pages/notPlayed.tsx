@@ -2,7 +2,7 @@ import * as React from 'react';
 import { scoresDB, songsDB } from '@/components/indexedDB';
 import { songData } from '@/types/data';
 import { difficultyDiscriminator } from '@/components/songs/filter';
-import { _isSingle,_currentStore, _showLatestSongs } from '@/components/settings';
+import { _isSingle, _showLatestSongs } from '@/components/settings';
 import NotPlayList from '@/view/components/songs/notplayed/notPlayList';
 import Loader from '@/view/components/common/loader';
 import AdsCard from '@/components/ad';
