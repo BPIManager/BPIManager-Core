@@ -19,6 +19,8 @@ import { ShareOnTwitter } from '@/view/components/common/shareButtons';
 import { _currentTheme } from '@/components/settings';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import fbActions from '@/components/firebase/actions';
+import { config } from '@/config';
+import Divider from '@material-ui/core/Divider';
 
 interface S {
   isLoading:boolean,
@@ -60,8 +62,9 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
     const res = await functions.httpsCallable("viewRanking")({
       cId:null,
       latest:true,
-      includeRank:false,
+      includeRank:true,
       currentUser:true,
+      version:config.latestStore
     });
     if(!res.data.auth){
       return this.setState({isLoading:false,loggedIn:false});
@@ -127,7 +130,7 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
     if(isLoading){
       return (
         <Alert icon={false} severity="info" variant="outlined" style={{borderLeft:"0",borderRight:"0",borderRadius:"0px",borderBottom:"0",borderTopRightRadius:"10px",borderTopLeftRadius:"10px",backdropFilter:"blur(5px)",borderColor:borderColor()}}>
-          <Loader text="Fetching Credentials"/>
+          <Loader text="ランキングをロード中"/>
         </Alert>
       );
     }
@@ -161,15 +164,16 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
           {(!isLoading && onGoing) && (
             <div>
               <AlertTitle style={{textAlign:"center"}}><b>ランキング開催中</b><small>(<RLink to="/help/ranking"><Link color="secondary" component="span">ヘルプ</Link></RLink>)</small></AlertTitle>
+              <Divider/>
               <p>
                 楽曲:<b>{onGoing.title}{_prefixFromNum(onGoing.difficulty,true)}</b><br/>
-                ステータス:<b>{rank.info.rank === -1 ? `未参加` : "参加済"}{rank.info.rank !== -1 && <span>({rank.info.rank}位/{rank.info.users}人中)</span>}</b>
+                ステータス:<b>{rank.info.rank === -1 ? `未参加` : "参加済"}{rank.info.rank !== -1 ? <span>({rank.info.rank}位/{rank.info.users}人中)</span> : <span>({rank.info.users}人が参加中)</span>}</b>
                 {rank.info.rank !== -1 && (
                   <ShareOnTwitter
-                  text={`BPIMスコアタに参加中！\n対象楽曲：${onGoing.title}(${_prefixFullNum(onGoing.difficulty)})\n登録スコア：${rank.info.detail.exScore}\n現在の順位：${rank.info.users}人中${rank.info.rank}位\n`}
+                  text={`BPIMスコアタ#${onGoing.week}に参加中！\n対象楽曲：${onGoing.title}(${_prefixFullNum(onGoing.difficulty)})\n登録スコア：${rank.info.detail.exScore}\n現在の順位：${rank.info.users}人中${rank.info.rank}位\n`}
                   url={`https://bpi.poyashi.me/ranking/id/${onGoingId}`}/>)}
                 <br/>
-                開催期間:<span style={{color:untilDate(onGoing.until._seconds * 1000) < 5 ? "#ff5151" : "inherit"}}>残り{untilDate(onGoing.until._seconds * 1000)}日</span>(~{timeFormatter(4,onGoing.until._seconds * 1000)})
+                開催期間:<span style={{color:untilDate(onGoing.until._seconds * 1000) < 7 ? "#ff5151" : "inherit"}}>残り{untilDate(onGoing.until._seconds * 1000)}日</span>(~{timeFormatter(4,onGoing.until._seconds * 1000)})
               </p>
               <ButtonGroup fullWidth>
                   <Button startIcon={<TouchAppIcon/>} size="small" color="secondary" variant="outlined" onClick={this.handleToggle}>

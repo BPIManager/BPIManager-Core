@@ -13,7 +13,7 @@ import WarningIcon from '@material-ui/icons/Warning';
 import InstantWRView from "@/view/pages/ranking/instant";
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import { getAltTwitterIcon } from '@/components/rivals';
-import { alternativeImg } from '@/components/common';
+import { alternativeImg, borderColor } from '@/components/common';
 import { Helmet } from 'react-helmet';
 
 class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
@@ -30,15 +30,6 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
   render(){
     const themeColor = _currentTheme();
     const {user} = this.state;
-    const borderColor = ():string=>{
-      if(themeColor === "light"){
-        return "#ff2222";
-      }
-      if(themeColor === "dark"){
-        return "#ccc";
-      }
-      return "#0095ff";
-    }
     return (
       <div>
         <Helmet>

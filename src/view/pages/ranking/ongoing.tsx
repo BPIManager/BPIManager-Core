@@ -35,6 +35,7 @@ import AlertTitle from '@material-ui/lab/AlertTitle';
 import Badge from '@material-ui/core/Badge';
 import { verNameArr } from '@/view/components/songs/common';
 import DeleteModal from '@/view/components/ranking/modal/delete';
+import { borderColor } from '@/components/common';
 
 interface S {
   isLoading:boolean,
@@ -227,19 +228,18 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
               {isBetween && <span>終了まで残り{untilDate(onGoing.until.toDate())}日</span>}
               {!isBetween && <span>終了済みのランキングです</span>} / {rank.info.users}人参加中
             </Typography>
-            <ButtonGroup style={{marginBottom:"5px"}}>
-              {isBetween && (
-                <Button startIcon={<TouchAppIcon/>} size="large" color="secondary" variant="outlined" onClick={this.handleToggle}>
-                  参加 / 更新
-                </Button>
-              )}
-                <Button size="large" color="secondary" variant="outlined" onClick={()=>this.props.history.push("/ranking/list")}>
-                  過去のランキング
-                </Button>
-            </ButtonGroup>
-            <RLink to="/help/ranking"><Link color="secondary" component="span">ランキングについて</Link></RLink>
           </div>
         </div>
+        <ButtonGroup style={{marginBottom:"5px"}} fullWidth>
+          {isBetween && (
+            <Button startIcon={<TouchAppIcon/>} color="secondary" style={{padding:"12px 0",borderRadius:"0",border:"0px",borderBottom:"1px solid " + borderColor() + "60",borderRight:"1px solid " + borderColor() + "60",borderTop:"1px solid " + borderColor() + "60"}} onClick={this.handleToggle}>
+              参加 / 更新
+            </Button>
+          )}
+            <Button color="secondary" style={{padding:"12px 0",borderRadius:"0",border:"0px",borderBottom:"1px solid " + borderColor() + "60",borderTop:"1px solid " + borderColor() + "60"}} onClick={()=>this.props.history.push("/ranking/list")}>
+              ランキング一覧
+            </Button>
+        </ButtonGroup>
         <Container fixed  className="commonLayout">
           {rank.error && (
             <p>エラーが発生しました。再読込してください。</p>
@@ -250,14 +250,20 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
               <Typography component="h5" variant="h5" color="textPrimary" gutterBottom style={{textAlign:"center"}}>
                 <span>{rank.info.rank}位 / {rank.info.users}人中</span>
                 <ShareOnTwitter
-                  text={`BPIMスコアタに参加中！\n対象楽曲：${onGoing.title}(${_prefixFullNum(onGoing.difficulty)})\n登録スコア：${rank.info.detail.exScore}\n現在の順位：${rank.info.users}人中${rank.info.rank}位\n`}
+                  text={`BPIMスコアタ#${onGoing.week}に参加中！\n対象楽曲：${onGoing.title}(${_prefixFullNum(onGoing.difficulty)})\n登録スコア：${rank.info.detail.exScore}\n現在の順位：${rank.info.users}人中${rank.info.rank}位\n`}
                   url={`https://bpi.poyashi.me/ranking/id/${onGoingId}`}/>
               </Typography>
               )}
               {(rank.info.rank === -1 || !rank.info.rank) && (
-              <Typography component="h5" variant="h5" color="textPrimary" gutterBottom style={{textAlign:"center"}}>
-                <span>未参加</span>
-              </Typography>
+                <div>
+                  <Typography component="h5" variant="h5" color="textPrimary" gutterBottom style={{textAlign:"center"}}>
+                    <span>未参加</span>
+                  </Typography>
+                  <Typography component="p" variant="caption" color="textPrimary" gutterBottom style={{textAlign:"center"}}>
+                    「参加 / 更新」ボタンからスコアを登録！<br/>
+                    <RLink to="/help/ranking"><Link color="secondary" component="span">ランキングについて詳しく知りたい場合はこちら</Link></RLink>
+                  </Typography>
+                </div>
               )}
               <Divider style={{margin:"15px 0"}}/>
               {contentLoading && <Loader/>}
@@ -266,9 +272,24 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
                 {paging}
                 <List>
                   {rank.info.rankBody.map((item:any,_i:number)=>{
+                    const badgeContent = ()=>{
+                      if(_i === rank.info.rankBody.length || !rank.info.rankBody[_i + 1]) return null;
+                      const next = rank.info.rankBody[_i + 1];
+                      const gap = item.exScore - next.exScore;
+                      if(gap > 99){
+                        return ">99";
+                      }
+                      return "+" + gap;
+                    }
                     return (
                       <ListItem key={item.name} button onClick={()=>this.open(item.uid)}>
                         <ListItemAvatar>
+                          <Badge
+                            color="secondary"
+                            anchorOrigin={{
+                              vertical: 'bottom',
+                              horizontal: 'right',
+                            }} badgeContent={badgeContent()}>
                           <Badge
                             anchorOrigin={{
                               vertical: 'top',
@@ -279,6 +300,7 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
                                 alt={item.name}
                                 onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(item)}/>
                             </Avatar>
+                          </Badge>
                           </Badge>
                         </ListItemAvatar>
                         <ListItemText primary={item.name} secondary={`EXSCORE:${item.exScore}(${item.PER}%) / BPI:${item.BPI}`} />

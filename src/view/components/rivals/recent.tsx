@@ -11,7 +11,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { rivalStoreData, rivalScoreData } from '@/types/data';
-import {Container, Divider, Input, InputAdornment, IconButton} from '@material-ui/core/';
+import { Input, InputAdornment, IconButton} from '@material-ui/core/';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
 import Loader from '../common/loader';
 import Alert from '@material-ui/lab/Alert';
@@ -21,6 +21,7 @@ import UserCard from './viewComponents/card';
 import SearchIcon from "@material-ui/icons/Search";
 import { timeCompare } from '@/components/common/timeFormatter';
 import AdsCard from '@/components/ad';
+import InfiniteScroll from 'react-infinite-scroller';
 
 interface P {
   compareUser:(rivalMeta:rivalStoreData,rivalBody:rivalScoreData[],last:rivalStoreData,arenaRank:string,currentPage:number)=>void,
@@ -47,6 +48,7 @@ interface S {
   searchInput:string,
   errorMessage:string,
   myId:string,
+  isLast:boolean
 }
 
 class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
@@ -80,6 +82,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
       searchInput:"",
       errorMessage:"",
       myId:"",
+      isLast:true,
     }
     this.timeOut = 0;
   }
@@ -102,12 +105,12 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
 
   search = async(last:rivalStoreData|null = null,endAt:rivalStoreData|null = null,arenaRank = this.state.arenaRank,willConcat:boolean = true):Promise<void>=>{
     const {mode} = this.props;
-    const {myId} = this.state;
+    const {myId,searchInput} = this.state;
     this.setState({processing:true,isLoading:true,});
     let res:rivalStoreData[] = [];
     if(mode === 0){
       res = (await this.fbA.recommendedByBPI()).filter((item)=>{
-        return item.uid !== myId
+        return item.uid !== myId && timeCompare(new Date(),item.timeStamp,"day") < 15
       })
     }else if(mode === 2){
       res = await this.fbA.recentUpdated(last,endAt,arenaRank);
@@ -115,15 +118,16 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
       res = (await this.fbA.addedAsRivals()).filter((item)=> item !== undefined);
     }
     if(!res){
+      this.setState({isLast:true});
       return this.toggleSnack("該当ページが見つかりませんでした。","warning")
     }
-    return this.setState({activated:true,res:willConcat ? this.state.res.concat(res) : res,processing:false,isLoading:false,});
+    return this.setState({activated:true,res:willConcat ? this.state.res.concat(res) : res,processing:false,isLoading:false,isLast:(mode === 2 && searchInput === "") ? false : true});
   }
 
   addUser = async(meta:rivalStoreData):Promise<void>=>{
     this.setState({processing:true});
     const rivalLen = await this.rivalListsDB.getRivalLength();
-    if(rivalLen >= 5){
+    if(rivalLen >= 10){
       return this.toggleSnack(`ライバル登録数が上限を超えています。`,"warning");
     }
     const data = await this.fbStores.setDocName(meta.uid).load();
@@ -150,7 +154,8 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
   }
 
   next = ()=>{
-    const {res} = this.state;
+    const {res,isLoading} = this.state;
+    if(isLoading) return;
     return this.search(res ? res[res.length-1] : null,null);
   }
 
@@ -192,11 +197,10 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
   open = (uid:string)=> this.setState({isModalOpen:true,currentUserName:uid})
 
   render(){
-    const {isLoading,isModalOpen,showSnackBar,activated,res,rivals,processing,message,variant,arenaRank,currentUserName,searchInput,myId} = this.state;
+    const {isLoading,isModalOpen,showSnackBar,activated,res,rivals,processing,message,variant,arenaRank,currentUserName,searchInput,myId,isLast} = this.state;
     const {mode} = this.props;
     return (
       <div>
-      <Container fixed  className="commonLayout">
         {mode === 2 && (
           <form noValidate autoComplete="off">
             <Grid container spacing={1} style={{margin:"5px 0"}}>
@@ -240,14 +244,19 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
           </p>
         </Alert>
       </div>}
-      {res.map((item:rivalStoreData,i:number)=>{
+      <InfiniteScroll
+        pageStart={0}
+        loadMore={this.next}
+        hasMore={!isLast}
+        initialLoad={false}
+      >
+      {res.map((item:rivalStoreData)=>{
         const isAdded = rivals.indexOf(item.uid) > -1;
         return (activated && <div key={item.uid}>
           <UserCard open={this.open} myId={myId} item={item} processing={processing} isAdded={isAdded} addUser={this.addUser}/>
-          {i !== res.length - 1 && <Divider variant="middle" component="div" />}
         </div>
       )})}
-      {isLoading && <Loader text="検索中です..."/>}
+      {isLoading && <Loader text={"検索中です..."}/>}
       {(mode === 2 && searchInput === "") &&
       <Grid container>
         <Grid item xs={12}>
@@ -257,8 +266,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
         </Grid>
       </Grid>
       }
-      <AdsCard/>
-      </Container>
+      </InfiniteScroll>
       {isModalOpen && <ModalUser isOpen={isModalOpen} currentUserName={currentUserName} handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
       <ShowSnackBar message={message} variant={variant}
           handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>

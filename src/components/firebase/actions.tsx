@@ -327,7 +327,7 @@ export default class fbActions{
     query = query.where("totalBPIs." + _currentStore(),">=",downLimit);
     query = query.where("totalBPIs." + _currentStore(),"<=",upLimit);
     query = this.versionQuery(query);
-    query = query.limit(20);
+    query = query.limit(30);
     return (await this.getUsers(query)).sort((a,b)=>{
       return Math.abs(total - (Number(a.totalBPI) || -15)) - Math.abs(total - (Number(b.totalBPI) || -15))
     })

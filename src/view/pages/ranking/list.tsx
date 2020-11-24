@@ -113,10 +113,10 @@ class DefaultHead extends React.Component<{},{}>{
       <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover"}}>
         <div style={{background:themeColor === "light" ? "rgba(255,255,255,.1)" : "rgba(0,0,0,.4)",display:"flex",padding:"5vh 0",alignItems:"center",justifyContent:"center",flexDirection:"column",textAlign:"center"}}>
           <Typography component="h4" variant="h4" color="textPrimary" gutterBottom>
-            ランキング一覧
+            過去のランキング一覧
           </Typography>
           <Typography component="p" variant="body1" color="textPrimary" gutterBottom>
-            開催されたランキングの一覧を表示しています
+            {versionString(_currentStore())}のWR
           </Typography>
         </div>
       </div>);

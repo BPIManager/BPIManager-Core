@@ -15,6 +15,16 @@ export const commonFunc = class{
   clone = () => JSON.parse(JSON.stringify(this.s));
 }
 
+export const borderColor = ():string=>{
+  if(themeColor === "light"){
+    return "#ff2222";
+  }
+  if(themeColor === "dark"){
+    return "#ccc";
+  }
+  return "#0095ff";
+}
+
 export const versionString = (input:string|number):string=>{
   const i = String(input);
   if(i === "28"){

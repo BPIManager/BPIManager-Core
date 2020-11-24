@@ -235,7 +235,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     const {res,uid} = this.state;
     const data = await this.fbStores.setDocName(uid).load();
     const rivalLen = await this.rivalListsDB.getRivalLength();
-    if(rivalLen >= 5){
+    if(rivalLen >= 10){
       return this.toggleSnack(`ライバル登録数が上限を超えています。`);
     }
     if(!data || data.length === 0){
@@ -297,7 +297,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     const url = config.baseUrl + "/u/" + encodeURI(userName);
     const isAdded = this.state.rivalUids.indexOf(uid) > -1;
     if(processing){
-      return (<Loader text="ユーザーを読込中"/>);
+      return (<Loader text="ユーザーを読込中" isFull/>);
     }
     if(!userName || !res){
       return <NoUserError match={this.props.match} alternativeId={alternativeId}/>;
@@ -444,7 +444,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
               <ListItemAvatar>
                 <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
                   <ExitToAppIcon/>
-                </Avatar> 
+                </Avatar>
               </ListItemAvatar>
               <ListItemText primary={"eAMUSEMENT"} secondary="IIDX公式サイトでユーザー情報を表示します" />
               <ListItemSecondaryAction>

@@ -30,8 +30,8 @@ const timeFormatter = (type = 0,date:string|Date|number = new Date()):string =>{
   return "";
 }
 
-export const timeCompare = (from:dayjs.Dayjs|string|Date,to:dayjs.Dayjs|string) =>{
-  return dayjs(from).diff(to,"s");
+export const timeCompare = (from:dayjs.Dayjs|string|Date,to:dayjs.Dayjs|string,type:"s"|"day" = "s") =>{
+  return dayjs(from).diff(to,type);
 }
 export const untilDate = (to:dayjs.Dayjs|string|number) =>{
   return Math.abs(dayjs().diff(to,"d"));
@@ -59,8 +59,8 @@ export const isBefore = (date:string) =>{
   return dayjs(date).isBefore(subtract(1, 'month'))
 }
 
-export const updatedTime = (timeStamp:string)=>{
-  return dayjs(timeStamp).fromNow();
+export const updatedTime = (timeStamp:string,withoutSuffix:boolean = false)=>{
+  return dayjs(timeStamp).fromNow(withoutSuffix);
 }
 
 export default timeFormatter;
