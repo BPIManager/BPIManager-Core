@@ -20,7 +20,6 @@ import ModalUser from './modal';
 import UserCard from './viewComponents/card';
 import SearchIcon from "@material-ui/icons/Search";
 import { timeCompare } from '@/components/common/timeFormatter';
-import AdsCard from '@/components/ad';
 import InfiniteScroll from 'react-infinite-scroller';
 
 interface P {
