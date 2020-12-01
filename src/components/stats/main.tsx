@@ -146,6 +146,9 @@ export const statMain = class {
     let eachDayShift:{[key:string]:shiftType[]} = {};
     const sortByDate = (data:historyData[]):{[key:string]:historyData[]}=>{
       return data.reduce((groups:{[key:string]:historyData[]}, item:historyData) => {
+        if(item.BPI === Infinity){
+          return groups;
+        }
         const date = timeFormatter(period,item.updatedAt);
         if (!groups[date]) {
           groups[date] = [];

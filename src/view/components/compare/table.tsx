@@ -7,8 +7,6 @@ import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import DetailedSongInformation from "@/view/components/songs/detailsScreen";
-import { diffColor } from "../songs/common";
-import Tooltip from '@material-ui/core/Tooltip';
 import { scoreData, songData } from '@/types/data';
 import { compareData } from '@/types/compare';
 import Loader from '../common/loader';
@@ -27,8 +25,8 @@ interface P{
   handleChangePage:(newPage:number)=>void,
   handleChangeRowsPerPage:(value:string)=>void,
   changeSort:(value:number)=>void,
-  sort:number,
-  isDesc:boolean,
+  sort?:number,
+  isDesc?:boolean,
   displayMode:string,
 }
 
@@ -60,18 +58,14 @@ export default class Compare extends React.Component<P,S> {
 
   render(){
     const {currentScoreData,currentSongData,isOpen} = this.state;
-    const {full,isLoading,page,rowsPerPage,changeSort,sort,isDesc,displayMode} = this.props;
+    const {full,isLoading,page,rowsPerPage,displayMode} = this.props;
     const columns = [
       { id: "difficultyLevel", label: "☆"},
-      { id: "title", label: "曲名" },
-      { id: "exScore", label: "S"},
-      {
-        id: "compareData",
-        label: "W",
-      },
+      { id: "title", label: "比較元" },
+      { id: "exScore", label: "比較先"},
       {
         id: "gap",
-        label: "G",
+        label: "GAP",
       }
     ];
     if(isLoading){
@@ -80,62 +74,87 @@ export default class Compare extends React.Component<P,S> {
     return (
     <Paper style={{width:"100%",overflowX:"auto"}}>
       <div>
-        <Table>
-          <TableHead>
-            <TableRow>
-              {columns.map((column,i) => (
-                <TableCell
-                  key={column.id}
-                  onClick={()=>changeSort(i)}
-                  className={i === 4 ? "compareGap" : ""}
-                >
-                  <Tooltip title={i === 2 ? "比較元" : i === 3 ? "比較先" : i === 4 ? "差" : ""} placement="top">
-                    <span>
+        <div>
+          <Table>
+            <TableHead>
+              <TableRow>
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                  >
                     {column.label}
-                    {i === sort &&
-                      <span>
-                        { isDesc ? "▼" : "▲" }
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+              {full.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:any,i:number) => {
+                const prefix = row.difficulty === "hyper" ? "(H)" : row.difficulty === "leggendaria" ? "(L)" : "";
+                const coloring = (col:number):string=>{
+                  const s = row.exScore - row.compareData >= 0;
+                  if(col === 0){
+                    return s ? "rgb(255, 151, 151)" : "transparent";
+                  }
+                  if(col === 1){
+                    return !s ? "rgb(255, 151, 151)" : "transparent";
+                  }
+                  return "transparent";
+                }
+                return (
+                <TableBody className="rival" key={row.title + i} onClick={()=>this.handleOpen(false,row)}>
+                  <TableRow
+                    hover role="checkbox" tabIndex={-1} className={ i % 2 ? "isOdd" : "isEven"}>
+                    <TableCell
+                      rowSpan={2}
+                      style={{position:"relative"}}
+                    >
+                      {row["difficultyLevel"]}
+                    </TableCell>
+                    <TableCell
+                      rowSpan={1}
+                      colSpan={3}
+                      style={{position:"relative"}}
+                    >
+                      {row["title"]}
+                      {prefix}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow className="rivalBody">
+                    <TableCell
+                      style={{
+                        borderLeft:`4px solid ${coloring(0)}`,
+                        position:"relative"}}
+                    >
+                      <span className={"bodyNumber"}>
+                        {row.exScore}
                       </span>
-                    }
-                    {i !== sort && <span>△</span>}
-                    </span>
-                  </Tooltip>
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {full.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:compareData,i:number) => {
-              return (
-                <TableRow
-                  onClick={()=>this.handleOpen(false,row)}
-                  hover role="checkbox" tabIndex={-1} key={row.title + i} className={ i % 2 ? "isOdd" : "isEven"}>
-                  {columns.map((column,j) => {
-                    const prefix = row.difficulty === "hyper" ? "(H)" : row.difficulty === "leggendaria" ? "(†)" : "";
-                    return (
-                      <TableCell key={column.id + prefix} className={j === 4 ? "compareGap" : ""} style={{backgroundColor : diffColor(j,row.scoreData.clearState),position:"relative"}}>
-                        {j === 2 &&
-                          <span>
-                            {displayMode === "exScore" && row[column.id]}
-                            {displayMode === "bpi" && Number(row.scoreData.currentBPI).toFixed(2)}
-                            {displayMode === "percentage" && Number(row[column.id]).toFixed(2)}
-                          </span>
-                        }
-                        {j !==  2 &&
-                          <span style={ (j === 4 && row[column.id] >= 0) ? {color:"rgb(0, 177, 14)"} : (j === 4 && row[column.id] < 0) ? {color:"#ff0000"} : {color:"inherit"}}>
-                            {(j <= 2 || displayMode === "exScore") && row[column.id]}
-                            {(j > 2 && displayMode !== "exScore") && Number(row[column.id]).toFixed(2)}
-                          </span>
-                        }
-                        {j === 1 && prefix}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        borderLeft:`4px solid ${coloring(1)}`,
+                        position:"relative"}}
+                    >
+                      <span className={"bodyNumber"}>
+                        {row.compareData}
+                      </span>
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        borderLeft:`4px solid ${coloring(2)}`,
+                        color:row.exScore - row.compareData >= 0 ? "#00b8ff" : "#ff0000",
+                        position:"relative"}}
+                    >
+                      <span className={"bodyNumber"}>
+                        {displayMode === "exScore" && row.exScore - row.compareData}
+                        {displayMode === "bpi" && (row.scoreData.currentBPI - row.compareData).toFixed(2)}
+                        {displayMode === "percentage" && (row.exScore - row.compareData).toFixed(2)}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+                );
+              })}
+          </Table>
+        </div>
       </div>
       <TablePagination
         rowsPerPageOptions={[10, 25, 50, 100]}

@@ -69,6 +69,11 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
     if(!res.data.auth){
       return this.setState({isLoading:false,loggedIn:false});
     }
+    if(!res.data.info.wrInfo){
+      return this.setState({
+        onGoing:null,isLoading:false,loggedIn:true,auth:res.data.auth
+      });
+    }
     const song = await sdb.getOneItemIsSingle(res.data.info.wrInfo.title,res.data.info.wrInfo.difficulty);
     const songData = song.length > 0 ? song[0] : null;
     this.setState({onGoing:res.data.info.wrInfo,onGoingId:res.data.info.wrId,isLoading:false,song:songData,rank:res.data,loggedIn:true,auth:res.data.auth});
@@ -156,6 +161,9 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
       )
     }
     if(!song){
+      return (null);
+    }
+    if(!isLoading && !onGoing){
       return (null);
     }
     return (

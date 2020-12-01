@@ -7,13 +7,15 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
-import { FormattedMessage } from "react-intl";
+import { FormattedMessage, injectIntl } from "react-intl";
 import CompareTable from "@/view/components/compare/table";
 import bpiCalcuator from '@/components/bpi';
 import { commonFunc } from '@/components/common';
 import FilterByLevelAndDiff from '@/view/components/common/selector';
 import { compareData } from '@/types/compare';
 import { scoreData } from '@/types/data';
+import OrderControl from "@/view/components/songs/common/orders";
+import { timeCompare } from '@/components/common/timeFormatter';
 
 interface S {
   [key: string]: any,
@@ -31,12 +33,14 @@ interface S {
   displayMode:string,
   total12BPI:number,
   total11BPI:number,
+  orderTitle:number,
+  orderMode:number,
 }
 
-export default class Compare extends React.Component<{},S> {
+class Compare extends React.Component<{intl:any},S> {
   _mounted: boolean = false;
 
-  constructor(props:Object){
+  constructor(props:{intl:any}){
     super(props);
     this.state ={
       isLoading:true,
@@ -50,13 +54,15 @@ export default class Compare extends React.Component<{},S> {
         pm:["+","-"],
       },
       filterByName:"",
-      compareFrom:"28",
+      compareFrom:"27",
       compareTo:"27",
       page:0,
       rowsPerPage:10,
       displayMode:"exScore",
       total12BPI:0,
       total11BPI:0,
+      orderTitle:2,
+      orderMode:1,
     }
   }
 
@@ -81,6 +87,18 @@ export default class Compare extends React.Component<{},S> {
 
   componentWillUnmount(){
     this._mounted = false;
+  }
+
+  handleOrderTitleChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
+    const val = event.target.value;
+    if (typeof val !== "number") { return; }
+    return this.setState({orderTitle:val,page:0});
+  }
+
+  handleOrderModeChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
+    const val = event.target.value;
+    if (typeof val !== "number") { return; }
+    return this.setState({orderMode:val,page:0});
   }
 
   handleSelectorChange = (name:string,target:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
@@ -191,7 +209,7 @@ export default class Compare extends React.Component<{},S> {
         scoreData: fData[i],
         difficulty:fData[i]["difficulty"],
         difficultyLevel:fData[i]["difficultyLevel"],
-        exScore:displayMode === "exScore" ? fData[i]["exScore"] : percentage,
+        exScore:displayMode === "exScore" ? fData[i]["exScore"] : displayMode === "bpi" ? fData[i]["currentBPI"] : percentage,
         compareData:tScore,
         gap: gap
       });
@@ -201,20 +219,32 @@ export default class Compare extends React.Component<{},S> {
   }
 
   sortedData = ():compareData[]=>{
-    const {isDesc,sort} = this.state;
+    const {orderTitle,orderMode} = this.state;
     const sortedData:compareData[] = this.filter().sort((a,b)=>{
-      switch(sort){
+      switch(orderTitle){
         case 0:
-        return Number(b.difficultyLevel) - Number(a.difficultyLevel);
-        case 1:
-        return b.title.localeCompare(a.title, "ja", {numeric:true});
         default:
+        return b.gap - a.gap;
+        case 1:
+        return a.title.localeCompare(b.title, "ja", {numeric:true});
         case 2:
-          return this.state.displayMode !== "bpi" ? b.exScore - a.exScore : b.scoreData.currentBPI - a.scoreData.currentBPI;
+        return Number(b.difficultyLevel) - Number(a.difficultyLevel);
         case 3:
-          return b.compareData - a.compareData;
+        return b.scoreData.currentBPI - a.scoreData.currentBPI;
         case 4:
-          return b.gap - a.gap;
+        return b.scoreData.clearState - a.scoreData.clearState;
+        case 5:
+        return (b.scoreData.missCount || -1) - (a.scoreData.missCount || -1);
+        case 6:
+        return b.scoreData.exScore - a.scoreData.exScore;
+        case 7:
+        return (b.scoreData.exScore / (b.songData.notes * 2)) - (a.scoreData.exScore / (a.songData.notes * 2));
+        case 8:
+        return timeCompare(a.scoreData.updatedAt,b.scoreData.updatedAt);
+        case 9:
+        let aVer = a.songData["textage"].replace(/\/.*?$/,"");
+        let bVer = b.songData["textage"].replace(/\/.*?$/,"");
+        return Number(bVer) - Number(aVer);
       }
     }).filter((t:compareData)=>{
       const pm:string[] = this.state.options.pm;
@@ -226,7 +256,8 @@ export default class Compare extends React.Component<{},S> {
       }
       return pm.indexOf("+") > -1 && pm.indexOf("-") > -1 ? true : false;
     });
-    return !isDesc ? sortedData.reverse() : sortedData;
+    console.log(sortedData);
+    return orderMode === 0 ? sortedData.reverse() : sortedData;
   }
 
   handleChangePage = (newPage:number):void => this.setState({page:newPage});
@@ -234,12 +265,25 @@ export default class Compare extends React.Component<{},S> {
   handleChangeRowsPerPage = (value:string):void => this.setState({page:0,rowsPerPage:+value});
 
   render(){
-    const {compareFrom,compareTo,displayMode,isLoading,page,rowsPerPage,options,sort,isDesc} = this.state;
+    const {formatMessage} = this.props.intl;
+    const {compareFrom,compareTo,orderMode,orderTitle,displayMode,isLoading,page,rowsPerPage,options} = this.state;
+    const orders = [
+      "選択中の表示項目の差",
+      formatMessage({id:"Orders.Title"}),
+      formatMessage({id:"Orders.Level"}),
+      formatMessage({id:"Orders.BPI"}) + "(比較元)",
+      formatMessage({id:"Orders.ClearLamp"}) + "(比較元)",
+      formatMessage({id:"Orders.MissCount"}) + "(比較元)",
+      formatMessage({id:"Orders.EX"}) + "(比較元)",
+      formatMessage({id:"Orders.Percentage"}) + "(比較元)",
+      formatMessage({id:"Orders.LastUpdate"}) + "(比較元)",
+      formatMessage({id:"Orders.Version"}),
+    ];
     if(!this.state.full){
       return (null);
     }
     return (
-      <Container fixed  className="commonLayout"  id="songsVil">
+      <Container fixed className="commonLayout">
         <Grid container spacing={1} style={{margin:"5px 0"}}>
           <Grid item xs={6}>
             <FormControl style={{width:"100%"}}>
@@ -278,11 +322,16 @@ export default class Compare extends React.Component<{},S> {
             </FormControl>
           </Grid>
         </Grid>
+        <OrderControl
+          orderTitles={orders}
+          orderMode={orderMode} orderTitle={orderTitle} handleOrderModeChange={this.handleOrderModeChange} handleOrderTitleChange={this.handleOrderTitleChange}/>
         <FilterByLevelAndDiff options={options} handleChange={this.handleSelectorChange} includePMButtons={true}/>
-        <CompareTable full={this.sortedData()} isLoading={isLoading} page={page} rowsPerPage={rowsPerPage} sort={sort} isDesc={isDesc}
+        <CompareTable full={this.sortedData()} isLoading={isLoading} page={page} rowsPerPage={rowsPerPage}
         changeSort={this.changeSort} displayMode={displayMode}
         handleChangeRowsPerPage={this.handleChangeRowsPerPage} handleChangePage={this.handleChangePage}/>
       </Container>
     );
   }
 }
+
+export default injectIntl(Compare);

@@ -126,14 +126,6 @@ th.MuiTableCell-root.MuiTableCell-head{
   background:#f7f7f77;
 }
 
-#__dark div#songsVil .MuiTableRow-root .MuiTableCell-body:first-child,#__deepsea div#songsVil .MuiTableRow-root .MuiTableCell-body:first-child{
-  color:#333;
-}
-
-#__dark #_notPlayed .MuiTableRow-root .MuiTableCell-body:first-child,#__deepsea #_notPlayed .MuiTableRow-root .MuiTableCell-body:first-child{
-  color:#fff !important;
-}
-
 a.link{
   text-decoration:none;
   color:#3f51b5;
