@@ -9,10 +9,16 @@ declare global {
 
 export default function AdsCard() {
     useEffect(() => {
+      if(window.location.href.match("localhost")){
+        return;
+      }
         if (window.adsbygoogle && process.env.NODE_ENV !== "development") {
             window.adsbygoogle.push({});
         }
     }, [])
+    if(window.location.href.match("localhost")){
+      return (null);
+    }
 
     return (
       <div style={{margin:"8px auto"}}>

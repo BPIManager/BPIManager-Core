@@ -115,10 +115,13 @@ export default class fbActions{
   }
 
   async save(isRegisteredAs = ""){
-    if(!this.name || !this.docName){return {error:true,date:null};}
+    if(!this.name || !this.docName){return {error:true,date:null,reason:"ログインしていません"};}
     console.log("writing",this.docName,this.name);
     const self = this;
     const s = await new scoresDB().getAll();
+    if(s.length === 0){
+      return {error:true,date:null,reason:"送信できる楽曲データが存在しません"};
+    }
     const docRef = firestore.collection(self.name).doc(self.docName);
     const userRef = firestore.collection("users").doc(self.docName);
     return firestore.runTransaction(async function(transaction) {
@@ -149,10 +152,10 @@ export default class fbActions{
         }
       });
     }).then(()=>{
-      return {error:false,date:timeFormatter(3)};
+      return {error:false,date:timeFormatter(3),reason:"Success"};
     }).catch(e=>{
       console.log(e);
-      return {error:true,date:null};
+      return {error:true,date:null,reason:e.message};
     });
   }
 

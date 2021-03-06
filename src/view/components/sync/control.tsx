@@ -11,6 +11,7 @@ import {Link, CircularProgress, Paper} from '@material-ui/core/';
 import {Link as RefLink} from "react-router-dom";
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
+import ShowSnackBar from '../snackBar';
 
 class SyncControlScreen extends React.Component<{userData:any},{
   isLoading:boolean,
@@ -22,6 +23,10 @@ class SyncControlScreen extends React.Component<{userData:any},{
   nameErrorMessage:string[],
   showNotes:boolean,
   arenaRank:string,
+  snack:{
+    open:boolean,
+    message:string|null
+  }
 }> {
 
   private fbA:fbActions = new fbActions();
@@ -40,7 +45,11 @@ class SyncControlScreen extends React.Component<{userData:any},{
       myProfile:"",
       arenaRank:"-",
       showNotes:false,
-      nameErrorMessage:[]
+      nameErrorMessage:[],
+      snack:{
+        open:false,
+        message:""
+      }
     }
   }
 
@@ -63,8 +72,8 @@ class SyncControlScreen extends React.Component<{userData:any},{
     this.setState({isLoading:true});
     const res = await this.fbLoader.save(this.state.myName);
     if(res.error){
-      alert("エラーが発生しました");
-      return this.setState({isLoading:false});;
+      this.toggleErrorSnack(res.reason);
+      return this.setState({isLoading:false});
     }
     this.setState({isLoading:false,scoreData:await this.fbLoader.load()});
   }
@@ -73,8 +82,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
     this.setState({isLoading:true});
     const res = await this.fbLoader.load();
     if(res === null || res === undefined){
-      console.log(res);
-      alert("エラーが発生しました");
+      this.toggleErrorSnack("エラーが発生しました");
       return this.setState({isLoading:false});
     }
     await new scoresDB().setDataWithTransaction(res.scores);
@@ -93,8 +101,10 @@ class SyncControlScreen extends React.Component<{userData:any},{
     this.setState({showNotes:e.target.checked});
   }
 
+  toggleErrorSnack = (mes?:string|null)=>this.setState({snack:{open:!this.state.snack.open,message:mes || null}});
+
   render(){
-    const {isLoading,scoreData} = this.state;
+    const {isLoading,scoreData,snack} = this.state;
     return (
       <Paper style={{padding:"15px"}}>
         <Typography component="h5" variant="h5">
@@ -151,6 +161,8 @@ class SyncControlScreen extends React.Component<{userData:any},{
           userId: {this.props.userData.uid}<br/>
           <RefLink to="/help" style={{textDecoration:"none"}}><Link color="secondary" component="span">免責事項・利用について</Link></RefLink>
         </Typography>
+        <ShowSnackBar message={snack.message} variant="warning"
+            handleClose={this.toggleErrorSnack} open={snack.open} autoHideDuration={3000}/>
       </Paper>
     );
   }

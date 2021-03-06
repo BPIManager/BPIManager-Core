@@ -203,7 +203,7 @@ class MyBest extends React.Component<{},S> {
                                   return (
                                     <TableCell key={column.id + prefix} style={{textAlign:j === 0 ? "left" : "center",width:j === 0 ? "80%" : "initial"}}>
                                       {column.id !== "currentBPI" && row[column.id]}
-                                      {column.id === "currentBPI" && Number(row[column.id]).toFixed(2)}
+                                      {column.id === "currentBPI" && (row[column.id] !== Infinity ? Number(row[column.id]).toFixed(2) : "-")}
                                       {column.id === "title" && prefix}
                                     </TableCell>
                                   );
