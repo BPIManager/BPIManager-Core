@@ -579,3 +579,12 @@ html,body{
 #__deepsea .MuiTableBody-root .MuiTableCell-root:not(:first-child) {
     border-left: 1px dotted rgb(0 0 0 / 30%);
 }
+
+
+.MuiFormLabel-root.Mui-focused{
+  color:inherit !important;
+}
+
+.MuiOutlinedInput-notchedOutline{
+  border-color:inherit !important;
+}

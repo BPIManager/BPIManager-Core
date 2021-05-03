@@ -1,26 +1,18 @@
 import * as React from 'react';
 import { injectIntl } from 'react-intl';
-import { _prefixFromNum, _prefixFullNum } from '@/components/songs/filter';
-import timeFormatter, { untilDate } from '@/components/common/timeFormatter';
 import Button from '@material-ui/core/Button';
-import TouchAppIcon from '@material-ui/icons/TouchApp';
-import JoinModal from '@/view/components/ranking/modal/join';
 import { songsDB } from '@/components/indexedDB';
 import { songData } from '@/types/data';
 import { functions } from '@/components/firebase';
 import Loader from '@/view/components/common/loader';
-import ModalUser from '@/view/components/rivals/modal';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Alert from '@material-ui/lab/Alert/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
-import { withRouter,RouteComponentProps, Link as RLink } from 'react-router-dom';
-import Link from '@material-ui/core/Link';
-import { ShareOnTwitter } from '@/view/components/common/shareButtons';
+import { withRouter,RouteComponentProps } from 'react-router-dom';
 import { _currentTheme } from '@/components/settings';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import fbActions from '@/components/firebase/actions';
 import { config } from '@/config';
-import Divider from '@material-ui/core/Divider';
 
 interface S {
   isLoading:boolean,
@@ -114,7 +106,7 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
   open = (uid:string)=> this.setState({isModalOpen:true,currentUserName:uid})
 
   render(){
-    const {onGoing,isLoading,joinModal,song,rank,isModalOpen,currentUserName,onGoingId,auth} = this.state;
+    const {onGoing,isLoading,song,auth} = this.state;
     const borderColor = ():string=>{
       const t = _currentTheme();
       if(t === "light"){
@@ -124,13 +116,6 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
         return "#222";
       }
       return "#0095ff";
-    }
-    const fontColor = ():string=>{
-      const t = _currentTheme();
-      if(t === "light"){
-        return "#222";
-      }
-      return "#fff";
     }
     if(isLoading){
       return (
@@ -166,38 +151,7 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
     if(!isLoading && !onGoing){
       return (null);
     }
-    return (
-      <div>
-        <Alert icon={false} severity="info" variant="outlined" style={{borderLeft:"0",borderRight:"0",borderRadius:"0px",borderBottom:"0",borderTopRightRadius:"10px",borderTopLeftRadius:"10px",backdropFilter:"blur(5px)",borderColor:borderColor(),color:fontColor(),}}>
-          {(!isLoading && onGoing) && (
-            <div>
-              <AlertTitle style={{textAlign:"center"}}><b>ランキング開催中</b><small>(<RLink to="/help/ranking"><Link color="secondary" component="span">ヘルプ</Link></RLink>)</small></AlertTitle>
-              <Divider/>
-              <p>
-                楽曲:<b>{onGoing.title}{_prefixFromNum(onGoing.difficulty,true)}</b><br/>
-                ステータス:<b>{rank.info.rank === -1 ? `未参加` : "参加済"}{rank.info.rank !== -1 ? <span>({rank.info.rank}位/{rank.info.users}人中)</span> : <span>({rank.info.users}人が参加中)</span>}</b>
-                {rank.info.rank !== -1 && (
-                  <ShareOnTwitter
-                  text={`BPIMスコアタ#${onGoing.week}に参加中！\n対象楽曲：${onGoing.title}(${_prefixFullNum(onGoing.difficulty)})\n登録スコア：${rank.info.detail.exScore}\n現在の順位：${rank.info.users}人中${rank.info.rank}位\n`}
-                  url={`https://bpi.poyashi.me/ranking/id/${onGoingId}`}/>)}
-                <br/>
-                開催期間:<span style={{color:untilDate(onGoing.until._seconds * 1000) < 7 ? "#ff5151" : "inherit"}}>残り{untilDate(onGoing.until._seconds * 1000)}日</span>(~{timeFormatter(4,onGoing.until._seconds * 1000)})
-              </p>
-              <ButtonGroup fullWidth>
-                  <Button startIcon={<TouchAppIcon/>} size="small" color="secondary" variant="outlined" onClick={this.handleToggle}>
-                    参加 / 更新
-                  </Button>
-                  <Button size="small" color="secondary" variant="outlined" onClick={()=>this.props.history.push("/ranking/ongoing")}>
-                    ランキング
-                  </Button>
-              </ButtonGroup>
-            </div>
-          )}
-        </Alert>
-        {isModalOpen && <ModalUser isOpen={isModalOpen} currentUserName={currentUserName} exact handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
-        {joinModal && <JoinModal handleToggle={this.handleToggle} joinExec={this.joinExec} default={rank.info} song={song}/>}
-      </div>
-    );
+    return (null)
   }
 }
 

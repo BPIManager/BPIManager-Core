@@ -66,12 +66,12 @@ interface S {
   index:number
 }
 
-class User extends React.Component<{intl:any,currentUserName?:string,limited?:boolean,exact?:boolean,updateName?:(name:string)=>void}&RouteComponentProps,S> {
+class User extends React.Component<{intl:any,currentUserName?:string,limited?:boolean,exact?:boolean,updateName?:(name:string)=>void,initialView?:number}&RouteComponentProps,S> {
   private fbA:fbActions = new fbActions();
   private fbStores:fbActions = new fbActions();
   private rivalListsDB = new rivalListsDB();
 
-  constructor(props:{intl:any,currentUserName?:string,limited?:boolean,exact?:boolean,updateName?:(name:string)=>void}&RouteComponentProps){
+  constructor(props:{intl:any,currentUserName?:string,limited?:boolean,exact?:boolean,updateName?:(name:string)=>void,initialView?:number}&RouteComponentProps){
     super(props);
     const search = new URLSearchParams(props.location.search);
     const initialView = search.get("init");
@@ -82,7 +82,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
       userName:props.currentUserName || params.uid || "",
       processing:true,
       add:false,
-      currentView:initialView ? 1 : 0,
+      currentView:props.initialView ? props.initialView : initialView ? 1 : 0,
       message:"",
       alternativeId:"",
       myDisplayName:"",
@@ -529,7 +529,9 @@ class NoUserError extends React.Component<{match:any,alternativeId:string},{}>{
             </Typography>
             <Typography variant="body2" gutterBottom>
               指定されたユーザーは見つかりませんでした<br/>
-              プロフィールが非公開か、表示名が変更された可能性があります。
+              プロフィールが非公開か、表示名が変更された可能性があります。<br/><br/>
+              自分のデータを閲覧しようとしてこのページが表示されている場合、Syncからプロフィールを公開に設定する必要があります。<br/>
+              <RefLink to={"/sync/settings"} style={{textDecoration:"none"}}><Link color="secondary" component="span">こちらのページ</Link></RefLink>から「プロフィールを一般公開」にチェックを入れてください。
             </Typography>
             {(!(match.params as any).uid && alternativeId) &&
             <Typography variant="body2" gutterBottom>

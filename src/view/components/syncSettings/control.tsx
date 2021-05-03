@@ -21,7 +21,6 @@ import AlertTitle from '@material-ui/lab/AlertTitle';
 import CheckIcon from '@material-ui/icons/Check';
 import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
-import BackupIcon from '@material-ui/icons/Backup';
 import TouchAppIcon from '@material-ui/icons/TouchApp';
 
 class SyncControlScreen extends React.Component<{userData:any}&RouteComponentProps,{
@@ -226,7 +225,7 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
         {(nameErrorMessage.length > 0 || (scoreData === null && myName)) &&
           <Alert severity="error" style={{margin:"8px 0"}}>
             {nameErrorMessage.map((item:string)=><span key={item}>{item}<br/></span>)}
-            {(scoreData === null && myName) && <span style={{color:"#ff0000"}}>スコアデータが送信されていません。「転送」→「アップロード」よりスコアデータを送信してください。</span>}
+            {(scoreData === null && myName) && <span style={{color:"#ff0000"}}>スコアデータが送信されていません。「データ」→「アップロード」よりスコアデータを送信してください。</span>}
           </Alert>
         }
         <Divider style={{margin:"8px 0"}}/>
@@ -249,13 +248,13 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
             </ListItemAvatar>
             <ListItemText primary={"ライバルを探す"} secondary={"実力が近いユーザーをライバル登録して、スコアを競えます"} />
           </ListItem>
-          <ListItem button onClick={()=>this.props.history.push("/ranking/ongoing")}>
+          <ListItem button onClick={()=>this.props.history.push("/ranking/")}>
             <ListItemAvatar>
               <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
                 <TouchAppIcon/>
               </Avatar>
             </ListItemAvatar>
-            <ListItemText primary={"WRに参加"} secondary={"他のユーザーとスコアを競おう。ライバル探しにも!"} />
+            <ListItemText primary={"WRに参加"} secondary={"自由にランキングを開催したり、他の人のランキングに参加することができます!"} />
           </ListItem>
           <ListItem button onClick={()=>this.props.history.push("/notes")}>
             <ListItemAvatar>
@@ -264,14 +263,6 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
               </Avatar>
             </ListItemAvatar>
             <ListItemText primary={"ノートを投稿"} secondary={"楽曲の攻略情報をシェアしよう"} />
-          </ListItem>
-          <ListItem button onClick={()=>this.props.history.push("/sync")}>
-            <ListItemAvatar>
-              <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
-                <BackupIcon/>
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={"スコアを送信"} secondary={"常に最新のスコアをアップロードすることをおすすめします"} />
           </ListItem>
         </List>
         {/*

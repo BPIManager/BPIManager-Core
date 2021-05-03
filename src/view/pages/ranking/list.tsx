@@ -10,7 +10,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
-import timeFormatter from '@/components/common/timeFormatter';
+import timeFormatter, { _isBetween } from '@/components/common/timeFormatter';
 import { _prefixFullNum } from '@/components/songs/filter';
 import { versionString } from '@/components/common';
 import Button from '@material-ui/core/Button';
@@ -81,8 +81,9 @@ class WeeklyList extends React.Component<{intl:any,viewInUser?:boolean,backToMai
               {!list.error && (
                 <div>
                   {list.info.map((item:any)=>{
+                    const isBetween = _isBetween(new Date().toString(),timeFormatter(4,item.since._seconds * 1000),timeFormatter(4,item.until._seconds * 1000));
                     return (
-                      <List key={item.cid} subheader={<ListSubheader>{item.ongoing ? "(開催中)" : "(終了済)"} {timeFormatter(4,item.since._seconds * 1000)}~{timeFormatter(4,item.until._seconds * 1000)}</ListSubheader>}>
+                      <List key={item.cid} subheader={<ListSubheader>{isBetween ? "(開催中)" : "(期間外)"} {timeFormatter(4,item.since._seconds * 1000)}~{timeFormatter(4,item.until._seconds * 1000)}</ListSubheader>}>
                         <ListItem button onClick={()=>this.props.history.push("/ranking/id/" + item.cid)}>
                           <ListItemText primary={`${item.title}(${_prefixFullNum(item.difficulty)})`} secondary={
                             <span>

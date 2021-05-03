@@ -13,16 +13,16 @@ export const getAltTwitterIcon = (data:rivalStoreData|DBRivalStoreData,isLocal:b
   if(isLocal){
     data = data as DBRivalStoreData;
     if(data.socialId){
-      return "https://unavatar.now.sh/twitter/" + data.socialId;
+      return "https://proxy.poyashi.me/img?screen_name=" + data.socialId;
     }
   }else{
     data = data as rivalStoreData;
     if(data.twitter){
-      return "https://unavatar.now.sh/twitter/" + data.twitter;
+      return "https://proxy.poyashi.me/img?screen_name=" + data.twitter;
     }
   }
   if(data.profile){
-    return getTwitterName(data.profile) ? "https://unavatar.now.sh/twitter/" + getTwitterName(data.profile) : alternativeImg(data.uid);
+    return getTwitterName(data.profile) ? "https://proxy.poyashi.me/img?screen_name=" + getTwitterName(data.profile) : alternativeImg(data.uid);
   }
   return alternativeImg(data.uid);
 }

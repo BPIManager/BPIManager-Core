@@ -21,11 +21,12 @@ export default class UserCard extends React.Component<{
   processing:boolean,
   isAdded:boolean,
   myId?:string,
-  addUser:(q:any)=>void
+  addUser:(q:any)=>void,
+  hideBottomButtons?:boolean
 },{}>{
 
   render(){
-    const {item,isAdded,processing,myId} = this.props;
+    const {item,isAdded,processing,myId,hideBottomButtons} = this.props;
     return (
       <Card style={{margin:"10px 0",background:"transparent"}} variant="outlined">
         <CardHeader
@@ -51,6 +52,7 @@ export default class UserCard extends React.Component<{
             </Typography>
           </CardContent>
         )}
+        {(hideBottomButtons && !item.profile) && <CardContent style={{padding:"0 16px"}}><small>プロフィールは記入されていません</small></CardContent>}
         <CardActions>
           <ButtonGroup fullWidth variant="text">
           {myId !== item.uid && (
@@ -62,9 +64,11 @@ export default class UserCard extends React.Component<{
               {!isAdded ? "ライバル登録" : "ライバルです!"}
           </Button>
           )}
+          {!hideBottomButtons && (
           <Button size="small" disabled={processing} color="secondary" onClick={()=>this.props.open(item.displayName)}>
             プロフィール表示
           </Button>
+          )}
           </ButtonGroup>
         </CardActions>
       </Card>

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import User from "@/view/pages/user";
 import { _currentTheme } from '@/components/settings';
 import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
@@ -7,30 +6,27 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from "@material-ui/icons/Close";
+import WeeklyOnGoing from "./ongoing";
 
-export default class ModalUser extends React.Component<{
+export default class WeeklyModal extends React.Component<{
   isOpen:boolean,
-  handleOpen:(flag:boolean)=>void,
-  currentUserName:string,
-  exact?:boolean,
-  initialView?:number
+  handleOpen:(flag:string)=>void,
+  rankingId:string,
 },{
-  currentUserName:string,
+  rankingName:string
 }>{
 
-  constructor(props:{isOpen:boolean,handleOpen:(flag:boolean)=>void,currentUserName:string}){
+  constructor(props:any){
     super(props);
     this.state = {
-      currentUserName:props.currentUserName
+      rankingName:""
     }
   }
 
-  updateName = (name:string)=> this.setState({currentUserName:name});
-
   render(){
     const c = _currentTheme();
-    const {isOpen,handleOpen,initialView} = this.props;
-    const {currentUserName} = this.state;
+    const {isOpen,handleOpen,rankingId} = this.props;
+    const {rankingName} = this.state;
     return (
       <Dialog
         id="detailedScreen"
@@ -38,16 +34,16 @@ export default class ModalUser extends React.Component<{
         fullScreen open={isOpen} onClose={handleOpen} style={{overflowX:"hidden",width:"100%"}}>
         <AppBar>
           <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={()=>handleOpen(false)} aria-label="close">
+            <IconButton edge="start" color="inherit" onClick={()=>handleOpen("")} aria-label="close">
               <CloseIcon />
             </IconButton>
             <Typography variant="h6" className="be-ellipsis" style={{flexGrow:1}}>
-              {currentUserName}
+              {rankingName}
             </Typography>
           </Toolbar>
         </AppBar>
         <Toolbar/>
-        <User initialView={initialView || 0} currentUserName={currentUserName} limited={true} exact={this.props.exact || false} updateName={this.updateName}/>
+        <WeeklyOnGoing rankingId={rankingId}/>
       </Dialog>
     )
   }

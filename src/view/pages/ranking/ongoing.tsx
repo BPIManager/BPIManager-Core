@@ -5,7 +5,7 @@ import weeklyStore from '@/components/firebase/ranking';
 import Typography from '@material-ui/core/Typography';
 import { _prefixFullNum, difficultyDiscriminator } from '@/components/songs/filter';
 import { _currentTheme } from '@/components/settings';
-import timeFormatter, { untilDate, _isBetween } from '@/components/common/timeFormatter';
+import timeFormatter, { untilDate, _isBetween, isBeforeSpecificDate } from '@/components/common/timeFormatter';
 import Button from '@material-ui/core/Button';
 import TouchAppIcon from '@material-ui/icons/TouchApp';
 import JoinModal from '@/view/components/ranking/modal/join';
@@ -28,7 +28,7 @@ import bpiCalcuator from '@/components/bpi';
 import ModalUser from '@/view/components/rivals/modal';
 import Divider from '@material-ui/core/Divider';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
-import { RouteComponentProps, withRouter, Link as RLink } from 'react-router-dom';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import Link from '@material-ui/core/Link';
 import Alert from '@material-ui/lab/Alert/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
@@ -36,6 +36,11 @@ import Badge from '@material-ui/core/Badge';
 import { verNameArr } from '@/view/components/songs/common';
 import DeleteModal from '@/view/components/ranking/modal/delete';
 import { borderColor } from '@/components/common';
+import EditIcon from '@material-ui/icons/Edit';
+import EditModal from './crud/update';
+import fbActions from '@/components/firebase/actions';
+import InfoIcon from '@material-ui/icons/Info';
+import { Details } from './rankingInfo';
 
 interface S {
   isLoading:boolean,
@@ -50,9 +55,13 @@ interface S {
   isModalOpen:boolean,
   isDeleteModalOpen:boolean,
   currentUserName:string,
+  uid:string,
+  isOpenEditModal:boolean,
+  authorData:any,
+  isOpenDetail:boolean
 }
 
-class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
+class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteComponentProps,S> {
 
   constructor(props:{intl:any}&RouteComponentProps){
     super(props);
@@ -69,15 +78,25 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
       isModalOpen:false,
       isDeleteModalOpen:false,
       currentUserName:"",
+      uid:"",
+      isOpenEditModal:false,
+      authorData:null,
+      isOpenDetail:false
     }
   }
 
-  async componentDidMount(){
+  componentDidMount(){
+    this.load(true);
+  }
+
+  async load(getUserData:boolean = false){
     const fb = new weeklyStore();
+    const fba = new fbActions();
     const sdb = new songsDB();
     const scdb = new scoresDB();
+    let authorData = null;
 
-    const urlId = (this.props.match.params as any).id;
+    const urlId = this.props.rankingId || (this.props.match.params as any).id;
     const current = urlId ? await fb.getRanking(urlId) : await fb.currentRanking();
     if(!current){
       this.setState({isLoading:false});
@@ -95,8 +114,31 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
         version:d.version,
       });
       if(res.data.error){return;}
-      this.setState({onGoing:d,onGoingId:current.id,isLoading:false,song:songData,score:score.length > 0 ? score[0] : null,page:0,rank:this.calcBPI(res.data,songData)});
+      if(getUserData && d.authorId){
+        authorData = await fba.searchByExactId(d.authorId);
+      }
+      this.setState({
+        onGoing:d,
+        onGoingId:current.id,
+        isLoading:false,
+        song:songData,
+        score:score.length > 0 ? score[0] : null,
+        page:0,
+        rank:this.calcBPI(res.data,songData),
+        uid:res.data.auth ? res.data.auth.uid : "",
+        authorData: getUserData ? authorData : this.state.authorData
+      });
     }
+  }
+
+  handleOpenEditModal = async(isUpdating:boolean = false,reload?:boolean)=>{
+    if(isUpdating && !reload) return;
+    if(reload){
+      await this.load();
+    }
+    this.setState({
+      isOpenEditModal:!this.state.isOpenEditModal,
+    })
   }
 
   handleToggle = ()=>this.setState({joinModal:!this.state.joinModal});
@@ -178,12 +220,14 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
 
   handleModalOpen = (flag:boolean)=> this.setState({isModalOpen:flag});
   deleteScore = (flag:boolean)=>this.setState({isDeleteModalOpen:flag});
-  open = (uid:string)=> this.setState({isModalOpen:true,currentUserName:uid})
+  open = (uid:string)=> this.setState({isModalOpen:true,currentUserName:uid});
 
+  toggleDetail = ()=>this.setState({isOpenDetail:!this.state.isOpenDetail});
 
   render(){
-    const {onGoing,isLoading,onGoingId,joinModal,song,score,page,rank,contentLoading,isModalOpen,currentUserName,isDeleteModalOpen} = this.state;
+    const {onGoing,isLoading,onGoingId,joinModal,song,score,page,rank,contentLoading,isModalOpen,currentUserName,isDeleteModalOpen,uid,isOpenEditModal,authorData,isOpenDetail} = this.state;
     const themeColor = _currentTheme();
+    const isModal = !!this.props.rankingId;
     const pager = ()=>{
       const p = [];
       for(let i =0; i < rank.info.fullPageNum; ++i){
@@ -199,6 +243,7 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
     }
 
     const isBetween = _isBetween(new Date().toString(),onGoing.since.toDate(),onGoing.until.toDate());
+    const isBefore = isBeforeSpecificDate(new Date(),onGoing.since.toDate());
     const paging = (
       <div style={{display:"flex",justifyContent:"flex-end"}}>
         <FormControl>
@@ -212,22 +257,37 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
           </Select>
         </FormControl>
       </div>);
+    const remainTime = ()=>{
+        if(isBetween) return `終了まで残り${untilDate(onGoing.until.toDate())}日`;
+        if(!isBetween && !isBefore) return `終了済みのランキング`;
+        if(!isBetween && isBefore) return `開催まであと${untilDate(onGoing.until.toDate())}日`;
+    }
     return (
       <div>
         <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover"}}>
           <div style={{background:themeColor === "light" ? "rgba(255,255,255,.1)" : "rgba(0,0,0,.4)",display:"flex",padding:"5vh 0",alignItems:"center",justifyContent:"center",flexDirection:"column",textAlign:"center"}}>
             <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
-              現在開催中のランキング
+              {onGoing.rankName || "無題のランキング"}
             </Typography>
             <Typography component="h4" variant="h4" color="textPrimary" gutterBottom>
               {onGoing.title}({_prefixFullNum(onGoing.difficulty)})
             </Typography>
             <Typography component="small" variant="caption" color="textPrimary" gutterBottom>
+              <Link color="secondary" component="span" onClick={()=>this.open(authorData.uid)}>{authorData.displayName}</Link>さんが開催<br/><br/>
               {song && <span>VERSION:{verNameArr[Number(song["textage"].replace(/\/.*?$/,""))]},☆{song["difficultyLevel"]}</span>}<br/>
               開催期間:{timeFormatter(4,onGoing.since.toDate())}~{timeFormatter(4,onGoing.until.toDate())}<br/>
-              {isBetween && <span>終了まで残り{untilDate(onGoing.until.toDate())}日</span>}
-              {!isBetween && <span>終了済みのランキングです</span>} / {rank.info.users}人参加中
+              {remainTime()} / {rank.info.users}人参加中
             </Typography>
+            <ButtonGroup>
+              {onGoing.authorId === uid && (
+                <Button startIcon={<EditIcon/>} color="secondary" variant="outlined" onClick={()=>this.handleOpenEditModal()}>
+                  ランキングを編集
+                </Button>
+              )}
+              <Button startIcon={<InfoIcon/>} color="secondary" variant="outlined" onClick={this.toggleDetail}>
+                ランキング詳細
+              </Button>
+            </ButtonGroup>
           </div>
         </div>
         <ButtonGroup style={{marginBottom:"5px"}} fullWidth>
@@ -236,9 +296,11 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
               参加 / 更新
             </Button>
           )}
-            <Button color="secondary" style={{padding:"12px 0",borderRadius:"0",border:"0px",borderBottom:"1px solid " + borderColor() + "60",borderTop:"1px solid " + borderColor() + "60"}} onClick={()=>this.props.history.push("/ranking/list")}>
+          {!isModal &&
+            <Button color="secondary" style={{padding:"12px 0",borderRadius:"0",border:"0px",borderBottom:"1px solid " + borderColor() + "60",borderTop:"1px solid " + borderColor() + "60"}} onClick={()=>this.props.history.push("/ranking/")}>
               ランキング一覧
             </Button>
+          }
         </ButtonGroup>
         <Container fixed  className="commonLayout">
           {rank.error && (
@@ -250,7 +312,7 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
               <Typography component="h5" variant="h5" color="textPrimary" gutterBottom style={{textAlign:"center"}}>
                 <span>{rank.info.rank}位 / {rank.info.users}人中</span>
                 <ShareOnTwitter
-                  text={`BPIMスコアタ#${onGoing.week}に参加中！\n対象楽曲：${onGoing.title}(${_prefixFullNum(onGoing.difficulty)})\n登録スコア：${rank.info.detail.exScore}\n現在の順位：${rank.info.users}人中${rank.info.rank}位\n`}
+                  text={`「${onGoing.rankName}」に参加中！(${remainTime()})\n対象楽曲：${onGoing.title}(${_prefixFullNum(onGoing.difficulty)})\n登録スコア：${rank.info.detail.exScore}\n現在の順位：${rank.info.users}人中${rank.info.rank}位\n`}
                   url={`https://bpi.poyashi.me/ranking/id/${onGoingId}`}/>
               </Typography>
               )}
@@ -260,9 +322,20 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
                     <span>未参加</span>
                   </Typography>
                   <Typography component="p" variant="caption" color="textPrimary" gutterBottom style={{textAlign:"center"}}>
-                    「参加 / 更新」ボタンからスコアを登録！<br/>
-                    <RLink to="/help/ranking"><Link color="secondary" component="span">ランキングについて詳しく知りたい場合はこちら</Link></RLink>
+                        {(isBetween) && `「参加 / 更新」ボタンからスコアを登録！`}
+                        {(!isBetween && !isBefore) && `終了済みのランキングです`}
+                        {(!isBetween && isBefore) && `開催まであと${untilDate(onGoing.until.toDate())}日お待ち下さい`}
+                    <br/><br/>
+                    <ShareOnTwitter
+                      text={`「${onGoing.rankName}」\n対象楽曲：${onGoing.title}(${_prefixFullNum(onGoing.difficulty)})\n集計期間：${remainTime()}`}
+                      url={`https://bpi.poyashi.me/ranking/id/${onGoingId}`}/>
                   </Typography>
+                </div>
+              )}
+              {(rank.info.rank && rank.info.rank !== -1 && isBetween) && (
+                <div style={{textAlign:"center"}}>
+                  <Divider style={{margin:"10px 0"}}/>
+                  <Link color="secondary" component="span" onClick={()=>this.deleteScore(true)}>登録済みのスコアを削除</Link>
                 </div>
               )}
               <Divider style={{margin:"15px 0"}}/>
@@ -309,12 +382,6 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
                   })}
                 </List>
                 {paging}
-                {(rank.info.rank && rank.info.rank !== -1 && onGoing.ongoing === true) && (
-                  <div style={{textAlign:"center"}}>
-                    <Divider style={{margin:"10px 0"}}/>
-                    <Link color="secondary" component="span" onClick={()=>this.deleteScore(true)}>登録済みのスコアを削除</Link>
-                  </div>
-                )}
                 </div>
               )}
               {(!contentLoading && rank.info.users === 0) && (
@@ -322,7 +389,8 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
                   <AlertTitle>参加者がいません</AlertTitle>
                   <p>
                     ランキングに参加しましょう！<br/>
-                    「参加 / 更新」ボタンからスコアを登録してください。
+                    「参加 / 更新」ボタンからスコアを登録してください。<br/>
+                    <Link color="secondary" component="span" onClick={()=>this.props.history.push("/help/ranking")}>ランキング機能のヘルプはこちらから確認できます。</Link>
                   </p>
                 </Alert>
               )}
@@ -332,6 +400,10 @@ class WeeklyOnGoing extends React.Component<{intl:any}&RouteComponentProps,S> {
         {isModalOpen && <ModalUser isOpen={isModalOpen} currentUserName={currentUserName} exact handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
         {joinModal && <JoinModal handleToggle={this.handleToggle} joinExec={this.joinExec} song={song} score={score}/>}
         {isDeleteModalOpen && <DeleteModal handleToggle={()=>this.deleteScore(!isDeleteModalOpen)} exec={this.deleteExec}/>}
+        {isOpenEditModal &&
+          <EditModal isOpen={isOpenEditModal} handleOpen={this.handleOpenEditModal} onGoing={onGoing} onGoingId={onGoingId}/>
+        }
+        {isOpenDetail && <Details onGoingId={onGoingId} closeModal={this.toggleDetail} onGoing={onGoing} authorData={authorData}/>}
       </div>
     );
   }

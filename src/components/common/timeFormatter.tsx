@@ -30,14 +30,18 @@ const timeFormatter = (type = 0,date:string|Date|number = new Date()):string =>{
   return "";
 }
 
-export const timeCompare = (from:dayjs.Dayjs|string|Date,to:dayjs.Dayjs|string,type:"s"|"day" = "s") =>{
+export const timeCompare = (from:dayjs.Dayjs|string|Date,to:dayjs.Dayjs|string|number,type:"s"|"day" = "s") =>{
   return dayjs(from).diff(to,type);
 }
 export const untilDate = (to:dayjs.Dayjs|string|number) =>{
   return Math.abs(dayjs().diff(to,"d"));
 }
 
+export const toDate = (t:string|dayjs.Dayjs|Date)=>dayjs(t).toDate().toString();
+
 export const toMoment = (t:string|Date|dayjs.Dayjs)=>dayjs(t).format("YYYYMMDD");
+
+export const toMomentHHMM = (t:string|Date|dayjs.Dayjs)=>dayjs(t).format("YYYYMMDD HH:mm");
 
 export const isSameDay = (a:string|Date|dayjs.Dayjs,b:string|Date|dayjs.Dayjs = new Date())=>{
   return toMoment(a) === toMoment(b);
@@ -47,7 +51,7 @@ export const isSameWeek = (a:string|Date|dayjs.Dayjs,b:string|Date|dayjs.Dayjs)=
   return dayjs(a).week() === dayjs(b).week();
 }
 
-export const _isBetween = (date:string,rfrom:string,rto:string)=>{
+export const _isBetween = (date:string|Date,rfrom:string|Date,rto:string)=>{
   return dayjs(date).isBetween(rfrom,rto,"day", '[]');
 }
 
@@ -55,8 +59,16 @@ export const subtract = (num:number,r:"day"|"month")=>{
   return dayjs().subtract(num, r);
 }
 
+export const d_add = (num:number,r:"day"|"month")=>{
+  return dayjs().add(num, r);
+}
+
 export const isBefore = (date:string) =>{
   return dayjs(date).isBefore(subtract(1, 'month'))
+}
+
+export const isBeforeSpecificDate = (date:string|Date|dayjs.Dayjs|number,comparison:string|Date|dayjs.Dayjs|number)=>{
+  return dayjs(date).isBefore(comparison);
 }
 
 export const updatedTime = (timeStamp:string,withoutSuffix:boolean = false)=>{

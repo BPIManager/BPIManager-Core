@@ -2,6 +2,7 @@ import bpiCalcuator from "../bpi";
 import {scoresDB, songsDB} from "../indexedDB";
 import {scoreData} from "@/types/data";
 import {_isSingle,_currentStore, _currentTheme} from "../settings";
+import { untilDate, isBeforeSpecificDate } from "./timeFormatter";
 
 export const commonFunc = class{
 
@@ -128,3 +129,11 @@ export const alternativeImg = (input:string) => {
 const themeColor = _currentTheme();
 export const avatarBgColor = themeColor === "light" ? "#efefef" : "rgba(255, 255, 255, 0.05)";
 export const avatarFontColor = themeColor === "light" ? "#222" : "#efefef";
+
+
+export const timeDiff = (seconds:number)=>{
+  if(isBeforeSpecificDate(new Date(),seconds)){ // 今日の日付が終了日付より前か？
+    return "残り"+ untilDate(seconds) +"日";
+  }
+  return "終了済み";
+}

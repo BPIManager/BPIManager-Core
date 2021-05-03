@@ -256,7 +256,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         icon:<SpeakerNotesIcon />
       },
       {
-        to:"/ranking/ongoing",
+        to:"/ranking/",
         id:"GlobalNav.Weekly",
         icon:<EventNoteIcon />
       }
@@ -344,8 +344,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         <Typography align="center" variant="caption" style={{margin:"8px 0",width:"100%",display:"block",paddingBottom:"15px"}}>
           {config.versionString}&nbsp;
           {config.lastUpdate}<br/>
-          <s><RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink></s>(凍結中)<br/>
-          <b><RefLink color="secondary" href="https://github.com/potakusan/iidx_score_manager/blob/master/CHANGELOG.md" target="_blank">更新履歴(暫定)</RefLink></b><br/>
+          <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink><br/>
           <RefLink color="secondary" href="https://forms.gle/yVCa8sP2ndEQNaxg8">アンケートにご協力下さい </RefLink>
         </Typography>
       </div>
