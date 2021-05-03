@@ -3,7 +3,7 @@ export const config ={
   client:"ca-pub-1494631468121976",
   slot:"6952909012",
   versionString:"beta ver0.0.7.1",
-  lastUpdate:"2020/05/03 JST",
+  lastUpdate:"2021/05/03 JST",
   latestStore:"28",
   baseUrl:"https://bpi.poyashi.me"
 }

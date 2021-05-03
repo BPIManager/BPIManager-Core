@@ -60,9 +60,9 @@ export class Details extends React.Component<Props,{
           {header("ランキング情報")}
           <p>
             {
-              onGoing.info.split('\n').map((str:string, index:number) => (
+              onGoing.info ? onGoing.info.split('\n').map((str:string, index:number) => (
                 <React.Fragment key={index}>{str}<br /></React.Fragment>
-              )) || "ランキング情報が記入されていません"
+              )) : "ランキング情報が記入されていません"
             }
           </p>
           {header("作成者情報")}
