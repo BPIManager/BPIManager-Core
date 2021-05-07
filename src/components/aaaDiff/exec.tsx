@@ -36,7 +36,11 @@ export default class aaaDiffCalc{
       if(res > 50){
         results["50"].push(temp);
       }else{
-        results[Math.floor(res / 10) * 10].push(temp);
+        if(!Number.isNaN(res)){
+          results[Math.floor(res / 10) * 10].push(temp);
+        }else{
+          console.log(res,s);
+        }
       }
     }
     return this.rangeSort(results);
