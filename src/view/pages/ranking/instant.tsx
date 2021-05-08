@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { injectIntl } from 'react-intl';
 import Button from '@material-ui/core/Button';
-import { songsDB } from '@/components/indexedDB';
 import { songData } from '@/types/data';
 import { functions } from '@/components/firebase';
 import Loader from '@/view/components/common/loader';
@@ -12,7 +11,6 @@ import { withRouter,RouteComponentProps } from 'react-router-dom';
 import { _currentTheme } from '@/components/settings';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import fbActions from '@/components/firebase/actions';
-import { config } from '@/config';
 
 interface S {
   isLoading:boolean,
