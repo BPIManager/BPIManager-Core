@@ -33,7 +33,8 @@ export default class HelpStart extends React.Component<{},{
           <Container fixed style={{marginTop:"15px"}}>
             <Typography variant="h4" style={{display: 'flex',alignItems: 'center'}}><ContactSupportIcon/>&nbsp;BPIManagerとは</Typography>
             <p>
-              BPIManagerは、beatmania IIDXの楽曲スコアを数値で評価する指標(BPI)を用いて実力を推定したり、様々な機能を通して更に実力を高めるお手伝いをするためのツールです。
+              BPIManagerは、beatmania IIDXの楽曲スコアを数値で評価する指標(BPI)を用いて実力を推定したり、様々な機能を通して更に実力を高めるお手伝いをするためのツールです。<br/>
+              単に実力を数値化するだけでなく、過去のスコア推移を確認したりライバルとスコアを比較したりといろいろな機能があります。
             </p>
             <Typography variant="h5" style={{display: 'flex',alignItems: 'center'}}><MenuBookIcon/>&nbsp;BPIとは?</Typography>
             <p>

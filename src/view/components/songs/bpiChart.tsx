@@ -40,13 +40,14 @@ class BPIChart extends React.Component<P,{
       if (props.active && props.payload[0].payload) {
         const p = props.payload[0].payload;
         const per = Math.round((p["EX SCORE"] / (song.notes * 2) ) * 10000) / 100;
+        const gap = (!Number.isNaN(newScore) ? newScore : score.exScore) - p["EX SCORE"];
         return (
           <div className="custom-tooltip">
           {(p.name !== "YOU" && p.name !== "RIVAL") && <div>
               <p>BPI{p.name}</p>
               <p>EX:{p["EX SCORE"]}</p>
               <p>PER:{per}%</p>
-              <p>GAP:{(!Number.isNaN(newScore) ? newScore : score.exScore) - p["EX SCORE"]}</p>
+              <p>GAP:{gap}</p>
             </div>
           }
           {p.name === "RIVAL" && <div>

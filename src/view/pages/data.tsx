@@ -26,7 +26,7 @@ import Loader from "@/view/components/common/loader";
 import Divider from '@material-ui/core/Divider';
 import AdsCard from '@/components/ad';
 import bpiCalcuator from '@/components/bpi';
-import { statMain } from '@/components/stats/main';
+import statMain from '@/components/stats/main';
 import dayjs from 'dayjs';
 
 interface P{

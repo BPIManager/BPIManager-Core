@@ -1,4 +1,4 @@
-import { statMain } from "../stats/main";
+import statMain from "../stats/main";
 import bpiCalcuator from "../bpi";
 import { scoresDB } from "../indexedDB";
 import { scoreData } from "@/types/data";

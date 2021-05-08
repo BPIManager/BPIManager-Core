@@ -50,57 +50,26 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
   }
 
   async componentDidMount(){
-    const sdb = new songsDB();
-    const res = await functions.httpsCallable("viewRanking")({
-      cId:null,
-      latest:true,
-      includeRank:true,
+    const res = await functions.httpsCallable("rankSearch")({
       currentUser:true,
-      version:config.latestStore
+      includeRank:false,
+      showFinished:false,
+      offset:0,
+      split:0,
+      order:"asc",
+      uid:"",
+      onlyJoined:false,
+      endDate:"0",
     });
     if(!res.data.auth){
       return this.setState({isLoading:false,loggedIn:false});
     }
-    if(!res.data.info.wrInfo){
-      return this.setState({
-        onGoing:null,isLoading:false,loggedIn:true,auth:res.data.auth
-      });
-    }
-    const song = await sdb.getOneItemIsSingle(res.data.info.wrInfo.title,res.data.info.wrInfo.difficulty);
-    const songData = song.length > 0 ? song[0] : null;
-    this.setState({onGoing:res.data.info.wrInfo,onGoingId:res.data.info.wrId,isLoading:false,song:songData,rank:res.data,loggedIn:true,auth:res.data.auth});
+    return this.setState({
+      onGoing:null,isLoading:false,loggedIn:true,auth:res.data.auth
+    });
   }
 
   handleToggle = ()=>this.setState({joinModal:!this.state.joinModal});
-
-  joinExec = async (score:number):Promise<{error:boolean,errorMessage:string}>=>{
-    const {onGoingId,song,onGoing} = this.state;
-    if(!song){return {error:true,errorMessage:"楽曲データが見つかりません"};}
-    try{
-      const data = {
-        cId:onGoingId,
-        title:song.title,
-        difficulty:song.difficulty,
-        score:score,
-        version:onGoing.version,
-      };
-      const p = await functions.httpsCallable("joinRanking")(data);
-      if(p.data.error){
-        throw new Error(p.data.errorMessage);
-      }
-      const res = await functions.httpsCallable("viewRanking")({
-        cId:onGoingId,
-        includeRank:false,
-        currentUser:true,
-        version:onGoing.version,
-      });
-      this.setState({rank:res.data})
-      return {error:false,errorMessage:""};
-    }catch(e){
-      console.log(e);
-      return {error:true,errorMessage:e.message};
-    }
-  }
 
   handleModalOpen = (flag:boolean)=> this.setState({isModalOpen:flag});
   open = (uid:string)=> this.setState({isModalOpen:true,currentUserName:uid})

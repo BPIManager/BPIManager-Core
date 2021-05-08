@@ -54,7 +54,7 @@ class Compare extends React.Component<{intl:any},S> {
         pm:["+","-"],
       },
       filterByName:"",
-      compareFrom:"27",
+      compareFrom:"28",
       compareTo:"27",
       page:0,
       rowsPerPage:10,
@@ -256,7 +256,6 @@ class Compare extends React.Component<{intl:any},S> {
       }
       return pm.indexOf("+") > -1 && pm.indexOf("-") > -1 ? true : false;
     });
-    console.log(sortedData);
     return orderMode === 0 ? sortedData.reverse() : sortedData;
   }
 

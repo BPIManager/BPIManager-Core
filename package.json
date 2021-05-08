@@ -21,6 +21,7 @@
     "@types/react-router-dom": "^5.1.5",
     "@types/react-swipeable-views": "^0.13.0",
     "@types/recharts": "^1.8.16",
+    "@welldone-software/why-did-you-render": "^6.1.1",
     "dayjs": "^1.9.1",
     "dexie": "^2.0.4",
     "es6-promise-pool": "^2.5.0",

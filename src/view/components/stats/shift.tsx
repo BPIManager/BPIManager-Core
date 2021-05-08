@@ -6,7 +6,7 @@ import {FormControlLabel, FormControl, FormLabel, Checkbox, FormGroup, Divider, 
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '../common/loader';
 import { ShiftType } from '@/types/stats';
-import { statMain } from '@/components/stats/main';
+import statMain from '@/components/stats/main';
 import Alert from '@material-ui/lab/Alert/Alert';
 import { ChangeLevel } from './main';
 import { injectIntl } from 'react-intl';

@@ -1,7 +1,5 @@
-import bpiCalcuator from "../bpi";
-import {_currentStore, _currentTheme} from "../settings";
+import {_currentTheme} from "../settings";
 import { untilDate, isBeforeSpecificDate } from "./timeFormatter";
-import { statMain } from "../stats/main";
 
 export const commonFunc = class{
 
@@ -61,11 +59,6 @@ export const arenaRankColor = (rank:string)=>{
     case "B5":
     return "rgb(27, 28, 31)"
   }
-}
-
-export const getTotalBPI = async(targetLevel:number = 12):Promise<number>=>{
-  let exec = await (await new statMain(targetLevel).load()).setLastData(String(Number(_currentStore()) - 1));
-  return new bpiCalcuator().setSongs(exec.at(),exec.at().length) || -15;
 }
 
 export const noimg = "https://files.poyashi.me/noimg.png"

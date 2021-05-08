@@ -5,10 +5,10 @@ import platform from "platform";
 import firebase from 'firebase/app';
 import { rivalStoreData, scoreData, DBRivalStoreData, songData } from "../../types/data";
 import bpiCalcuator from '../bpi';
-import {getTotalBPI} from '../common';
 import { _currentStore } from "../settings";
 import { messanger } from "./message";
 import { difficultyDiscriminator } from "../songs/filter";
+import totalBPI from "../bpi/totalBPI";
 
 export default class fbActions{
 
@@ -324,7 +324,7 @@ export default class fbActions{
 
   async recommendedByBPI(exactBPI?:number){
     let query:firebase.firestore.Query = this.setUserCollection().orderBy("totalBPIs." + _currentStore(), "desc");
-    const total = exactBPI || await getTotalBPI();
+    const total = exactBPI || (await new totalBPI().load()).currentVersion();
     const downLimit = total > 60 ? 50 : total - 5;
     const upLimit = total > 50 ? 100 : total + 5;
     query = query.where("totalBPIs." + _currentStore(),">=",downLimit);

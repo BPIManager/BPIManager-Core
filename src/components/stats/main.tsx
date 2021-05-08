@@ -12,7 +12,7 @@ const isSingle = _isSingle();
 export const BPITicker = [-20,-10,0,10,20,30,40,50,60,70,80,90,100];
 interface shiftType {title:string,bpi:number};
 
-export const statMain = class {
+export default class statMain {
 
   private twelves:scoreData[] = [];
   private elevens:scoreData[] = [];

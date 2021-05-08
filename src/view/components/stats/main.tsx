@@ -11,7 +11,7 @@ import {FormControlLabel, FormControl, RadioGroup, Radio, FormLabel} from '@mate
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '../common/loader';
 import { S, groupedArray } from '@/types/stats';
-import { BPITicker, statMain } from '@/components/stats/main';
+import statMain , { BPITicker } from '@/components/stats/main';
 import { rivalScoreData } from '@/types/data';
 import { ShareOnTwitter } from '../common/shareButtons';
 import { config } from '@/config';
@@ -48,10 +48,14 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
 
   async updateScoreData(targetLevel = 12){
     const bpi = new bpiCalcuator();
+
     let exec = await (await new statMain(targetLevel).load(this.props.derived)).setLastData(String(Number(_currentStore()) - 1));
+
     const totalBPI = bpi.setSongs(exec.at(),exec.at().length) || -15;
     const lastVerTotalBPI = bpi.setSongs(exec.at(true),exec.at(true).length);
+
     //BPI別集計
+
     this.setState({
       isLoading:false,
       totalBPI:totalBPI,

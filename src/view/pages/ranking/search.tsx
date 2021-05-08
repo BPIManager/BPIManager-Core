@@ -216,11 +216,13 @@ class RankingSearch extends React.Component<{intl:any}&RouteComponentProps,S> {
             </div>
           )}
           </InfiniteScroll>
-          <Button startIcon={<AddIcon/>} onClick={()=>this.handleOpenCreateModal(false)} fullWidth>ランキングを作成</Button>
+          {auth &&
+            <Button startIcon={<AddIcon/>} onClick={()=>this.handleOpenCreateModal(false)} fullWidth>ランキングを作成</Button>
+          }
           {auth &&
             <SpeedDial
+              ariaLabel="menu"
               style={{position:"fixed",bottom:"8%",right:"8%"}}
-              ariaLabel="SpeedDial example"
               icon={<SpeedDialIcon icon={<MenuIcon/>} openIcon={<CloseIcon/>} />}
               onClose={this.toggleDial}
               onOpen={this.toggleDial}
