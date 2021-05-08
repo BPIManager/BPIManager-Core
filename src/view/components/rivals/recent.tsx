@@ -107,13 +107,13 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
     const {myId,searchInput} = this.state;
     this.setState({processing:true,isLoading:true,});
     let res:rivalStoreData[] = [];
-    if(mode === 0){
+    if(mode === 0){ //おすすめユーザー
       res = (await this.fbA.recommendedByBPI()).filter((item)=>{
         return item.uid !== myId && timeCompare(new Date(),item.timeStamp,"day") < 15
       })
-    }else if(mode === 2){
+    }else if(mode === 2){ //最近更新
       res = await this.fbA.recentUpdated(last,endAt,arenaRank);
-    }else if(mode === 1){
+    }else if(mode === 1){ //逆ライバル
       res = (await this.fbA.addedAsRivals()).filter((item)=> item !== undefined);
     }
     if(!res){

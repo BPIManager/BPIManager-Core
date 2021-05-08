@@ -1,8 +1,7 @@
 import bpiCalcuator from "../bpi";
-import {scoresDB, songsDB} from "../indexedDB";
-import {scoreData} from "@/types/data";
-import {_isSingle,_currentStore, _currentTheme} from "../settings";
+import {_currentStore, _currentTheme} from "../settings";
 import { untilDate, isBeforeSpecificDate } from "./timeFormatter";
+import { statMain } from "../stats/main";
 
 export const commonFunc = class{
 
@@ -64,17 +63,9 @@ export const arenaRankColor = (rank:string)=>{
   }
 }
 
-export const getTotalBPI = async():Promise<number>=>{
-  const bpi = new bpiCalcuator();
-  bpi.setTraditionalMode(0);
-  const db = await new scoresDB(_isSingle(),_currentStore()).loadStore();
-  const twelves = await db.getItemsBySongDifficulty("12");
-  const bpiMapper = (t:scoreData[])=>t.map((item:scoreData)=>item.currentBPI);
-
-  bpi.allTwelvesBPI = bpiMapper(twelves);
-  bpi.allTwelvesLength = await new songsDB().getSongsNum("12");
-
-  return bpi.totalBPI();
+export const getTotalBPI = async(targetLevel:number = 12):Promise<number>=>{
+  let exec = await (await new statMain(targetLevel).load()).setLastData(String(Number(_currentStore()) - 1));
+  return new bpiCalcuator().setSongs(exec.at(),exec.at().length) || -15;
 }
 
 export const noimg = "https://files.poyashi.me/noimg.png"
