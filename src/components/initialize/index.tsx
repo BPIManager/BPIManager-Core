@@ -65,18 +65,17 @@ export default class Initialize extends React.Component<{global:any},{show:boole
         localStorage.setItem("showLatestSongs","true");
       }
 
-      // Close the world bug fix 2019/11/11 & 2019/12/08
-        this.songsDB.removeItem("Close the World feat. a☆ru");
-        this.scoresDB.removeSpecificItemAtAllStores("Close the World feat. a☆ru");
-      //
-
-      // Data error fixes 2020/07/12
-      //if(!localStorage.getItem("20200712fixes")){
-        this.songsDB.diffChange("Bow shock!!","4","11");
-        this.songsDB.diffChange("Shiva","4","11");
-        this.songsDB.diffChange("錬成人間トリコロイダー","4","11");
-        localStorage.setItem("20200712fixes","1");
-      //}
+      {
+        const ax = await (await fetch("https://proxy.poyashi.me/?type=bpi_metadata")).json();
+        if(ax.removed){
+          for (let i = 0; i < ax.removed.length; ++i){
+            const t = ax.removed[i];
+            await this.songsDB.removeItem(t["title"]);
+            await this.scoresDB.removeSpecificItemAtAllStores(t["title"]);
+            await this.scoreHistoryDB.removeSpecificItemAtAllStores(t["title"]);
+          }
+        }
+      }
 
       const songsAvailable:string[] = await this.songsDB.getAll();
       await this.scoresDB.removeNaNItems();
@@ -88,6 +87,9 @@ export default class Initialize extends React.Component<{global:any},{show:boole
       const csv = await fetch(_currentDefinitionURL()).then(t=>t.json());
       let p = [];
       for(let i=0;i < csv.body.length;++i){
+        if(csv["body"][i]["removed"]){
+          continue;
+        }
         p.push(Object.assign(csv["body"][i],{
           updatedAt:now,
         }));

@@ -140,5 +140,8 @@ export const makeRivalStat = async(full:rivalScoreData[],showAllScore:boolean = 
 }
 
 export const fullData = async(descendingRivalData:rivalScoreData[]|undefined,rivalData:string = ""):Promise<rivalScoreData[]>=>{
-  return (descendingRivalData || await new rivalListsDB().getAllScores(rivalData))
+  if(descendingRivalData){
+    return descendingRivalData;
+  }
+  return await new rivalListsDB().getAllScores(rivalData)
 }

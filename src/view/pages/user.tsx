@@ -37,6 +37,7 @@ import Radar from '@/view/components/rivals/viewComponents/ui/radar';
 import Alert from '@material-ui/lab/Alert/Alert';
 import EventNoteIcon from '@material-ui/icons/EventNote';
 import WeeklyList from '@/view/pages/ranking/list';
+import getUserData from '@/components/user';
 
 interface S {
   userName:string,
@@ -70,6 +71,8 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
   private fbA:fbActions = new fbActions();
   private fbStores:fbActions = new fbActions();
   private rivalListsDB = new rivalListsDB();
+
+  private userStore = new getUserData();
 
   constructor(props:{intl:any,currentUserName?:string,limited?:boolean,exact?:boolean,updateName?:(name:string)=>void,initialView?:number}&RouteComponentProps){
     super(props);
@@ -147,29 +150,22 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
   });
 
   search = async(forceUserName?:string):Promise<void>=>{
+
     let {userName} = this.state;
     const exactId = (this.props.match.params as any).exactId || this.props.exact;
-    const rivalScores = async(res:any)=>{
-      try{
-        const store = await this.fbStores.setDocName(res.uid).load();
-        if(!store){
-          return [];
-        }
-        return store.scores;
-      }catch(e){
-        console.log(e);
-        return [];
-      }
-    }
+
     if(forceUserName){
       userName = forceUserName;
     }
+
     this.setState({processing:true});
     const res = (exactId && !forceUserName) ? await this.fbA.searchByExactId(userName) : await this.fbA.searchRival(userName);
     if(res){
+
       if(res.isPublic === false){
         return this.setState({userName:"",res:null});
       }
+
       if(exactId){
         userName = res.displayName;
         if(!this.props.exact){
@@ -177,11 +173,14 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
         }else{
           if(this.props.updateName) this.props.updateName(userName);
         }
+
       }
-      const scores = await rivalScores(res);
+
+      const scores = await this.userStore.rivalScores(res);
       const totalBPI = (res.totalBPIs && res.totalBPIs[_currentStore()]) ? res.totalBPIs[_currentStore()] : "-";
-      this.countAsync(res.uid);
       const rivalStat = await makeRivalStat(scores,true);
+
+      this.countAsync(res.uid);
       return this.setState({
         userName:userName,res:res,uid:res.uid,
         rivalData:scores,
@@ -295,20 +294,25 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
   render(){
     const {processing,add,myId,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI,loadingRecommended,recommendUsers,counts,limited,rivalStat,radar,index} = this.state;
     const url = config.baseUrl + "/u/" + encodeURI(userName);
+
     const isAdded = this.state.rivalUids.indexOf(uid) > -1;
+
     if(processing){
       return (<Loader text="ユーザーを読込中" isFull/>);
     }
     if(!userName || !res){
       return <NoUserError match={this.props.match} alternativeId={alternativeId}/>;
     }
+
     if(currentView === 1){
+      //スコア一覧
       return (
         <RivalView toggleSnack={this.toggleSnack} backToMainPage={this.backToMainPage} showAllScore={true}
           rivalData={uid} rivalMeta={res} descendingRivalData={rivalData} isNotRival={true}/>
       )
     }
     if(currentView === 2){
+      //AAA達成表
       return (
         <Container fixed  className="commonLayout">
           <ClearLampView backToMainPage={this.backToMainPage}
@@ -317,6 +321,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
       )
     }
     if(currentView === 3){
+      //ノート一覧
       return (
         <Container fixed  className="commonLayout">
           <NotesView backToMainPage={this.backToMainPage}
@@ -325,27 +330,33 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
       )
     }
     if(currentView === 4){
+      //統計データ
       return (
         <RivalStatViewFromUserPage full={rivalStat} rivalRawData={rivalData} backToMainPage={this.backToMainPage} name={res.displayName}/>
       )
     }
     if(currentView === 5){
+      //IR参加履歴
       return (
         <Container fixed  className="commonLayout">
           <WeeklyList viewInUser backToMainPage={this.backToMainPage} uid={uid} name={res.displayName}/>
         </Container>
       )
     }
+
     const buttons = [
       {icon:<ViewListIcon />,primary:"スコアを見る",secondary:(res.displayName) + "さんの登録スコアを表示します",onClick:()=>this.view(1)},
       {icon:<EqualizerIcon />,primary:"統計データを表示",secondary:(res.displayName) + "さんの統計データを表示します",onClick:()=>this.view(4)},
       {icon:<WbIncandescentIcon />,primary:"AAA達成表",secondary:"BPIに基づいたAAA達成難易度表を表示します",onClick:()=>this.view(2)},
       {icon:<EventNoteIcon />,primary:"ランキング",secondary:"ランキング参加履歴を表示します",onClick:()=>this.view(5)},
     ]
+
     if(res.showNotes){
       buttons.push({icon:<CommentIcon />,primary:"投稿ノート一覧",secondary:(res.displayName) + "さんが投稿した攻略情報一覧",onClick:()=>this.view(3)});
     }
+
     const themeColor = _currentTheme();
+
     return (
       <div style={{width:"100%"}}>
         <Helmet>

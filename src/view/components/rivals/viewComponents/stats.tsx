@@ -60,18 +60,25 @@ class RivalStats extends React.Component<P,S> {
     let sum11 = 0, sum12 = 0;
     for(let i = 0;i < full.length; ++i){
       const indv = full[i];
-      scoresAbout[indv.myEx > indv.rivalEx ? 0 : indv.myEx === indv.rivalEx ? 1 : 2]++;
-      clearAbout[indv.myClearState > indv.rivalClearState ? 0 : indv.myClearState === indv.rivalClearState ? 1 : 2]++;
+      
+      //win:0,draw:1,lose:2
+      const ex = indv.myEx > indv.rivalEx ? 0 : indv.myEx === indv.rivalEx ? 1 : 2;
+      const clear = indv.myClearState > indv.rivalClearState ? 0 : indv.myClearState === indv.rivalClearState ? 1 : 2;
+
+      scoresAbout[ex]++;
+      clearAbout[clear]++;
+
       if(indv.difficultyLevel === "11"){
-        scoresByLevel11[indv.myEx > indv.rivalEx ? 0 : indv.myEx === indv.rivalEx ? 1 : 2]++;
-        clearByLevel11[indv.myClearState > indv.rivalClearState ? 0 : indv.myClearState === indv.rivalClearState ? 1 : 2]++;
+        scoresByLevel11[ex]++;
+        clearByLevel11[clear]++;
         sum11++;
       }
       if(indv.difficultyLevel === "12"){
-        scoresByLevel12[indv.myEx > indv.rivalEx ? 0 : indv.myEx === indv.rivalEx ? 1 : 2]++;
-        clearByLevel12[indv.myClearState > indv.rivalClearState ? 0 : indv.myClearState === indv.rivalClearState ? 1 : 2]++;
+        scoresByLevel12[ex]++;
+        clearByLevel12[clear]++;
         sum12++;
       }
+
     }
     return this.setState({
       scoresAbout:scoresAbout,

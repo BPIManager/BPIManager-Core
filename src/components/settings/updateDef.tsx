@@ -17,7 +17,6 @@ export const updateDefFile = async()=>{
   }, {});
   const allSongs = await sdb.getAllWithAllPlayModes().then(t=>reducer(t));
   const url = _currentDefinitionURL();
-  const currentVersion = _currentVersion();
   try{
     res = await fetch(url).then(t=>t.json());
   }catch(e){
@@ -27,22 +26,27 @@ export const updateDefFile = async()=>{
   if(Number(res.requireVersion) > Number(config.versionNumber) ){
     return response("最新の定義データを導入するために本体を更新する必要があります:要求バージョン>="+ res.requireVersion);
   }
+  /*
   if(Number(res.version) === Number(currentVersion)){
     return response("定義データはすでに最新です");
   }
+  */
   const promiseProducer = ()=>{
     return res.body.map((t:songData) => {
       return new Promise(async(resolve)=>{
         const pfx = t["title"] + t["difficulty"] + (t["dpLevel"] === "0" ? "1" : "0");
         if(allSongs[pfx] && allSongs[pfx]["dpLevel"] === t["dpLevel"]){
           //既存曲
-          if(t["removed"]){
-            console.log(t);
+
+          if(t["removed"]){ //削除フラグが立っている場合削除する
+            console.log(t)
             await sdb.removeItem(t["title"]);
             await scDB.removeSpecificItemAtAllStores(t["title"]);
             await schDB.removeSpecificItemAtAllStores(t["title"]);
             resolve();
           }
+
+          //なんらかの要素が新しい場合、データベースを更新する
           if(
             allSongs[pfx]["wr"] !== Number(t["wr"]) || allSongs[pfx]["avg"] !== Number(t["avg"]) ||
             (t["coef"] && allSongs[pfx]["coef"] && allSongs[pfx]["coef"] !== t["coef"]) ||
