@@ -70,28 +70,26 @@ class SongDiffs extends React.Component<P,S> {
       return (null);
     }
     return (
-      <div>
-        <Container fixed>
-          <FormControl style={{width:"100%"}}>
-          <InputLabel shrink>
-              <FormattedMessage id="SongDiffs.Target"/>
-            </InputLabel>
-            <Select
-              value={current}
-              onChange={this.handleChange}
-              displayEmpty>
-                <MenuItem value={0}><FormattedMessage id="SongDiffs.WithinSameVersion"/></MenuItem>
-                <MenuItem value={1}><FormattedMessage id="SongDiffs.EachVersion"/></MenuItem>
-              </Select>
-          </FormControl>
-          {
-            isLoading && <Loader/>
-          }
-          {
-            !isLoading && <DiffsTable scoreTable={dataset} type={current}/>
-          }
-        </Container>
-      </div>
+      <Container fixed>
+        <FormControl style={{width:"100%"}}>
+        <InputLabel shrink>
+            <FormattedMessage id="SongDiffs.Target"/>
+          </InputLabel>
+          <Select
+            value={current}
+            onChange={this.handleChange}
+            displayEmpty>
+              <MenuItem value={0}><FormattedMessage id="SongDiffs.WithinSameVersion"/></MenuItem>
+              <MenuItem value={1}><FormattedMessage id="SongDiffs.EachVersion"/></MenuItem>
+            </Select>
+        </FormControl>
+        {
+          isLoading && <Loader/>
+        }
+        {
+          !isLoading && <DiffsTable scoreTable={dataset} type={current}/>
+        }
+      </Container>
     );
   }
 }

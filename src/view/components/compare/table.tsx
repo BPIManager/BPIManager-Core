@@ -73,89 +73,86 @@ export default class Compare extends React.Component<P,S> {
     }
     return (
     <Paper style={{width:"100%",overflowX:"auto"}}>
-      <div>
-        <div>
-          <Table>
-            <TableHead>
-              <TableRow>
-                {columns.map((column) => (
-                  <TableCell
-                    key={column.id}
-                  >
-                    {column.label}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-              {full.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:any,i:number) => {
-                const prefix = row.difficulty === "hyper" ? "(H)" : row.difficulty === "leggendaria" ? "(L)" : "";
-                const coloring = (col:number):string=>{
-                  const s = row.exScore - row.compareData >= 0;
-                  if(col === 0){
-                    return s ? "rgb(255, 151, 151)" : "transparent";
-                  }
-                  if(col === 1){
-                    return !s ? "rgb(255, 151, 151)" : "transparent";
-                  }
-                  return "transparent";
-                }
-                return (
-                <TableBody className="rival" key={row.title + i} onClick={()=>this.handleOpen(false,row)}>
-                  <TableRow
-                    hover role="checkbox" tabIndex={-1} className={ i % 2 ? "isOdd" : "isEven"}>
-                    <TableCell
-                      rowSpan={2}
-                      style={{position:"relative"}}
-                    >
-                      {row["difficultyLevel"]}
-                    </TableCell>
-                    <TableCell
-                      rowSpan={1}
-                      colSpan={3}
-                      style={{position:"relative"}}
-                    >
-                      {row["title"]}
-                      {prefix}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow className="rivalBody">
-                    <TableCell
-                      style={{
-                        borderLeft:`4px solid ${coloring(0)}`,
-                        position:"relative"}}
-                    >
-                      <span className={"bodyNumber"}>
-                        {row.exScore}
-                      </span>
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        borderLeft:`4px solid ${coloring(1)}`,
-                        position:"relative"}}
-                    >
-                      <span className={"bodyNumber"}>
-                        {row.compareData}
-                      </span>
-                    </TableCell>
-                    <TableCell
-                      style={{
-                        borderLeft:`4px solid ${coloring(2)}`,
-                        color:row.exScore - row.compareData >= 0 ? "#00b8ff" : "#ff0000",
-                        position:"relative"}}
-                    >
-                      <span className={"bodyNumber"}>
-                        {displayMode === "exScore" && row.exScore - row.compareData}
-                        {displayMode === "bpi" && (row.scoreData.currentBPI - row.compareData).toFixed(2)}
-                        {displayMode === "percentage" && (row.exScore - row.compareData).toFixed(2)}
-                      </span>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-                );
-              })}
-          </Table>
-        </div>
-      </div>
+      <Table>
+        <TableHead>
+          <TableRow>
+            {columns.map((column) => (
+              <TableCell
+                key={column.id}
+              >
+                {column.label}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        {full.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:any,i:number) => {
+          const prefix = row.difficulty === "hyper" ? "(H)" : row.difficulty === "leggendaria" ? "(L)" : "";
+          const coloring = (col:number):string=>{
+            const s = row.exScore - row.compareData >= 0;
+            if(col === 0){
+              return s ? "rgb(255, 151, 151)" : "transparent";
+            }
+            if(col === 1){
+              return !s ? "rgb(255, 151, 151)" : "transparent";
+            }
+            return "transparent";
+          }
+          return (
+          <TableBody className="rival" key={row.title + i} onClick={()=>this.handleOpen(false,row)}>
+            <TableRow
+              hover role="checkbox" tabIndex={-1} className={ i % 2 ? "isOdd" : "isEven"}>
+              <TableCell
+                rowSpan={2}
+                style={{position:"relative"}}
+              >
+                {row["difficultyLevel"]}
+              </TableCell>
+              <TableCell
+                rowSpan={1}
+                colSpan={3}
+                style={{position:"relative"}}
+              >
+                {row["title"]}
+                {prefix}
+              </TableCell>
+            </TableRow>
+            <TableRow className="rivalBody">
+              <TableCell
+                style={{
+                  borderLeft:`4px solid ${coloring(0)}`,
+                  position:"relative"}}
+              >
+                <span className={"bodyNumber"}>
+                  {row.exScore}
+                </span>
+              </TableCell>
+              <TableCell
+                style={{
+                  borderLeft:`4px solid ${coloring(1)}`,
+                  position:"relative"
+                }}
+              >
+                <span className={"bodyNumber"}>
+                  {row.compareData}
+                </span>
+              </TableCell>
+              <TableCell
+                style={{
+                  borderLeft:`4px solid ${coloring(2)}`,
+                  color:row.exScore - row.compareData >= 0 ? "#00b8ff" : "#ff0000",
+                  position:"relative"}}
+              >
+                <span className={"bodyNumber"}>
+                  {displayMode === "exScore" && row.exScore - row.compareData}
+                  {displayMode === "bpi" && (row.scoreData.currentBPI - row.compareData).toFixed(2)}
+                  {displayMode === "percentage" && (row.exScore - row.compareData).toFixed(2)}
+                </span>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+          );
+        })}
+      </Table>
       <TablePagination
         rowsPerPageOptions={[10, 25, 50, 100]}
         component="div"

@@ -23,7 +23,7 @@ class SyncLoginScreen extends React.Component<{
 
   render(){
     return (
-    <div>
+    <React.Fragment>
       <Paper style={{padding:"15px"}}>
         <Avatar style={{background:avatarBgColor,color:avatarFontColor,margin:"10px auto",padding:"35px",fontSize:"25px"}}>
           <LockIcon fontSize="large"/>
@@ -72,7 +72,7 @@ class SyncLoginScreen extends React.Component<{
         </Typography>
         </Alert>
       </Paper>
-      </div>
+      </React.Fragment>
     );
   }
 }

@@ -1,4 +1,4 @@
-import { _prefix } from "@/components/songs/filter";
+import { _prefix, lampCSVArray } from "@/components/songs/filter";
 import { B, BPIR } from "./filter";
 import { scoreData, songData } from "@/types/data";
 
@@ -32,6 +32,13 @@ export const verArr = (include:boolean = true):number[]=>{
     t.push(i);
   }
   return t;
+}
+
+export const clearArr = ():number[]=>{
+  return [...Array(lampCSVArray.length)].reduce((_,__,i)=>{
+    _.push(i);
+    return _;
+  },[]);
 }
 
 export const verNameArr = [

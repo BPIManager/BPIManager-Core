@@ -1,6 +1,6 @@
 import { songsDB, scoreHistoryDB, scoresDB } from "../indexedDB";
 import { songData } from "@/types/data";
-import { _currentDefinitionURL } from ".";
+import { _currentDefinitionURL, _currentVersion } from ".";
 import { config } from "@/config";
 
 export const updateDefFile = async()=>{
@@ -8,31 +8,40 @@ export const updateDefFile = async()=>{
   const response = (mes:string)=>{
     return {"message":mes,"newVersion":res.version};
   }
+  const currentVersion = _currentVersion();
+  const url = _currentDefinitionURL();
+
   const sdb = new songsDB();
   const schDB = new scoreHistoryDB();
   const scDB = new scoresDB();
+
   const reducer = (t:songData[])=>t.reduce((result:{[key:string]:songData}, current:songData) => {
     result[current.title + current.difficulty + (current["dpLevel"] === "0" ? "1" : "0")] = current;
     return result;
   }, {});
+
   const allSongs = await sdb.getAllWithAllPlayModes().then(t=>reducer(t));
-  const url = _currentDefinitionURL();
+
   try{
     res = await fetch(url).then(t=>t.json());
   }catch(e){
     return response("定義データの取得に失敗しました");
   }
   const updatedSongs:string[] = [];
+
+  if(!res.body){
+    return response("定義データの形式が不正です");
+  }
+
   if(Number(res.requireVersion) > Number(config.versionNumber) ){
     return response("最新の定義データを導入するために本体を更新する必要があります:要求バージョン>="+ res.requireVersion);
   }
-  /*
   if(Number(res.version) === Number(currentVersion)){
     return response("定義データはすでに最新です");
   }
-  */
-  const promiseProducer = ()=>{
-    return res.body.map((t:songData) => {
+
+  const promiseProducer = (body:any[])=>{
+    return body.map((t:songData) => {
       return new Promise(async(resolve)=>{
         const pfx = t["title"] + t["difficulty"] + (t["dpLevel"] === "0" ? "1" : "0");
         if(allSongs[pfx] && allSongs[pfx]["dpLevel"] === t["dpLevel"]){
@@ -65,11 +74,13 @@ export const updateDefFile = async()=>{
       });
     });
   }
-  await Promise.all(promiseProducer());
+
+  await Promise.all(promiseProducer(res.body));
   scDB.setNewSongsDBRawData(reducer(res.body));
   console.log("WillUpdated:",updatedSongs)
   await scDB.recalculateBPI(updatedSongs);
   await schDB.recalculateBPI(updatedSongs);
   localStorage.setItem("lastDefFileVer",res.version);
   return response("更新完了");
+
 }

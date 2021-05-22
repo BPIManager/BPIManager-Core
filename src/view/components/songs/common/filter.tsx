@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import {verArr,verNameArr} from "./";
+import {verArr,verNameArr, clearArr} from "./";
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -13,15 +13,17 @@ import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
 import { buttonTextColor } from '@/components/settings';
+import { lampCSVArray } from '@/components/songs/filter';
 
 interface P {
   handleToggle:()=>void,
-  applyFilter:(state:{bpm:B,versions:number[],memo:boolean|null,showLatestOnly:boolean|null})=>void,
+  applyFilter:(state:{bpm:B,versions:number[],memo:boolean|null,showLatestOnly:boolean|null,clearType:number[]})=>void,
   bpm:B,
   bpi?:BPIR,
   memo?:boolean,
   versions:number[],
-  showLatestOnly?:boolean
+  showLatestOnly?:boolean,
+  clearType?:number[]
 }
 
 interface S {
@@ -29,7 +31,8 @@ interface S {
   bpi:BPIR|null,
   versions:number[],
   memo:boolean|null,
-  showLatestOnly:boolean|null
+  showLatestOnly:boolean|null,
+  clearType:number[]
 }
 
 export interface B {
@@ -53,6 +56,7 @@ class SongsFilter extends React.Component<P,S> {
       showLatestOnly:typeof props.showLatestOnly !== "boolean" ? null : props.showLatestOnly,
       bpm:props.bpm,
       versions:props.versions,
+      clearType:props.clearType || [],
       bpi:props.bpi || null
     }
   }
@@ -98,6 +102,17 @@ class SongsFilter extends React.Component<P,S> {
     })
   }
 
+  handleClearTypeChkBox = (type:number)=> (event: React.ChangeEvent<HTMLInputElement>)=>{
+    let {clearType} = this.state;
+    clearType = clearType.filter(v=>v !== type);
+    if(event.target.checked){
+      clearType.push(type);
+    }
+    return this.setState({
+      clearType:clearType
+    })
+  }
+
   handleInput = (name:"min"|"max" = "min")=> (event: React.ChangeEvent<HTMLInputElement>)=>{
     let bpm:B = this.cloneState() as B;
     if(!bpm){return;}
@@ -121,9 +136,12 @@ class SongsFilter extends React.Component<P,S> {
   allSelect = ()=> this.setState({versions:verArr()});
   allUnselect = ()=> this.setState({versions:[]});
 
+  allClearTypeSelect = ()=> this.setState({clearType:clearArr()});
+  allClearTypeUnselect = ()=> this.setState({clearType:[]});
+
   render(){
     const {handleToggle} = this.props;
-    const {bpm,versions,bpi,memo,showLatestOnly} = this.state;
+    const {bpm,versions,bpi,memo,showLatestOnly,clearType} = this.state;
     return (
       <Dialog open={true} onClose={handleToggle}>
         <DialogTitle>詳細フィルタ</DialogTitle>
@@ -286,6 +304,37 @@ class SongsFilter extends React.Component<P,S> {
               />
             )
           })}
+          {this.props.clearType && (
+            <React.Fragment>
+              <Typography component="h6" variant="h6" style={{marginTop:"5px"}}>
+                クリアタイプ
+              </Typography>
+              <Button onClick={this.allClearTypeUnselect} color="primary" style={{color:buttonTextColor()}}>
+                すべて選択解除
+              </Button>
+              <Button onClick={this.allClearTypeSelect} color="primary" style={{color:buttonTextColor()}}>
+                すべて選択
+              </Button>
+              <Divider/>
+              {clearArr().map(item=>{
+                if(!this.props.clearType) return <React.Fragment/>;
+                return (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={clearType.indexOf(item) > -1}
+                        onChange={this.handleClearTypeChkBox(item)}
+                        value={item}
+                        color="primary"
+                      />
+                    }
+                    key={item}
+                    label={lampCSVArray[item]}
+                  />
+                )
+              })}
+            </React.Fragment>
+        )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleToggle} color="primary">

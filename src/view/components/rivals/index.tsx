@@ -34,7 +34,7 @@ class RivalIndex extends React.Component<P,S> {
   render(){
     const {currentTab} = this.state;
     return (
-      <div>
+      <React.Fragment>
         <Tabs
           value={this.state.currentTab}
           onChange={this.handleChange}
@@ -54,7 +54,7 @@ class RivalIndex extends React.Component<P,S> {
         {currentTab === 1 && <RecentlyAdded mode={0} compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
         {currentTab === 2 && <RecentlyAdded mode={1} compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
         {currentTab === 3 && <RecentlyAdded mode={2} compareUser={this.props.compareUser} last={this.props.last} arenaRank={this.props.arenaRank}/>}
-      </div>
+      </React.Fragment>
     );
   }
 }

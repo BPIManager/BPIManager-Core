@@ -105,7 +105,7 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
       return (<Loader/>);
     }
     return (
-      <div>
+      <React.Fragment>
         <div style={{display:"flex",justifyContent:"flex-end"}}>
           <div style={{margin:"10px 6px 0"}}>
             <SwipeableDrawer
@@ -120,7 +120,7 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
                     ライバル管理
                   </ListSubheader>
               }>
-                <ListItem button onClick={()=>this.props.history.push("/sync?init=1")}>
+                <ListItem button onClick={()=>this.props.history.push("/sync/settings?init=1")}>
                   <ListItemIcon><CloudUploadIcon/></ListItemIcon>
                   <ListItemText primary={"ライバルリストを同期"} secondary={"現在登録済みのライバルをアカウントに同期します。"}/>
                 </ListItem>
@@ -128,7 +128,7 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
                   <ListItemIcon><SyncIcon/></ListItemIcon>
                   <ListItemText primary={"ライバルスコアの一括更新"} secondary={"現在登録済みのライバルの登録スコアを一括で最新状態にアップデートします。"}/>
                 </ListItem>
-                <ListItem button onClick={()=>this.props.history.push("/sync?init=2")}>
+                <ListItem button onClick={()=>this.props.history.push("/sync/settings?init=3")}>
                   <ListItemIcon><NotificationsActiveIcon/></ListItemIcon>
                   <ListItemText primary={"プッシュ通知管理"} secondary={"指定したライバルのスコア更新を自動でお知らせします"}/>
                 </ListItem>
@@ -194,7 +194,7 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
         <AdsCard/>
         <ShowSnackBar message={message} variant={message === updateMinuteError ? "warning" : "success"}
             handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>
-      </div>
+      </React.Fragment>
     );
   }
 }

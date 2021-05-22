@@ -190,7 +190,7 @@ class WriteDialog extends React.Component<WP,{
     const {isLoading} = this.state;
     const tooLong = this.state.text.length > 500;
     return (
-      <div>
+      <React.Fragment>
         <Dialog open={true}>
           <DialogTitle>投稿を作成</DialogTitle>
           <DialogContent>
@@ -236,7 +236,7 @@ class WriteDialog extends React.Component<WP,{
             }
           </DialogActions>)}
         </Dialog>
-      </div>
+      </React.Fragment>
     );
   }
 }
@@ -317,7 +317,7 @@ export class EachMemo extends React.Component<{
       );
     }
     return (
-      <div>
+      <React.Fragment>
         <p>{memo}</p>
         <Grid container justify="space-around" alignItems="center">
           <Grid item>
@@ -332,7 +332,7 @@ export class EachMemo extends React.Component<{
           </Grid>
         </Grid>
         <Divider style={{margin:"10px 0"}}/>
-      </div>
+      </React.Fragment>
     );
   }
 }

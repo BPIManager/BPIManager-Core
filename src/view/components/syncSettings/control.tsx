@@ -122,7 +122,7 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
       }
     }
     return (
-      <div>
+      <React.Fragment>
         {(!_autoSync() && !hideAlert) && (
           <Alert severity="warning" style={{margin:"10px 0"}}>
             <AlertTitle>Auto-syncが無効です</AlertTitle>
@@ -280,7 +280,7 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
           <small>アカウント削除などを実行するには、ソーシャルアカウントで再連携し、本人であることを確認する必要があります。</small>
         </li>
         */}
-      </div>
+      </React.Fragment>
     );
   }
 }

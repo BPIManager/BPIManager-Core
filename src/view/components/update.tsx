@@ -40,7 +40,7 @@ export default class ReloadModal extends Component<{registration: ServiceWorkerR
       return null;
     }
     return (
-    <div>
+    <React.Fragment>
       <Dialog
         open={show}
       >
@@ -52,7 +52,7 @@ export default class ReloadModal extends Component<{registration: ServiceWorkerR
           </Container>
         </DialogContent>
       </Dialog>
-    </div>
+    </React.Fragment>
     );
   }
 }

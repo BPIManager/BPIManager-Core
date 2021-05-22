@@ -88,7 +88,7 @@ export class DiffsTable extends React.Component<{scoreTable:datasets[],yourEx:nu
     ];
     if(this.props.scoreTable.length === 1){ //自分以外いない場合
         return (
-        <div>
+        <React.Fragment>
           <Alert severity="warning" variant="outlined" style={{marginTop:"10px"}}>
             <AlertTitle>ライバルがいません!</AlertTitle>
             <p>総合BPIやアリーナランクなどの条件から、あなたと実力が拮抗しているライバルを探しましょう。</p>
@@ -96,7 +96,7 @@ export class DiffsTable extends React.Component<{scoreTable:datasets[],yourEx:nu
           <RLink to="/rivals" style={{textDecoration:"none"}}>
             <Button variant="outlined" color="secondary" fullWidth style={{margin:"10px 0"}}>ライバルを探す</Button>
           </RLink>
-        </div>
+        </React.Fragment>
       );
     }
     return (

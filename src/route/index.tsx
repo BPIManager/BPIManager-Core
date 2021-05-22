@@ -33,7 +33,6 @@ import RivalChallengeLetters from '../view/components/rivals/rivalChallengeLette
 import Note from '@/view/pages/note';
 import NoteIndv from '@/view/pages/noteIndv';
 import HelpNotes from '@/view/pages/helpNotes';
-import SitemapGen from '@/view/pages/sitemap';
 import HelpStart from '@/view/pages/helpStart';
 import RankingSearch from '@/view/pages/ranking/search';
 import WeeklyOnGoing from '@/view/pages/ranking/ongoing';
@@ -79,7 +78,6 @@ class Router extends React.Component<{},{}> {
                   <Route path="/u/:uid/:exactId?" exact component={User}/>
                   <Route path="/notes" exact component={Note}/>
                   <Route path="/notes/:title/:diff/:single" exact component={NoteIndv}/>
-                  <Route path="/sitemap" exact component={SitemapGen}/>
                   <Route path="/ranking/" exact component={RankingSearch}/>
                   <Route path="/ranking/id/:id" exact component={WeeklyOnGoing}/>
                   <Route path="/ranking/ongoing" exact component={WeeklyOnGoing}/>

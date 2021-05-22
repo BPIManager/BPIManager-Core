@@ -186,7 +186,7 @@ class AAATable extends React.Component<P,S> {
     ];
 
     return (
-      <div>
+      <React.Fragment>
         {isLoading && <Loader/>}
         <AdsCard/>
         {!isLoading && checks.sort((a,b)=>b-a).map((key:number)=>{
@@ -227,7 +227,7 @@ class AAATable extends React.Component<P,S> {
           closeModal={this.handleFilterModal} isChecked={this.isChecked} targetLevel={targetLevel} changeLevel={this.changeLevel} toggle={this.toggle}
           defaultPM={this.defaultPM} _default={this.default} result={result} handleChange={this.handleChange}
         />}
-      </div>
+      </React.Fragment>
     );
   }
 }

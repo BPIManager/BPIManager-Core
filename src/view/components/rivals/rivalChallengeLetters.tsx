@@ -3,7 +3,7 @@ import { loader } from '@/components/rivals/letters';
 import FilterByLevelAndDiff from '../common/selector';
 import LettersTable from './viewComponents/letters/table';
 import SongsFilter, {  B } from '../songs/common/filter';
-import { verArr, bpmFilter } from '../songs/common';
+import { verArr, bpmFilter, clearArr } from '../songs/common';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import BackspaceIcon from "@material-ui/icons/Backspace";
 import { difficultyDiscriminator } from '@/components/songs/filter';
@@ -55,7 +55,8 @@ interface stateInt {
   orderTitle:number,
   orderMode:number,
   versions:number[],
-  userData:any
+  userData:any,
+  clearType:number[]
 }
 
 class RivalChallengeLetters extends React.Component<P&RouteComponentProps,stateInt> {
@@ -83,7 +84,8 @@ class RivalChallengeLetters extends React.Component<P&RouteComponentProps,stateI
       page:0,
       filterOpen:false,
       versions:verArr(),
-      userData:null
+      userData:null,
+      clearType:clearArr(),
     }
   }
 
@@ -208,7 +210,7 @@ class RivalChallengeLetters extends React.Component<P&RouteComponentProps,stateI
   }
 
   render(){
-    const {isLoading,scoreData,options,page,full,filterOpen,versions,filterByName,orderMode,orderTitle} = this.state;
+    const {isLoading,scoreData,options,page,full,filterOpen,versions,filterByName,orderMode,orderTitle,clearType} = this.state;
     const orders = [
       "勝率",
       "勝利数",
@@ -300,7 +302,7 @@ class RivalChallengeLetters extends React.Component<P&RouteComponentProps,stateI
         <LettersTable full={full}
           page={page} handleChangePage={this.handleChangePage}
           data={this.sortedData()} isLoading={isLoading}/>
-        {filterOpen && <SongsFilter versions={versions} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpm={this.state.bpm}/>}
+        {filterOpen && <SongsFilter versions={versions} clearType={clearType} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpm={this.state.bpm}/>}
       </Container>
     );
   }

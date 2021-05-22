@@ -28,6 +28,7 @@ interface S {
   targetVersion:string,
   targetLevel:string,
   way:number,
+  errors:scatterGraph[],
 }
 
 class ScatterGraph extends React.Component<{},S> {
@@ -41,6 +42,7 @@ class ScatterGraph extends React.Component<{},S> {
       targetVersion:String(Number(_currentStore()) - 1),
       targetLevel:"12",
       way:0,
+      errors:[]
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
@@ -65,23 +67,36 @@ class ScatterGraph extends React.Component<{},S> {
     const db = await new scoresDB(isSingle,currentVersion).loadStore();
     const currentVer = await db.getItemsBySongDifficulty(targetLevel);
     const lastVer = await db.getItemsBySongDifficultyWithSpecificVersion(targetLevel,targetVersion);
-    let scatterGraph:{label:string,x:number,y:number,last:number}[]  = [];
+    let scatterGraph:scatterGraph[]  = [];
+    let errors:scatterGraph[] = [];
     for(let item in currentVer){
       const current = currentVer[item];
       const last = targetVersion === "OBPI" ? goalBPI : lastVer[current.title + current.difficulty];
-      if(!Number.isNaN(last)){
-        scatterGraph.push({
+      const x = way === 0 && last !== 0 ? Math.ceil( 1000 * current.currentBPI / last )  / 10  - 100 : way === 1 ? current.currentBPI - last : last;
+      if((last && !Number.isNaN(last)) && (current.currentBPI && !Number.isNaN(current.currentBPI)) && (x && !Number.isNaN(x))){
+        const p = {
           label:current.title + _prefix(current.difficulty),
-          x:way === 0 && last !== 0 ? Math.ceil( 1000 * current.currentBPI / last )  / 10  - 100 : way === 1 ? current.currentBPI - last : last,
+          x:x,
           y:current.currentBPI,
           last:last
-        })
+        };
+        if( x > 500 || x < -500 ){
+          errors.push(p);
+        }else{
+          scatterGraph.push(p);
+        }
+      }else{
+        errors.push({
+          label:current.title + _prefix(current.difficulty),
+          x:NaN,y:NaN,last:NaN
+        });
       }
     }
     //BPI別集計
     this.setState(Object.assign({
       isLoading:false,
       scatterGraph:scatterGraph,
+      errors:errors
     },newData));
   }
 
@@ -93,7 +108,7 @@ class ScatterGraph extends React.Component<{},S> {
   }
 
   render(){
-    const {isLoading,scatterGraph,currentVersion,targetVersion,targetLevel,way} = this.state;
+    const {isLoading,scatterGraph,currentVersion,targetVersion,targetLevel,way,errors} = this.state;
     const CustomTooltip = (props:any) => {
       if (props.active && props.payload[0].payload) {
         const p = props.payload[0].payload;
@@ -108,6 +123,7 @@ class ScatterGraph extends React.Component<{},S> {
       }
       return (null);
     }
+    console.log(scatterGraph,errors);
     const chartColor = _chartColor();
     return (
       <Container fixed  style={{padding:0}}>
@@ -165,11 +181,11 @@ class ScatterGraph extends React.Component<{},S> {
                       <ResponsiveContainer>
                         <ScatterChart margin={{top: 5, right: 30, left: -30, bottom: 30,}}>
                           <CartesianGrid />
-                          <XAxis type="number" dataKey="x" name="前作比較" unit={way === 0 ? "％" : ""} stroke={chartColor} />
-                          <YAxis type="number" dataKey="y" name="今作BPI" unit="" stroke={chartColor} />
+                          <XAxis type="number" dataKey={way === 2 ? "y" : "x"} name="前作比較" unit={way === 0 ? "％" : ""} stroke={chartColor} />
+                          <YAxis type="number" dataKey={way === 2 ? "last" : "y"} name="今作BPI" unit={""} stroke={chartColor} />
                           <Tooltip content={<CustomTooltip />} cursor={{ strokeDasharray: '3 3' }} />
-                        <Scatter data={scatterGraph} fill="#8884d8" />
-                      </ScatterChart>
+                          <Scatter data={scatterGraph} fill="#8884d8" />
+                        </ScatterChart>
                     </ResponsiveContainer>
                   </div>
                 </Grid>
@@ -180,7 +196,19 @@ class ScatterGraph extends React.Component<{},S> {
             </Paper>
           </Grid>
         </Grid>
-
+        {errors.length > 0 && (
+        <Alert severity="error" style={{margin:"10px 0"}}>
+          <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>すべてを表示していません</AlertTitle>
+          <p>
+            以下のデータについて、グラフ上の表示を省略しています。
+          </p>
+          <ul>
+            {errors.map((item:scatterGraph,i:number)=>{
+              return <li key={i}>{item.label} / x:{item.x} y:{item.y}</li>
+            })}
+          </ul>
+        </Alert>
+        )}
         <Alert severity="info" style={{margin:"10px 0"}}>
           <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>分布機能について</AlertTitle>
           <p>

@@ -177,7 +177,7 @@ class SyncRivalScreen extends React.Component<P,S> {
   render(){
     const {processing,errorMessage,syncData,notUploaded,onServer,onLocal,message,variant,showSnackBar} = this.state;
     return (
-      <div>
+      <React.Fragment>
         <Paper style={{padding:"15px"}}>
           <ButtonGroup fullWidth variant="contained" color="secondary">
             <Button ref={this.refServer} disabled={processing} onClick={()=>this.handleToggle(0)} endIcon={<ArrowDropDownIcon/>}>アカウント</Button>
@@ -277,7 +277,7 @@ class SyncRivalScreen extends React.Component<P,S> {
         </Alert>
         <ShowSnackBar message={message} variant={variant}
             handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>
-      </div>
+      </React.Fragment>
     );
   }
 }

@@ -15,7 +15,7 @@ interface P {
   orderTitles:string[]
 }
 
-export default class extends React.Component<P,{}> {
+class OrderBox extends React.Component<P,{}> {
 
   render(){
     const {orderTitle,orderMode,handleOrderModeChange,handleOrderTitleChange,orderTitles} = this.props;
@@ -44,3 +44,5 @@ export default class extends React.Component<P,{}> {
     );
   }
 }
+
+export default OrderBox;

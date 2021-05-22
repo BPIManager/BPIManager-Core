@@ -67,7 +67,8 @@ import {Link as RefLink} from '@material-ui/core/';
       "body":
         <div>
           本機能を用いることで、スコアデータをクラウド上に保管し不慮の事故による消失を防いだり、「ライバル」機能を用いて他の人にスコアを公開することができます。<br/>
-          TwitterまたはGoogleアカウントによるソーシャルログインに対応しています。
+          TwitterまたはGoogleアカウントによるソーシャルログインに対応しています。<br/><br/>
+          *アカウントの削除を希望する場合はTwitter(@BPIManager)までお問い合わせください。
         </div>
     },{
       "title":"Help.Contact",

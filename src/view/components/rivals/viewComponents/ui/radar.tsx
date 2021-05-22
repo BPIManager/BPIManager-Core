@@ -3,7 +3,7 @@ import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadius
 import { _chartColor } from "@/components/settings";
 import { radarData } from "@/components/stats/radar";
 
-export default class extends React.Component<{
+class RadarBox extends React.Component<{
   radar:radarData[]
 },{}>{
 
@@ -26,3 +26,5 @@ export default class extends React.Component<{
     );
   }
 }
+
+export default RadarBox;

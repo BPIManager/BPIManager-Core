@@ -23,17 +23,19 @@ import { _prefix, _prefixFromNum } from '@/components/songs/filter';
 import equal from 'fast-deep-equal'
 import { _isSingle, _showLatestSongs } from '@/components/settings';
 import Button from '@material-ui/core/Button';
-import { bpmFilter,bpiFilter,verArr } from '../common';
+import { bpmFilter,bpiFilter } from '../common';
 import SongsFilter, { B, BPIR } from '../common/filter';
 import OrderControl from "../common/orders";
 import { commonFunc } from '@/components/common';
 import FilterByLevelAndDiff from '@/view/components/common/selector';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '@/view/components/common/loader';
-import { toMoment, isSameDay, isSameWeek, _isBetween, subtract, isBefore, timeCompare } from '@/components/common/timeFormatter';
+import { timeCompare } from '@/components/common/timeFormatter';
 import TimeRangeDialog from '../common/timeRange';
+import { songFuncInList } from '@/components/songs/func/songList';
+import { defaultState_songsList } from '@/components/songs/default/states';
 
-interface stateInt {
+export interface songsList_stateInt {
   isLoading:boolean,
   filterByName:string,
   scoreData:scoreData[],
@@ -54,7 +56,8 @@ interface stateInt {
   showLatestOnly:boolean,
   orderTitle:number,
   orderMode:number,
-  versions:number[]
+  versions:number[],
+  clearType:number[]
 }
 
 interface P{
@@ -67,46 +70,13 @@ interface P{
 
 const ranges = [{val:0,label:"全期間"},{val:1,label:"本日更新"},{val:2,label:"前日更新"},{val:3,label:"今週更新"},{val:5,label:"期間指定"},{val:4,label:"1ヶ月以上未更新"}]
 
-class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
+class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt> {
 
   constructor(props:P&RouteComponentProps){
     super(props);
     const search = new URLSearchParams(props.location.search);
-    const initialBPIRange = search.get("initialBPIRange");
-    this.state = {
-      isLoading:true,
-      filterByName:"",
-      scoreData:[],
-      allSongsData:{},
-      mode:0,
-      options:{
-        level:["11","12"],
-        difficulty:["0","1","2"],
-      },
-      bpm:{
-        noSoflan:true,
-        min:"",
-        max:"",
-        soflan:true,
-      },
-      bpi:{
-        min:initialBPIRange ? Number(initialBPIRange) : "",
-        max:initialBPIRange && initialBPIRange !== "100" ? Number(initialBPIRange) + 10 : "",
-      },
-      dateRange:{
-        from:toMoment(new Date()),
-        to:toMoment(new Date()),
-      },
-      memo:false,
-      showLatestOnly:false,
-      range:0,
-      page:0,
-      filterOpen:false,
-      timeRangeOpen:false,
-      orderTitle:2,
-      orderMode:1,
-      versions:verArr()
-    }
+    const initialBPIRange = search.get("initialBPIRange") || undefined;
+    this.state = defaultState_songsList(initialBPIRange);
     this.updateScoreData = this.updateScoreData.bind(this);
   }
 
@@ -163,66 +133,31 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
     return this.setState({scoreData:this.songFilter(newState),filterByName:newState.filterByName,page:0});
   }
 
-  songFilter = (newState:stateInt = this.state) =>{
+  songFilter = (newState:songsList_stateInt = this.state) =>{
     const diffs:string[] = ["hyper","another","leggendaria"];
-    const m = newState.mode;
-    const r = newState.range;
-    const rb = newState.dateRange;
     const b = newState.bpm;
-    const _memo = newState.memo;
     const bpir = newState.bpi;
-    const v = newState.versions;
     const f = this.state.allSongsData;
 
-    const evaluateRange = (data:scoreData):boolean=>{
-      return r === 0 ? true :
-      r === 1 ? isSameDay(data.updatedAt) :
-      r === 2 ? isSameDay(data.updatedAt,subtract(1, 'day')) :
-      r === 3 ? isSameWeek(data.updatedAt,new Date()) :
-      r === 5 ? _isBetween(data.updatedAt,rb.from,rb.to) :
-      isBefore(data.updatedAt);
-    }
-
-    const evaluateMode = (data:scoreData,max:number):boolean=>{
-      return m === 0 ? true :
-      m === 1 ? data.exScore / max < 2 / 3 :
-      m === 2 ? data.exScore / max < 7 / 9 && 2/3 < data.exScore / max :
-      m === 3 ? data.exScore / max < 8 / 9 && 7/9 < data.exScore / max :
-      m === 4 ? data.exScore / max < 17 / 18 && 8/9 < data.exScore / max :
-      m === 5 ? true :
-      m === 6 ? data.clearState <= 3 :
-      m === 7 ? data.clearState <= 4 :
-      m === 8 ? data.clearState <= 5 : true
-    }
-
-    const evaluateVersion = (song:string):boolean=>{
-      const songVer = song.split("/")[0];
-      if(songVer === "s"){
-        return v.indexOf(1.5) > -1;
-      }
-      return v.indexOf(Number(songVer)) > -1;
-    }
-
-    const availableMemo = (memo?:string)=>{
-      if(!_memo){
-        return true;
-      }else{
-        return memo !== "" && memo !== undefined;
-      }
-    }
+    const sFunc = new songFuncInList(newState);
 
     if(Object.keys(this.state.allSongsData).length === 0) return [];
     return this.props.full.filter((data)=>{
       const _f = f[data.title + _prefix(data["difficulty"])];
+
+      sFunc.setData(data);
+
       if(!_f){return false;}
+
       const max = _f["notes"] * 2;
       return (
         bpmFilter(_f.bpm,b) &&
         bpiFilter(data.currentBPI,bpir) &&
-        evaluateRange(data) &&
-        evaluateMode(data,max) &&
-        evaluateVersion(_f.textage) &&
-        availableMemo(_f.memo) &&
+        sFunc.evaluateRange() &&
+        sFunc.evaluateMode(max) &&
+        sFunc.evaluateVersion(_f.textage) &&
+        sFunc.availableMemo(_f.memo) &&
+        sFunc.evaluateClearType(data.clearState) &&
         newState["options"]["level"].some((item:string)=>{
           return item === data.difficultyLevel }) &&
         newState["options"]["difficulty"].some((item:string)=>{
@@ -320,13 +255,14 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
     return this.setState({scoreData:this.songFilter(newState),range:event.target.value,page:0});
   }
 
-  applyFilter = (state:{bpm:B,versions:number[],memo:boolean|null,showLatestOnly:boolean|null}):void=>{
+  applyFilter = (state:{bpm:B,versions:number[],memo:boolean|null,showLatestOnly:boolean|null,clearType:number[]}):void=>{
     let newState = this.clone();
     newState.bpm = state.bpm;
     newState.versions = state.versions;
+    newState.clearType = state.clearType;
     newState.memo = typeof state.memo !== "boolean" ? false : state.memo;
     newState.showLatestOnly = typeof state.showLatestOnly !== "boolean" ? false : state.showLatestOnly;
-    return this.setState({scoreData:this.songFilter(newState),bpm:state.bpm,versions:state.versions,memo:newState.memo,showLatestOnly:newState.showLatestOnly,page:0});
+    return this.setState({scoreData:this.songFilter(newState),bpm:state.bpm,versions:state.versions,clearType:state.clearType,memo:newState.memo,showLatestOnly:newState.showLatestOnly,page:0});
   }
 
   applyTimeFilter = (state:{from:string,to:string}):void=>{
@@ -347,7 +283,7 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
   render(){
     const {formatMessage} = this.props.intl;
     const {isFav} = this.props;
-    const {isLoading,filterByName,options,orderMode,orderTitle,mode,range,page,filterOpen,versions,timeRangeOpen,showLatestOnly} = this.state;
+    const {isLoading,filterByName,options,orderMode,orderTitle,mode,range,page,filterOpen,versions,timeRangeOpen,showLatestOnly,clearType} = this.state;
     const orders = [
       formatMessage({id:"Orders.Title"}),
       formatMessage({id:"Orders.Level"}),
@@ -430,7 +366,7 @@ class SongsList extends React.Component<P&RouteComponentProps,stateInt> {
           data={this.sortedData()} mode={mode}
           allSongsData={this.state.allSongsData}
           updateScoreData={this.updateScoreData}/>
-        {filterOpen && <SongsFilter versions={versions} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpi={this.state.bpi} bpm={this.state.bpm} memo={this.state.memo} showLatestOnly={showLatestOnly}/>}
+        {filterOpen && <SongsFilter versions={versions} clearType={clearType} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpi={this.state.bpi} bpm={this.state.bpm} memo={this.state.memo} showLatestOnly={showLatestOnly}/>}
         {timeRangeOpen && <TimeRangeDialog handleToggle={this.toggleTimeRangeDialog} dateRange={this.state.dateRange} applyTimeFilter={this.applyTimeFilter}/>}
       </Container>
     );

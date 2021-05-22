@@ -134,7 +134,7 @@ const ja = {
   "Settings.dpDescription":"オンにすることでDPのスコアを登録できます。",
   "Help.title":"説明書",
   "Help.AboutThisSite":"このサイトについて",
-  "Help.Functions":"機能について",
+  "Help.Functions":"何ができるの？",
   "Help.HowToUse":"楽曲スコアの登録方法",
   "Help.AboutBPI":"BPIについて",
   "Help.Updates":"Updates",

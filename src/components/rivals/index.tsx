@@ -9,20 +9,20 @@ export const getTwitterName = (input:string)=>{
   return match ? match[0].replace(/@/g,"") : "";
 }
 
-export const getAltTwitterIcon = (data:rivalStoreData|DBRivalStoreData,isLocal:boolean = false):string=>{
+export const getAltTwitterIcon = (data:rivalStoreData|DBRivalStoreData,isLocal:boolean = false,size:string = "original"):string=>{
   if(isLocal){
     data = data as DBRivalStoreData;
     if(data.socialId){
-      return "https://proxy.poyashi.me/img?screen_name=" + data.socialId;
+      return "https://proxy.poyashi.me/img?screen_name=" + data.socialId + "&size=" + size;
     }
   }else{
     data = data as rivalStoreData;
     if(data.twitter){
-      return "https://proxy.poyashi.me/img?screen_name=" + data.twitter;
+      return "https://proxy.poyashi.me/img?screen_name=" + data.twitter + "&size=" + size;
     }
   }
   if(data.profile){
-    return getTwitterName(data.profile) ? "https://proxy.poyashi.me/img?screen_name=" + getTwitterName(data.profile) : alternativeImg(data.uid);
+    return getTwitterName(data.profile) ? "https://proxy.poyashi.me/img?screen_name=" + getTwitterName(data.profile) + "&size=" + size : alternativeImg(data.uid);
   }
   return alternativeImg(data.uid);
 }

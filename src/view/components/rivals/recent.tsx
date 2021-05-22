@@ -199,7 +199,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
     const {isLoading,isModalOpen,showSnackBar,activated,res,rivals,processing,message,variant,arenaRank,currentUserName,searchInput,myId,isLast} = this.state;
     const {mode} = this.props;
     return (
-      <div>
+      <React.Fragment>
         {mode === 2 && (
           <form noValidate autoComplete="off">
             <Grid container spacing={1} style={{margin:"5px 0"}}>
@@ -269,7 +269,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
       {isModalOpen && <ModalUser isOpen={isModalOpen} currentUserName={currentUserName} handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
       <ShowSnackBar message={message} variant={variant}
           handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>
-      </div>
+      </React.Fragment>
     );
   }
 }

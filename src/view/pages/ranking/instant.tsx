@@ -87,7 +87,7 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
     if(isLoading){
       return (
         <Alert icon={false} severity="info" variant="outlined" style={{borderLeft:"0",borderRight:"0",borderRadius:"0px",borderBottom:"0",borderTopRightRadius:"10px",borderTopLeftRadius:"10px",backdropFilter:"blur(5px)",borderColor:borderColor()}}>
-          <Loader text="ランキングをロード中"/>
+          <Loader text="認証中"/>
         </Alert>
       );
     }

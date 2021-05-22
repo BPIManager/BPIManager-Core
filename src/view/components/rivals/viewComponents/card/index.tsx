@@ -34,7 +34,7 @@ export default class UserCard extends React.Component<{
             <Avatar onClick={()=>this.props.open(item.displayName)}>
               <img src={item.photoURL ? item.photoURL : "noimg"} style={{width:"100%",height:"100%"}}
                 alt={item.displayName}
-                onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(item) || alternativeImg(item.displayName)}/>
+                onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(item,false,"normal") || alternativeImg(item.displayName)}/>
             </Avatar>
           }
           title={<div onClick={()=>this.props.open(item.displayName)}>{item.displayName}&nbsp;<small>{updatedTime(item.serverTime.toDate())}</small></div>}

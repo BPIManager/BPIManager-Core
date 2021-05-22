@@ -515,11 +515,10 @@ html,body{
 
 .swipeableContentTab{
   display: block;
-  width:25px;
+  width:50%;
   height: 4px;
   background: #fff;
   opacity:.5;
-  margin:0 5px;
 }
 
 .swipeableContentTab.active{

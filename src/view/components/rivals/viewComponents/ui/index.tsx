@@ -14,7 +14,7 @@ import { _isSingle } from '@/components/settings';
 import OrderControl from "@/view/components/songs/common/orders";
 import Button from '@material-ui/core/Button';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import { verArr, bpmFilter } from '@/view/components/songs/common';
+import { verArr, bpmFilter, clearArr } from '@/view/components/songs/common';
 import SongsFilter, { B } from '@/view/components/songs/common/filter';
 import { commonFunc } from '@/components/common';
 import FilterByLevelAndDiff from "@/view/components/common/selector";
@@ -22,10 +22,11 @@ import { withRivalData } from '@/components/stats/radar';
 import { songData } from '@/types/data';
 import Loader from '@/view/components/common/loader';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import timeFormatter, { toMoment, timeCompare } from '@/components/common/timeFormatter';
+import timeFormatter, { timeCompare } from '@/components/common/timeFormatter';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import Link from '@material-ui/core/Link';
+import { songFuncWithRival } from '@/components/songs/func/withRival';
 
 interface stateInt {
   isLoading:boolean,
@@ -39,6 +40,7 @@ interface stateInt {
   orderTitle:number,
   orderMode:number,
   versions:number[],
+  clearType:number[],
   bpm:B,
   todayOnly:string
 }
@@ -79,6 +81,7 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
         soflan:true,
       },
       versions:verArr(),
+      clearType:clearArr(),
       todayOnly:initialView ? initialView : ""
     }
   }
@@ -134,39 +137,22 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
     const v = newState.versions;
     const b = newState.bpm;
     const f = newState.allSongsData;
+    const c = newState.clearType;
     const todayOnly = newState.todayOnly;
 
-    const evaluateVersion = (song:string):boolean=>{
-      const songVer = song.split("/")[0];
-      if(songVer === "s"){
-        return v.indexOf(1.5) > -1;
-      }
-      return v.indexOf(Number(songVer)) > -1;
-    }
+    const sFunc = new songFuncWithRival();
 
     return this.props.full.filter((data)=>{
       const _f = f[data.title + _prefix(data["difficulty"])];
       const pm:string[] = this.state.options.pm;
       if(!_f){return false;}
-      const evaluateGap = ()=>{
-        const plus = pm.indexOf("+") > -1;
-        const minus = pm.indexOf("-") > -1;
-        if(!plus && minus) return data.myEx - data.rivalEx <= 0;
-        if(plus && !minus) return data.myEx - data.rivalEx > 0;
-        return plus && minus ? true : false;
-      }
-      const isTodayOnly = ()=>{
-        if(!todayOnly){
-          return true;
-        }else{
-          return toMoment(data.rivalLastUpdate) === toMoment(todayOnly === "1" ? new Date() : todayOnly);
-        }
-      }
+      sFunc.setData(data);
       return (
         bpmFilter(_f.bpm,b) &&
-        evaluateVersion(_f.textage) &&
-        evaluateGap() &&
-        isTodayOnly() &&
+        sFunc.evaluateVersion(_f.textage,v) &&
+        sFunc.evaluateGap(pm) &&
+        sFunc.isTodayOnly(todayOnly) &&
+        sFunc.evaluateClearType(data.rivalClearState,c) &&
         newState["options"]["level"].some((item:string)=>{
           return item === data.difficultyLevel }) &&
         newState["options"]["difficulty"].some((item:string)=>{
@@ -259,11 +245,12 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
     return this.setState({orderMode:val,page:0});
   }
 
-  applyFilter = (state:{bpm:B,versions:number[]}):void=>{
+  applyFilter = (state:{bpm:B,versions:number[],clearType:number[]}):void=>{
     let newState = this.clone();
     newState.bpm = state.bpm;
     newState.versions = state.versions;
-    return this.setState({scoreData:this.songFilter(newState),bpm:state.bpm,versions:state.versions,page:0});
+    newState.clearType = state.clearType;
+    return this.setState({scoreData:this.songFilter(newState),clearType:state.clearType,bpm:state.bpm,versions:state.versions,page:0});
   }
 
   timeFormat = ()=>{
@@ -273,7 +260,7 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
 
   render(){
     const {formatMessage} = this.props.intl;
-    const {isLoading,filterByName,options,orderMode,orderTitle,page,mode,filterOpen,versions,todayOnly} = this.state;
+    const {isLoading,filterByName,options,orderMode,orderTitle,page,mode,filterOpen,versions,todayOnly,clearType} = this.state;
     const _my = formatMessage({id:"Orders.My"}), _rival = formatMessage({id:"Orders.Rival"});
     let orders = [
       formatMessage({id:"Orders.Title"}),
@@ -349,7 +336,7 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
         <Table
           page={page} handleChangePage={this.handleChangePage}
           data={this.sortedData()} mode={mode}/>
-        {filterOpen && <SongsFilter versions={versions} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpm={this.state.bpm}/>}
+        {filterOpen && <SongsFilter versions={versions} clearType={clearType} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpm={this.state.bpm}/>}
       </div>
     );
   }

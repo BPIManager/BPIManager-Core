@@ -49,7 +49,11 @@ class Shared extends React.Component<RouteComponentProps,S> {
     this.load();
   }
 
-  load = async()=>{
+  componentWillUnmount(){
+    window.document.title = "BPI Manager";
+  }
+
+  private load = async()=>{
     const fba = new fbActions();
     const scoreData = await fba.setColName("shared").setDocName((this.props.match.params as any).id).load();
     if(!scoreData){
@@ -66,13 +70,9 @@ class Shared extends React.Component<RouteComponentProps,S> {
     })
   }
 
-  componentWillUnmount(){
-    window.document.title = "BPI Manager";
-  }
-
   private calc:bpiCalcuator = new bpiCalcuator();
 
-  makeGraph = (newScore?:number):chartData[]=>{
+  private makeGraph = (newScore?:number):chartData[]=>{
     let data:chartData[] = [],lastExScore = 0;
     const {song,score} = this.state;
     const dataInserter = (exScore:number,label:string):number=>{
@@ -101,21 +101,21 @@ class Shared extends React.Component<RouteComponentProps,S> {
     return data;
   }
 
-  showRank = (isBody:boolean):string=>{
+  private showRank = (isBody:boolean):string=>{
     const {song,score} = this.state;
     if(!song || !score){return "-";}
     const max:number = song.notes * 2;
     return _djRank(false,isBody,max,score.exScore);
   }
 
-  percentage = ():string=>{
+  private percentage = ():string=>{
     const {song,score} = this.state;
     if(!song || !score){return "-";}
     const max:number = song.notes * 2;
     return Number(score.exScore / max * 100).toFixed(2) + "%";
   }
 
-  userName = ():string=>{
+  private userName = ():string=>{
     const {userData} = this.state;
     if(userData && userData.displayName){
       return userData.displayName
@@ -123,7 +123,7 @@ class Shared extends React.Component<RouteComponentProps,S> {
     return "ライバル";
   }
 
-  shareText = ():string=>{
+  private shareText = ():string=>{
     const {score,song} = this.state;
     if(!score || !song){
       return "";
@@ -134,7 +134,7 @@ class Shared extends React.Component<RouteComponentProps,S> {
     return `[${diff > 0 ? "+" + diff : diff}] ${song.title}${_prefixFromNum(song.difficulty,true)} [EX:${exscore}(${this.showRank(false)}${this.showRank(true)})][BPI:${bpi}]`;
   }
 
-  calcRank = ()=> this.state.score ? `${this.calc.rank(this.state.score.currentBPI)}` : "-";
+  private calcRank = ()=> this.state.score ? `${this.calc.rank(this.state.score.currentBPI)}` : "-";
 
   render(){
     const {isLoading,score,userData,song,you} = this.state;

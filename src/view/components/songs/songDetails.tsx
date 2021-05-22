@@ -34,7 +34,7 @@ class SongDetails extends React.Component<P> {
     }
     const max = song.notes * 2;
     return (
-      <div>
+      <React.Fragment>
         <Paper>
           <Table aria-label="Score Details">
             <TableHead>
@@ -152,14 +152,16 @@ class SongDetails extends React.Component<P> {
               </TableRow>
               <TableRow>
                 <TableCell>Plot</TableCell>
-                <TableCell><img src={`https://files.poyashi.me/bpim/plots/27_end/`+ song.title.replace(/:|"|\*|†$/g,"") + "[" + _prefixFullNum(song.difficulty) + "].jpeg"}
+                <TableCell>
+                  <img src={`https://files.poyashi.me/bpim/plots/27_end/`+ song.title.replace(/:|"|\*|†$/g,"") + "[" + _prefixFullNum(song.difficulty) + "].jpeg"}
                   alt="plot"
-                  style={{maxWidth:"100%"}} onError={(e)=>(e.target as HTMLImageElement).src = 'https://files.poyashi.me/noimg.png'}/></TableCell>
+                  style={{maxWidth:"100%"}} onError={(e)=>(e.target as HTMLImageElement).src = 'https://files.poyashi.me/noimg.png'}/>
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>
         </Paper>
-      </div>
+      </React.Fragment>
     );
   }
 }

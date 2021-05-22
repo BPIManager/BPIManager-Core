@@ -74,7 +74,6 @@ class Index extends React.Component<P&RouteComponentProps,{
 
   async componentDidMount(){
     const user = JSON.parse(localStorage.getItem("social") || "{}");
-    console.log(user);
     if(user){
       const bpi = new bpiCalcuator();
       const exec = await new statMain(12).load();
@@ -147,10 +146,20 @@ class Index extends React.Component<P&RouteComponentProps,{
           continue;
         }
         const item = all[result[i]["title"] + result[i]["difficulty"]];
-        if(item && ((item["exScore"] === 0 || Number.isNaN(item["exScore"])) || (item["exScore"] >= result[i]["exScore"] && item["clearState"] === result[i]["clearState"]) || timeCompare(result[i]["updatedAt"],item["updatedAt"]) <= 0)){
-          ++skipped;
-          continue;
+        if(
+          item && (
+            (
+              item["exScore"] === 0 ||
+              Number.isNaN(item["exScore"])) ||
+              (item["exScore"] >= result[i]["exScore"] && item["clearState"] === result[i]["clearState"]) ||
+              timeCompare(result[i]["updatedAt"],item["updatedAt"]) <= 0
+            )
+          ){
+            //データ更新がない場合、スキップ
+            ++skipped;
+            continue;
         }
+        //データ更新がある場合、更新キューに追加
         scores.push(Object.assign(
           result[i],
           {
@@ -170,6 +179,7 @@ class Index extends React.Component<P&RouteComponentProps,{
       }
       this.props.global.setMove(false);
       errors.unshift(result.length + "件処理しました," + updated + "件更新しました," + skipped + "件スキップされました,"+ errorOccured + "件追加できませんでした");
+
       const bpi = new bpiCalcuator();
       const statsAPI = await new statMain(12).load();
       const totalBPI = bpi.setSongs(statsAPI.at(),statsAPI.at().length);
@@ -179,6 +189,7 @@ class Index extends React.Component<P&RouteComponentProps,{
       const rankPer = Math.round(rank / bpi.getTotalKaidens() * 1000000) / 10000;
       const updatedText = `BPIManagerでスコアを${updated}件更新しました%0a総合BPI:${totalBPI}(前日比:${showBpiDist(totalBPI,lastDay)},前週比:${showBpiDist(totalBPI,lastWeek)})%0a推定順位:${rank}位,皆伝上位${rankPer}％`;
       return this.setState({isSaving:false,raw:"",stateText:"Data.Success",errors:errors,updated:updated,updatedText:updatedText});
+
     }catch(e){
       console.log(e);
       this.props.global.setMove(false);
@@ -385,12 +396,17 @@ class Navigation extends React.Component<{},{currentTab:number}>{
             <p>5.(省略可能)上記テキストボックスにコピーしたデータを貼り付けます。</p>
             <p>6.「取り込み実行」ボタンをクリックします。</p>
             <p>7.以上！</p>
-            <p>注意事項<br/>
-            IIDX公式サイトの仕様変更によりブックマークレットが機能しなくなるかもしれません。その場合はお問い合わせください。<br/>
-            ブックマークレットにより更新できる情報はEXスコアとクリアランプのみです。ミスカウントなどは集計されません。<br/>
-            更新日時は最終プレイ日時ではなく、取り込み日時となります。<br/>
-            ブックマークレットは現段階ではSPのみ対応しています。
-            </p>
+            <Alert severity="warning">
+              <AlertTitle>
+                注意事項
+              </AlertTitle>
+              <p>
+              IIDX公式サイトの仕様変更によりブックマークレットが機能しなくなるかもしれません。その場合はお問い合わせください。<br/>
+              ブックマークレットにより更新できる情報はEXスコアとクリアランプのみです。ミスカウントなどは集計されません。<br/>
+              更新日時は最終プレイ日時ではなく、取り込み日時となります。<br/>
+              ブックマークレットは現段階ではSPのみ対応しています。
+              </p>
+            </Alert>
           </div>
         )}
       </div>

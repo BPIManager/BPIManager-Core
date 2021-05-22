@@ -282,7 +282,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
     ]
     const { classes,history } = this.props;
     const drawer = (isPerment:boolean)=>(
-      <div>
+      <React.Fragment>
         <div style={{margin:"8px 0",padding:"0 8px"}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
             <Logo onClick={()=>{history.push("/");if(!isPerment){this.toggleNav()}}} style={{width:"44px",height:"44px"}}/>
@@ -347,11 +347,11 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
           <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink><br/>
           <RefLink color="secondary" href="https://forms.gle/yVCa8sP2ndEQNaxg8">アンケートにご協力下さい </RefLink>
         </Typography>
-      </div>
+      </React.Fragment>
     );
     if(page[1] === ""){
       return (
-        <div>
+        <React.Fragment>
           <nav className={classes.drawer}>
             <Drawer open={isOpen} onClose={this.toggleNav}
               classes={{
@@ -363,7 +363,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
           <main style={{width:"100%"}}>
             <Index toggleNav={this.toggleNav}/>
           </main>
-        </div>
+        </React.Fragment>
       );
     }
 

@@ -111,7 +111,7 @@ class PushSettings extends React.Component<P,S> {
     const {syncData,permission,processing} = this.state;
     if(!permission){
       return (
-        <div>
+        <React.Fragment>
           <Paper style={{padding:"15px"}}>
             <Typography component="h6" variant="h6" color="textPrimary">
               ライバルの更新を通知
@@ -129,10 +129,10 @@ class PushSettings extends React.Component<P,S> {
               iOSには対応していません。Android/Windows PCでのみ利用可能です。
             </Typography>
           </Paper>
-        </div>);
+        </React.Fragment>);
     }
     return (
-      <div>
+      <React.Fragment>
         <Paper style={{padding:"15px"}}>
           <List
             subheader={
@@ -211,7 +211,7 @@ class PushSettings extends React.Component<P,S> {
             使用中のデバイス:通知を{firebase.messaging.isSupported() ? "利用可能" : "利用不可"}
           </p>
         </Alert>
-      </div>
+      </React.Fragment>
     );
   }
 }

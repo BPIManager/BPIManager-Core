@@ -358,7 +358,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     const themeColor = _currentTheme();
 
     return (
-      <div style={{width:"100%"}}>
+      <React.Fragment>
         <Helmet>
           <meta name="description"
             content={`${res.displayName}さんのbeatmaniaIIDX スコアデータを閲覧できます。総合BPI:${totalBPI},アリーナランク:${res.arenaRank || "登録なし"}。${res.profile}`}
@@ -419,7 +419,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
             </div>
           </SwipeableViews>
         </div>
-        <div style={{background:themeColor === "light" ? "rgba(255,255,255,.1)" : "rgba(0,0,0,.4)",display:"flex",padding:"5px 0 30px 0",alignItems:"center",justifyContent:"center"}}>
+        <div style={{background:themeColor === "light" ? "rgba(255,255,255,.1)" : "rgba(0,0,0,.4)",display:"flex",alignItems:"center",justifyContent:"center"}}>
           <span className={this.tabClasses(0)} onClick={()=>this.handleChangeIndex(0)}></span>
           <span className={this.tabClasses(1)} onClick={()=>this.handleChangeIndex(1)}></span>
         </div>
@@ -520,7 +520,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
         </div>
       )}
       </div>
-      </div>
+      </React.Fragment>
     );
   }
 }

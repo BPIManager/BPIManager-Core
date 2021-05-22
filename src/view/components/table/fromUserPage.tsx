@@ -24,13 +24,13 @@ class ClearLampView extends React.Component<P,S> {
   render(){
     const {backToMainPage,name,data} = this.props;
     return (
-      <div>
+      <React.Fragment>
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
           <Button onClick={backToMainPage} style={{minWidth:"auto",padding:"6px 0px"}}><ArrowBackIcon/></Button>
           &nbsp;{name}
         </Typography>
         <ClearLampTable data={data}/>
-      </div>
+      </React.Fragment>
     );
   }
 }
