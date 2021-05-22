@@ -123,7 +123,6 @@ class ScatterGraph extends React.Component<{},S> {
       }
       return (null);
     }
-    console.log(scatterGraph,errors);
     const chartColor = _chartColor();
     return (
       <Container fixed  style={{padding:0}}>
