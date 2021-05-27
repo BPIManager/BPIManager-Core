@@ -38,6 +38,7 @@ import RankingSearch from '@/view/pages/ranking/search';
 import WeeklyOnGoing from '@/view/pages/ranking/ongoing';
 import WeeklyList from '@/view/pages/ranking/list';
 import HelpWR from '@/view/pages/helpWR';
+import Camera from '@/view/pages/camera/camera';
 
 class Router extends React.Component<{},{}> {
 
@@ -82,6 +83,7 @@ class Router extends React.Component<{},{}> {
                   <Route path="/ranking/id/:id" exact component={WeeklyOnGoing}/>
                   <Route path="/ranking/ongoing" exact component={WeeklyOnGoing}/>
                   <Route path="/ranking/list/:uid" exact component={WeeklyList}/>
+                  <Route path="/camera" exact component={Camera}/>
                 </AppBar>
               </BrowserRouter>
             </IntlProvider>

@@ -43,6 +43,17 @@ export const _prefixFromNum = (difficulty:string,showAnother:boolean = false):st
   return prefix;
 }
 
+export const _prefixFromLetters = (difficulty:string,showAnother:boolean = false):string=>{
+  let prefix:string = showAnother ? "(A)" : "";
+  if(difficulty === "HYPER"){
+    prefix = "(H)";
+  }
+  if(difficulty === "LEGGENDARIA"){
+    prefix = "(†)";
+  }
+  return prefix;
+}
+
 //difficulty number to string
 export const difficultyDiscriminator = (difficulty:string):string=>{
   let diff:string = "another";

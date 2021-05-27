@@ -44,6 +44,7 @@
     "react-scripts": "^4.0.3",
     "react-share": "^3.0.1",
     "react-swipeable-views": "^0.13.9",
+    "react-webcam": "^5.2.4",
     "recharts": "^1.8.5",
     "typescript": "^3.9.9",
     "unstated": "^2.1.1"
