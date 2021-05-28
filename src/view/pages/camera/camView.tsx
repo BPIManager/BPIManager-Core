@@ -4,6 +4,7 @@ import Fab from '@material-ui/core/Fab';
 import CameraAltIcon from '@material-ui/icons/CameraAlt';
 import SettingsIcon from '@material-ui/icons/Settings';
 import IconButton from '@material-ui/core/IconButton';
+import { Link } from '@material-ui/core';
 
 interface Props{
   shot:(shot:string)=>void,
@@ -58,6 +59,7 @@ export default class CameraMode extends React.Component<Props,{}> {
             <SettingsIcon/>
           </IconButton>
         </div>
+        <p style={{textAlign:"center"}}><Link href="https://gist.github.com/potakusan/b40f4c309556a5ea5430612db721f192" color="secondary">この機能の使い方 / Usage</Link></p>
       </div>
     );
   }
