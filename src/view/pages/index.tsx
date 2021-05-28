@@ -2,7 +2,7 @@ import * as React from 'react';
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import {Link as RefLink, Dialog, DialogTitle, DialogContent, Divider, Typography, ButtonGroup, Chip, Avatar} from '@material-ui/core/';
+import {Link as RefLink, Dialog, DialogTitle, DialogContent, Divider, Typography, ButtonGroup, Chip, Avatar, Fab} from '@material-ui/core/';
 import { _currentVersion, _currentTheme } from '@/components/settings';
 import MenuIcon from '@material-ui/icons/Menu';
 import UpdateIcon from '@material-ui/icons/Update';
@@ -10,11 +10,11 @@ import Loader from '../components/common/loader';
 import { updateDefFile } from '@/components/settings/updateDef';
 import CheckIcon from '@material-ui/icons/Check';
 import WarningIcon from '@material-ui/icons/Warning';
-import InstantWRView from "@/view/pages/ranking/instant";
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import { getAltTwitterIcon } from '@/components/rivals';
 import { alternativeImg, borderColor } from '@/components/common';
 import { Helmet } from 'react-helmet';
+import CameraAltIcon from '@material-ui/icons/CameraAlt';
 
 class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
   user:any
@@ -82,9 +82,10 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
             </Container>
           </div>
         </div>
-        <div style={{position:"absolute",bottom:0,width:"100%"}}>
-          <InstantWRView/>
-        </div>
+        <Fab variant="extended" style={{position:"fixed",bottom:"3%",right:"3%"}} color="secondary" onClick={()=>this.props.history.push("/camera")}>
+          <CameraAltIcon style={{marginRight:"5px"}}/>
+          BPI CAMERA
+        </Fab>
         <UpdateDef/>
       </div>
     )
