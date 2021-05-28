@@ -82,9 +82,7 @@ export class CameraClass{
 
   findSong(){
 
-
     const swifts = this.swiftDiffcultTitles(); //優先完全一致検索
-    console.log("s",swifts);
     if(swifts.length > 0){
       this.suggestions = swifts;
       return swifts;
@@ -93,7 +91,6 @@ export class CameraClass{
     const res = this.exec(); //ざっくり探索
     this.suggestions = res.res;
     this.swipeOneCharacterTitles(); //1~2文字楽曲の選別
-    console.log(res);
     if(res.perfect){ //もう完全一致楽曲が見つかっているなら終了
       return this.suggestions;
     }
@@ -104,11 +101,12 @@ export class CameraClass{
   withoutJapanese(){
     this.split = /A-Za-z0-9/g;
     this.init();
-    console.log(this.songTitles);
     this.exec();
   }
 
-  swiftDiffcultTitles(){ //難読漢字など、OCRでの読み取りが難しい楽曲については、他の情報を参照して直接楽曲指定する
+  swiftDiffcultTitles(){
+    //難読漢字など、OCRでの読み取りが難しい楽曲については、他の情報を参照して直接楽曲指定する
+    //alternativesのほうは単一条件、こちらは複数条件を指定
     const indexOf = this.indexOf;
     if(indexOf("弁士") > -1 || indexOf("カンタ") > -1) return ["音楽"];
     if(indexOf("v2") > -1) return ["V2"];
@@ -125,6 +123,19 @@ export class CameraClass{
     if(indexOf("lapix") > -1 && indexOf("1877") > -1) return ["〆"];
     if(indexOf("おいわちゃん") > -1) return ["ディッシュウォッシャー◎彡おいわちゃん"];
     return [];
+  }
+
+  levenshtein():any[]{
+    const minimumText = this.text.slice(this.text.length / 3 * -1).replace(/SLOW.[\s\S]*?\\n$/g,"");
+    let distances:any[] = [];
+    for(let i = 0;i < this.songs.length; ++i){
+      const song = this.songs[i][0];
+      if(song){
+        distances.push([song,this.wordDistance(minimumText,song[0])]);
+      }
+    }
+    distances = distances.sort((a:any,b:any)=>b[1] - a[1]);
+    return distances;
   }
 
   exec():{perfect:boolean,res:string[]}{
@@ -265,6 +276,65 @@ export class CameraClass{
       }
     }
     return {error:true,ex:0,reason:"不明なエラーです"};
+  }
+
+  private snake =(k:number, y:number, str1:string, str2:string)=>{
+    let x = y - k;
+    while (x < str1.length && y < str2.length && str1.charCodeAt(x) === str2.charCodeAt(y)) {
+      x++;
+      y++;
+    }
+    return y;
+  }
+
+  private editDistanceONP =(str1:string, str2:string)=>{
+    let s1, s2;
+    if (str1.length < str2.length) {
+      s1 = str1;
+      s2 = str2;
+    } else {
+      s1 = str2;
+      s2 = str1;
+    }
+    let kk, k, p,
+    v0, v1,
+    len1 = s1.length,
+    len2 = s2.length,
+    delta = len2 - len1,
+    offset = len1 + 1,
+    dd = delta + offset,
+    dc = dd - 1,
+    de = dd + 1,
+    max =len1 + len2 + 3,
+    fp = [];
+
+    for (p=0; p<max; p++) {
+      fp.push(-1);
+    }
+    for (p=0; fp[dd]!==len2; p++) {
+      for (k=-p; k<delta; k++) {
+        kk = k + offset;
+        v0 = fp[kk-1] + 1;
+        v1 = fp[kk+1];
+        fp[kk] = this.snake(k, (v0 > v1 ? v0: v1), s1, s2);
+      }
+      for (k=delta+p; k>delta; k--) {
+        kk = k + offset;
+        v0 = fp[kk-1] + 1;
+        v1 = fp[kk+1];
+        fp[kk] = this.snake(k, (v0 > v1 ? v0: v1), s1, s2);
+      }
+      v0 = fp[dc] + 1;
+      v1 = fp[de];
+      fp[dd] = this.snake(delta, (v0 > v1 ? v0: v1), s1, s2);
+    }
+    return delta + (p - 1) * 2;
+  }
+
+  wordDistance =(str1:string, str2:string):number=>{
+    let m = Math.max(str1.length, str2.length);
+    let d = this.editDistanceONP(str1, str2);
+    return 1 - (d / m);
   }
 
 }
