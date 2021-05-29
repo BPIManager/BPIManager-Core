@@ -208,8 +208,9 @@ export class CameraClass{
             add("Megalara Garuda",false);
             break;
           }
-          if(title === "STARLIGHT" && this.text.indexOf("dancehall") > -1){
-            //Megalara Garudaが完全一致する場合は優先
+          console.log(title,this.text)
+          if(title === "STARLiGHT" && this.text.indexOf("dancehall") > -1){
+            //STARLIGHT DANCEHALLが完全一致する場合は優先
             perfect = this.setPerfect(true);
             add("STARLIGHT DANCEHALL",false);
             break;
