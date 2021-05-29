@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CameraClass, OCRExSore } from '@/components/camera/songs';
+import { CameraClass, OCRExScore } from '@/components/camera/songs';
 import CameraMode from './camView';
 import { CameraSettings } from './settings';
 import Backdrop from '@material-ui/core/Backdrop';
@@ -91,8 +91,7 @@ export default class Camera extends React.Component<{},{
     }
     const title = this.cam.reset().setText(fullText).findSong();
     const diff = this.cam.findDifficulty();
-
-    const exScore = this.cam.getExScore();
+    const exScore = await this.cam.setTargetSong(title.length > 0 ? title[0] : "",diff).getExScore();
     this.syncOCRData(fullText,title,diff,exScore);
     return this.setState({
       result:{
@@ -135,7 +134,7 @@ export default class Camera extends React.Component<{},{
     )}&related=BPIManager&hashtags=BPIM`);
   }
 
-  syncOCRData = (body:string,title:string[],diff:string,exScore:OCRExSore)=>{
+  syncOCRData = (body:string,title:string[],diff:string,exScore:OCRExScore)=>{
     this.fetcher("sql/save",JSON.stringify({
       body:body,
       title:title,

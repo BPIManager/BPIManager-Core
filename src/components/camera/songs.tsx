@@ -1,7 +1,7 @@
 import { songsDB } from "../indexedDB";
 import { _isSingle } from "../settings";
 import { songData } from "@/types/data";
-export interface OCRExSore {error:boolean,ex:number,reason?:string,details?:{pg:number,gr:number}}
+export interface OCRExScore {error:boolean,ex:number,reason?:string,details?:{pg:number,gr:number}}
 
 export class CameraClass{
   private songTitles:string[];
@@ -9,6 +9,9 @@ export class CameraClass{
   private split:RegExp = /.{5}/g;
   private maxLen:number = 0;
   private sDB = new songsDB();
+
+  private originalText = "";
+  private perfect:boolean = false;
 
   constructor(){
     this.songs = [];
@@ -36,15 +39,16 @@ export class CameraClass{
 
   init(){
     for(let i = 0; i < this.songTitles.length; ++i){
-      const song = this.songTitles[i];
+      const original = this.songTitles[i];
+      const song = this.songTitles[i].toLowerCase();
       let p = [];
       if(song && song){
         const splitted = song.match(this.split);
         if(!splitted){
-          p = [song];
+          p = [original,song];
           this.songs.push(p);
         }else{
-          p = [song,...splitted];
+          p = [original,song,...splitted];
           this.songs.push(p);
         }
       }
@@ -61,14 +65,14 @@ export class CameraClass{
   }
 
   private alternatives:{[key:string]:string[]} = {
-    "R∞tage":["Rootage"],
-    "mosaic":["Mosaic","Auridy"],
-    "Ganymede":["Ganu"],
-    "Go Beyond!!":["GO Beyond","G0 Beyond"],
-    "狂イ咲ケ焔ノ華":["狂イ咲ケ","ノPrim"],
+    "R∞tage":["rootage"],
+    "mosaic":["auridy"],
+    "Ganymede":["ganu"],
+    "Go Beyond!!":["g0 beyond"],
+    "狂イ咲ケ焔ノ華":["狂イ咲ケ","ノprim"],
     "ワルツ第17番 ト短調”大犬のワルツ”":["ワルツ第","犬のワルツ","大大のワルツ"],
-    "GuNGNiR":["GUNGNIR","2081 NOTES"],
-    "BLACK.by X-Cross Fade":["BLACK by","XCross"],
+    "GuNGNiR":["2081 NOTES"],
+    "BLACK.by X-Cross Fade":["black by","xcross"],
     "魔法のかくれんぼ":["かくれん"],
     "火影":["焱影"]
   }
@@ -76,8 +80,15 @@ export class CameraClass{
   private suggestions:string[] = [];
   private text:string = "";
 
+  setPerfect = (newState:boolean):boolean=>{
+    this.perfect = newState;
+    return newState;
+  }
+
   setText(text:string){
-    this.text = text;
+    //テキストはすべて小文字対小文字で比較
+    this.text = text.toLowerCase().replace(/~/g,"～");
+    this.originalText = text;
     return this;
   }
 
@@ -112,20 +123,20 @@ export class CameraClass{
     if(indexOf("弁士") > -1 || indexOf("カンタ") > -1) return ["音楽"];
     if(indexOf("v2") > -1) return ["V2"];
     if(indexOf("1.0.1") > -1) return ["CODE:1 [revision1.0.1]"];
-    if(indexOf("Flve Hammer") > -1 || indexOf("Five Hammer") > -1) return ["fffff"];
-    if(indexOf("Amuro vs Killer") > -1) return ["冥"]; //アーティスト
-    if(indexOf("SOUND HOLIC feat. Nana Takahashi Vs.GOD PHOENIX Prim") > -1) return ["神謳 -RESONANCE-"]; //アーティスト
-    if(indexOf("ALBA") > -1 && indexOf("SOUND HOLIC") > -1) return ["ALBA -黎明-"]; //曲名 OR アーティスト
+    if(indexOf("five hammer") > -1) return ["fffff"];
+    if(indexOf("amuro vs killer") > -1) return ["冥"]; //アーティスト
+    if(indexOf("sound holic feat. nana takahashi vs.god phoenix prim") > -1) return ["神謳 -RESONANCE-"]; //アーティスト
+    if(indexOf("alba") > -1 && indexOf("sound holic") > -1) return ["ALBA -黎明-"]; //曲名 OR アーティスト
     if((indexOf("朱雀") > -1 && indexOf("玄武") > -1 ) || indexOf("VS 玄") > -1) return ["卑弥呼"]; //アーティスト
-    if(indexOf("レイディオ") > -1 || indexOf("夏色ビキニのPrim") > -1) return ["†渚の小悪魔ラヴリィ～レイディオ†(IIDX EDIT)"]; //曲名（部分） OR アーティスト
-    if(indexOf("Long Train") > -1) return ["灼熱 Pt.2 Long Train Running"]; //曲名（部分）
+    if(indexOf("レイディオ") > -1 || indexOf("夏色ビキニのprim") > -1) return ["†渚の小悪魔ラヴリィ～レイディオ†(IIDX EDIT)"]; //曲名（部分） OR アーティスト
+    if(indexOf("long train") > -1) return ["灼熱 Pt.2 Long Train Running"]; //曲名（部分）
     if(indexOf("ダンジョン") > -1 && indexOf("771") > -1) return ["リリーゼと炎龍レーヴァテイン"]; //アーティスト名 & ノート数（部分）
-    if(indexOf("Liketit") > -1) return ["Like+it!"];
+    if(indexOf("liketit") > -1) return ["Like+it!"];
     if(indexOf("lapix") > -1 && indexOf("1877") > -1) return ["〆"];
     if(indexOf("おいわちゃん") > -1) return ["ディッシュウォッシャー◎彡おいわちゃん"];
     if(indexOf("きの") > -1 && indexOf("2000")) return ["嘆きの樹"];
-    if(indexOf("Master vs") > -1 || indexOf("Master ve") > -1) return ["刃図羅"];
-    if(indexOf("mund") > -1 && indexOf("Gram") > -1) return ["Sigmund"];
+    if(indexOf("master vs") > -1 || indexOf("master ve") > -1) return ["刃図羅"];
+    if(indexOf("mund") > -1 && indexOf("gram") > -1) return ["Sigmund"];
     return [];
   }
 
@@ -158,7 +169,7 @@ export class CameraClass{
 
   exec():{perfect:boolean,res:string[]}{
     let res:string[] = [];
-    let perfect:boolean = false;
+    let perfect:boolean = this.setPerfect(false);
     const add = (title:string,isPush:boolean = true)=>{
       if(res.indexOf(title) === -1){
         if(isPush){
@@ -181,27 +192,27 @@ export class CameraClass{
 
           if(title === "Broken" && this.text.indexOf("Broken Sword") > -1){
             //Broken Swordが完全一致する場合は優先
-            perfect = true;
+            perfect = this.setPerfect(true);
             add("Broken Sword",false);
             break;
           }
-            if(title === "Timepiece phase II" && this.text.indexOf("CN Ver") > -1){
+          if(title === "Timepiece phase II" && this.text.indexOf("CN Ver") > -1){
             //CN Verが完全一致する場合は優先
-            perfect = true;
+            perfect = this.setPerfect(true);
             add("Timepiece phase II (CN Ver.)",false);
             break;
           }
-            if(title === "Garuda" && this.text.indexOf("Megalara") > -1){
+          if(title === "Garuda" && this.text.indexOf("Megalara") > -1){
             //Megalara Garudaが完全一致する場合は優先
-            perfect = true;
+            perfect = this.setPerfect(true);
             add("Megalara Garuda",false);
             break;
           }
 
-          if(i === 0){//完全一致
+          if(i < 2){//完全一致
 
             if(["A","AA","D","V","F","X"].indexOf(title) === -1){
-              perfect = true;
+              perfect = this.setPerfect(true);
               add(title,false);
               break;//施行中止
             }else{ // A,AA,D,V,Fのうちいずれかの楽曲の場合
@@ -236,16 +247,16 @@ export class CameraClass{
     const indexOf = this.indexOf;
     this.suggestions = this.suggestions.filter(item=>{
       if(["AA","A","X","F"].indexOf(item) > -1){
-        return indexOf("D.J.") > -1 || indexOf("Amuro") > -1;
+        return indexOf("d.j.") > -1 || indexOf("amuro") > -1;
       }
       if(item === "V"){
-        return indexOf("TAKA") > -1;
+        return indexOf("taka") > -1;
       }
       if(item === "D"){
-        return indexOf("Eagle") > -1;
+        return indexOf("eagle") > -1;
       }
       if(item === "IX"){
-        return indexOf("dj TAKA") > -1;
+        return indexOf("dj taka") > -1;
       }
       return true;
     });
@@ -255,31 +266,37 @@ export class CameraClass{
   checkSingleTitles(current:string){
     const indexOf = this.indexOf;
     if(["AA","A","X"].indexOf(current) > -1){
-      return indexOf("D.J.") > -1 || indexOf("Amuro") > -1;
+      return indexOf("d.j.") > -1 || indexOf("amuro") > -1;
     }
     if(current === "V"){
-      return indexOf("TAKA") > -1;
+      return indexOf("taka") > -1;
     }
     if(current === "D"){
-      return indexOf("Eagle") > -1;
+      return indexOf("eagle") > -1;
     }
   }
 
   findDifficulty(){
-    if(this.text.indexOf("ANOTH") > -1){
+    if(this.text.indexOf("anoth") > -1){
       return "ANOTHER";
     }
-    if(this.text.indexOf("HYPER") > -1){
+    if(this.text.indexOf("hyper") > -1){
       return "HYPER";
     }
     return "LEGGENDARIA";
   }
 
-  getExScore():OCRExSore{
+  async getExScore():Promise<OCRExScore>{
+    //曲名完全一致時には高精度スコア計算を利用する
+    const t = await this.getExScorev2();
+
+    if(!t.error && t.ex !== 0){
+      return t;
+    }
 
     // JUDGE ~ GOOD部分を読み取り、最初の数字*2(PGREAT) + 次の数字 *1(GREAT) = EX SCOREで計算
     // GREAT,GOOD,BAD,POOR
-    let neccessaryText = this.text.match(/GREAT((\n|.)*?)GOOD/g);
+    let neccessaryText = this.originalText.match(/GREAT((\n|.)*?)GOOD/g);
     if(neccessaryText && neccessaryText.length > 0){
       let e = neccessaryText[0];
       e = e.replace("GOOD","").replace(/[ |　]/g,"").replace(/[o|O]/g,"0").replace(/[l|i|I]/g,"1").replace(/LH/g,"4").replace(/E6/g,"6").replace(/S/g,"5").replace(/EB/g,"8");
@@ -294,6 +311,68 @@ export class CameraClass{
       }
     }
     return {error:true,ex:0,reason:"不明なエラーです"};
+  }
+
+  async getExScorev2():Promise<OCRExScore>{
+    const error = {error:true,ex:0,reason:"invalid"};
+    let neccessaryText = this.originalText.match(/\n(MAX|AAA|AA|A|B|C|D|E|F)(\+|-| |\d|t|S|Z|l|O|T)+\n/g); //MAX-等表記部分の抜き出し
+    if(!neccessaryText) return error;
+
+    const targetText:string = neccessaryText[0];
+    const targetLevelRegExp = targetText.match(/MAX|AAA|AA|A|B|C|D|E|F+/g);
+    const targetStr = targetText.indexOf("+") > -1 ? 1 : -1; //プラス表記なら1、マイナス表記ならマイナス1を結果に掛ける
+    const n = targetText.replace(/MAX|AAA|AA|A|B|C|D|E|F+/g,"");
+    const targetGapRegExp = n.replace(/(\+|-)/g,"").replace(/O|o/g,"0").replace(/t|l|I|T/g,"1").replace(/S/g,"5").replace(/Z/g,"2").match(/[0-9]+/g);
+
+    if(!targetLevelRegExp) return error;
+    if(!targetGapRegExp) return error;
+
+    const targetLevel = targetLevelRegExp[0];
+    const targetGap = Number(targetGapRegExp[0]);
+
+    const targetEx = await this.getTargetExScore(targetLevel);
+    if(targetEx === 0) return error;
+    return {error:false,ex: targetEx + targetGap * targetStr};
+  }
+
+  private targetSongTitle:string = "";
+  private targetSongDiff:string = "";
+
+  setTargetSong(title:string,diff:string):this{
+    this.targetSongTitle = title;
+    this.targetSongDiff = diff.toLowerCase();
+    return this;
+  }
+
+  getTargetExScore = async(targetLevel:string):Promise<number>=>{
+    const sdb = new songsDB();
+    let count = 0;
+    let song = await sdb.getOneItemIsSingle(this.targetSongTitle,this.targetSongDiff);
+    if(!song){
+      while(count < 3){
+        const newDiff = count === 0 ? "hyper" : count === 1 ? "another" : "leggendaria";
+        song = await sdb.getOneItemIsSingle(this.targetSongTitle,newDiff);
+        if(song && song.length > 0) break;
+        count++;
+      }
+    }
+    if(!song || song.length === 0) return 0;
+    const percentile = ():number=>{
+      const n = song[0].notes * 2;
+      switch(targetLevel){
+        case "MAX": return n;
+        case "AAA": return n * 8 / 9;
+        case "AA": return n * 7 / 9;
+        case "A": return n * 2/ 3;
+        case "B": return n * 5 / 9;
+        case "C": return n * 4 / 9;
+        case "D": return n / 3
+        case "E": return n * 2 / 9;
+        case "F": return n / 9;
+        default: return 0;
+      }
+    }
+    return Math.ceil(percentile());
   }
 
   private snake =(k:number, y:number, str1:string, str2:string)=>{
