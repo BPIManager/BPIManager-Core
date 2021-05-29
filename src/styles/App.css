@@ -558,9 +558,6 @@ html,body{
   align-items: center;
 }
 
-.MuiDrawer-root .MuiBackdrop-root{
-  backdrop-filter:blur(5px);
-}
 
 @media screen and (max-width:330px){
   .topFlexContent{

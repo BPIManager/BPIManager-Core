@@ -86,6 +86,10 @@ export default class Camera extends React.Component<{},{
     }
     const json = await t.json();
     const fullText = !json.error ? json.res : "";
+    if(!fullText){
+      this.setState({isLoading:false});
+      return false;
+    }
     const title = this.cam.reset().setText(fullText).findSong();
     const diff = this.cam.findDifficulty();
 
