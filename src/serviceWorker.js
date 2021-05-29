@@ -61,6 +61,7 @@ function registerValidSW(swUrl, config) {
     firebase.messaging().useServiceWorker(registration);
     registration.onupdatefound = () => {
       const installingWorker = registration.installing;
+      registration.update();
       if (installingWorker == null) {
         return;
       }
@@ -73,7 +74,6 @@ function registerValidSW(swUrl, config) {
             console.log(
               "New content is available after re-loading page."
             );
-
             // Execute callback
             if (config && config.onUpdate) {
               config.onUpdate(registration);

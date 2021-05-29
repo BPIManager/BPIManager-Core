@@ -276,6 +276,34 @@ class Settings extends React.Component<P,S> {
               <Typography variant="caption" display="block">
                 <FormattedMessage id="Settings.Area"/>
               </Typography>
+              <Divider style={{margin:"10px 0"}}/>
+              <FormControl>
+                <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
+                  キャッシュクリア
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={()=>{
+                    if(navigator){
+                      navigator.serviceWorker.getRegistration()
+                      .then(registration => {
+                        if(registration){
+                          registration.unregister();
+                        }else{
+                          alert("削除できません");
+                        }
+                      })
+                    }
+                  }}
+                  disabled={disableUpdateBtn}
+                  startIcon={<UpdateIcon />}>
+                  <FormattedMessage id="Settings.UpdateResourcePacks"/>
+                </Button>
+              </FormControl>
+              <Typography variant="caption" display="block">
+                BPIManager本体のキャッシュをクリアします。バージョンアップできない場合に押してください。
+              </Typography>
             </Paper>
           </Container>
         )}

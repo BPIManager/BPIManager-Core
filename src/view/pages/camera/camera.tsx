@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CameraClass } from '@/components/camera/songs';
+import { CameraClass, OCRExSore } from '@/components/camera/songs';
 import CameraMode from './camView';
 import { CameraSettings } from './settings';
 import Backdrop from '@material-ui/core/Backdrop';
@@ -22,7 +22,9 @@ export default class Camera extends React.Component<{},{
   openSettings:boolean,
   settings:any,
   isLoading:boolean,
-  songs:{[key:string]:songData}
+  songs:{[key:string]:songData},
+  token:string,
+  text:string
 }> {
 
   private cam = new CameraClass();
@@ -42,44 +44,53 @@ export default class Camera extends React.Component<{},{
       openSettings:false,
       settings:current ? JSON.parse(current) : null,
       isLoading:true,
-      songs:{}
+      songs:{},
+      token:"",
+      text:"",
     }
   }
 
   async componentDidMount(){
+    const s = await (await this.fetcher("token","")).json();
+    const token = s.token;
     (await this.cam.setSplitLetters(/.{6}/g).loadSongs()).init();
     const t = (await new songsDB().getAll(_isSingle())).reduce((groups:{[key:string]:songData},item:songData)=>{
       if(!groups){groups = {}};
       groups[item["title"] + _prefixFromNum(item.difficulty)] = item;
       return groups;
     },[]);
-    this.setState({songs:t,isLoading:false});
+    this.setState({songs:t,isLoading:false,token:token});
   }
 
-  find = async(shot:string)=>{
-    if(!shot) return;
-    this.setState({isLoading:true});
-    const t = await fetch("https://proxy.poyashi.me/ocr", {
+  fetcher = async(endpoint:string,data:string)=>{
+    return await fetch("https://proxy.poyashi.me/v2/" + endpoint, {
     method: 'POST',
     mode: 'cors',
     cache: 'no-cache',
     credentials: 'same-origin',
-    body:JSON.stringify({data:shot.replace("data:image/jpeg;base64,","")}),
+    body:JSON.stringify({data:data,token:this.state.token}),
     headers: {
       'Content-Type': 'application/json'
     },
     redirect: 'follow',
     referrerPolicy: 'no-referrer',
-    });
+  });
+  }
+
+  find = async(shot:string)=>{
+    if(!shot) return;
+    this.setState({isLoading:true});
+    const t = await this.fetcher("ocr",shot.replace("data:image/jpeg;base64,",""));
     if(!t.ok){
       alert("エラーが発生しました");
     }
     const json = await t.json();
-    const fullText = json && json.responses && json.responses[0] && json.responses[0]["fullTextAnnotation"] ? json.responses[0]["fullTextAnnotation"]["text"] : "";
+    const fullText = !json.error ? json.res : "";
     const title = this.cam.reset().setText(fullText).findSong();
     const diff = this.cam.findDifficulty();
 
     const exScore = this.cam.getExScore();
+    this.syncOCRData(fullText,title,diff,exScore);
     return this.setState({
       result:{
         title:title,
@@ -87,7 +98,8 @@ export default class Camera extends React.Component<{},{
         ex:exScore.error ? 0 : exScore.ex
       },
       isLoading:false,
-      display:1
+      display:1,
+      text:fullText,
     })
   }
 
@@ -102,17 +114,7 @@ export default class Camera extends React.Component<{},{
 
   upload = async(ex:number,bpi:string|number,song:songData,lastEx:number)=>{
     this.setState({isLoading:true});
-    const t = await fetch("https://proxy.poyashi.me/tweet/upload", {
-      method: 'POST',
-      mode: 'cors',
-      cache: 'no-cache',
-      body:JSON.stringify({data:this.state.rawCamData.replace("data:image/jpeg;base64,","")}),
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      redirect: 'follow',
-      referrerPolicy: 'no-referrer',
-    });
+    const t = await this.fetcher("tweet/upload",this.state.rawCamData.replace("data:image/jpeg;base64,",""));
     this.setState({isLoading:false});
     if(!t.ok){
       return alert("エラーが発生しました");
@@ -128,7 +130,15 @@ export default class Camera extends React.Component<{},{
       `☆${song.difficultyLevel} ${song.title}${_prefixFromNum(song.difficulty,false)}\n` +
       `EXSCORE:${ex}(自己ベスト${px}) BPI:${bpi} ${url}`
     )}&related=BPIManager`);
+  }
 
+  syncOCRData = (body:string,title:string[],diff:string,exScore:OCRExSore)=>{
+    this.fetcher("sql/save",JSON.stringify({
+      body:body,
+      title:title,
+      difficulty:diff || "ANOTHER",
+      ex:exScore.error ? 0 : exScore.ex
+    }))
   }
 
   download = (data:string)=>{
@@ -169,13 +179,13 @@ export default class Camera extends React.Component<{},{
   }
 
   render(){
-    const {songs,result,display,openSettings,settings,isLoading,rawCamData} = this.state;
+    const {songs,result,display,openSettings,settings,isLoading,rawCamData,text} = this.state;
     return (
       <React.Fragment>
         <Backdrop open={isLoading}>
           <Loader text="しばらくお待ち下さい"/>
         </Backdrop>
-        {display === 1 && <CameraResult result={result} rawCamData={rawCamData} songs={songs} save={this.save} retry={()=>this.setState({display:0})} upload={this.upload}/>}
+        {display === 1 && <CameraResult text={text} result={result} rawCamData={rawCamData} songs={songs} save={this.save} retry={()=>this.setState({display:0})} upload={this.upload}/>}
         {display === 0 && <CameraMode camSettings={settings} shot={this.shot} toggleSettings={this.toggleSettings}/>}
         {openSettings && <CameraSettings toggleSettings={this.toggleSettings}/>}
       </React.Fragment>

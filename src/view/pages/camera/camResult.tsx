@@ -22,7 +22,7 @@ import Alert from '@material-ui/lab/Alert/Alert';
 import { Link } from '@material-ui/core';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import {ReactComponent as TwitterIcon} from "@/assets/twitter.svg";
-import SongSearchDialog from '../ranking/crud/songSearch';
+import SongSearchDialog from './songSearch';
 
 interface Props{
   result:any,
@@ -30,7 +30,8 @@ interface Props{
   retry:()=>void,
   songs:{[key:string]:songData},
   save:(score:scoreData|null,ex:number,bpi:number,song:songData)=>Promise<boolean>,
-  upload:(ex:number,bpi:string|number,song:songData,lastEx:number)=>void
+  upload:(ex:number,bpi:string|number,song:songData,lastEx:number)=>void,
+  text:string
 }
 
 export default class CameraResult extends React.Component<Props,{
@@ -179,7 +180,7 @@ export default class CameraResult extends React.Component<Props,{
   }
 
   render(){
-    const {rawCamData} = this.props;
+    const {rawCamData,text} = this.props;
     const {defaultResult,currentSongTitle,currentDifficulty,exScore,bpi,score,saved,isDialogOpen} = this.state;
     return (
       <React.Fragment>
@@ -282,7 +283,7 @@ export default class CameraResult extends React.Component<Props,{
           {saved && <Button startIcon={<ThumbUpIcon/>} fullWidth disabled color="secondary" variant="contained">スコアを保存しました</Button>}
           <Button startIcon={<ReplayIcon/>} fullWidth onClick={this.props.retry} style={{margin:"10px 0 20px 0"}}>もう一度撮影</Button>
         </Container>
-        {isDialogOpen && <SongSearchDialog isDialogOpen={isDialogOpen} close={this.dialogToggle} decide={this.decide}/>}
+        {isDialogOpen && <SongSearchDialog diff={currentDifficulty} text={text} isDialogOpen={isDialogOpen} close={this.dialogToggle} decide={this.decide}/>}
       </React.Fragment>
     );
   }

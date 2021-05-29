@@ -11,6 +11,7 @@ const ja = {
   "GlobalNav.unregisteredSongs": "Not played yet",
   "GlobalNav.Statistics": "Statistics",
   "GlobalNav.compare": "Compare",
+  "GlobalNav.Camera": "BPI CAMERA",
   "GlobalNav.Sync":"Sync",
   "GlobalNav.Rivals":"Rivals",
   "GlobalNav.Weekly":"Ranking",
