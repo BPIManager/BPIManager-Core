@@ -118,11 +118,14 @@ export class CameraClass{
     if(indexOf("ALBA") > -1 && indexOf("SOUND HOLIC") > -1) return ["ALBA -黎明-"]; //曲名 OR アーティスト
     if((indexOf("朱雀") > -1 && indexOf("玄武") > -1 ) || indexOf("VS 玄") > -1) return ["卑弥呼"]; //アーティスト
     if(indexOf("レイディオ") > -1 || indexOf("夏色ビキニのPrim") > -1) return ["†渚の小悪魔ラヴリィ～レイディオ†(IIDX EDIT)"]; //曲名（部分） OR アーティスト
-    if(indexOf("Long Train Running") > -1) return ["灼熱 Pt.2 Long Train Running"]; //曲名（部分）
+    if(indexOf("Long Train") > -1) return ["灼熱 Pt.2 Long Train Running"]; //曲名（部分）
     if(indexOf("ダンジョン") > -1 && indexOf("771") > -1) return ["リリーゼと炎龍レーヴァテイン"]; //アーティスト名 & ノート数（部分）
     if(indexOf("Liketit") > -1) return ["Like+it!"];
     if(indexOf("lapix") > -1 && indexOf("1877") > -1) return ["〆"];
     if(indexOf("おいわちゃん") > -1) return ["ディッシュウォッシャー◎彡おいわちゃん"];
+    if(indexOf("きの") > -1 && indexOf("2000")) return ["嘆きの樹"];
+    if(indexOf("Master vs") > -1 || indexOf("Master ve") > -1) return ["刃図羅"];
+    if(indexOf("mund") > -1 && indexOf("Gram") > -1) return ["Sigmund"];
     return [];
   }
 
