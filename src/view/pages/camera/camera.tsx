@@ -9,6 +9,7 @@ import { songData, scoreData } from '@/types/data';
 import { songsDB, scoresDB, scoreHistoryDB } from '@/components/indexedDB';
 import { _isSingle, _currentStore } from '@/components/settings';
 import { _prefixFromNum, difficultyDiscriminator } from '@/components/songs/filter';
+import CameraLoader from './camLoader';
 
 export default class Camera extends React.Component<{},{
   loading:boolean,
@@ -63,7 +64,8 @@ export default class Camera extends React.Component<{},{
   }
 
   fetcher = async(endpoint:string,data:string)=>{
-    return await fetch("https://proxy.poyashi.me/v2/" + endpoint, {
+    const v = window.location.href.indexOf("localhost") > -1  ? "test" : "v2";
+    return await fetch("https://proxy.poyashi.me/" + v + "/" + endpoint, {
     method: 'POST',
     mode: 'cors',
     cache: 'no-cache',
@@ -79,15 +81,12 @@ export default class Camera extends React.Component<{},{
 
   find = async(shot:string)=>{
     if(!shot) return;
-    this.setState({isLoading:true});
+    this.setState({isLoading:true,display:2});
     const t = await this.fetcher("ocr",shot.replace("data:image/jpeg;base64,",""));
-    if(!t.ok){
-      alert("エラーが発生しました");
-    }
     const json = await t.json();
     const fullText = !json.error ? json.res : "";
-    if(!fullText){
-      this.setState({isLoading:false});
+    if(!fullText || !t.ok){
+      this.setState({isLoading:false,display:0});
       return false;
     }
     const title = this.cam.reset().setText(fullText).findSong();
@@ -133,7 +132,7 @@ export default class Camera extends React.Component<{},{
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(
       `☆${song.difficultyLevel} ${song.title}${_prefixFromNum(song.difficulty,false)}\n` +
       `EXSCORE:${ex}(自己ベスト${px}) BPI:${bpi} ${url}`
-    )}&related=BPIManager`);
+    )}&related=BPIManager&hashtags=BPIM`);
   }
 
   syncOCRData = (body:string,title:string[],diff:string,exScore:OCRExSore)=>{
@@ -189,6 +188,7 @@ export default class Camera extends React.Component<{},{
         <Backdrop open={isLoading}>
           <Loader text="しばらくお待ち下さい"/>
         </Backdrop>
+        {display === 2 && <CameraLoader rawCamData={rawCamData}/>} { /* Loader */ }
         {display === 1 && <CameraResult text={text} result={result} rawCamData={rawCamData} songs={songs} save={this.save} retry={()=>this.setState({display:0})} upload={this.upload}/>}
         {display === 0 && <CameraMode camSettings={settings} shot={this.shot} toggleSettings={this.toggleSettings}/>}
         {openSettings && <CameraSettings toggleSettings={this.toggleSettings}/>}

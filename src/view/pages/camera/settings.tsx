@@ -11,6 +11,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { Switch, FormGroup, FormLabel, Divider } from "@material-ui/core";
+import { Link } from '@material-ui/core';
 
 interface Props{
   toggleSettings:()=>void
@@ -88,7 +89,8 @@ export class CameraSettings extends React.Component<Props,{
               <FormControlLabel control={<Switch onChange={this.setSaveImage} checked={autoSave} />} label="撮影した画像を自動保存" />
             </FormGroup>
           </FormControl>
-
+          <Divider style={{margin:"10px 0"}}/>
+          <p style={{textAlign:"center"}}><Link href="https://gist.github.com/potakusan/b40f4c309556a5ea5430612db721f192" color="secondary">この機能の使い方 / Usage</Link></p>
         </DialogContent>
         <DialogActions>
           <Button color="secondary" onClick={this.props.toggleSettings}>閉じる</Button>

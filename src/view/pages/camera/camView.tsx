@@ -4,7 +4,6 @@ import Fab from '@material-ui/core/Fab';
 import CameraAltIcon from '@material-ui/icons/CameraAlt';
 import SettingsIcon from '@material-ui/icons/Settings';
 import IconButton from '@material-ui/core/IconButton';
-import { Link } from '@material-ui/core';
 
 interface Props{
   shot:(shot:string)=>void,
@@ -41,7 +40,7 @@ export default class CameraMode extends React.Component<Props,{}> {
       options = Object.assign({deviceId:camSettings.deviceId},options);
     }
     return (
-      <div style={{display:"flex",justifyContent:"center",flexDirection:"column"}}>
+      <div style={{display:"flex",justifyContent:"center",flexDirection:"column",position:"relative",height:"85vh"}}>
         <Webcam audio={false} ref={this.camRef}
           style={{maxHeight:"80vh"}}
           height = {100 + '%'}
@@ -50,16 +49,15 @@ export default class CameraMode extends React.Component<Props,{}> {
           forceScreenshotSourceSize
           videoConstraints={options}
         />
-        <div style={{display:"flex",justifyContent:"center",margin:"15px auto"}}>
-          <Fab variant="extended" color="secondary" onClick={this.capture}>
+        <div style={{display:"flex",justifyContent:"center",margin:"15px auto",position:"absolute",bottom:"5%",width:"100%"}}>
+          <Fab variant="extended" color="secondary" onClick={this.capture} style={{width:"60%"}}>
             <CameraAltIcon style={{marginRight:"5px"}}/>
             撮影
           </Fab>
-          <IconButton style={{position:"absolute",right:"5%"}} onClick={this.props.toggleSettings}>
-            <SettingsIcon/>
-          </IconButton>
         </div>
-        <p style={{textAlign:"center"}}><Link href="https://gist.github.com/potakusan/b40f4c309556a5ea5430612db721f192" color="secondary">この機能の使い方 / Usage</Link></p>
+        <IconButton onClick={this.props.toggleSettings} style={{position:"absolute",bottom:"5%",right:"5%",margin:"15px 0"}}>
+          <SettingsIcon/>
+        </IconButton>
       </div>
     );
   }
