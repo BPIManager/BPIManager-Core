@@ -190,25 +190,25 @@ export class CameraClass{
         if(this.text.indexOf(songArr[i]) > -1){ //suggest
           const title = songArr[0];
 
-          if(title === "Broken" && this.text.indexOf("Broken Sword") > -1){
+          if(title === "Broken" && this.text.indexOf("broken sword") > -1){
             //Broken Swordが完全一致する場合は優先
             perfect = this.setPerfect(true);
             add("Broken Sword",false);
             break;
           }
-          if(title === "Timepiece phase II" && this.text.indexOf("CN Ver") > -1){
+          if(title === "Timepiece phase II" && this.text.indexOf("cn ver") > -1){
             //CN Verが完全一致する場合は優先
             perfect = this.setPerfect(true);
             add("Timepiece phase II (CN Ver.)",false);
             break;
           }
-          if(title === "Garuda" && this.text.indexOf("Megalara") > -1){
+          if(title === "Garuda" && this.text.indexOf("megalara") > -1){
             //Megalara Garudaが完全一致する場合は優先
             perfect = this.setPerfect(true);
             add("Megalara Garuda",false);
             break;
           }
-          if(title === "STARLIGHT" && this.text.indexOf("DANCEHALL") > -1){
+          if(title === "STARLIGHT" && this.text.indexOf("dancehall") > -1){
             //Megalara Garudaが完全一致する場合は優先
             perfect = this.setPerfect(true);
             add("STARLIGHT DANCEHALL",false);
