@@ -1,17 +1,17 @@
 import { songsDB } from "../indexedDB";
 import { _isSingle } from "../settings";
 import { songData } from "@/types/data";
+export interface OCRExSore {error:boolean,ex:number,reason?:string,details?:{pg:number,gr:number}}
 
 export class CameraClass{
   private songTitles:string[];
   private songs:string[][];
-  private songsData:songData[];
   private split:RegExp = /.{5}/g;
   private maxLen:number = 0;
+  private sDB = new songsDB();
 
   constructor(){
     this.songs = [];
-    this.songsData = [];
     this.songTitles = [];
   }
 
@@ -26,7 +26,7 @@ export class CameraClass{
   }
 
   async loadSongs(){
-    const db = new songsDB();
+    const db = this.sDB;
     const songs = await db.getAll(_isSingle());
     this.songTitles = songs.map((item:songData)=>{
       return item["title"];
@@ -69,7 +69,8 @@ export class CameraClass{
     "ワルツ第17番 ト短調”大犬のワルツ”":["ワルツ第","犬のワルツ","大大のワルツ"],
     "GuNGNiR":["GUNGNIR","2081 NOTES"],
     "BLACK.by X-Cross Fade":["BLACK by","XCross"],
-    "魔法のかくれんぼ":["かくれん"]
+    "魔法のかくれんぼ":["かくれん"],
+    "火影":["焱影"]
   }
 
   private suggestions:string[] = [];
@@ -115,7 +116,7 @@ export class CameraClass{
     if(indexOf("Amuro vs Killer") > -1) return ["冥"]; //アーティスト
     if(indexOf("SOUND HOLIC feat. Nana Takahashi Vs.GOD PHOENIX Prim") > -1) return ["神謳 -RESONANCE-"]; //アーティスト
     if(indexOf("ALBA") > -1 && indexOf("SOUND HOLIC") > -1) return ["ALBA -黎明-"]; //曲名 OR アーティスト
-    if(indexOf("朱雀") > -1 && indexOf("玄武") > -1) return ["卑弥呼"]; //アーティスト
+    if((indexOf("朱雀") > -1 && indexOf("玄武") > -1 ) || indexOf("VS 玄") > -1) return ["卑弥呼"]; //アーティスト
     if(indexOf("レイディオ") > -1 || indexOf("夏色ビキニのPrim") > -1) return ["†渚の小悪魔ラヴリィ～レイディオ†(IIDX EDIT)"]; //曲名（部分） OR アーティスト
     if(indexOf("Long Train Running") > -1) return ["灼熱 Pt.2 Long Train Running"]; //曲名（部分）
     if(indexOf("ダンジョン") > -1 && indexOf("771") > -1) return ["リリーゼと炎龍レーヴァテイン"]; //アーティスト名 & ノート数（部分）
@@ -125,16 +126,30 @@ export class CameraClass{
     return [];
   }
 
-  levenshtein():any[]{
+  levenshtein(currentDiff:string):any[]{
     const minimumText = this.text.slice(this.text.length / 3 * -1).replace(/SLOW.[\s\S]*?\\n$/g,"");
     let distances:any[] = [];
     for(let i = 0;i < this.songs.length; ++i){
-      const song = this.songs[i][0];
-      if(song){
-        distances.push([song,this.wordDistance(minimumText,song[0])]);
+      const song = this.songs[i];
+      let maxDistance = 0;
+      for(let j = 0; j < song.length; ++j){
+        const latest = this.wordDistance(minimumText,song[j]);
+        if(latest > maxDistance){
+          maxDistance = latest;
+        }
       }
+      distances.push([song[0],maxDistance]);
     }
-    distances = distances.sort((a:any,b:any)=>b[1] - a[1]);
+    distances = distances.sort((a:any,b:any)=>b[1] - a[1]).reduce((groups:any,item:any)=>{
+      if(!groups) groups = [];
+      if(groups.find((s:any)=>item[0] === s.title)){ return groups;};
+      groups.push({
+        title:item[0],
+        difficulty:currentDiff,
+        distance:item[1]
+      });
+      return groups;
+    },[]);
     return distances;
   }
 
@@ -257,7 +272,7 @@ export class CameraClass{
     return "LEGGENDARIA";
   }
 
-  getExScore():{error:boolean,ex:number,reason?:string,details?:{pg:number,gr:number}}{
+  getExScore():OCRExSore{
 
     // JUDGE ~ GOOD部分を読み取り、最初の数字*2(PGREAT) + 次の数字 *1(GREAT) = EX SCOREで計算
     // GREAT,GOOD,BAD,POOR

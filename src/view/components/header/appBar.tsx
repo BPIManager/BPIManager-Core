@@ -44,6 +44,7 @@ import LockOpenIcon from '@material-ui/icons/LockOpen';
 import EventNoteIcon from '@material-ui/icons/EventNote';
 import { _currentVersion } from "@/components/settings";
 import Index from "@/view/pages/";
+import CameraAltIcon from '@material-ui/icons/CameraAlt';
 
 interface navBars {
   to:string,
@@ -269,6 +270,11 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
       },
     ]
     const navBarBottom:navBars[] = [
+      {
+        to:"/camera",
+        id:"GlobalNav.Camera",
+        icon:<CameraAltIcon/>
+      },
       {
         to:"/settings",
         id:"GlobalNav.Settings",

@@ -15,6 +15,7 @@ const ja = {
   "GlobalNav.compare": "データ比較",
   "GlobalNav.AAATable":"AAA達成表",
   "GlobalNav.Tools":"ツール集",
+  "GlobalNav.Camera": "BPIカメラ",
   "GlobalNav.Settings": "設定",
   "GlobalNav.Help": "ヘルプ",
   "GlobalNav.Notes": "Notes",
