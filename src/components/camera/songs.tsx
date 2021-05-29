@@ -131,6 +131,7 @@ export class CameraClass{
     if(indexOf("レイディオ") > -1 || indexOf("夏色ビキニのprim") > -1) return ["†渚の小悪魔ラヴリィ～レイディオ†(IIDX EDIT)"]; //曲名（部分） OR アーティスト
     if(indexOf("long train") > -1) return ["灼熱 Pt.2 Long Train Running"]; //曲名（部分）
     if(indexOf("side bunny") > -1) return ["灼熱Beach Side Bunny"];
+    if(indexOf("空トラベ") > -1) return ["時空トラベローグ"];
     if(indexOf("ダンジョン") > -1 && indexOf("771") > -1) return ["リリーゼと炎龍レーヴァテイン"]; //アーティスト名 & ノート数（部分）
     if(indexOf("liketit") > -1) return ["Like+it!"];
     if(indexOf("lapix") > -1 && indexOf("1877") > -1) return ["〆"];
