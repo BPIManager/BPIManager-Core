@@ -208,6 +208,12 @@ export class CameraClass{
             add("Megalara Garuda",false);
             break;
           }
+          if(title === "STARLIGHT" && this.text.indexOf("DANCEHALL") > -1){
+            //Megalara Garudaが完全一致する場合は優先
+            perfect = this.setPerfect(true);
+            add("STARLIGHT DANCEHALL",false);
+            break;
+          }
 
           if(i < 2){//完全一致
 
