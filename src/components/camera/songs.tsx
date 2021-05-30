@@ -76,7 +76,10 @@ export class CameraClass{
     "BLACK.by X-Cross Fade":["black by","xcross"],
     "魔法のかくれんぼ":["かくれん"],
     "火影":["焱影"],
-    "Idola":["dola","feat.gumi"]
+    "Idola":["dola","feat.gumi"],
+    "華麗なる大犬円舞曲":["なる大犬"],
+    "ディスコルディア":["スコルデ"],
+    "千年ノ理":["年ノ"],
   }
 
   private suggestions:string[] = [];
@@ -141,6 +144,14 @@ export class CameraClass{
     if(indexOf("きの") > -1 && indexOf("2000")) return ["嘆きの樹"];
     if(indexOf("master vs") > -1 || indexOf("master ve") > -1) return ["刃図羅"];
     if(indexOf("mund") > -1 && indexOf("gram") > -1) return ["Sigmund"];
+    if(indexOf("moon") > -1 && indexOf("child") > -1) return ["moon_child"];
+    if(indexOf("ヒーレン") > -1 && (indexOf("ダン") > -1 || indexOf("ジョン") > -1)) return ["龍と少女とデコヒーレンス"];
+    if((indexOf("蝶") > -1 || indexOf("風") > -1 || indexOf("雪") > -1 || indexOf("白虎") > -1) && indexOf("1500") > -1) return ["華蝶風雪"];
+    if((indexOf("バッド") > -1 || indexOf("シンド") > -1) && indexOf("アリス") > -1) return ["バッドエンド・シンドローム"];
+    if(indexOf("team hu") > -1 && indexOf("pect for") > -1 && indexOf("amu") > -1) return ["∀"];
+    if(indexOf("risen relic") > -1) return ["SOLID STATE SQUAD -RISEN RELIC REMIX-"];
+    if(indexOf("murasame") > -1 && indexOf("1943") > -1) return ["仮想空間の旅人たち"];
+    if((indexOf("丹") > -1 || indexOf("1445") > -1) && indexOf("naga") > -1) return ["紅牡丹"];
     return [];
   }
 
@@ -194,6 +205,11 @@ export class CameraClass{
         if(this.text.indexOf(songArr[i]) > -1){ //suggest
           const title = songArr[0];
 
+          if(title === "Holic" && (this.text.indexOf("880") === 0 || this.text.indexOf("taq") === 0)){
+            //Holic完全一致出ない場合（サンホリ曲対策）
+            continue;
+          }
+
           if(title === "Broken" && this.text.indexOf("broken sword") > -1){
             //Broken Swordが完全一致する場合は優先
             perfect = this.setPerfect(true);
@@ -222,6 +238,17 @@ export class CameraClass{
             //SCREW // owo // SCREWが完全一致する場合は優先
             perfect = this.setPerfect(true);
             add("SCREW // owo // SCREW",false);
+            break;
+          }
+          if(title === "xenon" && (this.text.indexOf("xenon ii") > -1 || this.text.indexOf("tomoyuki") > -1)){
+            //XENON IIが完全一致する場合は優先
+            perfect = this.setPerfect(true);
+            add("XENON II ～TOMOYUKIの野望～",false);
+            break;
+          }
+          if(title === "Beyond The Earth" && this.text.indexOf("seven") > -1){
+            perfect = this.setPerfect(true);
+            add("Beyond The Seven",false);
             break;
           }
 
@@ -330,7 +357,14 @@ export class CameraClass{
 
   async getExScorev2():Promise<OCRExScore>{
     const error = {error:true,ex:0,reason:"invalid"};
-    let neccessaryText = this.originalText.match(/\n(MAX|AAA|AA|A|B|C|D|E|F)(\+|-| |\d|t|S|Z|l|O|o|T)+\n/g); //MAX-等表記部分の抜き出し
+    let neccessaryText = this.originalText.match(/\n(MAX|AAA|AA|A|B|C|D|E|F)(\+|-)(\+|-| |\d|[a-zA-Z])+\n/g); //MAX-等表記部分の抜き出し
+    if(!neccessaryText) return error;
+
+    if(neccessaryText.length > 1){
+      //A-CLEAR表記がマッチする可能性があるので、数字を含むものに絞る
+      neccessaryText = neccessaryText.filter((item:string)=>/\d/.test(item));
+    }
+
     if(!neccessaryText) return error;
 
     const targetText:string = neccessaryText[0];

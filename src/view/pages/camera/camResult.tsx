@@ -23,6 +23,7 @@ import { Link } from '@material-ui/core';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import {ReactComponent as TwitterIcon} from "@/assets/twitter.svg";
 import SongSearchDialog from './songSearch';
+import { CameraClass } from '@/components/camera/songs';
 
 interface Props{
   result:any,
@@ -125,38 +126,43 @@ export default class CameraResult extends React.Component<Props,{
     return score || null;
   }
 
-  checkNewSongMax = (title:string|null = null,diff:string|null = null,ex:number|null = null)=>{
+  checkNewSongMax = async(title:string|null = null,diff:string|null = null,ex:number|null = null)=>{
     const t = title ? title : this.state.currentSongTitle;
     const d = diff ? diff : this.state.currentDifficulty;
     const e = ex ? ex : this.state.exScore;
     const newSong = this.song(t,d);
+    if(title || diff){
+      const cam = new CameraClass();
+      cam.reset().setText(this.props.text);
+      const exScore = await cam.setTargetSong(t,d).getExScore();
+      this.setState({exScore:exScore.error ? 0 : exScore.ex});
+      this.updateBPI(t,d,exScore.ex);
+      return false;
+    }
     if(newSong && e > newSong.notes * 2){
       const newEx = newSong.notes * 2;
       this.setState({exScore:newEx});
       this.updateBPI(t,d,newEx);
       return true;
     }
+    this.updateBPI(t,d,e);
     return false;
   }
 
   changeSongTitle = (e:React.ChangeEvent<any>)=>{
     this.setState({currentSongTitle:e.target.value,saved:false});
-    this.checkNewSongMax(e.target.value,null,null);
-    return this.updateBPI(e.target.value,null,null);
+    return this.checkNewSongMax(e.target.value,null,null);
   }
 
   changeSongDifficulty = (e:React.ChangeEvent<any>)=>{
     this.setState({currentDifficulty:e.target.value,saved:false});
-    this.checkNewSongMax(null,e.target.value,null);
-    return this.updateBPI(null,e.target.value,null);
+    return this.checkNewSongMax(null,e.target.value,null);
   }
 
   changeExScore = (event:React.ChangeEvent<HTMLInputElement>)=>{
     const num = Number(event.target.value);
     if(num < 0 || num > this.song().notes * 2) return;
-    this.checkNewSongMax(null,null,num);
-    this.setState({exScore:num,saved:false});
-    return this.updateBPI(null,null,num);
+    return this.checkNewSongMax(null,null,num);
   }
 
   async updateBPI(newTitle:string|null = null,newDiff:string|null = null,newScore:number|null){
@@ -167,7 +173,7 @@ export default class CameraResult extends React.Component<Props,{
       const score = await this.getScore(newTitle || currentSongTitle,newDiff || currentDifficulty);
       this.setState({score:score,saved:false});
     }
-    this.setState({bpi:newBPI,saved:false});
+    this.setState({bpi:newBPI,exScore:newScore || this.state.exScore,saved:false});
     return newBPI;
   }
 
