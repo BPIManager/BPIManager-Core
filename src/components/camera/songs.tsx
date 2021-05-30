@@ -65,6 +65,7 @@ export class CameraClass{
   }
 
   private alternatives:{[key:string]:string[]} = {
+    "GO OVER WITH GLARE -ROOTAGE 26-":["go over with"],
     "R∞tage":["rootage"],
     "mosaic":["auridy"],
     "Ganymede":["ganu"],
@@ -124,7 +125,7 @@ export class CameraClass{
     if(indexOf("v2") > -1) return ["V2"];
     if(indexOf("1.0.1") > -1) return ["CODE:1 [revision1.0.1]"];
     if(indexOf("five hammer") > -1) return ["fffff"];
-    if(indexOf("amuro vs killer") > -1) return ["冥"]; //アーティスト
+    if(indexOf("amuro vs") > -1) return ["冥"]; //アーティスト
     if(indexOf("sound holic feat. nana takahashi vs.god phoenix prim") > -1) return ["神謳 -RESONANCE-"]; //アーティスト
     if(indexOf("alba") > -1 && indexOf("sound holic") > -1) return ["ALBA -黎明-"]; //曲名 OR アーティスト
     if((indexOf("朱雀") > -1 && indexOf("玄武") > -1 ) || indexOf("VS 玄") > -1) return ["卑弥呼"]; //アーティスト
@@ -210,11 +211,16 @@ export class CameraClass{
             add("Megalara Garuda",false);
             break;
           }
-          console.log(title,this.text)
           if(title === "STARLiGHT" && this.text.indexOf("dancehall") > -1){
             //STARLIGHT DANCEHALLが完全一致する場合は優先
             perfect = this.setPerfect(true);
             add("STARLIGHT DANCEHALL",false);
+            break;
+          }
+          if(title === "crew" && (this.text.indexOf("screw") > -1 && this.text.indexOf("かめりあ") > -1)){
+            //SCREW // owo // SCREWが完全一致する場合は優先
+            perfect = this.setPerfect(true);
+            add("SCREW // owo // SCREW",false);
             break;
           }
 
