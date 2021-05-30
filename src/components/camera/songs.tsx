@@ -72,7 +72,7 @@ export class CameraClass{
     "Go Beyond!!":["g0 beyond"],
     "狂イ咲ケ焔ノ華":["狂イ咲ケ","ノprim"],
     "ワルツ第17番 ト短調”大犬のワルツ”":["ワルツ第","犬のワルツ","大大のワルツ"],
-    "GuNGNiR":["2081 NOTES"],
+    "GuNGNiR":["2081 notes"],
     "BLACK.by X-Cross Fade":["black by","xcross"],
     "魔法のかくれんぼ":["かくれん"],
     "火影":["焱影"]
@@ -304,7 +304,6 @@ export class CameraClass{
   async getExScore():Promise<OCRExScore>{
     //曲名完全一致時には高精度スコア計算を利用する
     const t = await this.getExScorev2();
-
     if(!t.error && t.ex !== 0){
       return t;
     }
@@ -330,7 +329,7 @@ export class CameraClass{
 
   async getExScorev2():Promise<OCRExScore>{
     const error = {error:true,ex:0,reason:"invalid"};
-    let neccessaryText = this.originalText.match(/\n(MAX|AAA|AA|A|B|C|D|E|F)(\+|-| |\d|t|S|Z|l|O|T)+\n/g); //MAX-等表記部分の抜き出し
+    let neccessaryText = this.originalText.match(/\n(MAX|AAA|AA|A|B|C|D|E|F)(\+|-| |\d|t|S|Z|l|O|o|T)+\n/g); //MAX-等表記部分の抜き出し
     if(!neccessaryText) return error;
 
     const targetText:string = neccessaryText[0];
@@ -346,8 +345,19 @@ export class CameraClass{
     const targetGap = Number(targetGapRegExp[0]);
 
     const targetEx = await this.getTargetExScore(targetLevel);
+    let proveThis = targetEx + targetGap * targetStr;
+
+    const matcher = ()=>this.originalText.indexOf(String(proveThis)) > -1;
+    if(!matcher()){ //存在しない場合
+      const newStr = targetStr === 1 ? -1 : 1;
+      proveThis = targetEx + targetGap * newStr;
+      if(!matcher()){ //それでも存在しない場合
+        proveThis = targetEx + targetGap * targetStr; //戻す
+      }
+    }
+
     if(targetEx === 0) return error;
-    return {error:false,ex: targetEx + targetGap * targetStr};
+    return {error:false,ex: proveThis};
   }
 
   private targetSongTitle:string = "";

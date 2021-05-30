@@ -20,7 +20,8 @@ interface Props{
 export class CameraSettings extends React.Component<Props,{
   cams:any[],
   currentCam:any,
-  autoSave:boolean
+  autoSave:boolean,
+  sendData:boolean
 }> {
 
   constructor(props:Props){
@@ -31,10 +32,12 @@ export class CameraSettings extends React.Component<Props,{
     };
     const current = localStorage.getItem("currentCam");
     const autoSave = localStorage.getItem("autoSaveAfterTook");
+    const sendData = localStorage.getItem("sendData") || "true";
     this.state = {
       cams:[],
       currentCam:current ? JSON.parse(current) : def,
-      autoSave:autoSave === "true"
+      autoSave:autoSave === "true",
+      sendData:sendData === "true"
     }
   }
 
@@ -64,8 +67,13 @@ export class CameraSettings extends React.Component<Props,{
     localStorage.setItem("autoSaveAfterTook",String(e.target.checked));
   }
 
+  setSendData = (e:React.ChangeEvent<any>)=>{
+    this.setState({sendData:e.target.checked});
+    localStorage.setItem("sendData",String(e.target.checked));
+  }
+
   render(){
-    const {cams,currentCam,autoSave} = this.state;
+    const {cams,currentCam,autoSave,sendData} = this.state;
     return (
       <Dialog open={true} onClose={this.props.toggleSettings}>
         <DialogTitle className="narrowDialogTitle">設定</DialogTitle>
@@ -88,6 +96,17 @@ export class CameraSettings extends React.Component<Props,{
             <FormGroup row>
               <FormControlLabel control={<Switch onChange={this.setSaveImage} checked={autoSave} />} label="撮影した画像を自動保存" />
             </FormGroup>
+          </FormControl>
+          <Divider style={{margin:"10px 0"}}/>
+          <FormControl component="fieldset" style={{display:"block"}}>
+            <FormLabel component="legend">データの提供</FormLabel>
+            <FormGroup row>
+              <FormControlLabel control={<Switch onChange={this.setSendData} checked={sendData} />} label="読み取りデータを提供" />
+            </FormGroup>
+            <FormHelperText>
+              読み取り精度向上のため、撮影で読み取った文字データおよび読み取り結果（楽曲名、難易度、EXスコア）を専用サーバーへ送信します。<br/>
+              送信されたデータは上記目的以外に供されることはありません。
+            </FormHelperText>
           </FormControl>
           <Divider style={{margin:"10px 0"}}/>
           <p style={{textAlign:"center"}}><Link href="https://gist.github.com/potakusan/b40f4c309556a5ea5430612db721f192" color="secondary">この機能の使い方 / Usage</Link></p>

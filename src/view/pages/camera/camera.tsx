@@ -135,6 +135,11 @@ export default class Camera extends React.Component<{},{
   }
 
   syncOCRData = (body:string,title:string[],diff:string,exScore:OCRExScore)=>{
+
+    const sendData = localStorage.getItem("sendData") || "true";
+    if(sendData !== "true"){
+      return;
+    }
     this.fetcher("sql/save",JSON.stringify({
       body:body,
       title:title,

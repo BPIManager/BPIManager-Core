@@ -264,17 +264,17 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
     ]
     const navBarTop:navBars[] = [
       {
+        to:"/camera",
+        id:"GlobalNav.Camera",
+        icon:<CameraAltIcon/>
+      },
+      {
         to:"/data",
         id:"GlobalNav.Data",
         icon:<SaveAltIcon />
       },
     ]
     const navBarBottom:navBars[] = [
-      {
-        to:"/camera",
-        id:"GlobalNav.Camera",
-        icon:<CameraAltIcon/>
-      },
       {
         to:"/settings",
         id:"GlobalNav.Settings",
