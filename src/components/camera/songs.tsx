@@ -75,7 +75,8 @@ export class CameraClass{
     "GuNGNiR":["2081 notes"],
     "BLACK.by X-Cross Fade":["black by","xcross"],
     "魔法のかくれんぼ":["かくれん"],
-    "火影":["焱影"]
+    "火影":["焱影"],
+    "Idola":["dola","feat.gumi"]
   }
 
   private suggestions:string[] = [];
