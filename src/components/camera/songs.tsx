@@ -152,6 +152,8 @@ export class CameraClass{
     if(indexOf("risen relic") > -1) return ["SOLID STATE SQUAD -RISEN RELIC REMIX-"];
     if(indexOf("murasame") > -1 && indexOf("1943") > -1) return ["仮想空間の旅人たち"];
     if((indexOf("丹") > -1 || indexOf("1445") > -1) && indexOf("naga") > -1) return ["紅牡丹"];
+    if(indexOf("電人") > -1 && indexOf("れる") > -1) return ["電人、暁に斃れる。"];
+    if(indexOf("tiation") > -1) return ["Initiation"];
     return [];
   }
 
