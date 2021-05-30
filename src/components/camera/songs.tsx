@@ -124,36 +124,39 @@ export class CameraClass{
   swiftDiffcultTitles(){
     //難読漢字など、OCRでの読み取りが難しい楽曲については、他の情報を参照して直接楽曲指定する
     //alternativesのほうは単一条件、こちらは複数条件を指定
-    const indexOf = this.indexOf;
-    if(indexOf("弁士") > -1 || indexOf("カンタ") > -1) return ["音楽"];
-    if(indexOf("v2") > -1) return ["V2"];
-    if(indexOf("1.0.1") > -1) return ["CODE:1 [revision1.0.1]"];
-    if(indexOf("five hammer") > -1) return ["fffff"];
-    if(indexOf("amuro vs") > -1) return ["冥"]; //アーティスト
-    if(indexOf("sound holic feat. nana takahashi vs.god phoenix prim") > -1) return ["神謳 -RESONANCE-"]; //アーティスト
-    if(indexOf("alba") > -1 && indexOf("sound holic") > -1) return ["ALBA -黎明-"]; //曲名 OR アーティスト
-    if((indexOf("朱雀") > -1 && indexOf("玄武") > -1 ) || indexOf("VS 玄") > -1) return ["卑弥呼"]; //アーティスト
-    if(indexOf("レイディオ") > -1 || indexOf("夏色ビキニのprim") > -1) return ["†渚の小悪魔ラヴリィ～レイディオ†(IIDX EDIT)"]; //曲名（部分） OR アーティスト
-    if(indexOf("long train") > -1) return ["灼熱 Pt.2 Long Train Running"]; //曲名（部分）
-    if(indexOf("side bunny") > -1) return ["灼熱Beach Side Bunny"];
-    if(indexOf("空トラベ") > -1) return ["時空トラベローグ"];
-    if(indexOf("ダンジョン") > -1 && indexOf("771") > -1) return ["リリーゼと炎龍レーヴァテイン"]; //アーティスト名 & ノート数（部分）
-    if(indexOf("liketit") > -1) return ["Like+it!"];
-    if(indexOf("lapix") > -1 && indexOf("1877") > -1) return ["〆"];
-    if(indexOf("おいわちゃん") > -1) return ["ディッシュウォッシャー◎彡おいわちゃん"];
-    if(indexOf("きの") > -1 && indexOf("2000")) return ["嘆きの樹"];
-    if(indexOf("master vs") > -1 || indexOf("master ve") > -1) return ["刃図羅"];
-    if(indexOf("mund") > -1 && indexOf("gram") > -1) return ["Sigmund"];
-    if(indexOf("moon") > -1 && indexOf("child") > -1) return ["moon_child"];
-    if(indexOf("ヒーレン") > -1 && (indexOf("ダン") > -1 || indexOf("ジョン") > -1)) return ["龍と少女とデコヒーレンス"];
-    if((indexOf("蝶") > -1 || indexOf("風") > -1 || indexOf("雪") > -1 || indexOf("白虎") > -1) && indexOf("1500") > -1) return ["華蝶風雪"];
-    if((indexOf("バッド") > -1 || indexOf("シンド") > -1) && indexOf("アリス") > -1) return ["バッドエンド・シンドローム"];
-    if(indexOf("team hu") > -1 && indexOf("pect for") > -1 && indexOf("amu") > -1) return ["∀"];
-    if(indexOf("risen relic") > -1) return ["SOLID STATE SQUAD -RISEN RELIC REMIX-"];
-    if(indexOf("murasame") > -1 && indexOf("1943") > -1) return ["仮想空間の旅人たち"];
-    if((indexOf("丹") > -1 || indexOf("1445") > -1) && indexOf("naga") > -1) return ["紅牡丹"];
-    if(indexOf("電人") > -1 && indexOf("れる") > -1) return ["電人、暁に斃れる。"];
-    if(indexOf("tiation") > -1) return ["Initiation"];
+    const exists = this.exists;
+    if(exists("弁士") || exists("カンタ")) return ["音楽"];
+    if(exists("v2")) return ["V2"];
+    if(exists("1.0.1")) return ["CODE:1 [revision1.0.1]"];
+    if(exists("five hammer")) return ["fffff"];
+    if(exists("amuro vs")) return ["冥"]; //アーティスト
+    if(exists("sound holic feat. nana takahashi vs.god phoenix prim")) return ["神謳 -RESONANCE-"]; //アーティスト
+    if(exists("alba") && exists("sound holic")) return ["ALBA -黎明-"]; //曲名 OR アーティスト
+    if((exists("朱雀") && exists("玄武") ) || exists("VS 玄")) return ["卑弥呼"]; //アーティスト
+    if(exists("レイディオ") || exists("夏色ビキニのprim")) return ["†渚の小悪魔ラヴリィ～レイディオ†(IIDX EDIT)"]; //曲名（部分） OR アーティスト
+    if(exists("long train")) return ["灼熱 Pt.2 Long Train Running"]; //曲名（部分）
+    if(exists("side bunny")) return ["灼熱Beach Side Bunny"];
+    if(exists("空トラベ")) return ["時空トラベローグ"];
+    if(exists("ダンジョン") && exists("771")) return ["リリーゼと炎龍レーヴァテイン"]; //アーティスト名 & ノート数（部分）
+    if(exists("liketit")) return ["Like+it!"];
+    if(exists("lapix") && exists("1877")) return ["〆"];
+    if(exists("おいわちゃん")) return ["ディッシュウォッシャー◎彡おいわちゃん"];
+    if(exists("きの") && exists("2000")) return ["嘆きの樹"];
+    if(exists("master vs") || exists("master ve")) return ["刃図羅"];
+    if(exists("mund") && exists("gram")) return ["Sigmund"];
+    if(exists("moon") && exists("child")) return ["moon_child"];
+    if(exists("ヒーレン") && (exists("ダン") || exists("ジョン"))) return ["龍と少女とデコヒーレンス"];
+    if((exists("蝶") || exists("風") || exists("雪") || exists("白虎")) && exists("1500")) return ["華蝶風雪"];
+    if((exists("バッド") || exists("シンド")) && exists("アリス")) return ["バッドエンド・シンドローム"];
+    if(exists("team hu") && exists("pect for") && exists("amu")) return ["∀"];
+    if(exists("risen relic")) return ["SOLID STATE SQUAD -RISEN RELIC REMIX-"];
+    if(exists("murasame") && exists("1943")) return ["仮想空間の旅人たち"];
+    if((exists("丹") || exists("1445")) && exists("naga")) return ["紅牡丹"];
+    if(exists("電人") && exists("れる")) return ["電人、暁に斃れる。"];
+    if(exists("tiation")) return ["Initiation"];
+    if(exists("-65") && exists("amuro")) return ["-65℃"];
+    if(exists("#the") && exists("noriken")) return ["#The_Relentless"];
+    if(exists("dolon") && exists("Eagle")) return ["3!dolon Forc3"];
     return [];
   }
 
@@ -187,6 +190,7 @@ export class CameraClass{
   exec():{perfect:boolean,res:string[]}{
     let res:string[] = [];
     let perfect:boolean = this.setPerfect(false);
+    const exists = this.exists;
     const add = (title:string,isPush:boolean = true)=>{
       if(res.indexOf(title) === -1){
         if(isPush){
@@ -204,53 +208,63 @@ export class CameraClass{
         if(!songArr[i]){
           continue;
         }
-        if(this.text.indexOf(songArr[i]) > -1){ //suggest
+        if(exists(songArr[i])){ //suggest
           const title = songArr[0];
 
-          if(title === "Holic" && (this.text.indexOf("880") === 0 || this.text.indexOf("taq") === 0)){
-            //Holic完全一致出ない場合（サンホリ曲対策）
+          if(title === "Holic" && (!exists("880") || !exists("taq") )){
+            //Holic完全一致でない場合（サンホリ曲対策）
             continue;
           }
 
-          if(title === "Broken" && this.text.indexOf("broken sword") > -1){
+          if(title === "Broken" && exists("broken sword")){
             //Broken Swordが完全一致する場合は優先
             perfect = this.setPerfect(true);
             add("Broken Sword",false);
             break;
           }
-          if(title === "Timepiece phase II" && this.text.indexOf("cn ver") > -1){
+          if(title === "Timepiece phase II" && exists("cn ver")){
             //CN Verが完全一致する場合は優先
             perfect = this.setPerfect(true);
             add("Timepiece phase II (CN Ver.)",false);
             break;
           }
-          if(title === "Garuda" && this.text.indexOf("megalara") > -1){
+          if(title === "Garuda" && exists("megalara")){
             //Megalara Garudaが完全一致する場合は優先
             perfect = this.setPerfect(true);
             add("Megalara Garuda",false);
             break;
           }
-          if(title === "STARLiGHT" && this.text.indexOf("dancehall") > -1){
+          if(title === "STARLiGHT" && exists("dancehall")){
             //STARLIGHT DANCEHALLが完全一致する場合は優先
             perfect = this.setPerfect(true);
             add("STARLIGHT DANCEHALL",false);
             break;
           }
-          if(title === "crew" && (this.text.indexOf("screw") > -1 && this.text.indexOf("かめりあ") > -1)){
+          if(title === "crew" && (exists("screw") && exists("かめりあ"))){
             //SCREW // owo // SCREWが完全一致する場合は優先
             perfect = this.setPerfect(true);
             add("SCREW // owo // SCREW",false);
             break;
           }
-          if(title === "xenon" && (this.text.indexOf("xenon ii") > -1 || this.text.indexOf("tomoyuki") > -1)){
+          if(title === "xenon" && (exists("xenon ii") || exists("tomoyuki"))){
             //XENON IIが完全一致する場合は優先
             perfect = this.setPerfect(true);
             add("XENON II ～TOMOYUKIの野望～",false);
             break;
           }
-          if(title === "Beyond The Earth" && this.text.indexOf("seven") > -1){
+          if(title === "Beyond The Earth" && exists("seven")){
             perfect = this.setPerfect(true);
             add("Beyond The Seven",false);
+            break;
+          }
+          if(title === "ABSOLUTE" && exists("remix")){
+            perfect = this.setPerfect(true);
+            add("ABSOLUTE (kors k Remix)",false);
+            break;
+          }
+          if(title === "AsiaN distractive" && (exists("かめりあ") || exists("virtual"))){
+            perfect = this.setPerfect(true);
+            add("ASIAN VIRTUAL REALITIES (MELTING TOGETHER IN DAZZLING DARKNESS)",false);
             break;
           }
 
@@ -264,11 +278,11 @@ export class CameraClass{
               if(this.checkSingleTitles(title)){
                 add(title,false);
                 if(["A","AA","D","V","X","F"].indexOf(title) === -1) break;//施行中止
-                if(title === "D" && this.text.indexOf("1705") === -1) break;
-                if(title === "X" && this.text.indexOf("1952") > -1) break;
-                if(title === "A" && this.text.indexOf("1260") > -1) break;
-                if(title === "AA" && this.text.indexOf("1834") > -1) break;
-                if(title === "F" && this.text.indexOf("1813") > -1) break;
+                if(title === "D" && !exists("1705")) break;
+                if(title === "X" && exists("1952")) break;
+                if(title === "A" && exists("1260")) break;
+                if(title === "AA" && exists("1834")) break;
+                if(title === "F" && exists("1813")) break;
               }
             }
           }
@@ -277,7 +291,7 @@ export class CameraClass{
           const alter = this.alternatives[songArr[i]]
           if(alter){ //代替文字列が存在する場合
             for(let m = 0; m < alter.length; ++m){
-              if(this.text.indexOf(alter[m]) > -1) add(songArr[0],false);
+              if(exists(alter[m])) add(songArr[0],false);
             }
           }
         }
@@ -286,22 +300,22 @@ export class CameraClass{
     return {perfect:perfect,res:res};
   }
 
-  private indexOf = (text:string)=> this.text.indexOf(text);
+  private exists = (text:string,num:number = -1):boolean=> this.text.indexOf(text) > num;
 
   swipeOneCharacterTitles(){
-    const indexOf = this.indexOf;
+    const exists = this.exists;
     this.suggestions = this.suggestions.filter(item=>{
       if(["AA","A","X","F"].indexOf(item) > -1){
-        return indexOf("d.j.") > -1 || indexOf("amuro") > -1;
+        return exists("d.j.") || exists("amuro");
       }
       if(item === "V"){
-        return indexOf("taka") > -1;
+        return exists("taka");
       }
       if(item === "D"){
-        return indexOf("eagle") > -1;
+        return exists("eagle");
       }
       if(item === "IX"){
-        return indexOf("dj taka") > -1;
+        return exists("dj taka");
       }
       return true;
     });
@@ -309,23 +323,23 @@ export class CameraClass{
   }
 
   checkSingleTitles(current:string){
-    const indexOf = this.indexOf;
+    const exists = this.exists;
     if(["AA","A","X"].indexOf(current) > -1){
-      return indexOf("d.j.") > -1 || indexOf("amuro") > -1;
+      return exists("d.j.") || exists("amuro");
     }
     if(current === "V"){
-      return indexOf("taka") > -1;
+      return exists("taka");
     }
     if(current === "D"){
-      return indexOf("eagle") > -1;
+      return exists("eagle");
     }
   }
 
   findDifficulty(){
-    if(this.text.indexOf("anoth") > -1){
+    if(this.exists("anoth")){
       return "ANOTHER";
     }
-    if(this.text.indexOf("hyper") > -1){
+    if(this.exists("hyper")){
       return "HYPER";
     }
     return "LEGGENDARIA";
@@ -367,7 +381,7 @@ export class CameraClass{
       neccessaryText = neccessaryText.filter((item:string)=>/\d/.test(item));
     }
 
-    if(!neccessaryText) return error;
+    if(!neccessaryText || neccessaryText.length === 0) return error;
 
     const targetText:string = neccessaryText[0];
     const targetLevelRegExp = targetText.match(/MAX|AAA|AA|A|B|C|D|E|F+/g);
