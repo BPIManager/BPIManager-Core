@@ -86,7 +86,9 @@ export class CameraClass{
     "聖人の塔":["beridzebeth"],
     "表裏一体！？怪盗いいんちょの悩み":["表裏一体"],
     "シュレーディンガーの猫":["cait sith"],
-    "めいさいアイドル☆あいむちゃん♪":["めいさい","あいむ"]
+    "めいさいアイドル☆あいむちゃん♪":["めいさい","あいむ"],
+    "共鳴遊戯の華":["アイテ","共鳴"],
+    "がっつり陰キャ!? 怪盗いいんちょの億劫^^;":["prim@"]
   }
 
   private suggestions:string[] = [];
@@ -155,6 +157,7 @@ export class CameraClass{
     if(exists("ヒーレン") && (exists("ダン") || exists("ジョン"))) return ["龍と少女とデコヒーレンス"];
     if((exists("蝶") || exists("風") || exists("雪") || exists("白虎")) && exists("1500")) return ["華蝶風雪"];
     if((exists("バッド") || exists("シンド")) && exists("アリス")) return ["バッドエンド・シンドローム"];
+    if(exists("ドリーム") && exists("スイーツ")) return ["バッド・スイーツ、バッド・ドリーム"];
     if(exists("team hu") && exists("pect for") && exists("amu")) return ["∀"];
     if(exists("risen relic")) return ["SOLID STATE SQUAD -RISEN RELIC REMIX-"];
     if(exists("murasame") && exists("1943")) return ["仮想空間の旅人たち"];
@@ -226,6 +229,10 @@ export class CameraClass{
 
           if(title === "Holic" && (!exists("880") || !exists("taq") )){
             //Holic完全一致でない場合（サンホリ曲対策）
+            continue;
+          }
+          if(title === "SOUND OF GIALLARHORN" && !exists("1668")){
+            //SOUND OF GIALLARHORN完全一致でない場合（BEMANI SOUND TEAM対策）
             continue;
           }
 
@@ -386,7 +393,7 @@ export class CameraClass{
 
   async getExScorev2():Promise<OCRExScore>{
     const error = {error:true,ex:0,reason:"invalid"};
-    let neccessaryText = this.originalText.match(/\n(MAX|AAA|AA|A|B|C|D|E|F)(\+|-)(\+|-| |\d|[a-zA-Z])+\n/g); //MAX-等表記部分の抜き出し
+    let neccessaryText = this.originalText.match(/(\n|')(MAX|AAA|AA|A|B|C|D|E|F)(\+|-|\s+)(\+|-| |\d|[A-Z])+\n/g); //MAX-等表記部分の抜き出し
     if(!neccessaryText) return error;
 
     if(neccessaryText.length > 1){
