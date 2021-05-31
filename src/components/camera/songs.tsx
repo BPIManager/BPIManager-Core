@@ -80,6 +80,13 @@ export class CameraClass{
     "華麗なる大犬円舞曲":["なる大犬"],
     "ディスコルディア":["スコルデ"],
     "千年ノ理":["年ノ"],
+    "THE F∀UST":["the fvust","masqed"],
+    "焔極OVERKILL":["overkill"],
+    "金野火織の金色提言":["金野","金色"],
+    "聖人の塔":["beridzebeth"],
+    "表裏一体！？怪盗いいんちょの悩み":["表裏一体"],
+    "シュレーディンガーの猫":["cait sith"],
+    "めいさいアイドル☆あいむちゃん♪":["めいさい","あいむ"]
   }
 
   private suggestions:string[] = [];
@@ -157,6 +164,12 @@ export class CameraClass{
     if(exists("-65") && exists("amuro")) return ["-65℃"];
     if(exists("#the") && exists("noriken")) return ["#The_Relentless"];
     if(exists("dolon") && exists("Eagle")) return ["3!dolon Forc3"];
+    if(exists("a mix") && exists("scripted")) return ["Scripted Connection⇒ A mix"];
+    if(exists("h mix") && exists("scripted")) return ["Scripted Connection⇒ H mix"];
+    if(exists("rave") && exists("it")) return ["Rave*it!! Rave*it!! "];
+    if(exists("地獄") && exists("hell")) return ["真 地獄超特急 -HELL or HELL-"];
+    if(exists("dropz") || exists("dj dia")) return ["DropZ-Line-"];
+    if(exists("dj totto") && exists("rionos")) return ["シムルグの目醒め"];
     return [];
   }
 
@@ -339,7 +352,7 @@ export class CameraClass{
     if(this.exists("anoth")){
       return "ANOTHER";
     }
-    if(this.exists("hyper")){
+    if(this.exists("hyper") && !this.exists("perio")){
       return "HYPER";
     }
     return "LEGGENDARIA";
