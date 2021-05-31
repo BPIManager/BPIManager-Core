@@ -25,7 +25,8 @@ export default class Camera extends React.Component<{},{
   isLoading:boolean,
   songs:{[key:string]:songData},
   token:string,
-  text:string
+  text:string,
+  ocrId:number,
 }> {
 
   private cam = new CameraClass();
@@ -48,6 +49,7 @@ export default class Camera extends React.Component<{},{
       songs:{},
       token:"",
       text:"",
+      ocrId:-1,
     }
   }
 
@@ -66,17 +68,17 @@ export default class Camera extends React.Component<{},{
   fetcher = async(endpoint:string,data:string)=>{
     const v = window.location.href.indexOf("localhost") > -1  ? "test" : "v2";
     return await fetch("https://proxy.poyashi.me/" + v + "/" + endpoint, {
-    method: 'POST',
-    mode: 'cors',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    body:JSON.stringify({data:data,token:this.state.token}),
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    redirect: 'follow',
-    referrerPolicy: 'no-referrer',
-  });
+      method: 'POST',
+      mode: 'cors',
+      cache: 'no-cache',
+      credentials: 'same-origin',
+      body:JSON.stringify({data:data,token:this.state.token}),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      redirect: 'follow',
+      referrerPolicy: 'no-referrer',
+    });
   }
 
   find = async(shot:string)=>{
@@ -92,7 +94,7 @@ export default class Camera extends React.Component<{},{
     const title = this.cam.reset().setText(fullText).findSong();
     const diff = this.cam.findDifficulty();
     const exScore = await this.cam.setTargetSong(title.length > 0 ? title[0] : "",diff).getExScore();
-    this.syncOCRData(fullText,title,diff,exScore);
+    const m = await this.syncOCRData(fullText,title,diff,exScore);
     return this.setState({
       result:{
         title:title,
@@ -102,6 +104,7 @@ export default class Camera extends React.Component<{},{
       isLoading:false,
       display:1,
       text:fullText,
+      ocrId:m
     })
   }
 
@@ -134,18 +137,20 @@ export default class Camera extends React.Component<{},{
     )}&related=BPIManager&hashtags=BPIM`);
   }
 
-  syncOCRData = (body:string,title:string[],diff:string,exScore:OCRExScore)=>{
+  syncOCRData = async (body:string,title:string[],diff:string,exScore:OCRExScore)=>{
 
     const sendData = localStorage.getItem("sendData") || "true";
     if(sendData !== "true"){
-      return;
+      return -1;
     }
-    this.fetcher("sql/save",JSON.stringify({
+    const p = await this.fetcher("sql/save",JSON.stringify({
       body:body,
       title:title,
       difficulty:diff || "ANOTHER",
       ex:exScore.error ? 0 : exScore.ex
-    }))
+    }));
+    const json = await p.json();
+    return (json && json.id) ? Number(json.id) : -1;
   }
 
   download = (data:string)=>{
@@ -186,14 +191,14 @@ export default class Camera extends React.Component<{},{
   }
 
   render(){
-    const {songs,result,display,openSettings,settings,isLoading,rawCamData,text} = this.state;
+    const {songs,result,display,openSettings,settings,isLoading,rawCamData,token,text,ocrId} = this.state;
     return (
       <React.Fragment>
         <Backdrop open={isLoading}>
           <Loader text="しばらくお待ち下さい"/>
         </Backdrop>
         {display === 2 && <CameraLoader rawCamData={rawCamData}/>} { /* Loader */ }
-        {display === 1 && <CameraResult text={text} result={result} rawCamData={rawCamData} songs={songs} save={this.save} retry={()=>this.setState({display:0})} upload={this.upload}/>}
+        {display === 1 && <CameraResult id={ocrId} text={text} token={token} result={result} rawCamData={rawCamData} songs={songs} save={this.save} retry={()=>this.setState({display:0})} upload={this.upload}/>}
         {display === 0 && <CameraMode camSettings={settings} shot={this.shot} toggleSettings={this.toggleSettings}/>}
         {openSettings && <CameraSettings toggleSettings={this.toggleSettings}/>}
       </React.Fragment>

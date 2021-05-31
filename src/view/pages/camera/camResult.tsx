@@ -19,11 +19,13 @@ import _djRank from '@/components/common/djRank';
 import CheckIcon from '@material-ui/icons/Check';
 import { scoresDB } from '@/components/indexedDB';
 import Alert from '@material-ui/lab/Alert/Alert';
-import { Link } from '@material-ui/core';
-import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import { Link, ButtonGroup } from '@material-ui/core';
 import {ReactComponent as TwitterIcon} from "@/assets/twitter.svg";
 import SongSearchDialog from './songSearch';
 import { CameraClass } from '@/components/camera/songs';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import ThumbDownIcon from '@material-ui/icons/ThumbDown';
+import Loader from '@/view/components/common/loader';
 
 interface Props{
   result:any,
@@ -32,7 +34,9 @@ interface Props{
   songs:{[key:string]:songData},
   save:(score:scoreData|null,ex:number,bpi:number,song:songData)=>Promise<boolean>,
   upload:(ex:number,bpi:string|number,song:songData,lastEx:number)=>void,
-  text:string
+  text:string,
+  id:number,
+  token:string
 }
 
 export default class CameraResult extends React.Component<Props,{
@@ -186,7 +190,7 @@ export default class CameraResult extends React.Component<Props,{
   }
 
   render(){
-    const {rawCamData,text} = this.props;
+    const {rawCamData,text,id,token} = this.props;
     const {defaultResult,currentSongTitle,currentDifficulty,exScore,bpi,score,saved,isDialogOpen} = this.state;
     return (
       <React.Fragment>
@@ -288,9 +292,79 @@ export default class CameraResult extends React.Component<Props,{
           {!saved && <Button startIcon={<CheckIcon/>} fullWidth onClick={this.save} color="secondary" variant="contained">スコアを保存</Button>}
           {saved && <Button startIcon={<ThumbUpIcon/>} fullWidth disabled color="secondary" variant="contained">スコアを保存しました</Button>}
           <Button startIcon={<ReplayIcon/>} fullWidth onClick={this.props.retry} style={{margin:"10px 0 20px 0"}}>もう一度撮影</Button>
+          {id !== -1 && (
+            <VoteButton id={id} token={this.props.token}/>
+          )}
         </Container>
         {isDialogOpen && <SongSearchDialog diff={currentDifficulty} text={text} isDialogOpen={isDialogOpen} close={this.dialogToggle} decide={this.decide}/>}
       </React.Fragment>
     );
+  }
+}
+
+
+class VoteButton extends React.Component<{id:number,token:string},{
+  progress:number
+}>{
+
+  constructor(props:{id:number,token:string}){
+    super(props);
+    this.state = {
+      progress:0
+    }
+  }
+
+  fetcher = async(type:number)=>{
+    const v = window.location.href.indexOf("localhost") > -1  ? "test" : "v2";
+    return await fetch("https://proxy.poyashi.me/" + v + "/sql/vote", {
+      method: 'POST',
+      mode: 'cors',
+      cache: 'no-cache',
+      credentials: 'same-origin',
+      body:JSON.stringify({data:JSON.stringify({type:type,id:this.props.id}),token:this.props.token}),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      redirect: 'follow',
+      referrerPolicy: 'no-referrer',
+    });
+  }
+
+  vote = async(type:number)=>{
+    this.setState({progress:1});
+    await this.fetcher(type);
+    this.setState({progress:2});
+  }
+
+  render(){
+    return (
+      <React.Fragment>
+        <div style={{display:"flex",justifyContent:"center",flexDirection:"column",textAlign:"center",marginBottom:"30px"}}>
+          <Alert  icon={false} variant="outlined" severity="info">
+            <Typography variant="body1" display="block" gutterBottom>
+              読み取りは正確ですか？
+            </Typography>
+            {
+              this.state.progress === 2 && (
+                <p>ご協力ありがとうございました</p>
+              )
+            }
+            {
+              this.state.progress === 1 && (
+                <Loader/>
+              )
+            }
+            {
+              this.state.progress === 0 && (
+                <ButtonGroup fullWidth>
+                  <Button onClick={()=>this.vote(1)} startIcon={<ThumbUpIcon/>}>正確</Button>
+                  <Button onClick={()=>this.vote(0)} startIcon={<ThumbDownIcon/>}>不正確</Button>
+                </ButtonGroup>
+              )
+            }
+          </Alert>
+        </div>
+      </React.Fragment>
+    )
   }
 }

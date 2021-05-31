@@ -11,6 +11,13 @@ export default class Loader extends React.Component<{
 
   render(){
     const {hasMargin,text,isInner,isFull} = this.props;
+    if(!text){
+      return (
+        <Container fixed  className={hasMargin ? "loaderCentered" : "loaderCenteredOnly"} style={{maxWidth:"100%"}}>
+          <CircularProgress color="secondary" />
+        </Container>
+      )
+    }
     if(isFull){
       return (
         <Container fixed  className={hasMargin ? "loaderCentered" : "loaderCenteredOnly"} style={{maxWidth:"100%",height:"100%",display:"flex",justifyContent:"center",alignItems:"center"}}>
