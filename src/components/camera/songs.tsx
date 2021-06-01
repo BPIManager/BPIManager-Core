@@ -170,7 +170,8 @@ export class CameraClass{
     if(exists("dolon") && exists("Eagle")) return ["3!dolon Forc3"];
     if(exists("a mix") && exists("scripted")) return ["Scripted Connection⇒ A mix"];
     if(exists("h mix") && exists("scripted")) return ["Scripted Connection⇒ H mix"];
-    if(exists("rave") && exists("it")) return ["Rave*it!! Rave*it!! "];
+    if(exists("rave") && exists("patrol")) return ["Rave Patroller"];
+    if(exists("rave") && exists("it") && exists("1656")) return ["Rave*it!! Rave*it!! "];
     if(exists("地獄") && exists("hell")) return ["真 地獄超特急 -HELL or HELL-"];
     if(exists("dropz") || exists("dj dia")) return ["DropZ-Line-"];
     if(exists("dj totto") && exists("rionos")) return ["シムルグの目醒め"];
@@ -261,7 +262,7 @@ export class CameraClass{
             add("STARLIGHT DANCEHALL",false);
             break;
           }
-          if(title === "crew" && (exists("screw") && exists("かめりあ"))){
+          if(title === "crew" && exists("screw")){
             //SCREW // owo // SCREWが完全一致する場合は優先
             perfect = this.setPerfect(true);
             add("SCREW // owo // SCREW",false);
