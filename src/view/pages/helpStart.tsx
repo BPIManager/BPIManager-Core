@@ -48,7 +48,7 @@ export default class HelpStart extends React.Component<{},{
             <Typography variant="h4" style={{display: 'flex',alignItems: 'center'}}><FavoriteIcon/>&nbsp;必要なもの</Typography>
             <p>BPIManagerをお使いいただくにあたって必要なものは、beatmania IIDXのプレイデータのみです。</p>
             <p>eAMUSEMENTプレミアムコースに加入しているとCSVによるスコアデータの取り込みが可能になり便利ですが、eAMUSEMENTベーシックコースへの加入のみ、または有料プランへ未加入の場合でもご利用いただくことが可能です。</p>
-            <p>BPIManagerへのスコア登録方法は「CSV取り込み」「ブックマークレット取り込み」「手動登録」の3種類があり、eAMUSEMENT各コースにおいてご利用いただける機能対応表は以下のようになっています。</p>
+            <p>BPIManagerへのスコア登録方法は「CSV取り込み」「ブックマークレット取り込み」「手動登録」「カメラ読み取り」の4種類があり、eAMUSEMENT各コースにおいてご利用いただける機能対応表は以下のようになっています。</p>
             {eAmusementCompare()}
             <p>各取り込み方法の使い方については、「<Link to="/data"><RefLink component="span" color="secondary">データ取り込み</RefLink></Link>」ページを御覧ください。<br/>
             コナミアミューズメントが提供するeAMUSEMENT有料プランの詳細は、<RefLink href="https://p.eagate.573.jp/gate/pub/course/eapremium/index.html" color="secondary">こちらのページ(コナミアミューズメント公式サイト)</RefLink>をご確認ください。</p>
@@ -78,6 +78,7 @@ const rows:any = [
   createDataCompare("CSV取り込み",true,false,false),
   createDataCompare("ブックマークレット取り込み",true,true,false),
   createDataCompare("手動登録",true,true,true),
+  createDataCompare("カメラ読み取り",true,true,true),
 ];
 
 const bpiRows:any = [
