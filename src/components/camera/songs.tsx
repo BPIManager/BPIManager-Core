@@ -140,7 +140,7 @@ export class CameraClass{
     if(exists("1.0.1")) return ["CODE:1 [revision1.0.1]"];
     if(exists("five hammer")) return ["fffff"];
     if(exists("amuro vs")) return ["冥"]; //アーティスト
-    if(exists("sound holic feat. nana takahashi vs.god phoenix prim")) return ["神謳 -RESONANCE-"]; //アーティスト
+    if(exists("god phoenix prim")) return ["神謳 -RESONANCE-"]; //アーティスト
     if(exists("alba") && exists("sound holic")) return ["ALBA -黎明-"]; //曲名 OR アーティスト
     if((exists("朱雀") && exists("玄武") ) || exists("VS 玄")) return ["卑弥呼"]; //アーティスト
     if(exists("レイディオ") || exists("夏色ビキニのprim")) return ["†渚の小悪魔ラヴリィ～レイディオ†(IIDX EDIT)"]; //曲名（部分） OR アーティスト
@@ -175,6 +175,7 @@ export class CameraClass{
     if(exists("地獄") && exists("hell")) return ["真 地獄超特急 -HELL or HELL-"];
     if(exists("dropz") || exists("dj dia")) return ["DropZ-Line-"];
     if(exists("dj totto") && exists("rionos")) return ["シムルグの目醒め"];
+    if(exists("totto") && exists("ステラ")) return ["眠りの国のステラ"];
     return [];
   }
 
