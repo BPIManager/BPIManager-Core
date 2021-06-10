@@ -85,7 +85,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
     const {page,data,mode} = this.props;
     return (
       <Paper style={{width:"100%",overflowX:"auto"}} className={_traditionalMode() === 1 ? "traditionalMode" : ""}>
-        <div>
+        <React.Fragment>
           <Table>
             <TableHead>
               <TableRow>
@@ -101,7 +101,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
             </TableHead>
             <TableBody>
               {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:scoreData,i:number) => {
-                const prefix = row.difficulty === "hyper" ? "(H)" : row.difficulty === "leggendaria" ? "(†)" : "";
+                const prefix = _prefix(row.difficulty);
                 const f = this.props.allSongsData[row.title + prefix];
                 if(!f){return (null);}
                 const max  = f["notes"] * 2;
@@ -173,7 +173,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
               })}
             </TableBody>
           </Table>
-        </div>
+        </React.Fragment>
         <TablePagination
           rowsPerPageOptions={[10, 25, 50, 100]}
           component="div"

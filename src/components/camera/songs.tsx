@@ -234,6 +234,10 @@ export class CameraClass{
             //Holic完全一致でない場合（サンホリ曲対策）
             continue;
           }
+          if(title === "BREAK OVER" && (!exists("1210") || !exists("masayshi") || !exists("iimori") )){
+            //BREAK OVER完全一致出ない場合（COMBO BREAK対策）
+            continue;
+          }
           if(title === "SOUND OF GIALLARHORN" && !exists("1668")){
             //SOUND OF GIALLARHORN完全一致でない場合（BEMANI SOUND TEAM対策）
             continue;
