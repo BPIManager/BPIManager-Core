@@ -92,14 +92,24 @@ export default class Camera extends React.Component<{},{
       return false;
     }
     const title = this.cam.reset().setText(fullText).findSong();
-    const diff = this.cam.findDifficulty();
-    const exScore = await this.cam.setTargetSong(title.length > 0 ? title[0] : "",diff).getExScore();
+    const currentSong = title.length > 0 ? title[0] : "";
+    let diff = this.cam.findDifficulty(); //仮難易度推定
+    let exScore = await this.cam.setTargetSong(currentSong,diff).getExScore();
+    if(!this.cam.isAccurateDiff()){
+      const chk = await this.cam.getAccSong(exScore.ex); //対象難易度が存在するかチェック、存在しない場合は存在する難易度を使用
+      if(chk){
+        diff = chk.difficulty;
+      }
+      exScore = await this.cam.setTargetSong(currentSong,diff).getExScore();
+    }
+
     const m = await this.syncOCRData(fullText,title,diff,exScore);
+
     return this.setState({
       result:{
         title:title,
         difficulty:diff || "ANOTHER",
-        ex:exScore.error ? 0 : exScore.ex
+        ex:this.cam.checkExScoreDigits(exScore)
       },
       isLoading:false,
       display:1,

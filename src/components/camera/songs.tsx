@@ -1,7 +1,7 @@
 import { songsDB } from "../indexedDB";
 import { _isSingle } from "../settings";
 import { songData } from "@/types/data";
-export interface OCRExScore {error:boolean,ex:number,reason?:string,details?:{pg:number,gr:number}}
+export interface OCRExScore {error:boolean,ex:number,reason?:string,details?:{pg:number,gr:number},accurate:boolean}
 
 export class CameraClass{
   private songTitles:string[];
@@ -90,6 +90,7 @@ export class CameraClass{
     "共鳴遊戯の華":["アイテ","共鳴"],
     "がっつり陰キャ!? 怪盗いいんちょの億劫^^;":["prim@"],
     "疾風迅雷":["kumokiri","迅雷"],
+    "おーまい！らぶりー！すうぃーてぃ！だーりん！":["おーまい"],
   }
 
   private suggestions:string[] = [];
@@ -102,7 +103,7 @@ export class CameraClass{
 
   setText(text:string){
     //テキストはすべて小文字対小文字で比較
-    this.text = text.toLowerCase().replace(/~/g,"～");
+    this.text = text.toLowerCase().replace(/~/g,"～").replace("miss count","");
     this.originalText = text;
     return this;
   }
@@ -234,6 +235,17 @@ export class CameraClass{
             //Holic完全一致でない場合（サンホリ曲対策）
             continue;
           }
+
+          if(title === "KEY" && !exists("colors")){
+            //KEY完全一致でない場合
+            continue;
+          }
+
+          if(title === "Kung-fu Empire" && (exists("snakey") && exists("kung"))){
+            //Snakey Kung-fuの場合 Kung-fu Empireをスキップ
+            continue;
+          }
+
           if(title === "BREAK OVER" && (!exists("1210") || !exists("masayshi") || !exists("iimori") )){
             //BREAK OVER完全一致出ない場合（COMBO BREAK対策）
             continue;
@@ -293,6 +305,11 @@ export class CameraClass{
             perfect = this.setPerfect(true);
             add("ASIAN VIRTUAL REALITIES (MELTING TOGETHER IN DAZZLING DARKNESS)",false);
             break;
+          }
+
+          if(title === "mosaic" && exists("wav") ){
+            //mosaic.wav対策
+            continue;
           }
 
           if(i < 2){//完全一致
@@ -362,6 +379,14 @@ export class CameraClass{
     }
   }
 
+  checkExScoreDigits(ex:OCRExScore):number{
+    if(ex.error) return 0;
+    if(ex.ex < 0){
+      return 0;
+    }
+    return ex.ex;
+  }
+
   findDifficulty(){
     if(this.exists("anoth")){
       return "ANOTHER";
@@ -370,6 +395,19 @@ export class CameraClass{
       return "HYPER";
     }
     return "LEGGENDARIA";
+  }
+
+  isAccurateDiff(){
+    if(this.exists("anoth")){
+      return true;
+    }
+    if(this.exists("hyper") && !this.exists("perio")){
+      return true;
+    }
+    if(this.exists("ndaria")){
+      return true;
+    }
+    return false;
   }
 
   async getExScore():Promise<OCRExScore>{
@@ -390,16 +428,16 @@ export class CameraClass{
         let pg = Number(numbers[0]), gr = Number(numbers[1]);
         pg = Number.isNaN(pg) ? 0 : pg;
         gr = Number.isNaN(gr) ? 0 : gr;
-        return {error:false,ex:pg * 2 + gr * 1,details:{pg:pg,gr:gr}};
+        return {error:false,ex:pg * 2 + gr * 1,details:{pg:pg,gr:gr},accurate:false};
       }else{
-        return {error:true,ex:0,reason:"EXスコアを読み取れませんでした"};
+        return {error:true,ex:0,reason:"EXスコアを読み取れませんでした",accurate:false};
       }
     }
-    return {error:true,ex:0,reason:"不明なエラーです"};
+    return {error:true,ex:0,reason:"不明なエラーです",accurate:false};
   }
 
   async getExScorev2():Promise<OCRExScore>{
-    const error = {error:true,ex:0,reason:"invalid"};
+    const error = {error:true,ex:0,reason:"invalid",accurate:true};
     let neccessaryText = this.originalText.match(/(\n|')(MAX|AAA|AA|A|B|C|D|E|F)(\+|-|\s+)(\+|-| |\d|[A-Z])+\n/g); //MAX-等表記部分の抜き出し
     if(!neccessaryText) return error;
 
@@ -435,7 +473,7 @@ export class CameraClass{
     }
 
     if(targetEx === 0) return error;
-    return {error:false,ex: proveThis};
+    return {error:false,ex: proveThis,accurate:true};
   }
 
   private targetSongTitle:string = "";
@@ -447,7 +485,7 @@ export class CameraClass{
     return this;
   }
 
-  getTargetExScore = async(targetLevel:string):Promise<number>=>{
+  getAccSong = async(exScore?:number)=>{
     const sdb = new songsDB();
     let count = 0;
     let song = await sdb.getOneItemIsSingle(this.targetSongTitle,this.targetSongDiff);
@@ -455,13 +493,20 @@ export class CameraClass{
       while(count < 3){
         const newDiff = count === 0 ? "hyper" : count === 1 ? "another" : "leggendaria";
         song = await sdb.getOneItemIsSingle(this.targetSongTitle,newDiff);
+        if((exScore && song) && song[0].notes * 2 < exScore) continue; //EXスコアが理論値を超える場合
         if(song && song.length > 0) break;
         count++;
       }
     }
-    if(!song || song.length === 0) return 0;
+    if(!song || song.length === 0) return null;
+    return song[0];
+  }
+
+  getTargetExScore = async(targetLevel:string):Promise<number>=>{
+    const song = await this.getAccSong();
+    if(!song) return 0;
     const percentile = ():number=>{
-      const n = song[0].notes * 2;
+      const n = song.notes * 2;
       switch(targetLevel){
         case "MAX": return n;
         case "AAA": return n * 8 / 9;
