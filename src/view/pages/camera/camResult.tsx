@@ -238,6 +238,7 @@ export default class CameraResult extends React.Component<Props,{
                       {!rekidai && <span>+{exScore}</span>}
                     </Typography>
                     {rekidai && <small style={{textAlign:"center"}}>IIDX{rekidai.storedAt}で{untilDate(rekidai.updatedAt)}日前<br/>自己歴代スコア:{rekidai.exScore}</small>}
+                    {!rekidai && <small style={{textAlign:"center"}}>登録スコアなし<br/>&nbsp;</small>}
                   </div>
                 </Grid>
               </Grid>
