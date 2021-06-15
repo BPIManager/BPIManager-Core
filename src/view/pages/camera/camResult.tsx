@@ -26,7 +26,7 @@ import { CameraClass } from '@/components/camera/songs';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import Loader from '@/view/components/common/loader';
-import timeFormatter, { untilDate } from '@/components/common/timeFormatter';
+import { untilDate } from '@/components/common/timeFormatter';
 
 interface Props{
   result:any,
