@@ -2,7 +2,7 @@ import Dexie from "dexie";
 import {scoreData,songData, rivalScoreData, DBRivalStoreData, historyData} from "../../types/data";
 import timeFormatter, { timeCompare } from "../common/timeFormatter";
 import {_currentStore,_isSingle} from "../settings";
-import {difficultyDiscriminator, difficultyParser} from "../songs/filter";
+import {difficultyDiscriminator, difficultyParser, diffsUpperCase} from "../songs/filter";
 import bpiCalcuator from "../bpi";
 import {noimg, alternativeImg} from "../common/"
 import { DBLists } from "../../types/lists";
@@ -720,12 +720,22 @@ export const scoreHistoryDB = class extends storageWrapper{
         res.push(t[0]);
         return 0;
       });
-      console.log(res);
       return res.reverse();
     }catch(e){
       console.error(e);
       return [];
     }
+  }
+
+  async getRekidaiData(title:string,diff:diffsUpperCase):Promise<any>{
+    const d = difficultyDiscriminator(diff);
+    const m:songData = {
+      title:title,
+      difficulty:d,
+      difficultyLevel:"12",
+      wr:-1,avg:-1,notes:-1,bpm:"0",textage:"",dpLevel:"0",updatedAt:""
+    };
+    return await this.getAcrossVersion(m);
   }
 
   async recalculateBPI(updatedSongs:string[] = []){

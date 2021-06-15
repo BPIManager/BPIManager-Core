@@ -56,13 +56,16 @@ export default class Camera extends React.Component<{},{
   async componentDidMount(){
     const s = await (await this.fetcher("token","")).json();
     const token = s.token;
-    (await this.cam.setSplitLetters(/.{6}/g).loadSongs()).init();
+    this.setState({isLoading:false,token:token});
+  }
+
+  setSongs = async()=>{
     const t = (await new songsDB().getAll(_isSingle())).reduce((groups:{[key:string]:songData},item:songData)=>{
-      if(!groups){groups = {}};
+      if(!groups) groups = {};
       groups[item["title"] + _prefixFromNum(item.difficulty)] = item;
       return groups;
     },[]);
-    this.setState({songs:t,isLoading:false,token:token});
+    return this.setState({songs:t});
   }
 
   fetcher = async(endpoint:string,data:string)=>{
@@ -83,6 +86,10 @@ export default class Camera extends React.Component<{},{
 
   find = async(shot:string)=>{
     if(!shot) return;
+
+    await this.setSongs();
+    (await this.cam.setSplitLetters(/.{6}/g).loadSongs()).init();
+
     this.setState({isLoading:true,display:2});
     const t = await this.fetcher("ocr",shot.replace("data:image/jpeg;base64,",""));
     const json = await t.json();

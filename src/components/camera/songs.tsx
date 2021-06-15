@@ -103,7 +103,7 @@ export class CameraClass{
 
   setText(text:string){
     //テキストはすべて小文字対小文字で比較
-    this.text = text.toLowerCase().replace(/~/g,"～").replace("miss count","");
+    this.text = text.toLowerCase().replace(/~/g,"～").replace("miss count",""); // Triple Counter対策
     this.originalText = text;
     return this;
   }
@@ -175,8 +175,9 @@ export class CameraClass{
     if(exists("rave") && exists("it") && exists("1656")) return ["Rave*it!! Rave*it!! "];
     if(exists("地獄") && exists("hell")) return ["真 地獄超特急 -HELL or HELL-"];
     if(exists("dropz") || exists("dj dia")) return ["DropZ-Line-"];
-    if(exists("dj totto") && exists("rionos")) return ["シムルグの目醒め"];
+    if(exists("totto") && exists("rionos")) return ["シムルグの目醒め"];
     if(exists("totto") && exists("ステラ")) return ["眠りの国のステラ"];
+    if((exists("bouncek") || exists("1990")) && exists("mad")) return ["199024club -Re:BounceKiller-"];
     return [];
   }
 
@@ -247,11 +248,15 @@ export class CameraClass{
           }
 
           if(title === "BREAK OVER" && (!exists("1210") || !exists("masayshi") || !exists("iimori") )){
-            //BREAK OVER完全一致出ない場合（COMBO BREAK対策）
+            //BREAK OVER完全一致でない場合（COMBO BREAK対策）
             continue;
           }
           if(title === "SOUND OF GIALLARHORN" && !exists("1668")){
             //SOUND OF GIALLARHORN完全一致でない場合（BEMANI SOUND TEAM対策）
+            continue;
+          }
+          if(title === "KHAMEN BREAK" && !exists("ふお")){
+            //KHAMEN BREAK完全一致でない場合（COMBO BREAK対策）
             continue;
           }
 

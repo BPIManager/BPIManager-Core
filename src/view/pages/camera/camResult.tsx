@@ -9,7 +9,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import ReplayIcon from '@material-ui/icons/Replay';
 import bpiCalcuator, { B } from '@/components/bpi';
-import { difficultyParser, _prefixFromLetters, difficultyDiscriminator } from '@/components/songs/filter';
+import { difficultyParser, _prefixFromLetters, difficultyDiscriminator, diffsUpperCase } from '@/components/songs/filter';
 import { _isSingle } from '@/components/settings';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
@@ -17,7 +17,7 @@ import Grid from '@material-ui/core/Grid';
 import { songData, scoreData } from '@/types/data';
 import _djRank from '@/components/common/djRank';
 import CheckIcon from '@material-ui/icons/Check';
-import { scoresDB } from '@/components/indexedDB';
+import { scoresDB, scoreHistoryDB } from '@/components/indexedDB';
 import Alert from '@material-ui/lab/Alert/Alert';
 import { Link, ButtonGroup } from '@material-ui/core';
 import {ReactComponent as TwitterIcon} from "@/assets/twitter.svg";
@@ -26,6 +26,7 @@ import { CameraClass } from '@/components/camera/songs';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import Loader from '@/view/components/common/loader';
+import timeFormatter, { untilDate } from '@/components/common/timeFormatter';
 
 interface Props{
   result:any,
@@ -36,18 +37,19 @@ interface Props{
   upload:(ex:number,bpi:string|number,song:songData,lastEx:number)=>void,
   text:string,
   id:number,
-  token:string
+  token:string,
 }
 
 export default class CameraResult extends React.Component<Props,{
   defaultResult:any,
   currentSongTitle:string,
-  currentDifficulty:string,
+  currentDifficulty:"ANOTHER"|"HYPER"|"LEGGENDARIA",
   exScore:number,
   saved:boolean,
   score:scoreData|null,
   bpi:B,
-  isDialogOpen:boolean
+  isDialogOpen:boolean,
+  rekidai:scoreData|null,
 }> {
 
   constructor(props:Props){
@@ -60,7 +62,8 @@ export default class CameraResult extends React.Component<Props,{
       saved:false,
       bpi:{error:false,bpi:-15},
       score:null,
-      isDialogOpen:false
+      isDialogOpen:false,
+      rekidai:null,
     }
   }
 
@@ -86,17 +89,23 @@ export default class CameraResult extends React.Component<Props,{
   async componentDidMount(){
     const f1 = await this.updateBPI(null,null,null);
     const score = await this.getScore();
+    let rekidai = await this.getRekidaiScore(this.props.result.title[0],this.props.result.difficulty);
+    if(!rekidai || rekidai.length === 0){
+      rekidai = null;
+    }else{
+      rekidai = rekidai[0];
+    }
     if(f1 && f1.error){
       const f2 = await this.updateBPI(null,"ANOTHER",null);
-      return this.setState({bpi:f2,currentDifficulty:"ANOTHER",score:score});
+      return this.setState({bpi:f2,currentDifficulty:"ANOTHER",score:score,rekidai:rekidai});
     }else{
-      return this.setState({bpi:f1,score:score});
+      return this.setState({bpi:f1,score:score,rekidai:rekidai});
     }
   }
 
   dialogToggle = ()=> this.setState({isDialogOpen:!this.state.isDialogOpen});
   decide = (input:songData)=> {
-    const diff = difficultyDiscriminator(input.difficulty).toUpperCase();
+    const diff = (difficultyDiscriminator(input.difficulty,true) as diffsUpperCase);
     let newEx = this.state.exScore;
     this.setState({
       defaultResult:{
@@ -123,14 +132,20 @@ export default class CameraResult extends React.Component<Props,{
     return this.props.songs[this.state.currentSongTitle + _prefixFromLetters(this.state.currentDifficulty)];
   }
 
-  getScore = async(title:string = this.state.currentSongTitle, diff:string = this.state.currentDifficulty)=>{
+  getScore = async(title:string = this.state.currentSongTitle, diff:diffsUpperCase = this.state.currentDifficulty)=>{
     if(!this.song()) return null;
     const scores = await new scoresDB().getSpecificVersionAll();
     const score = scores.find((item:scoreData)=>item.title === title && item.difficulty === diff.toLowerCase());
     return score || null;
   }
 
-  checkNewSongMax = async(title:string|null = null,diff:string|null = null,ex:number|null = null)=>{
+  getRekidaiScore = async(title:string = this.state.currentSongTitle, diff:diffsUpperCase = this.state.currentDifficulty)=>{
+    const scdb = await new scoreHistoryDB().getRekidaiData(title,diff);
+    console.log(scdb);
+    return scdb;
+  }
+
+  checkNewSongMax = async(title:string|null = null,diff:diffsUpperCase|null = null,ex:number|null = null)=>{
     const t = title ? title : this.state.currentSongTitle;
     const d = diff ? diff : this.state.currentDifficulty;
     const e = ex ? ex : this.state.exScore;
@@ -169,7 +184,7 @@ export default class CameraResult extends React.Component<Props,{
     return this.checkNewSongMax(null,null,num);
   }
 
-  async updateBPI(newTitle:string|null = null,newDiff:string|null = null,newScore:number|null){
+  async updateBPI(newTitle:string|null = null,newDiff:diffsUpperCase|null = null,newScore:number|null){
     const {currentSongTitle,currentDifficulty,exScore} = this.state;
     if((!newTitle && !currentSongTitle) || (!newDiff && !currentDifficulty)) return {error:true,bpi:-15,reason:"楽曲または難易度が指定されていません"};
     const newBPI:B = await (this.calc.calc(newTitle || currentSongTitle,difficultyParser((newDiff || currentDifficulty).toLowerCase(),_isSingle()),newScore || exScore));
@@ -191,50 +206,80 @@ export default class CameraResult extends React.Component<Props,{
 
   render(){
     const {rawCamData,text,id,token} = this.props;
-    const {defaultResult,currentSongTitle,currentDifficulty,exScore,bpi,score,saved,isDialogOpen} = this.state;
+    const {defaultResult,currentSongTitle,currentDifficulty,exScore,bpi,score,saved,isDialogOpen,rekidai} = this.state;
+    const nextBPI = Math.ceil(bpi.bpi / 10) * 10;
     return (
       <React.Fragment>
         <img src={rawCamData} alt="撮影された画像" style={{display:"block",margin:"10px auto",maxWidth:"100%"}}/>
         <Container fixed>
           {this.song() && (
-            <Grid container spacing={3}>
-              <Grid item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0"}}>
+            <React.Fragment>
+              <Grid container spacing={3}>
+                <Grid item xs={6} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0"}}>
                   <div style={{textAlign:"center"}}>
                     <Typography component="h6" variant="h6" color="textSecondary">
-                      {<span>{this.showRank(false)}</span>}
+                      今作BEST
                     </Typography>
                     <Typography component="h4" variant="h4" color="textPrimary">
-                      {<span>{this.showRank(true)}</span>}
+                      {score && <span>{exScore - score.exScore > 0 && "+"}{exScore - score.exScore}</span>}
+                      {!score && <span>+{exScore}</span>}
                     </Typography>
+                    {score && <small style={{textAlign:"center"}}>{untilDate(score.updatedAt)}日前<br/>EX:{score.exScore}</small>}
+                    {!score && <small style={{textAlign:"center"}}>登録スコアなし<br/>&nbsp;</small>}
                   </div>
-                  {score && <small style={{textAlign:"center"}}>スコアレート<br/>{(exScore / (this.song().notes * 2) * 100).toFixed(2)}%</small>}
                 </Grid>
-                <Grid item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0"}}>
-                  <Typography component="h6" variant="h6" color="textSecondary">
-                    BPI
-                  </Typography>
-                  <Typography component="h4" variant="h4" color="textPrimary">
-                    {this.song().wr === -1 && <span>-</span>}
-                    {this.song().wr !== -1 && <div>
-                      {(!bpi.error) && bpi.bpi}
-                      {(bpi.error) && <span>-</span>}
-                    </div>}
-                  </Typography>
-                  {score && <small style={{textAlign:"center"}}>自己ベスト<br/>{exScore - score.exScore > 0 && "+"}{exScore - score.exScore}</small>}
-                </Grid>
-                <Grid item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0"}}>
-                  <Typography component="h6" variant="h6" color="textSecondary">
-                    RANK
-                  </Typography>
-                  <Typography component="h4" variant="h4" color="textPrimary">
-                    {this.song().wr === -1 && <span>-</span>}
-                    {this.song().wr !== -1 && <div>
-                      {this.calc.rank(bpi.bpi)}
-                    </div>}
-                  </Typography>
-                  {score && <small style={{textAlign:"center"}}>皆伝上位<br/>{((this.calc.rank(bpi.bpi) / this.calc.getTotalKaidens()) * 100).toFixed(1)}%</small>}
+                <Grid item xs={6} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0"}}>
+                  <div style={{textAlign:"center"}}>
+                    <Typography component="h6" variant="h6" color="textSecondary">
+                      自己歴代
+                    </Typography>
+                    <Typography component="h4" variant="h4" color="textPrimary">
+                      {rekidai && <span>{exScore - rekidai.exScore > 0 && "+"}{exScore - rekidai.exScore}</span>}
+                      {!rekidai && <span>+{exScore}</span>}
+                    </Typography>
+                    {rekidai && <small style={{textAlign:"center"}}>IIDX{rekidai.storedAt}で{untilDate(rekidai.updatedAt)}日前<br/>自己歴代スコア:{rekidai.exScore}</small>}
+                  </div>
                 </Grid>
               </Grid>
+              <Grid container spacing={3}>
+                <Grid item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0"}}>
+                    <div style={{textAlign:"center"}}>
+                      <Typography component="h6" variant="h6" color="textSecondary">
+                        {<span>{this.showRank(false)}</span>}
+                      </Typography>
+                      <Typography component="h4" variant="h4" color="textPrimary">
+                        {<span>{this.showRank(true)}</span>}
+                      </Typography>
+                    </div>
+                    <small style={{textAlign:"center"}}>スコアレート<br/>{(exScore / (this.song().notes * 2) * 100).toFixed(2)}%</small>
+                  </Grid>
+                  <Grid item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0"}}>
+                    <Typography component="h6" variant="h6" color="textSecondary">
+                      BPI
+                    </Typography>
+                    <Typography component="h4" variant="h4" color="textPrimary">
+                      {this.song().wr === -1 && <span>-</span>}
+                      {this.song().wr !== -1 && <div>
+                        {(!bpi.error) && bpi.bpi}
+                        {(bpi.error) && <span>-</span>}
+                      </div>}
+                    </Typography>
+                    <small style={{textAlign:"center"}}>BPI{nextBPI}まで<br/>あと{this.calc.calcFromBPI(nextBPI,true) - exScore}点</small>
+                  </Grid>
+                  <Grid item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0"}}>
+                    <Typography component="h6" variant="h6" color="textSecondary">
+                      RANK
+                    </Typography>
+                    <Typography component="h4" variant="h4" color="textPrimary">
+                      {this.song().wr === -1 && <span>-</span>}
+                      {this.song().wr !== -1 && <div>
+                        {this.calc.rank(bpi.bpi)}
+                      </div>}
+                    </Typography>
+                    <small style={{textAlign:"center"}}>皆伝上位<br/>{((this.calc.rank(bpi.bpi) / this.calc.getTotalKaidens()) * 100).toFixed(1)}%</small>
+                  </Grid>
+                </Grid>
+              </React.Fragment>
             )}
           <Divider style={{margin:"10px 0"}}/>
           {(defaultResult.title.length > 0 && !this.song()) && (

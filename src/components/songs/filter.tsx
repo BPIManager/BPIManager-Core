@@ -54,14 +54,16 @@ export const _prefixFromLetters = (difficulty:string,showAnother:boolean = false
   return prefix;
 }
 
+export type diffsUpperCase = "ANOTHER" | "HYPER" | "LEGGENDARIA";
+type diffs  = "another"|"hyper"|"leggendaria"|diffsUpperCase;
 //difficulty number to string
-export const difficultyDiscriminator = (difficulty:string):string=>{
-  let diff:string = "another";
+export const difficultyDiscriminator = (difficulty:string,isUpper:boolean = false):diffs=>{
+  let diff:"another"|"hyper"|"leggendaria"|"ANOTHER"|"HYPER"|"LEGGENDARIA" = isUpper ? "ANOTHER" : "another";
   if(difficulty === "3" || difficulty === "8"){
-    diff = "hyper";
+    diff = isUpper ? "HYPER" : "hyper";
   }
   if(difficulty === "10" || difficulty === "11"){
-    diff = "leggendaria";
+    diff = isUpper ? "LEGGENDARIA" : "leggendaria";
   }
   return diff;
 }
