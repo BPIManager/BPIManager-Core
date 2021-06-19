@@ -111,11 +111,17 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                     hover role="checkbox" tabIndex={-1} key={row.title + row.prefix + i} className={ i % 2 ? "songCell isOdd" : "songCell isEven"}>
                     {columns.map((column,j) => {
                       if(Number.isNaN(row.currentBPI)) return (null);
-
+                      const fontSize = ()=>{
+                        if(column.id !== "title") return "";
+                        if(row.title.length < 20) return "";
+                        if(window.innerWidth < 500) return " smallFont";
+                      };
+                      const left = column.id === "difficultyLevel" ? "9px solid " + diffColor(j,row.clearState) : "1px solid rgb(245 245 245 / 8%)";
                       return (
-                        <TableCell className={row.currentBPI === Infinity ? "isInfiniteBPI" : ""} key={column.id + row.title + row.prefix + prefix} style={{boxSizing:"border-box",borderLeft : "9px solid " + diffColor(j,row.clearState),position:"relative"}} >
+                        <TableCell className={row.currentBPI === Infinity ? "isInfiniteBPI" : ""} key={column.id + row.title + row.prefix + prefix} style={{boxSizing:"border-box",borderLeft:left ,position:"relative"}} >
                           {(mode < 6 && column.id === "currentBPI") && <span className={j >= 2 ? "bodyNumber" : ""}>{Number(row[column.id]) === Infinity ? "-" : Number(row[column.id]).toFixed(2)}</span>}
-                          {column.id !== "currentBPI" && <span className={j >= 2 ? "bodyNumber" : ""}>{row[column.id]}</span>}
+                          {(column.id !== "currentBPI" && column.id !== "title") && <span className={j >= 2 ? "bodyNumber" : ""}>{row[column.id]}</span>}
+                          {column.id === "title" && <span className={(j >= 2 ? "bodyNumber" : "") + fontSize()}>{row[column.id]}</span>}
                           {column.id === "title" && <span>{prefix}</span>}
                           {(mode > 5 && column.id === "currentBPI") && bp(row.missCount || NaN)}
                           <span className={i % 2 ? "plusOverlayScore isOddOverLayed" : "plusOverlayScore isEvenOverLayed"}>

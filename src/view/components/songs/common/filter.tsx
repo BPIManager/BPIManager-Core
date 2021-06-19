@@ -61,6 +61,17 @@ class SongsFilter extends React.Component<P,S> {
     }
   }
 
+  componentDidMount(){
+    window.history.pushState(null,"Filter",null);
+    window.addEventListener("popstate",this.overridePopstate,false);
+  }
+
+  componentWillUnmount(){
+    window.removeEventListener("popstate",this.overridePopstate,false);
+  }
+
+  overridePopstate = ()=>this.props.handleToggle();
+
   applyAndClose = ()=>{
     this.props.applyFilter(this.state);
     return this.props.handleToggle();

@@ -87,6 +87,8 @@ export default class CameraResult extends React.Component<Props,{
   }
 
   async componentDidMount(){
+    window.history.pushState(null,"Camera Result",null);
+    window.addEventListener("popstate",this.overridePopstate,false);
     const f1 = await this.updateBPI(null,null,null);
     const score = await this.getScore();
     let rekidai = await this.getRekidaiScore(this.props.result.title[0],this.props.result.difficulty);
@@ -102,6 +104,12 @@ export default class CameraResult extends React.Component<Props,{
       return this.setState({bpi:f1,score:score,rekidai:rekidai});
     }
   }
+
+  componentWillUnmount(){
+    window.removeEventListener("popstate",this.overridePopstate,false);
+  }
+
+  overridePopstate = ()=>this.props.retry();
 
   dialogToggle = ()=> this.setState({isDialogOpen:!this.state.isDialogOpen});
   decide = (input:songData)=> {

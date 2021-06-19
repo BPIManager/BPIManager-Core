@@ -70,7 +70,7 @@ class SongDiffs extends React.Component<P,S> {
       return (null);
     }
     return (
-      <Container fixed>
+      <Container>
         <FormControl style={{width:"100%"}}>
         <InputLabel shrink>
             <FormattedMessage id="SongDiffs.Target"/>

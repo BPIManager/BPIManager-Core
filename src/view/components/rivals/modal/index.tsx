@@ -25,6 +25,17 @@ export default class ModalUser extends React.Component<{
     }
   }
 
+  componentDidMount(){
+    window.history.pushState(null,"Detail",null);
+    window.addEventListener("popstate",this.overridePopstate,false);
+  }
+
+  componentWillUnmount(){
+    window.removeEventListener("popstate",this.overridePopstate,false);
+  }
+
+  overridePopstate = ()=>this.props.handleOpen(false);
+
   updateName = (name:string)=> this.setState({currentUserName:name});
 
   render(){

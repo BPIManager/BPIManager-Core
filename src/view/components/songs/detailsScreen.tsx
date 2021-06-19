@@ -43,6 +43,12 @@ import { DBLists } from "@/types/lists";
 import { scoreData, songData } from "@/types/data";
 import SongNotes from "./songNotes";
 
+import BarChartIcon from '@material-ui/icons/BarChart';
+import QueueMusicIcon from '@material-ui/icons/QueueMusic';
+import HistoryIcon from '@material-ui/icons/History';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
+import RateReviewIcon from '@material-ui/icons/RateReview';
+
 interface P{
   isOpen:boolean,
   song:songData|null,
@@ -130,7 +136,15 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       isLoading:false,
       currentTab:this.props.firstView || 0
     });
+    window.history.pushState(null,"Detail",null);
+    window.addEventListener("popstate",this.overridePopstate,false);
   }
+
+  componentWillUnmount(){
+    window.removeEventListener("popstate",this.overridePopstate,false);
+  }
+
+  overridePopstate = ()=>this.props.handleOpen(false);
 
   toggleShowBPI = ():void=>{
     return this.setState({showBody:!this.state.showBody});
@@ -345,7 +359,9 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
     const {
       isSaving,isLoading,isPreparing,newScore,newMemo,newBPI,newClearState,newMissCount,showCharts,chartData,
       currentTab,justSelectedList,openListsMenu,openShareMenu,justFavorited,allLists,allSavedLists,successSnack,errorSnack,errorSnackMessage,
-      hasRival,hasModifiedMemo} = this.state;
+      hasModifiedMemo} = this.state;
+    const nextBPI = Math.ceil((!Number.isNaN(newBPI) ? newBPI : score ? score.currentBPI : -15) / 10) * 10;
+    const currentScore = !Number.isNaN(newScore) ? newScore : score ? score.exScore : 0;
     if(!song || !score){
       return (null);
     }
@@ -419,26 +435,32 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
               </Typography>
             </Grid>
           </Grid>
+          <Typography component="p" variant="caption" style={{textAlign:"center",position:"relative",bottom:"7px",fontSize:"10px"}}>
+            BPI{nextBPI}まであと&nbsp;{this.calc.calcFromBPI(nextBPI,true) - currentScore}&nbsp;点
+          </Typography>
           <Divider/>
           <Grid container>
             <Grid item xs={10}>
-              <form noValidate autoComplete="off" style={{margin:"10px 6px 0"}}>
+              <form noValidate autoComplete="off" style={{margin:"10px 6px 0"}} className="detailedInputForm">
                 <TextField
                   type="number"
+                  size="small"
                   style={{width:"100%"}}
-                  label={<FormattedMessage id="Details.typeNewScore"/>}
-                  value={!Number.isNaN(newScore) ? newScore : score ? score.exScore : 0}
+                  label={<span style={{fontSize:"13px !important"}}><FormattedMessage id="Details.typeNewScore"/></span>}
+                  value={currentScore}
                   onChange={this.handleScoreInput}
                 />
               </form>
             </Grid>
             <Grid item xs={1} style={{display:"flex",alignItems:"center",justifyContent:"flex-end"}}>
               <div style={{margin:"10px 6px 0"}}>
-                <IconButton style={{margin:"10px 6px 0"}}
-                  aria-haspopup="true"
-                  onClick={()=>this.toggleListsMenu(true)}>
-                    <PlaylistAddCheckIcon/>
-                  </IconButton>
+                <Tooltip title="楽曲をリストに追加/削除">
+                  <IconButton style={{margin:"0 6px 0"}}
+                    aria-haspopup="true"
+                    onClick={()=>this.toggleListsMenu(true)}>
+                      <PlaylistAddCheckIcon/>
+                    </IconButton>
+                  </Tooltip>
                   <SwipeableDrawer
                     anchor="bottom"
                     open={openListsMenu}
@@ -469,11 +491,13 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
                 variant="success" handleClose={this.toggleSuccessSnack} open={successSnack} autoHideDuration={3000}/>
             </Grid>
             <Grid item xs={1} style={{display:"flex",alignItems:"center",justifyContent:"flex-end"}}>
-              <IconButton style={{margin:"10px 6px 0",position:"relative",top:"5px"}}
-                aria-haspopup="true"
-                onClick={()=>this.toggleMenu(true)}>
+              <Tooltip title="外部サイト連携">
+                <IconButton style={{margin:"0 6px 0",position:"relative",top:"5px"}}
+                  aria-haspopup="true"
+                  onClick={()=>this.toggleMenu(true)}>
                   <MoreVertIcon />
-              </IconButton>
+                </IconButton>
+              </Tooltip>
               <SwipeableDrawer
                 anchor="bottom"
                 open={openShareMenu}
@@ -521,14 +545,22 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
           indicatorColor="primary"
           textColor="primary"
           onChange={this.handleTabChange}
-          variant="scrollable"
-          scrollButtons="on"
-          className={hasRival ? "scrollableSpacebetween sc4Items" : "scrollableSpacebetween sc3Items"}>
-          <Tab label={<FormattedMessage id="Details.Graph"/>} />
-          <Tab label={<FormattedMessage id="Details.Details"/>} />
-          <Tab label={<FormattedMessage id="Details.Diffs"/>} />
-          <Tab label={<FormattedMessage id="Details.Rivals"/>} />
-          <Tab label={<FormattedMessage id="Details.Notes"/>} />
+          className={"scrollableSpacebetween sc3Items"}>
+          <Tooltip title="BPI分布グラフ">
+            <Tab icon={<BarChartIcon/>} />
+          </Tooltip>
+          <Tooltip title="楽曲情報">
+            <Tab icon={<QueueMusicIcon/>} />
+          </Tooltip>
+          <Tooltip title="過去のプレイ履歴">
+            <Tab icon={<HistoryIcon/>} />
+          </Tooltip>
+          <Tooltip title="ライバルスコア">
+            <Tab icon={<SupervisorAccountIcon/>} />
+          </Tooltip>
+          <Tooltip title="攻略コメント">
+            <Tab icon={<RateReviewIcon/>} />
+          </Tooltip>
         </Tabs>
         <TabPanel value={currentTab} index={0}>
           {showCharts &&

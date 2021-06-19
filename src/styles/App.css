@@ -97,34 +97,6 @@ th.MuiTableCell-root.MuiTableCell-head{
   background:#313131 !important;
 }
 
-#__light .isOdd{
-  background:#f7f7f7;
-}
-
-
-#__light .isEven{
-  background:#fff;
-}
-
-#__light .isOdd{
-  background:#f7f7f7;
-}
-
-#__dark .isOdd,#__dark .isOddOverLayed{
-  background:#272727;
-}
-
-#__dark .isEven,#__dark .isEvenOverLayed{
-  background:#1f1f1f;
-}
-
-#__light .isEvenOverLayed{
-  background:#ffffff;
-}
-
-#__light .isOddOverLayed{
-  background:#f7f7f77;
-}
 
 a.link{
   text-decoration:none;
@@ -408,7 +380,7 @@ th.MuiTableCell-root.MuiTableCell-head:first-child{
 }
 
 .sc3Items button{
-  width:33.3% !important;
+  width:20% !important;
 }
 
 .scrollableSpacebetween .MuiTabs-flexContainer{
@@ -568,8 +540,8 @@ html,body{
   }
 }
 
-#__deepsea .MuiTableCell-root{
-  border-bottom:1px solid #000;
+#__deepsea .MuiTableCell-root,#__dark .MuiTableCell-root{
+  border-bottom:1px solid rgb(245 245 245 / 8%) !important;
 }
 
 #__deepsea .MuiTableBody-root .MuiTableCell-root:not(:first-child) {
@@ -583,4 +555,9 @@ html,body{
 
 .MuiOutlinedInput-notchedOutline{
   border-color:inherit !important;
+}
+
+.detailedInputForm .MuiInput-underline:hover:not(.Mui-disabled):before,
+.detailedInputForm .MuiInput-underline:before{
+  border-bottom:0;
 }

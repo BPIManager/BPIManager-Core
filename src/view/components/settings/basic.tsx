@@ -24,6 +24,7 @@ import TextField from '@material-ui/core/TextField';
 import {Link as RefLink} from '@material-ui/core/';
 import Loader from '@/view/components/common/loader';
 import { updateDefFile } from '@/components/settings/updateDef';
+import AutorenewIcon from '@material-ui/icons/Autorenew';
 
 interface S {
   isLoading:boolean,
@@ -290,15 +291,16 @@ class Settings extends React.Component<P,S> {
                       .then(registration => {
                         if(registration){
                           registration.unregister();
+                          alert("キャッシュを削除しました。一度アプリを終了し、再度起動してください。");
                         }else{
-                          alert("削除できません");
+                          alert("削除するデータが見つかりませんでした");
                         }
                       })
                     }
                   }}
                   disabled={disableUpdateBtn}
-                  startIcon={<UpdateIcon />}>
-                  <FormattedMessage id="Settings.UpdateResourcePacks"/>
+                  startIcon={<AutorenewIcon />}>
+                  キャッシュ削除
                 </Button>
               </FormControl>
               <Typography variant="caption" display="block">

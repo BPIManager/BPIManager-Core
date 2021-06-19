@@ -119,7 +119,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
     this.state = {
       isOpen:false,
       isOpenSongs:true,
-      isOpenMyStat: false,
+      isOpenMyStat: true,
       isOpenSocial: true,
       errorSnack:false,
       user:null,

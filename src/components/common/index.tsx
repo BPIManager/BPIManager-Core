@@ -18,7 +18,7 @@ export const borderColor = ():string=>{
     return "#ff2222";
   }
   if(themeColor === "dark"){
-    return "#ccc";
+    return "rgb(255 104 46)";
   }
   return "#0095ff";
 }

@@ -121,6 +121,18 @@ export class Details extends React.Component<{
   title:string,
 },{}> {
 
+  componentDidMount(){
+    window.history.pushState(null,"Detail",null);
+    window.addEventListener("popstate",this.overridePopstate,false);
+  }
+
+  componentWillUnmount(){
+    window.removeEventListener("popstate",this.overridePopstate,false);
+  }
+
+  overridePopstate = ()=>this.props.closeModal("");
+
+
   render(){
     const {closeModal,withRival,data,title} = this.props;
     const target = data.find((item:radarData)=>item.title === title);
