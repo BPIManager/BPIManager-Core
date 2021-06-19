@@ -435,9 +435,11 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
               </Typography>
             </Grid>
           </Grid>
-          <Typography component="p" variant="caption" style={{textAlign:"center",position:"relative",bottom:"7px",fontSize:"10px"}}>
-            BPI{nextBPI}まであと&nbsp;{this.calc.calcFromBPI(nextBPI,true) - currentScore}&nbsp;点
-          </Typography>
+          {!Number.isNaN(nextBPI) && (
+            <Typography component="p" variant="caption" style={{textAlign:"center",position:"relative",bottom:"7px",fontSize:"10px"}}>
+              BPI{nextBPI}まであと&nbsp;{this.calc.calcFromBPI(nextBPI,true) - currentScore}&nbsp;点
+            </Typography>
+          )}
           <Divider/>
           <Grid container>
             <Grid item xs={10}>
