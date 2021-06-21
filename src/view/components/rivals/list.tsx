@@ -29,6 +29,8 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import SearchIcon from '@material-ui/icons/Search';
 import AdsCard from '@/components/ad';
+import Link from '@material-ui/core/Link';
+import AlertTitle from '@material-ui/lab/AlertTitle';
 interface S {
   isAddOpen:boolean,
   showSnackBar:boolean,
@@ -159,8 +161,9 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
         </List>
         {rivals.length === 0 && (
           <Alert severity="warning">
-            まだライバルがいません。<br/>
-            ライバルを追加すると、最新のスコアを追跡したり、自分のスコアと比較できます。
+            <AlertTitle>ライバルを追加</AlertTitle>
+            ライバルを追加して、最新のスコアを追跡したり、自分のスコアと比較しよう！<br/>
+            まずは<b>「<Link color="secondary" onClick={()=>this.props.changeTab(null,1)}>おすすめユーザー</Link>」から実力の近いユーザーを登録</b>してみましょう！
           </Alert>
         )}
         <List
@@ -170,8 +173,8 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
             </ListSubheader>
           }>
           {[
-            {name:"おすすめユーザー",func:()=>this.props.changeTab(null,1),desc:"総合BPIが近いユーザーを表示します",icon:<ThumbUpIcon/>},
-            {name:"探す",func:()=>this.props.changeTab(null,3),desc:"様々な条件からユーザーを検索します",icon:<SearchIcon/>}
+            {name:"おすすめユーザー",func:()=>this.props.changeTab(null,1),desc:"実力が近いユーザーを表示します",icon:<ThumbUpIcon/>},
+            {name:"探す",func:()=>this.props.changeTab(null,3),desc:"条件を指定してユーザーを検索します",icon:<SearchIcon/>}
           ].map((item,i)=>{
             return (
               <ListItem key={i} button onClick={item.func}>

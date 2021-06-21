@@ -38,6 +38,7 @@ import Alert from '@material-ui/lab/Alert/Alert';
 import EventNoteIcon from '@material-ui/icons/EventNote';
 import WeeklyList from '@/view/pages/ranking/list';
 import getUserData from '@/components/user';
+import FolloweeCounter from '../components/users/count';
 
 interface S {
   userName:string,
@@ -57,14 +58,14 @@ interface S {
   totalBPI:number,
   counts:{
     loading:boolean,
-    followers:number,
-    followings:number,
+    followers:string[],
+    followings:string[],
   },
   limited:boolean,
   myId:string,
   rivalStat:withRivalData[],
   radar:radarData[],
-  index:number
+  index:number,
 }
 
 class User extends React.Component<{intl:any,currentUserName?:string,limited?:boolean,exact?:boolean,updateName?:(name:string)=>void,initialView?:number}&RouteComponentProps,S> {
@@ -99,8 +100,8 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
       totalBPI:NaN,
       counts:{
         loading:true,
-        followers:0,
-        followings:0,
+        followers:[],
+        followings:[],
       },
       limited:props.limited || false,
       myId:"",
@@ -195,21 +196,37 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
   }
 
   countAsync = async (uid:string)=>{
+    const er = await this.counts(0,uid);
+    const ing = await this.counts(1,uid);
+    const ids = (p:any):string[]=> {
+      try{
+        return p.reduce((groups:string[],item:any)=>{
+          if(!groups) groups = [];
+          const id = item["_path"]["segments"][1] || null;
+          if(id){
+            groups.push(id);
+          }
+          return groups;
+        },[]);
+      }catch(e){
+        return [];
+      }
+    }
     return this.setState({
       counts:{
         loading:false,
-        followers:await this.counts(0,uid),
-        followings:await this.counts(1,uid)
-      }
+        followers:ids(er.body),
+        followings:ids(ing.body),
+      },
     });
   }
 
-  counts = async(type:number = 0, id:string):Promise<number>=>{
+  counts = async(type:number = 0, id:string):Promise<any>=>{
     return (await fetch(`https://us-central1-bpim-d5971.cloudfunctions.net/${type === 0 ? "getFollowersCnt" : "getFollowingsCnt"}?targetId=${id}&version=${_currentStore()}`)).json().then(t=>{
-      return t.length || 0;
+      return t;
     }).catch(e=>{
       console.log(e);
-      return 0;
+      return null;
     });
   }
 
@@ -394,20 +411,10 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
                 {!counts.loading && (
                   <Grid container style={{marginTop:"15px",textAlign:"center"}}>
                     <Grid item xs={6} lg={6}>
-                      <Typography component="h6" variant="h6" color="textSecondary">
-                        ライバル
-                      </Typography>
-                      <Typography component="h4" variant="h4" color="textPrimary">
-                        {counts.followings}
-                      </Typography>
+                      <FolloweeCounter ids={counts.followings} text="ライバル" userName={res.displayName}/>
                     </Grid>
                     <Grid item xs={6} lg={6}>
-                      <Typography component="h6" variant="h6" color="textSecondary">
-                        逆ライバル
-                      </Typography>
-                      <Typography component="h4" variant="h4" color="textPrimary">
-                        {counts.followers}
-                      </Typography>
+                      <FolloweeCounter ids={counts.followers} text="逆ライバル" userName={res.displayName}/>
                     </Grid>
                   </Grid>
                 )}

@@ -102,7 +102,7 @@ class RivalView extends React.Component<P,S> {
 
 export default RivalView;
 
-export const makeRivalStat = async(full:rivalScoreData[],showAllScore:boolean = false)=>{
+export const makeRivalStat = async(full:rivalScoreData[],_showAllScore:boolean = false)=>{
   const allScores = (await new scoresDB().getAll()).reduce((groups:{[key:string]:scoreData},item:scoreData)=>{
     groups[item.title + item.difficulty] = item;
     return groups;
@@ -119,22 +119,20 @@ export const makeRivalStat = async(full:rivalScoreData[],showAllScore:boolean = 
       clearState:7,
       updatedAt:"-",
     };
-    if(showAllScore){
-      const rival = allRivalScores[key];
-      groups.push({
-        title:rival.title,
-        difficulty:rival.difficulty,
-        difficultyLevel:rival.difficultyLevel,
-        myEx:mine.exScore || 0,
-        rivalEx:rival.exScore,
-        myMissCount:mine.missCount || 0,
-        rivalMissCount:rival.missCount,
-        myClearState:mine.clearState || 7,
-        rivalClearState:rival.clearState,
-        myLastUpdate:mine.updatedAt,
-        rivalLastUpdate:rival.updatedAt,
-      });
-    }
+    const rival = allRivalScores[key];
+    groups.push({
+      title:rival.title,
+      difficulty:rival.difficulty,
+      difficultyLevel:rival.difficultyLevel,
+      myEx:mine.exScore || 0,
+      rivalEx:rival.exScore,
+      myMissCount:mine.missCount || 0,
+      rivalMissCount:rival.missCount,
+      myClearState:mine.clearState || 7,
+      rivalClearState:rival.clearState,
+      myLastUpdate:mine.updatedAt,
+      rivalLastUpdate:rival.updatedAt,
+    });
     return groups;
   },[]);
 }

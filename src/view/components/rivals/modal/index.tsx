@@ -6,7 +6,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import CloseIcon from "@material-ui/icons/Close";
+import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 
 export default class ModalUser extends React.Component<{
   isOpen:boolean,
@@ -50,7 +50,7 @@ export default class ModalUser extends React.Component<{
         <AppBar>
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={()=>handleOpen(false)} aria-label="close">
-              <CloseIcon />
+              <ArrowBackIosIcon />
             </IconButton>
             <Typography variant="h6" className="be-ellipsis" style={{flexGrow:1}}>
               {currentUserName}
