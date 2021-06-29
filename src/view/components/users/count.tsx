@@ -28,11 +28,8 @@ class FolloweeCounter extends React.Component<P,S> {
     const {ids,text,userName} = this.props;
     return (
       <React.Fragment>
-        <Typography component="h6" variant="h6" color="textSecondary">
-          {text}
-        </Typography>
-        <Typography component="h4" variant="h4" color="textPrimary" onClick={this.toggleShowList}>
-          <Link color="secondary">{ids.length}</Link>
+        <Typography component="span" variant="body2" color="textSecondary" onClick={this.toggleShowList} style={{fontWeight:"bold"}}>
+          {text}&nbsp;<Link color="secondary">{ids.length}</Link>
         </Typography>
         {this.state.showList && <FolloweeList handleClose={this.toggleShowList} ids={ids} text={text} userName={userName}/>}
       </React.Fragment>

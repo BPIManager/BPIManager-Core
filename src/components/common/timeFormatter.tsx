@@ -26,6 +26,8 @@ const timeFormatter = (type = 0,date:string|Date|number = new Date()):string =>{
     return m.startOf("week").format("YYYY/MM/DD");
     case 6:
     return m.format("YYYY/MM");
+    case 7:
+    return m.format("YYYY-MM-DD");
   }
   return "";
 }
@@ -63,8 +65,8 @@ export const d_add = (num:number,r:"day"|"month")=>{
   return dayjs().add(num, r);
 }
 
-export const isBefore = (date:string) =>{
-  return dayjs(date).isBefore(subtract(1, 'month'))
+export const isBefore = (date:string,month:number = 1) =>{
+  return dayjs(date).isBefore(subtract(month, 'month'))
 }
 
 export const isBeforeSpecificDate = (date:string|Date|dayjs.Dayjs|number,comparison:string|Date|dayjs.Dayjs|number)=>{

@@ -1,16 +1,26 @@
 import * as React from 'react';
 import Container from '@material-ui/core/Container';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 export default class Loader extends React.Component<{
   hasMargin?:boolean
   text?:string,
   isInner?:boolean,
-  isFull?:boolean
+  isFull?:boolean,
+  isLine?:boolean
 },{}> {
 
   render(){
-    const {hasMargin,text,isInner,isFull} = this.props;
+    const {hasMargin,text,isInner,isFull,isLine} = this.props;
+    if(isLine && text){
+      return (
+        <Container fixed style={{maxWidth:"100%",height:"100%",marginTop:"15px"}}>
+          <LinearProgress color="secondary" />
+          <p style={{opacity:"0.5",textAlign:"center"}}>{text}</p>
+        </Container>
+      )
+    }
     if(!text){
       return (
         <Container fixed  className={hasMargin ? "loaderCentered" : "loaderCenteredOnly"} style={{maxWidth:"100%"}}>

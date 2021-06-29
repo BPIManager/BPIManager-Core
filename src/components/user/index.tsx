@@ -8,18 +8,25 @@ export default class getUserData{
     this.fbStores.setColName(`${_currentStore()}_${_isSingle()}`);
   }
 
+  private all:any;
+
   async rivalScores(res:any){
     try{
       const store = await this.fbStores.setDocName(res.uid).load();
       if(!store){
         return [];
       }
-      return store.scores || [];
+      this.all = store;
+      return this.all.scores || [];
     }catch(e){
       console.log(e);
       return [];
     }
   }
+
+  getAll = ()=> this.all;
+
+  scoreHistory = ()=> this.all.scoresHistory || [];
 
 
 }
