@@ -452,9 +452,6 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
         )}
         <Grid container>
           <Grid item xs={12} sm={12} md={6} lg={4} style={{padding:"10px"}}>
-            <Typography component="h6" variant="h6" color="textSecondary" className="userUpdateTitle">
-              更新状況
-            </Typography>
             <div style={{display:"flex",justifyContent:"center"}} className={c === "dark" ? "darkTheme" : c === "light" ? "lightTheme" : "deepSeaTheme"}>
               <CalendarHeatmap
                 startDate={toDate(subtract(6,"month"))}
