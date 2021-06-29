@@ -493,7 +493,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
           handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>
         {loadingRecommended && <Loader/>}
         {!loadingRecommended && (
-        <div style={{display:"flex",flexWrap:"wrap",justifyContent:"space-around",overflow:"hidden",margin:"15px auto",width:"90%"}}>
+        <div style={{display:"flex",flexWrap:"wrap",justifyContent:"space-around",margin:"15px auto",width:"90%"}}>
           <GridList  cellHeight={180} style={{height:"400px",width:"100%"}}>
             <GridListTile key="Subheader" cols={2} style={{ height: 'auto' }}>
               <ListSubheader component="div">実力が近いユーザー:</ListSubheader>
