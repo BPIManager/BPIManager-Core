@@ -398,7 +398,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
                       onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(res) || alternativeImg(res.displayName)}/>
                   </Avatar>
                 </Grid>
-                <Grid item xs={8} lg={8}>
+                <Grid item xs={8} lg={8} style={{paddingLeft:"5px"}}>
                   <Typography variant="h4">
                     {res.displayName}
                   </Typography>
