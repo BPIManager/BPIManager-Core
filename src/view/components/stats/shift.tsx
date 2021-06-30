@@ -12,7 +12,7 @@ import { ChangeLevel } from './main';
 import { injectIntl } from 'react-intl';
 import AdsCard from '@/components/ad';
 
-class Shift extends React.Component<{intl:any}&RouteComponentProps,ShiftType> {
+class Shift extends React.Component<{intl:any,propdata?:any}&RouteComponentProps,ShiftType> {
 
   constructor(props:{intl:any}&RouteComponentProps){
     super(props);
@@ -34,11 +34,11 @@ class Shift extends React.Component<{intl:any}&RouteComponentProps,ShiftType> {
 
   async updateScoreData(newState?:ShiftType){
     const {currentPeriod,targetLevel} = newState || this.state;
-    const exec = await new statMain(targetLevel).load();
+    const exec = this.props.propdata ? new statMain(targetLevel).setPropData(this.props.propdata) : await new statMain(targetLevel).load();
     //BPI別集計
     this.setState({
       isLoading:false,
-      perDate:await exec.eachDaySum(currentPeriod),
+      perDate:await exec.eachDaySum(currentPeriod,undefined,this.props.propdata),
     });
   }
 
@@ -108,7 +108,7 @@ class Shift extends React.Component<{intl:any}&RouteComponentProps,ShiftType> {
     const lineColor = _chartBarColor("line");
     if(isLoading){
       return (
-        <Container fixed  style={{padding:0}}>
+        <Container>
           <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel}/>
           <Loader/>
         </Container>
@@ -116,7 +116,7 @@ class Shift extends React.Component<{intl:any}&RouteComponentProps,ShiftType> {
     }
 
     return (
-      <Container fixed  style={{padding:0}}>
+      <Container className={"commonLayout"}>
         <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel}/>
         <CheckBoxes title="プライマリグラフの表示項目" hasData={this.hasItems} handleNewData={this.handleItems} config={config}/>
         <CheckBoxes title="表示期間" hasData={this.currentPeriod} handleNewData={this.handlePeriod} config={period}/>

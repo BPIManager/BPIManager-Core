@@ -1,8 +1,5 @@
 import * as React from 'react';
 
-import Typography from '@material-ui/core/Typography';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import Button from '@material-ui/core/Button';
 //import Tabs from '@material-ui/core/Tabs';
 //import Tab from '@material-ui/core/Tab';
 //import Main from "@/view/components/stats/main";
@@ -37,13 +34,9 @@ class RivalStatViewFromUserPage extends React.Component<P,S> {
 
   render(){
     //const {currentTab} = this.state;
-    const {backToMainPage,full,rivalRawData,name} = this.props;
+    const {full,rivalRawData} = this.props;
     return (
-      <Container fixed  className="commonLayout">
-        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
-          <Button onClick={backToMainPage} style={{minWidth:"auto",padding:"6px 0px"}}><ArrowBackIcon/></Button>
-          &nbsp;{name}
-        </Typography>
+      <Container className="commonLayout">
         <RivalStats full={full} rivalRawData={rivalRawData}/>
         {/*
         <Tabs

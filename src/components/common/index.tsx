@@ -121,3 +121,27 @@ export const timeDiff = (seconds:number)=>{
   }
   return "終了済み";
 }
+
+export const rivalBgColor = (d:number)=>{
+  //d = 0:rival , 2:you
+  const theme = _currentTheme();
+  if(theme === "light"){
+    if(d === 0) return "rgb(255 18 18)";
+    if(d === 1) return "rgb(253 202 202)";
+    if(d === 2) return "rgb(255 145 145)";
+    if(d === 3) return "rgb(136 0 0)";
+  }
+  if(theme === "dark"){
+    if(d === 0) return "#c56c16";
+    if(d === 1) return "rgb(82 66 50)";
+    if(d === 2) return "#653200";
+    if(d === 3) return "rgb(45 22 0)";
+  }
+  if(theme === "deepsea"){
+    if(d === 0) return "#005a96";
+    if(d === 1) return "rgb(14 43 62)";
+    if(d === 2) return "rgb(0 154 255)";
+    if(d === 3) return "#004382";
+  }
+  return "#000";
+}

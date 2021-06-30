@@ -60,6 +60,12 @@ export default class statMain {
     return this;
   }
 
+  setPropData(_derived:any){
+    this.twelves = _derived.filter((item:any)=>item.difficultyLevel === "12");
+    this.elevens = _derived.filter((item:any)=>item.difficultyLevel === "11");
+    return this;
+  }
+
   async songsByClearState(){
     const songsByClearState:groupedArray[] = [
       {name:"FAILED","☆11":0,"☆12":0},
@@ -141,7 +147,8 @@ export default class statMain {
     return groupedByLevel;
   }
 
-  async eachDaySum(period:number,last?:string|Date):Promise<perDate[]>{
+  async eachDaySum(period:number,last?:string|Date,propdata?:any):Promise<perDate[]>{
+    const data = propdata || await new scoreHistoryDB().getAll(String(this.targetLevel));
     let eachDaySum:perDate[] = [];
     let eachDayShift:{[key:string]:shiftType[]} = {};
     const sortByDate = (data:historyData[]):{[key:string]:historyData[]}=>{
@@ -157,7 +164,7 @@ export default class statMain {
         return groups;
       }, {});
     }
-    const allDiffs = this.objectSort(sortByDate(await new scoreHistoryDB().getAll(String(this.targetLevel))));
+    const allDiffs = this.objectSort(sortByDate(data));
     const _bpi = new bpiCalcuator();
     const total = (item:historyData[]):number=>{
       let t = item.reduce((sum:number,item:historyData)=>{

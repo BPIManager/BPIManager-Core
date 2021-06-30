@@ -10,6 +10,7 @@ import {Link as RefLink, Table, TableBody, TableRow, TableCell, TableHead, Divid
 import Loader from '@/view/components/common/loader';
 import { rivalScoreData } from '@/types/data';
 import Radar from "./ui/radar";
+import { rivalBgColor } from '@/components/common';
 
 interface S {
   scoresAbout:number[],
@@ -60,7 +61,7 @@ class RivalStats extends React.Component<P,S> {
     let sum11 = 0, sum12 = 0;
     for(let i = 0;i < full.length; ++i){
       const indv = full[i];
-      
+
       //win:0,draw:1,lose:2
       const ex = indv.myEx > indv.rivalEx ? 0 : indv.myEx === indv.rivalEx ? 1 : 2;
       const clear = indv.myClearState > indv.rivalClearState ? 0 : indv.myClearState === indv.rivalClearState ? 1 : 2;
@@ -209,17 +210,17 @@ class Graph extends React.Component<P2,{}>{
     return (
       <div style={{width:"100%",height:"30px",background:"#ccc",display:"flex"}}>
         { content[0] !== 0 &&
-          <div style={{width:calc(content[0]) + "%",height:"100%",background:"#82ca9d",display:calc(content[0]) === 0 ? "none" : "flex",justifyContent:"center",alignItems:"center"}}>
+          <div style={{width:calc(content[0]) + "%",height:"100%",background:rivalBgColor(0),display:calc(content[0]) === 0 ? "none" : "flex",justifyContent:"center",alignItems:"center"}}>
             {p ? calc(content[0]) + "%" : content[0]}
           </div>
         }
         { content[1] !== 0 &&
-          <div style={{width:calc(content[1]) + "%",height:"100%",background:"#ccc",display:calc(content[1]) === 0 ? "none" : "flex",justifyContent:"center",alignItems:"center"}}>
+          <div style={{width:calc(content[1]) + "%",height:"100%",background:rivalBgColor(1),display:calc(content[1]) === 0 ? "none" : "flex",justifyContent:"center",alignItems:"center"}}>
             {p ? calc(content[1]) + "%" : content[1]}
           </div>
         }
         { content[2] !== 0 &&
-          <div style={{width:calc(content[2]) + "%",height:"100%",background:"#8884d8",justifyContent:"center",alignItems:"center",display:calc(content[2]) === 0 ? "none" : "flex"}}>
+          <div style={{width:Math.ceil(100 - (calc(content[0]) + calc(content[1]))) + "%",height:"100%",background:rivalBgColor(2),justifyContent:"center",alignItems:"center",display:calc(content[2]) === 0 ? "none" : "flex"}}>
             {p ? calc(content[2]) + "%" : content[2]}
           </div>
         }

@@ -38,6 +38,10 @@ a {
   .heroLayout{
     margin:8px 0 0 0;
   }
+
+  svg.react-calendar-heatmap {
+      width: 50%;
+  }
 }
 
 .commonLayout{
@@ -565,7 +569,8 @@ html,body{
   padding-left: 5px;
 }
 
-text.react-calendar-heatmap-month-label {
+text.react-calendar-heatmap-month-label,
+text.react-calendar-heatmap-weekday-label {
     font-size: 7px !important;
 }
 
@@ -591,10 +596,6 @@ text.react-calendar-heatmap-month-label {
   border-bottom:0;
 }
 
-svg.react-calendar-heatmap {
-    width: 90%;
-}
-
 .lightTheme .react-calendar-heatmap .color-scale-1 { fill: #ffbbbb; }
 .lightTheme .react-calendar-heatmap .color-scale-2 { fill: #ff7373; }
 .lightTheme .react-calendar-heatmap .color-scale-3 { fill: #ff3838; }
@@ -612,3 +613,19 @@ svg.react-calendar-heatmap {
 .deepSeaTheme .react-calendar-heatmap .color-scale-2 { fill: #005a96; }
 .deepSeaTheme .react-calendar-heatmap .color-scale-3 { fill: #137dc3; }
 .deepSeaTheme .react-calendar-heatmap .color-scale-4 { fill: #6fc6ff; }
+
+
+.typographTitle {
+    text-align: center;
+    padding-top: 30px;
+    margin-top: 70px !important;
+}
+
+.darkTheme .typographTitle,
+.deepSeaTheme .typographTitle{
+  border-top: 2px solid #fff;
+}
+
+.lightTheme .typographTitle{
+  border-top: 2px solid #222;
+}

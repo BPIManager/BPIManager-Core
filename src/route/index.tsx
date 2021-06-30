@@ -39,6 +39,7 @@ import WeeklyOnGoing from '@/view/pages/ranking/ongoing';
 import WeeklyList from '@/view/pages/ranking/list';
 import HelpWR from '@/view/pages/helpWR';
 import Camera from '@/view/pages/camera/camera';
+import RedirectMyProfile from '@/view/pages/myprofile';
 
 class Router extends React.Component<{},{}> {
 
@@ -77,6 +78,7 @@ class Router extends React.Component<{},{}> {
                   <Route path="/AAATable" exact component={AAATable}/>
                   <Route path="/share/:id" exact component={Shared}/>
                   <Route path="/u/:uid/:exactId?" exact component={User}/>
+                  <Route path="/redirect/myprofile" exact component={RedirectMyProfile}/>
                   <Route path="/notes" exact component={Note}/>
                   <Route path="/notes/:title/:diff/:single" exact component={NoteIndv}/>
                   <Route path="/ranking/" exact component={RankingSearch}/>

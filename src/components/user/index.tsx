@@ -27,6 +27,7 @@ export default class getUserData{
   getAll = ()=> this.all;
 
   scoreHistory = ()=> this.all.scoresHistory || [];
+  score = ()=>this.all.scores || [];
 
 
 }

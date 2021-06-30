@@ -54,14 +54,14 @@ class WeeklyList extends React.Component<{intl:any,viewInUser?:boolean,backToMai
     const {viewInUser,backToMainPage,name} = this.props;
     return (
       <div>
-        {!viewInUser && <DefaultHead/>}
-        {(viewInUser && backToMainPage) && (
-          <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
-            <Button onClick={backToMainPage} style={{minWidth:"auto",padding:"6px 0px"}}><ArrowBackIcon/></Button>
-            &nbsp;{name}さんのランキング参加履歴
-          </Typography>
-        )}
-        <Container fixed  className="commonLayout">
+        <Container fixed className="commonLayout">
+          {!viewInUser && <DefaultHead/>}
+          {(viewInUser && backToMainPage) && (
+            <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
+              <Button onClick={backToMainPage} style={{minWidth:"auto",padding:"6px 0px"}}><ArrowBackIcon/></Button>
+              &nbsp;{name}さんのランキング参加履歴
+            </Typography>
+          )}
           {isLoading && <Loader text="ランキング一覧を取得中"/>}
           {!isLoading && (
             <div>

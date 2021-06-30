@@ -12,12 +12,11 @@ import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ViewListIcon from '@material-ui/icons/ViewList';
 import TwitterIcon from '@material-ui/icons/Twitter';
-import ShareButtons from '@/view/components/common/shareButtons';
 import { rivalListsDB } from '@/components/indexedDB';
 import ShowSnackBar from '@/view/components/snackBar';
 import RivalView, { makeRivalStat } from '@/view/components/rivals/view';
 import { rivalScoreData, rivalStoreData } from '@/types/data';
-import {Link, Chip, Divider, Grid, GridList, GridListTile, GridListTileBar, ListSubheader, List, ListItem, ListItemAvatar, ListItemText, ListItemSecondaryAction, IconButton, Button, Hidden} from '@material-ui/core/';
+import {Link, Chip, Divider, Grid, GridList, GridListTile, GridListTileBar, List, ListItem, ListItemAvatar, ListItemText, ListItemSecondaryAction, IconButton, Button, Fab, Tabs, Tab, ListSubheader} from '@material-ui/core/';
 import {Link as RefLink} from "react-router-dom";
 import ClearLampView from '@/view/components/table/fromUserPage';
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
@@ -29,7 +28,6 @@ import CommentIcon from '@material-ui/icons/Comment';
 import NotesView from '../components/notes/user';
 import { Helmet } from 'react-helmet';
 import { getTwitterName, getAltTwitterIcon } from '@/components/rivals';
-import EqualizerIcon from '@material-ui/icons/Equalizer';
 import { withRivalData, radarData, getRadar } from '@/components/stats/radar';
 import RivalStatViewFromUserPage from '../components/rivals/viewComponents/statsFromUserPage';
 import Alert from '@material-ui/lab/Alert/Alert';
@@ -41,6 +39,14 @@ import { makeHeatmap, colorClassifier } from '@/components/user/heatmap';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import { toDate, subtract } from '@/components/common/timeFormatter';
 import 'react-calendar-heatmap/dist/styles.css';
+import ReactTooltip from "react-tooltip";
+import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import ClearAllIcon from '@material-ui/icons/ClearAll';
+import RecentActorsIcon from '@material-ui/icons/RecentActors';
+import CheckIcon from '@material-ui/icons/Check';
+import Shift from '@/view/components/stats/shift';
+import ShareButtons from '../components/common/shareButtons';
+import bpiCalcuator from '@/components/bpi';
 
 interface S {
   userName:string,
@@ -69,6 +75,7 @@ interface S {
   radar:radarData[],
   index:number,
   heatmap:any[],
+  currentTab:number
 }
 
 class User extends React.Component<{intl:any,currentUserName?:string,limited?:boolean,exact?:boolean,updateName?:(name:string)=>void,initialView?:number}&RouteComponentProps,S> {
@@ -112,10 +119,16 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
       radar:[],
       heatmap:[],
       index:0,
+      currentTab:0,
     }
   }
 
+  handleChangeTab = (_e:any,newTab:number)=>{
+    return this.setState({currentTab:newTab})
+  }
+
   async componentDidMount(){
+    console.log(this.state.userName)
     if(!this.state.userName){
       this.fbA.auth().onAuthStateChanged(async (user: any)=> {
         if(user){
@@ -164,12 +177,8 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     }
 
     this.setState({processing:true});
-    const res = (exactId && !forceUserName) ? await this.fbA.searchByExactId(userName) : await this.fbA.searchRival(userName);
+    const res = (exactId && userName === "_") ? await this.fbA.searchByExactId(exactId) : (exactId && !forceUserName) ? await this.fbA.searchByExactId(userName) : await this.fbA.searchRival(userName);
     if(res){
-
-      if(res.isPublic === false){
-        return this.setState({userName:"",res:null});
-      }
 
       if(exactId){
         userName = res.displayName;
@@ -179,6 +188,10 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
           if(this.props.updateName) this.props.updateName(userName);
         }
 
+      }
+
+      if(res.isPublic === false){
+        return this.setState({userName:"",res:null});
       }
 
       const scores = await this.userStore.rivalScores(res);
@@ -285,14 +298,13 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
   }
 
   view = async(v:number):Promise<void>=>{
-    const {uid} = this.state;
-    const data = await this.fbStores.setDocName(uid).load();
+    const data = this.userStore.score();
     if(!data || data.length === 0){
       return this.toggleSnack("該当ユーザーは当該バージョン/モードにおけるスコアを登録していません。");
     }
     this.setState({
       currentView:v,
-      rivalData:data.scores
+      rivalData:data
     })
   }
 
@@ -314,9 +326,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
   }
 
   render(){
-    const {processing,add,myId,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI,loadingRecommended,recommendUsers,counts,limited,rivalStat,heatmap} = this.state;
-    const url = config.baseUrl + "/u/" + encodeURI(userName);
-
+    const {processing,add,myId,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI,loadingRecommended,recommendUsers,counts,limited,rivalStat,heatmap,currentTab} = this.state;
     const isAdded = this.state.rivalUids.indexOf(uid) > -1;
     const c = _currentTheme();
 
@@ -337,7 +347,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     if(currentView === 2){
       //AAA達成表
       return (
-        <Container fixed  className="commonLayout">
+        <Container fixed className="commonLayout">
           <ClearLampView backToMainPage={this.backToMainPage}
             name={res.displayName} data={rivalData}/>
         </Container>
@@ -346,30 +356,21 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     if(currentView === 3){
       //ノート一覧
       return (
-        <Container fixed  className="commonLayout">
+        <Container fixed className="commonLayout">
           <NotesView backToMainPage={this.backToMainPage}
             name={res.displayName} uid={uid}/>
         </Container>
       )
     }
-    if(currentView === 4){
-      //統計データ
-      return (
-        <RivalStatViewFromUserPage full={rivalStat} rivalRawData={rivalData} backToMainPage={this.backToMainPage} name={res.displayName}/>
-      )
-    }
     if(currentView === 5){
       //IR参加履歴
       return (
-        <Container fixed  className="commonLayout">
           <WeeklyList viewInUser backToMainPage={this.backToMainPage} uid={uid} name={res.displayName}/>
-        </Container>
       )
     }
 
     const buttons = [
       {icon:<ViewListIcon />,primary:"スコアを見る",secondary:(res.displayName) + "さんの登録スコアを表示します",onClick:()=>this.view(1)},
-      {icon:<EqualizerIcon />,primary:"統計データを表示",secondary:(res.displayName) + "さんの統計データを表示します",onClick:()=>this.view(4)},
       {icon:<WbIncandescentIcon />,primary:"AAA達成表",secondary:"BPIに基づいたAAA達成難易度表を表示します",onClick:()=>this.view(2)},
       {icon:<EventNoteIcon />,primary:"ランキング",secondary:"ランキング参加履歴を表示します",onClick:()=>this.view(5)},
     ]
@@ -378,6 +379,9 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
       buttons.push({icon:<CommentIcon />,primary:"投稿ノート一覧",secondary:(res.displayName) + "さんが投稿した攻略情報一覧",onClick:()=>this.view(3)});
     }
     const themeColor = _currentTheme();
+    const url = config.baseUrl + "/u/" + encodeURI(userName);
+    const totalRank = new bpiCalcuator().rank(totalBPI,false);
+    const rankPer = Math.round(totalRank / new bpiCalcuator().getTotalKaidens() * 1000000) / 10000;
 
     return (
       <React.Fragment>
@@ -391,14 +395,26 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
           <div style={{color:themeColor === "light" ? "#222" : "#fff",width:"90%"}}>
             <div>
               <Grid container alignItems="center">
-                <Grid item xs={4} lg={4}>
+                <Grid item xs={4} lg={4} style={{display:"flex",justifyContent:"center",flexDirection:"column"}}>
                   <Avatar style={{border:"1px solid #222",margin:"15px auto"}} className="userpageIcon">
                     <img src={res.photoURL ? res.photoURL.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
                       alt={res.displayName}
                       onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(res) || alternativeImg(res.displayName)}/>
                   </Avatar>
+                  {!isAdded && (
+                    <Fab size="small" color="secondary" variant="extended" onClick={()=>this.addUser()} disabled={myId === res.uid || add || processing} style={{fontWeight:"bold",fontSize: "12px"}}>
+                      <GroupAddIcon style={{fontSize:"20px"}}/>
+                      <span>追加</span>
+                    </Fab>
+                  )}
+                  {isAdded && (
+                    <Fab size="small" color="secondary" variant="extended" disabled={true} style={{fontWeight:"bold",fontSize: "12px"}}>
+                      <CheckIcon style={{fontSize:"20px"}}/>
+                      <span>ライバル</span>
+                    </Fab>
+                  )}
                 </Grid>
-                <Grid item xs={8} lg={8} style={{paddingLeft:"5px"}}>
+                <Grid item xs={8} lg={8} style={{paddingLeft:"15px"}}>
                   <Typography variant="h4">
                     {res.displayName}
                   </Typography>
@@ -410,7 +426,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
                         <input type="hidden" name="iidxid" value={this.getIIDXId(res.profile)}/>
                         <input type="hidden" name="mode" value="1"/>
                         <Button color="secondary" size="small" type="submit" startIcon={<ExitToAppIcon/>}>
-                          eAMU
+                          IIDX公式
                         </Button>
                       </form>
                     }
@@ -450,75 +466,110 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
             <RefLink to={"/settings"} style={{textDecoration:"none"}}><Link color="secondary" component="span">設定</Link></RefLink>からほかのバージョンを指定の上、再度表示してください。
           </Alert>
         )}
-        <Grid container>
-          <Grid item xs={12} sm={12} md={6} lg={4} style={{padding:"10px"}}>
-            <div style={{display:"flex",justifyContent:"center"}} className={c === "dark" ? "darkTheme" : c === "light" ? "lightTheme" : "deepSeaTheme"}>
+        <Tabs
+          value={currentTab}
+          onChange={this.handleChangeTab}
+          indicatorColor="secondary"
+          textColor="secondary"
+          variant="fullWidth"
+          centered
+        >
+          <Tab icon={<ClearAllIcon />}/>
+          <Tab icon={<TrendingUpIcon />} />
+          <Tab icon={<RecentActorsIcon />} />
+        </Tabs>
+        {currentTab === 0 && (
+          <React.Fragment>
+          <List>
+            {buttons.map((item,i)=>{
+              return (
+                  <DefListCard key={i} onAction={item.onClick} disabled={add || processing} icon={item.icon}
+                    primaryText={item.primary} secondaryText={item.secondary}/>
+                )
+              })
+            }
+          </List>
+          <div style={{width:"50%",margin:"10px auto"}}>
+            <p style={{textAlign:"center"}}>プロフィールをシェア</p>
+            <ShareButtons withTitle={true} url={url} text={res.displayName + " 総合BPI:" + String(Number.isNaN(totalBPI) ? "-" : totalBPI) + `(推定順位:${totalRank}位,皆伝上位${rankPer}%)`}/>
+          </div>
+          </React.Fragment>
+        )}
+        {currentTab === 1 && (
+          <div>
+            <Container className={"commonLayout " + (c === "dark" ? "darkTheme" : c === "light" ? "lightTheme" : "deepSeaTheme")}>
+              <Typography component="h6" variant="h6" color="textPrimary">
+                スコア更新ヒートマップ
+              </Typography>
+            </Container>
+            <Container style={{display:"flex",justifyContent:"center"}} className={"commonLayout " + (c === "dark" ? "darkTheme" : c === "light" ? "lightTheme" : "deepSeaTheme")}>
               <CalendarHeatmap
                 startDate={toDate(subtract(6,"month"))}
                 endDate={new Date()}
                 values={heatmap}
+                showWeekdayLabels
                 classForValue={(value) => colorClassifier(value)}
                 onClick={value => console.log(value)}
+                tooltipDataAttrs={(value:any) => {
+                  if (!value || !value.date) {
+                    return null;
+                  }
+                  return {
+                    "data-tip": `${value.date}:${value.count}件`,
+                  };
+                }}
               />
-            </div>
-          </Grid>
-          <Grid item xs={12} sm={12} md={6} lg={8}>
-            <Hidden smUp>
-              <Divider style={{margin:"1px 0"}}/>
-            </Hidden>
-            <List>
-              {buttons.map((item,i)=>{
-                return (
-                    <DefListCard key={i} onAction={item.onClick} disabled={add || processing} icon={item.icon}
-                      primaryText={item.primary} secondaryText={item.secondary}/>
-                  )
-                })
-              }
-            </List>
-            <Divider style={{margin:"5px 0 10px 0"}}/>
-            <List>
-              <DefListCard onAction={()=>this.addUser()} disabled={myId === res.uid || add || processing || isAdded} icon={<GroupAddIcon/>}
-                primaryText={"追加"} secondaryText={myId === res.uid ? ("自分を追加することはできません") : res.displayName + (isAdded ? "さんはすでにライバルです" : "さんをライバルに追加します")}/>
-            </List>
-          </Grid>
-        </Grid>
-        <div style={{width:"50%",margin:"10px auto"}}>
-          <p style={{textAlign:"center"}}>プロフィールをシェア</p>
-          <ShareButtons withTitle={true} url={url} text={res.displayName + " 総合BPI:" + String(Number.isNaN(totalBPI) ? "-" : totalBPI)}/>
-        </div>
+              <ReactTooltip />
+            </Container>
+            <Container className={"commonLayout"}>
+              <Alert severity="info" style={{margin:"0 0 20px 0"}}>
+                日ごとのスコア/クリアランプ更新件数の合計をカレンダー形式で表示します。色が明るいほど、更新件数が多いことを示しています。
+              </Alert>
+              <Typography component="h6" variant="h6" color="textPrimary">推移グラフ</Typography>
+            </Container>
+            <Shift propdata={this.userStore.scoreHistory()}/>
+            <Container className={"commonLayout " + (c === "dark" ? "darkTheme" : c === "light" ? "lightTheme" : "deepSeaTheme")}>
+              <Typography component="h4" variant="h4" color="textPrimary" className="typographTitle">あなたとの比較</Typography>
+              <Alert severity="info" style={{margin:"20px 0"}}>
+                「スコア勝敗」「クリア勝敗」は、グラフ左から順に、「ライバルの勝利数」「引き分け」「あなたの勝利数」を表しています。
+              </Alert>
+            </Container>
+            <RivalStatViewFromUserPage full={rivalStat} rivalRawData={rivalData} backToMainPage={this.backToMainPage} name={res.displayName}/>
+          </div>
+        )}
+        {(currentTab === 2 && loadingRecommended) && <Loader/>}
+        {(currentTab === 2 && !loadingRecommended) && (
+            <div style={{display:"flex",flexWrap:"wrap",justifyContent:"space-around",margin:"15px auto",width:"90%"}}>
+              <GridList  cellHeight={180} style={{height:"400px",width:"100%"}}>
+                <GridListTile key="Subheader" cols={2} style={{ height: 'auto' }}>
+                  <ListSubheader component="div">実力が近いユーザー:</ListSubheader>
+                </GridListTile>
+                {recommendUsers.map((tile:rivalStoreData) => (
+                  <GridListTile key={tile.displayName} onClick={async()=>{
+                    if(!limited){
+                      this.props.history.replace("/u/" + tile.displayName);
+                    }else{
+                      if(this.props.updateName){
+                        this.props.updateName(tile.displayName);
+                      }
+                    }
+                    this.setState({userName:tile.displayName,processing:true,loadingRecommended:true});
+                    await this.search(tile.displayName);
+                    this.recommended();
+                  }}>
+                  <img src={tile.photoURL.replace("_normal","")} alt={tile.displayName}
+                    onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(tile) || alternativeImg(tile.displayName)}/>
+                  <GridListTileBar
+                    title={tile.displayName}
+                    subtitle={"総合BPI " + String(tile.totalBPI || "-")}
+                  />
+                </GridListTile>
+              ))}
+            </GridList>
+          </div>
+        )}
         <ShowSnackBar message={message} variant={message === "ライバルを追加しました" ? "success" : "error"}
           handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>
-        {loadingRecommended && <Loader/>}
-        {!loadingRecommended && (
-        <div style={{display:"flex",flexWrap:"wrap",justifyContent:"space-around",margin:"15px auto",width:"90%"}}>
-          <GridList  cellHeight={180} style={{height:"400px",width:"100%"}}>
-            <GridListTile key="Subheader" cols={2} style={{ height: 'auto' }}>
-              <ListSubheader component="div">実力が近いユーザー:</ListSubheader>
-            </GridListTile>
-            {recommendUsers.map((tile:rivalStoreData) => (
-              <GridListTile key={tile.displayName} onClick={async()=>{
-                if(!limited){
-                  this.props.history.replace("/u/" + tile.displayName);
-                }else{
-                  if(this.props.updateName){
-                    this.props.updateName(tile.displayName);
-                  }
-                }
-                this.setState({userName:tile.displayName,processing:true,loadingRecommended:true});
-                await this.search(tile.displayName);
-                this.recommended();
-              }}>
-                <img src={tile.photoURL.replace("_normal","")} alt={tile.displayName}
-                  onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(tile) || alternativeImg(tile.displayName)}/>
-                <GridListTileBar
-                  title={tile.displayName}
-                  subtitle={"総合BPI " + String(tile.totalBPI || "-")}
-                />
-              </GridListTile>
-            ))}
-          </GridList>
-        </div>
-      )}
       </React.Fragment>
     );
   }
