@@ -19,7 +19,7 @@ export default class Initialize extends React.Component<{global:any},{show:boole
     this.state = {
       show : true,
       error:false,
-      consoleMes:"必須情報を読み込んでいます",
+      consoleMes:"初期化中",
       errorMessage:"",
       p:0,
     }
@@ -64,25 +64,15 @@ export default class Initialize extends React.Component<{global:any},{show:boole
       if(!localStorage.getItem("showLatestSongs")){
         localStorage.setItem("showLatestSongs","true");
       }
-
-      {
-        const ax = await (await fetch("https://proxy.poyashi.me/?type=bpi_metadata")).json();
-        if(ax.removed){
-          for (let i = 0; i < ax.removed.length; ++i){
-            const t = ax.removed[i];
-            await this.songsDB.removeItem(t["title"]);
-            await this.scoresDB.removeSpecificItemAtAllStores(t["title"]);
-            await this.scoreHistoryDB.removeSpecificItemAtAllStores(t["title"]);
-          }
-        }
-      }
-
+      this.removeDeletedSongs();
       const songsAvailable:string[] = await this.songsDB.getAll();
       await this.scoresDB.removeNaNItems();
       await this.scoreHistoryDB.removeNaNItems();
+
       if(songsAvailable.length > 0){
         return this.setState({show:false});
       }
+
       const now = timeFormatter(0);
       const csv = await fetch(_currentDefinitionURL()).then(t=>t.json());
       let p = [];
@@ -105,6 +95,20 @@ export default class Initialize extends React.Component<{global:any},{show:boole
     }
   }
 
+  removeDeletedSongs = async()=>{
+    {
+      const ax = await (await fetch("https://proxy.poyashi.me/?type=bpi_metadata")).json();
+      if(ax.removed){
+        for (let i = 0; i < ax.removed.length; ++i){
+          const t = ax.removed[i];
+          await this.songsDB.removeItem(t["title"]);
+          await this.scoresDB.removeSpecificItemAtAllStores(t["title"]);
+          await this.scoreHistoryDB.removeSpecificItemAtAllStores(t["title"]);
+        }
+      }
+    }
+  }
+
   render(){
     if(this.state.error){
       return (<Backdrop open>
@@ -123,7 +127,7 @@ export default class Initialize extends React.Component<{global:any},{show:boole
           <Loader/>
         </div>
         <div>
-          <p style={{textAlign:"center"}}>{this.state.consoleMes}<br/>Please wait.</p>
+          <p style={{textAlign:"center"}}>{this.state.consoleMes}<br/>Initializing...</p>
         </div>
       </Backdrop>
     );
