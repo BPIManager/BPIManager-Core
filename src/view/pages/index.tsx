@@ -67,8 +67,8 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
     });
     this.setState({
       totalBPI:totalBPI,
-      lastWeekUpdates:shift[shift.length - 1].sum,
-      remains:concatted.filter((item:CLBody)=>item.bpi > item.currentBPI).length,
+      lastWeekUpdates:(shift && shift[shift.length-1]) ? shift[shift.length - 1].sum : 0,
+      remains:concatted.filter((item:CLBody)=>item.bpi > (Number.isNaN(item.currentBPI) ? -999 : item.currentBPI)).length,
       isLoading:false
     })
   }
