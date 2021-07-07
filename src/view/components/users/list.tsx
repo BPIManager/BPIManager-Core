@@ -81,7 +81,6 @@ class FolloweeList extends React.Component<P,S> {
   }
 
   async loadMore(forceArray:string[]|null = null){
-    console.log("a");
     if(this.state.loading === true) return;
     this.setState({loading:true});
     const targetArray = forceArray !== null ? forceArray : this.state.notLoaded;

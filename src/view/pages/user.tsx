@@ -240,7 +240,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
   }
 
   counts = async(type:number = 0, id:string):Promise<any>=>{
-    return (await fetch(`https://us-central1-bpim-d5971.cloudfunctions.net/${type === 0 ? "getFollowersCnt" : "getFollowingsCnt"}?targetId=${id}&version=${_currentStore()}`)).json().then(t=>{
+    return (await fetch(`https://asia-northeast1-bpimv2.cloudfunctions.net/${type === 0 ? "getFollowersCnt" : "getFollowingsCnt"}?targetId=${id}&version=${_currentStore()}`)).json().then(t=>{
       return t;
     }).catch(e=>{
       console.log(e);
@@ -553,7 +553,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
                         this.props.updateName(tile.displayName);
                       }
                     }
-                    this.setState({userName:tile.displayName,processing:true,loadingRecommended:true});
+                    this.setState({userName:tile.displayName,processing:true,loadingRecommended:true,currentTab:0});
                     await this.search(tile.displayName);
                     this.recommended();
                   }}>

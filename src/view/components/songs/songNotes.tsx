@@ -161,7 +161,7 @@ class WriteDialog extends React.Component<WP,{
       if(!this.state.text || this.state.isLoading || !this.props.song) return;
       this.setState({isLoading:true});
       const authInfo = new fbActions().authInfo();
-      const response = await fetch("https://us-central1-bpim-d5971.cloudfunctions.net/writeComment",{
+      const response = await fetch("https://asia-northeast1-bpimv2.cloudfunctions.net/writeComment",{
         method:"POST",
         body:JSON.stringify({
           songTitle:this.props.song.title,
