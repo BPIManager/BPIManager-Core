@@ -96,15 +96,13 @@ export default class Initialize extends React.Component<{global:any},{show:boole
   }
 
   removeDeletedSongs = async()=>{
-    {
-      const ax = await (await fetch("https://proxy.poyashi.me/?type=bpi_metadata")).json();
-      if(ax.removed){
-        for (let i = 0; i < ax.removed.length; ++i){
-          const t = ax.removed[i];
-          await this.songsDB.removeItem(t["title"]);
-          await this.scoresDB.removeSpecificItemAtAllStores(t["title"]);
-          await this.scoreHistoryDB.removeSpecificItemAtAllStores(t["title"]);
-        }
+    const ax = await (await fetch("https://proxy.poyashi.me/?type=bpi_metadata")).json();
+    if(ax.removed){
+      for (let i = 0; i < ax.removed.length; ++i){
+        const t = ax.removed[i];
+        await this.songsDB.removeItem(t["title"]);
+        await this.scoresDB.removeSpecificItemAtAllStores(t["title"]);
+        await this.scoreHistoryDB.removeSpecificItemAtAllStores(t["title"]);
       }
     }
   }

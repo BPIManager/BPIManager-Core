@@ -368,6 +368,11 @@ th.MuiTableCell-root.MuiTableCell-head:first-child{
   height:150px !important;
 }
 
+.toppageIcon{
+  width:64px !important;
+  height:64px !important;
+}
+
 @media screen and (max-width:767px){
   .mdCentered{
     text-align:center;
@@ -629,3 +634,47 @@ text.react-calendar-heatmap-weekday-label {
 .lightTheme .typographTitle{
   border-top: 2px solid #222;
 }
+
+.TypographywithIcon{
+  display:flex;
+  align-items: center;
+}
+
+.narrowCards .MuiCardContent-root{
+  padding-bottom:0 !important;
+}
+
+.topMenuContainer .MuiGrid-item{
+  display:flex;
+  min-width:90px;
+  margin-bottom:10px;
+  cursor: pointer;
+}
+
+.topMenuContainer .MuiGrid-item svg{
+  margin-bottom: 8px;
+}
+
+@media screen and (min-width:968px){
+  .topMenuContaienrGridWrapper{justify-content: space-between !important}
+  .topMenuContainer .MuiGrid-item{
+    margin-bottom:0 !important;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 10px;
+}
+
+#__light .updateDefAlert{background:#fefefe;}
+#__dark .updateDefAlert{background:#181818;}
+#__deepsea .updateDefAlert{background:#001625;}

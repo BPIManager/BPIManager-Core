@@ -40,6 +40,7 @@ import WeeklyList from '@/view/pages/ranking/list';
 import HelpWR from '@/view/pages/helpWR';
 import Camera from '@/view/pages/camera/camera';
 import RedirectMyProfile from '@/view/pages/myprofile';
+import Index from '@/view/pages/index';
 
 class Router extends React.Component<{},{}> {
 
@@ -60,6 +61,7 @@ class Router extends React.Component<{},{}> {
             >
               <BrowserRouter>
                 <AppBar global={global}>
+                  <Route path="/" exact component={Index}/>
                   <Route path="/data" exact render={_props=><Data global={global} updateGlobal={this.globalUpdateScore}/>}/>
                   <Route path="/songs" exact component={Songs}/>
                   <Route path="/lists" exact component={Lists}/>

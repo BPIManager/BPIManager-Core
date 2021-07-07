@@ -43,7 +43,6 @@ import {ReactComponent as Logo} from "@/assets/aix2f-q5h7x.svg";
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import EventNoteIcon from '@material-ui/icons/EventNote';
 import { _currentVersion } from "@/components/settings";
-import Index from "@/view/pages/";
 import CameraAltIcon from '@material-ui/icons/CameraAlt';
 
 interface navBars {
@@ -355,23 +354,6 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         </Typography>
       </React.Fragment>
     );
-    if(page[1] === ""){
-      return (
-        <React.Fragment>
-          <nav className={classes.drawer}>
-            <Drawer open={isOpen} onClose={this.toggleNav}
-              classes={{
-                paper: classes.drawerPaper,
-            }}>
-              {drawer(false)}
-            </Drawer>
-          </nav>
-          <main style={{width:"100%"}}>
-            <Index toggleNav={this.toggleNav}/>
-          </main>
-        </React.Fragment>
-      );
-    }
 
     return (
       <div className={classes.root}>

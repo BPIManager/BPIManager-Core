@@ -1,13 +1,11 @@
 import * as React from 'react';
 
-import { rivalScoreData,scoreData } from '@/types/data';
-import { AAADifficulty, CLInt, CLBody } from '@/components/aaaDiff/data';
+import { rivalScoreData } from '@/types/data';
+import { CLBody, named, getTable } from '@/components/aaaDiff/data';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import Loader from '@/view/components/common/loader';
 import AdsCard from '@/components/ad';
-import { _isSingle, _currentStore } from '@/components/settings';
-import { scoresDB } from '@/components/indexedDB';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon/SpeedDialIcon';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction/SpeedDialAction';
@@ -97,58 +95,17 @@ class AAATable extends React.Component<P,S> {
   }
 
   async componentDidMount(){
-    this.setState({result:await this.getTable(),isLoading:false});
+    const _named = await named(12);
+    this.setState({result:await getTable(12,_named),isLoading:false});
   }
 
   changeLevel = async (e:React.ChangeEvent<HTMLInputElement>,)=>{
     if(typeof e.target.value === "string"){
       const targetLevel = Number(e.target.value);
+      const _named = await named(targetLevel);
       this.setState({targetLevel:targetLevel,isLoading:true});
-      return this.setState({result:await this.getTable(targetLevel),isLoading:false});
+      return this.setState({result:await getTable(targetLevel,_named),isLoading:false});
     }
-  }
-
-  getTable = async(targetLevel:number = 12)=>{
-    const table = await AAADifficulty(targetLevel);
-    const named = await this.named(targetLevel);
-    let result:CLInt = {};
-    console.log(table)
-    Object.keys(table).map((diffs:string)=>{
-      result[diffs] = [];
-      for(let i=0; i <table[diffs].length; ++i){
-        const p = table[diffs][i];
-        const diff = p["difficulty"];
-        named[p["title"] + diff] && result[diffs].push({
-          bpi:p["bpi"],
-          title:p["title"],
-          difficulty:diff,
-          currentBPI:named[p["title"] + diff]["currentBPI"],
-          exScore:named[p["title"] + diff]["exScore"]
-        });
-        !named[p["title"] + diff] && result[diffs].push({
-          title:p["title"],
-          difficulty:diff,
-          bpi:p["bpi"],
-          currentBPI:NaN,
-          exScore:NaN
-        });
-      }
-      return 0;
-    });
-    return result;
-  }
-
-  named = async (targetLevel:number = 12)=>{
-    const fil = (t:any)=>t.filter((item:rivalScoreData|scoreData)=>item.difficultyLevel === String(targetLevel)).reduce((groups:{[key:string]:any},item:any)=>{
-      groups[item.title + item.difficulty] = item;
-      return groups;
-    },{});
-    if(this.props.data){
-      return fil(this.props.data);
-    }
-    const db = await new scoresDB(_isSingle(),_currentStore()).loadStore();
-    const full:scoreData[] = await db.getItemsBySongDifficulty(String(targetLevel));
-    return fil(full);
   }
 
   isChecked = (input:number,target:number):boolean=>{

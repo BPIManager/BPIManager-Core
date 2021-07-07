@@ -1,35 +1,76 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
-import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
-import {Link as RefLink, Dialog, DialogTitle, DialogContent, Divider, Typography, ButtonGroup, Chip, Avatar, Fab} from '@material-ui/core/';
+import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
+import {Link as RefLink, Divider, Avatar, Grid, Typography, CardActions, Card, CardContent, Container} from '@material-ui/core/';
 import { _currentVersion, _currentTheme } from '@/components/settings';
-import MenuIcon from '@material-ui/icons/Menu';
 import UpdateIcon from '@material-ui/icons/Update';
-import Loader from '../components/common/loader';
+import Loader from '@/view/components/common/loader';
 import { updateDefFile } from '@/components/settings/updateDef';
 import CheckIcon from '@material-ui/icons/Check';
 import WarningIcon from '@material-ui/icons/Warning';
-import ArrowRightIcon from '@material-ui/icons/ArrowRight';
-import { getAltTwitterIcon } from '@/components/rivals';
-import { alternativeImg, borderColor } from '@/components/common';
 import { Helmet } from 'react-helmet';
+import { getAltTwitterIcon } from '@/components/rivals';
+import { alternativeImg } from '@/components/common';
+import bpiCalcuator from '@/components/bpi';
+import statMain from '@/components/stats/main';
+
+import TimelineIcon from '@material-ui/icons/Timeline';
+import LibraryMusicIcon from '@material-ui/icons/LibraryMusic';
+import MenuOpenIcon from '@material-ui/icons/MenuOpen';
 import CameraAltIcon from '@material-ui/icons/CameraAlt';
+import QueueMusicIcon from '@material-ui/icons/QueueMusic';
+import SaveAltIcon from "@material-ui/icons/SaveAlt";
+import PeopleIcon from '@material-ui/icons/People';
+import SyncProblemIcon from '@material-ui/icons/SyncProblem';
+import Alert from '@material-ui/lab/Alert/Alert';
+import AlertTitle from '@material-ui/lab/AlertTitle/AlertTitle';
+import { FormattedMessage } from 'react-intl';
+import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
+import { named, getTable, CLBody } from '@/components/aaaDiff/data';
 
 class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
-  user:any
+  user:any,
+  totalBPI:number,
+  lastWeekUpdates:number,
+  remains:number,
+  isLoading:boolean
 }>{
 
   constructor(props:{toggleNav:()=>void}&RouteComponentProps){
     super(props);
     this.state = {
-      user:localStorage.getItem("social") ? JSON.parse(localStorage.getItem("social") || "[]") : null
+      user:localStorage.getItem("social") ? JSON.parse(localStorage.getItem("social") || "[]") : null,
+      totalBPI:-15,
+      lastWeekUpdates:0,
+      remains:0,
+      isLoading:true
     }
+  }
+
+  async componentDidMount(){
+    const bpi = new bpiCalcuator();
+    let exec = await new statMain(12).load();
+    const totalBPI = bpi.setSongs(exec.at(),exec.at().length) || -15;
+    const shift = await exec.eachDaySum(5);
+    const _named = await named(12);
+    const remains = await getTable(12,_named);
+    const concatted = Object.keys(remains).reduce((group:any,item:string)=>{
+      if(!group) group = [];
+      group = group.concat(remains[item]);
+      return group;
+    },[]);
+    this.setState({
+      totalBPI:totalBPI,
+      lastWeekUpdates:shift[shift.length - 1].sum,
+      remains:concatted.filter((item:CLBody)=>item.bpi > item.currentBPI).length,
+      isLoading:false
+    })
   }
 
   render(){
     const themeColor = _currentTheme();
     const {user} = this.state;
+    const xs = 12,sm = 6, md = 4,lg = 4;
     return (
       <div>
         <Helmet>
@@ -37,56 +78,140 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
             content="beatmania IIDXのスコアをBPIという指標を用いて管理したり、ライバルとスコアを競ったりできるツールです。"
           />
         </Helmet>
-        <div style={{position:"absolute",top:"3vh",display:"flex",justifyContent:"space-around",width:"100%",alignItems:"center"}}>
-          {user && (
-            <Chip
-              avatar={(
-                <Avatar style={{width:"32px",height:"32px"}}>
+        <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover"}}>
+          <div style={{background:themeColor === "light" ? "transparent" : "rgba(0,0,0,.5)",display:"flex",padding:"1vh 0",width:"100%",height:"100%",paddingBottom:"60px"}}>
+            {user && (
+            <Grid container alignContent="space-between" alignItems="center" style={{padding:"20px"}}>
+              <Grid item xs={3} lg={3} style={{display:"flex",justifyContent:"center",flexDirection:"column"}}>
+                <Avatar style={{border:"1px solid #222",margin:"15px auto"}} className="toppageIcon">
                   <img src={user.photoURL ? user.photoURL.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
-                  alt={user.displayName || "Unpublished User"}
-                  onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(user) || alternativeImg(user.displayName)}/>
+                    alt={user.displayName}
+                    onClick={()=>this.props.history.push("/u/" + user.displayName)}
+                    onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(user) || alternativeImg(user.displayName)}/>
                 </Avatar>
-              )}
-              onClick={()=>this.props.history.push("/sync/settings")}
-              label={user.displayName || "-"}
-              clickable
-              color="secondary"
-            />
-          )}
-          {!user && <div style={{width:"150px"}}></div>}
-          <div>
-            <Button startIcon={<MenuIcon />} onClick={this.props.toggleNav} color="secondary" size="large" style={{position:"relative",bottom:"2px",borderRadius:"0",borderBottom:"2px solid " + borderColor()}}>
-              MENU
-            </Button>
-          </div>
-
-        </div>
-        <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover",height:"100vh"}}>
-          <div style={{background:themeColor === "light" ? "transparent" : "rgba(0,0,0,.5)",display:"flex",padding:"1vh 0",width:"100%",height:"100vh"}} className="topFlexContent">
-            <Container style={{display:"flex",justifyContent:"center",flexDirection:"column",textAlign:"center"}}>
-              <Typography variant="h3" component="h1" style={{textAlign:"center"}}>
-                BPIManager
-              </Typography>
-              <Typography variant="subtitle1" component="h2" gutterBottom style={{textAlign:"center"}}>
-                The score management tool for IIDX
-              </Typography>
-              <ButtonGroup fullWidth style={{marginBottom:"5px"}}>
-                <Button startIcon={<ArrowRightIcon />} onClick={()=>this.props.history.push("/data")} size="large" variant="text">
-                  IMPORT
-                </Button>
-                <Button startIcon={<ArrowRightIcon />} onClick={()=>this.props.history.push("/songs")} size="large" variant="text">
-                  SONGS
-                </Button>
-              </ButtonGroup>
-              <Link to="/help/start"><RefLink component="span" color="secondary">How to Use / はじめての方</RefLink></Link>
-            </Container>
+              </Grid>
+              <Grid item xs={9} lg={9} style={{paddingLeft:"15px"}}>
+                <Typography variant="body1">
+                  {user.displayName}
+                </Typography>
+                  <Typography variant="body1">
+                    <Link to={"/u/" + user.displayName}><RefLink color="secondary" component="span">プロフィールを確認</RefLink></Link>
+                  </Typography>
+              </Grid>
+            </Grid>
+            )}
+            {!user && (
+            <Grid container alignContent="space-between" alignItems="center" style={{padding:"20px"}}>
+              <Grid item xs={3} lg={3} style={{display:"flex",justifyContent:"center",flexDirection:"column"}}>
+                <Avatar style={{border:"1px solid #222",margin:"15px auto"}} className="toppageIcon">
+                </Avatar>
+              </Grid>
+              <Grid item xs={9} lg={9} style={{paddingLeft:"15px"}}>
+                <Typography variant="body1">
+                  ログインしていません
+                </Typography>
+                <Typography variant="body1">
+                  <Link to="/sync/settings"><RefLink color="secondary" component="span">ログインして全機能を開放</RefLink></Link>
+                </Typography>
+              </Grid>
+            </Grid>
+            )}
           </div>
         </div>
-        <Fab variant="extended" style={{position:"fixed",bottom:"3%",right:"3%"}} color="secondary" onClick={()=>this.props.history.push("/camera")}>
-          <CameraAltIcon style={{marginRight:"5px"}}/>
-          BPI CAMERA
-        </Fab>
-        <UpdateDef/>
+        <Container style={{marginTop:"-60px"}} className="topMenuContainer">
+          <UpdateDef/>
+          <Card>
+            <CardContent>
+              <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
+                <MenuOpenIcon/>&nbsp;クイックアクセス
+              </Typography>
+              <div style={{overflowX:"scroll"}} className="topMenuScrollableWrapper">
+              <Grid container direction="row" wrap="nowrap" alignItems="center" style={{width:"100%",margin:"20px 0 0 0"}} className="topMenuContaienrGridWrapper">
+                <Grid item direction="column" alignItems="center" onClick={()=>this.props.history.push("/camera")}>
+                  <CameraAltIcon/>
+                  <Typography color="textSecondary" variant="caption">BPIカメラ</Typography>
+                </Grid>
+                <Grid item direction="column" alignItems="center" onClick={()=>this.props.history.push("/data")}>
+                  <SaveAltIcon/>
+                  <Typography color="textSecondary" variant="caption">インポート</Typography>
+                </Grid>
+                <Grid item direction="column" alignItems="center" onClick={()=>this.props.history.push("/songs")}>
+                  <QueueMusicIcon/>
+                  <Typography color="textSecondary" variant="caption">楽曲一覧</Typography>
+                </Grid>
+                <Grid item direction="column" alignItems="center" onClick={()=>this.props.history.push("/rivals")}>
+                  <PeopleIcon/>
+                  <Typography color="textSecondary" variant="caption">ライバル</Typography>
+                </Grid>
+                <Grid item direction="column" alignItems="center" onClick={()=>this.props.history.push("/sync/settings")}>
+                  <SyncProblemIcon/>
+                  <Typography color="textSecondary" variant="caption">Sync</Typography>
+                </Grid>
+              </Grid>
+              </div>
+            </CardContent>
+          </Card>
+        </Container>
+        <Divider style={{margin:"25px 0"}}/>
+        {this.state.isLoading && <Loader/>}
+        {!this.state.isLoading && (
+        <Container>
+          <Grid container direction="row" justify="space-between" spacing={3} className="narrowCards">
+            <Grid item xs={xs} sm={sm} md={md} lg={lg}>
+              <Card>
+                <CardContent>
+                  <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
+                    <TimelineIcon/>&nbsp;総合BPI(☆12)
+                  </Typography>
+                  <Typography color="textSecondary" variant="h2">
+                    {this.state.totalBPI}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button size="small" onClick={()=>this.props.history.push("/stats")}>統計をすべて表示</Button>
+                </CardActions>
+              </Card>
+            </Grid>
+            <Grid item xs={xs} sm={sm} md={md} lg={lg}>
+              <Card>
+                <CardContent>
+                  <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
+                    <LibraryMusicIcon/>&nbsp;今週更新した楽曲数
+                  </Typography>
+                  <Typography color="textSecondary" variant="h2">
+                    {this.state.lastWeekUpdates}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button size="small" onClick={()=>this.props.history.push("/songs")}>楽曲一覧を表示</Button>
+                </CardActions>
+              </Card>
+            </Grid>
+            <Grid item xs={xs} sm={sm} md={md} lg={lg}>
+              <Card>
+                <CardContent>
+                  <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
+                    <WbIncandescentIcon/>&nbsp;残り未AAA楽曲数(☆12)
+                  </Typography>
+                  <Typography color="textSecondary" variant="h2">
+                    {this.state.remains}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button size="small" onClick={()=>this.props.history.push("/AAATable")}>AAA達成表を表示</Button>
+                </CardActions>
+              </Card>
+            </Grid>
+            <Grid item xs={xs} sm={sm} md={md} lg={lg}>
+            </Grid>
+          </Grid>
+        </Container>
+      )}
+        <small style={{marginTop:"25px",fontSize:"8px",textAlign:"center",display:"block",padding:"15px"}}>
+          <FormattedMessage id="Index.notes1"/><br/>
+          <FormattedMessage id="Index.notes2"/><br/>
+          <FormattedMessage id="Index.notes3"/>
+        </small>
       </div>
     )
   }
@@ -145,25 +270,22 @@ class UpdateDef extends React.Component<{},{
       return (null);
     }
     return (
-      <Dialog open={true}>
-        <DialogTitle>定義データを更新</DialogTitle>
-        <DialogContent>
+      <Alert variant="outlined" className="MuiPaper-root updateDefAlert" severity="info" style={{marginBottom:"25px"}}>
+        <AlertTitle>定義データを更新</AlertTitle>
+        <div>
           {progress === 0 && <div>
             最新の楽曲データ(ver{latestVersion})が利用可能です。<br/>
-            「更新」ボタンをクリックして更新するか、「閉じる」ボタンをクリックして後で更新できます。<br/>
+            「更新」ボタンをクリックして今すぐ更新できます。<br/>
             <RefLink href={updateInfo} target="_blank" color="secondary">ここをクリック</RefLink>して、最新の楽曲データにおける変更点を確認できます。
             <Divider style={{margin:"8px 0"}}/>
             <Button
               fullWidth
-              variant="contained"
+              variant="outlined"
               color="secondary"
               size="large"
               onClick={this.updateButton}
               startIcon={<UpdateIcon/>}>
               今すぐ更新
-            </Button>
-            <Button onClick={this.handleToggle} color="secondary" fullWidth style={{marginTop:"8px"}}>
-              閉じる
             </Button>
           </div>}
           {progress === 1 && <div>
@@ -180,47 +302,8 @@ class UpdateDef extends React.Component<{},{
               閉じる
             </Button>
           </div>}
-        </DialogContent>
-      </Dialog>
+        </div>
+      </Alert>
     );
   }
 }
-
-/*
-
-
-
-<Container fixed className="heroTitle">
-  {((!hideVerBR && !localStorage.getItem("hideTopBISTROVER")) && (_currentStore() !== "28" && _currentStore() !== "INF")) &&
-    <Alert variant="outlined" severity="info" style={{margin:"10px 0"}}>
-      <AlertTitle>新バージョンへの切り替え</AlertTitle>
-      <p>
-        設定画面からスコアの保存先を「28 BISTROVER」に変更してください。
-      </p>
-      <ButtonGroup color="secondary" style={{margin:"8px 0"}} variant="outlined">
-      <Button startIcon={<FavoriteIcon />}><Link to="/settings" style={{textDecoration:"none",color:"inherit"}}>設定</Link></Button>
-      <Button startIcon={<VisibilityOffIcon />} onClick={()=>{
-        localStorage.setItem("hideTopBISTROVER","true");
-        this.setState({hide:true});
-      }}>非表示</Button>
-      </ButtonGroup>
-    </Alert>
-  }
-  {(!hide1106 && !localStorage.getItem("hideTop20201106")) &&
-    <Alert variant="outlined" severity="info" style={{margin:"10px 0"}}>
-      <AlertTitle>新機能のご紹介</AlertTitle>
-      <p>
-        新曲のスコアをすぐにBPIManagerに登録できるようになりました。
-      </p>
-      <ButtonGroup color="secondary" style={{margin:"8px 0"}} variant="outlined">
-      <Button startIcon={<FavoriteIcon />}><RefLink href="https://gist.github.com/potakusan/b5768f3ec6c50556beec50dd14ebaf23" style={{textDecoration:"none",color:"inherit"}} target="_blank">詳細</RefLink></Button>
-      <Button startIcon={<VisibilityOffIcon />} onClick={()=>{
-        localStorage.setItem("hideTop20201106","true");
-        this.setState({hide:true});
-      }}>非表示</Button>
-      </ButtonGroup>
-    </Alert>
-  }
-</Container>
-
- */
