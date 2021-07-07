@@ -3,14 +3,13 @@ import 'firebase/firestore';
 import 'firebase/auth'
 import "firebase/functions";
 const fb = firebase.initializeApp({
-  apiKey: "AIzaSyDSy7KvNgPa42c8aiILI6o7jknMCq72Saw",
-  authDomain: "bpim-d5971.firebaseapp.com",
-  databaseURL: "https://bpim-d5971.firebaseio.com",
-  projectId: "bpim-d5971",
-  storageBucket: "bpim-d5971.appspot.com",
-  messagingSenderId: "263404475070",
-  appId: "1:263404475070:web:74212b489a5cfdb66904ef",
-  measurementId: "G-1RBYE73RY5"
+  apiKey: "AIzaSyAIlzzxI0kZtIe4vvjSIiRwfqSQVZtbluM",
+  authDomain: "bpimv2.firebaseapp.com",
+  projectId: "bpimv2",
+  storageBucket: "bpimv2.appspot.com",
+  messagingSenderId: "199747072203",
+  appId: "1:199747072203:web:79b7545a4e426763b5ab4e",
+  measurementId: "G-4V5QE3YXF9"
 });
 
 export const firestore = fb.firestore();
@@ -19,4 +18,4 @@ export const twitter = new firebase.auth.TwitterAuthProvider();
 export const google = new firebase.auth.GoogleAuthProvider();
 export default fb;
 
-export const functions = fb.functions();
+export const functions = fb.functions("asia-northeast1");

@@ -1,7 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/messaging';
 import fbActions from './actions';
-export const pubkey = "BK9k1aToNoODFR7kAWGLmyKy4B7oEhhk17RJwQ08xw5XzSmYnP7195rEcMhwlBqJ3KfTlQjCg4zxGa7VBFA6rus";
+export const pubkey = "BHwX2FHmMWpVIWwnELeC0Go_TDXQO4TlCr-gUsW38gqXME0LLUp3runutAAU5lxIUGQYEXgo090CVuCK-7kajms";
 
 export class messanger{
   private messaging = firebase.messaging();

@@ -40,7 +40,7 @@ export default class Initialize extends React.Component<{global:any},{show:boole
           if(!localStorage.getItem("lastTwitterSynced")){
             console.log("** Twitter Sync Start **");
             localStorage.setItem("lastTwitterSynced",new Date().toString());
-            const ax = await (await fetch("https://us-central1-bpim-d5971.cloudfunctions.net/getTwitterInfo?targetId=" + user.providerData[0]["uid"])).json();
+            const ax = await (await fetch("https://asia-northeast1-bpimv2.cloudfunctions.net/getTwitterInfo?targetId=" + user.providerData[0]["uid"])).json();
             const p = JSON.parse(ax.raw.body);
             const u = new fbActions().v2SetUserCollection().setDocName(user.uid);
             u.setTwitterId(p.screen_name);
