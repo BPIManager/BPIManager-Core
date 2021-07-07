@@ -27,18 +27,21 @@ import AlertTitle from '@material-ui/lab/AlertTitle/AlertTitle';
 import { FormattedMessage } from 'react-intl';
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
 import { named, getTable, CLBody } from '@/components/aaaDiff/data';
+import fbActions from '@/components/firebase/actions';
 
 class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
   user:any,
   totalBPI:number,
   lastWeekUpdates:number,
   remains:number,
+  auth:any,
   isLoading:boolean
 }>{
 
   constructor(props:{toggleNav:()=>void}&RouteComponentProps){
     super(props);
     this.state = {
+      auth:null,
       user:localStorage.getItem("social") ? JSON.parse(localStorage.getItem("social") || "[]") : null,
       totalBPI:-15,
       lastWeekUpdates:0,
@@ -59,6 +62,9 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
       group = group.concat(remains[item]);
       return group;
     },[]);
+    new fbActions().auth().onAuthStateChanged((user: any)=> {
+      this.setState({auth:user});
+    });
     this.setState({
       totalBPI:totalBPI,
       lastWeekUpdates:shift[shift.length - 1].sum,
@@ -69,7 +75,7 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
 
   render(){
     const themeColor = _currentTheme();
-    const {user} = this.state;
+    const {user,auth} = this.state;
     const xs = 12,sm = 6, md = 4,lg = 4;
     return (
       <div>
@@ -80,7 +86,7 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
         </Helmet>
         <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover"}}>
           <div style={{background:themeColor === "light" ? "transparent" : "rgba(0,0,0,.5)",display:"flex",padding:"1vh 0",width:"100%",height:"100%",paddingBottom:"60px"}}>
-            {user && (
+            {(auth && user) && (
             <Grid container alignContent="space-between" alignItems="center" style={{padding:"20px"}}>
               <Grid item xs={3} lg={3} style={{display:"flex",justifyContent:"center",flexDirection:"column"}}>
                 <Avatar style={{border:"1px solid #222",margin:"15px auto"}} className="toppageIcon">
@@ -100,7 +106,7 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
               </Grid>
             </Grid>
             )}
-            {!user && (
+            {(!auth || !user) && (
             <Grid container alignContent="space-between" alignItems="center" style={{padding:"20px"}}>
               <Grid item xs={3} lg={3} style={{display:"flex",justifyContent:"center",flexDirection:"column"}}>
                 <Avatar style={{border:"1px solid #222",margin:"15px auto"}} className="toppageIcon">
