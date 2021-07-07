@@ -28,6 +28,9 @@ import { FormattedMessage } from 'react-intl';
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
 import { named, getTable, CLBody } from '@/components/aaaDiff/data';
 import fbActions from '@/components/firebase/actions';
+import { scoresDB } from '@/components/indexedDB';
+import { scoreData } from '@/types/data';
+import { isSameWeek } from '@/components/common/timeFormatter';
 
 class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
   user:any,
@@ -54,7 +57,8 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
     const bpi = new bpiCalcuator();
     let exec = await new statMain(12).load();
     const totalBPI = bpi.setSongs(exec.at(),exec.at().length) || -15;
-    const shift = await exec.eachDaySum(5);
+    let shift = await new scoresDB().getAll();
+    shift = shift.filter((data:scoreData)=>isSameWeek(data.updatedAt,new Date()));
     const _named = await named(12);
     const remains = await getTable(12,_named);
     const concatted = Object.keys(remains).reduce((group:any,item:string)=>{
@@ -67,7 +71,7 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
     });
     this.setState({
       totalBPI:totalBPI,
-      lastWeekUpdates:(shift && shift[shift.length-1]) ? shift[shift.length - 1].sum : 0,
+      lastWeekUpdates:shift.length || 0,
       remains:concatted.filter((item:CLBody)=>item.bpi > (Number.isNaN(item.currentBPI) ? -999 : item.currentBPI)).length,
       isLoading:false
     })
