@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import Paper from '@material-ui/core/Paper';
 import FormControl from '@material-ui/core/FormControl';
-import { _currentViewComponents, _setCurrentViewComponents, _setShowLatestSongs, _showLatestSongs } from '@/components/settings';
+import { _currentViewComponents, _setCurrentViewComponents, _setShowLatestSongs, _showLatestSongs, _currentQuickAccessComponents, _setQuickAccessComponents } from '@/components/settings';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -12,10 +12,12 @@ import FormLabel from '@material-ui/core/FormLabel';
 import Divider from '@material-ui/core/Divider';
 import Switch from '@material-ui/core/Switch';
 import Loader from '@/view/components/common/loader';
+import { quickAccessTable } from '@/components/common/quickAccess';
 
 interface S {
   isLoading:boolean,
   currentVersion:string[],
+  quickAccess:string[],
   showLatestSongs:boolean
 }
 
@@ -31,12 +33,27 @@ class Settings extends React.Component<P,S> {
     this.state ={
       isLoading:false,
       currentVersion:_currentViewComponents().split(","),
+      quickAccess:_currentQuickAccessComponents().split(","),
       showLatestSongs:_showLatestSongs(),
     }
   }
 
   indexOf = (needle:string):boolean=>{
     return this.state.currentVersion.indexOf(needle) > -1
+  }
+
+  indexOfQA = (needle:string):boolean=>{
+    return this.state.quickAccess.indexOf(needle) > -1
+  }
+
+  changeQA = (value:string)=>(_e:React.ChangeEvent<HTMLInputElement>):void =>{
+    let p = Array.from(this.state.quickAccess);
+    if(this.indexOfQA(value)){
+      p = p.filter(v=>v !== value)
+    }else{
+      p.push(value);
+    }
+    return this.setState({quickAccess:_setQuickAccessComponents(p)});
   }
 
   changeView = (value:string)=>(_e:React.ChangeEvent<HTMLInputElement>):void =>{
@@ -95,6 +112,23 @@ class Settings extends React.Component<P,S> {
             リリースされたばかりの楽曲を楽曲リストに表示します。<br/>
             これらの楽曲はBPIが算出されませんが、スコアログの記録には対応しています。<br/><br/>
             (リストから非表示にしても、内部的にスコアは記録され続けます)
+          </Typography>
+          <Divider style={{margin:"10px 0"}}/>
+          <FormControl fullWidth>
+            <FormLabel component="legend">クイックアクセス</FormLabel>
+            {
+              quickAccessTable.map((item:any)=>{
+                return (
+                  <FormGroup key={item.name}>
+                    <FormControlLabel control={<Checkbox checked={this.indexOfQA(item.com)} onChange={this.changeQA(item.com)} value={item.com} />} label={item.name}/>
+                  </FormGroup>
+                )
+              })
+            }
+          </FormControl>
+          <Typography variant="caption" display="block">
+            トップページ「クイックアクセス」に表示する機能を編集します。<br/>
+            よく使う機能をお好みで選択してください。
           </Typography>
         </Paper>
       </Container>

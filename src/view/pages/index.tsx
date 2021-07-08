@@ -1,8 +1,8 @@
 import * as React from 'react';
 import Button from '@material-ui/core/Button';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import {Link as RefLink, Divider, Avatar, Grid, Typography, CardActions, Card, CardContent, Container} from '@material-ui/core/';
-import { _currentVersion, _currentTheme } from '@/components/settings';
+import {Link as RefLink, Divider, Avatar, Grid, Typography, CardActions, Card, CardContent, Container, CircularProgress, ListItem, ListItemAvatar, ListItemText, List} from '@material-ui/core/';
+import { _currentVersion, _currentTheme, _currentQuickAccessComponents } from '@/components/settings';
 import UpdateIcon from '@material-ui/icons/Update';
 import Loader from '@/view/components/common/loader';
 import { updateDefFile } from '@/components/settings/updateDef';
@@ -17,11 +17,6 @@ import statMain from '@/components/stats/main';
 import TimelineIcon from '@material-ui/icons/Timeline';
 import LibraryMusicIcon from '@material-ui/icons/LibraryMusic';
 import MenuOpenIcon from '@material-ui/icons/MenuOpen';
-import CameraAltIcon from '@material-ui/icons/CameraAlt';
-import QueueMusicIcon from '@material-ui/icons/QueueMusic';
-import SaveAltIcon from "@material-ui/icons/SaveAlt";
-import PeopleIcon from '@material-ui/icons/People';
-import SyncProblemIcon from '@material-ui/icons/SyncProblem';
 import Alert from '@material-ui/lab/Alert/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle/AlertTitle';
 import { FormattedMessage } from 'react-intl';
@@ -29,8 +24,13 @@ import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
 import { named, getTable, CLBody } from '@/components/aaaDiff/data';
 import fbActions from '@/components/firebase/actions';
 import { scoresDB } from '@/components/indexedDB';
-import { scoreData } from '@/types/data';
-import { isSameWeek } from '@/components/common/timeFormatter';
+import { scoreData, rivalStoreData } from '@/types/data';
+import { isSameWeek, updatedTime } from '@/components/common/timeFormatter';
+import { quickAccessTable } from '@/components/common/quickAccess';
+import PeopleIcon from '@material-ui/icons/People';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import ModalUser from '../components/rivals/modal';
+import AppsIcon from '@material-ui/icons/Apps';
 
 class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
   user:any,
@@ -38,7 +38,12 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
   lastWeekUpdates:number,
   remains:number,
   auth:any,
-  isLoading:boolean
+  isLoading:boolean,
+  userLoading:boolean,
+  latestUsersLoading:boolean,
+  recentUsers:rivalStoreData[],
+  isModalOpen:boolean,
+  currentUserName:string,
 }>{
 
   constructor(props:{toggleNav:()=>void}&RouteComponentProps){
@@ -49,7 +54,12 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
       totalBPI:-15,
       lastWeekUpdates:0,
       remains:0,
-      isLoading:true
+      isLoading:true,
+      userLoading:true,
+      latestUsersLoading:true,
+      recentUsers:[],
+      isModalOpen:false,
+      currentUserName:""
     }
   }
 
@@ -67,19 +77,33 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
       return group;
     },[]);
     new fbActions().auth().onAuthStateChanged((user: any)=> {
-      this.setState({auth:user});
+      this.setState({auth:user,userLoading:false});
     });
     this.setState({
       totalBPI:totalBPI,
       lastWeekUpdates:shift.length || 0,
       remains:concatted.filter((item:CLBody)=>item.bpi > (Number.isNaN(item.currentBPI) ? -999 : item.currentBPI)).length,
       isLoading:false
-    })
+    });
+    return this.getRecentUsers();
   }
+
+  getRecentUsers = async()=>{
+    const res = await new fbActions().recentUpdated(null,null,"すべて");
+    return this.setState({latestUsersLoading:false,recentUsers:res.slice(0,5)});
+  }
+
+  QAindexOf = (needle:string)=>{
+    const str = _currentQuickAccessComponents();
+    return str.indexOf(needle) > -1;
+  }
+
+  handleModalOpen = (flag:boolean)=> this.setState({isModalOpen:flag});
+  open = (uid:string)=> this.setState({isModalOpen:true,currentUserName:uid});
 
   render(){
     const themeColor = _currentTheme();
-    const {user,auth} = this.state;
+    const {user,auth,isLoading,userLoading,latestUsersLoading,recentUsers,isModalOpen,currentUserName} = this.state;
     const xs = 12,sm = 6, md = 4,lg = 4;
     return (
       <div>
@@ -90,7 +114,24 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
         </Helmet>
         <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover"}}>
           <div style={{background:themeColor === "light" ? "transparent" : "rgba(0,0,0,.5)",display:"flex",padding:"1vh 0",width:"100%",height:"100%",paddingBottom:"60px"}}>
-            {(auth && user) && (
+            {userLoading && (
+            <Grid container alignContent="space-between" alignItems="center" style={{padding:"20px"}}>
+              <Grid item xs={3} lg={3} style={{display:"flex",justifyContent:"center",flexDirection:"column"}}>
+                <Container fixed  className={"loaderCenteredOnly"} style={{maxWidth:"100%"}}>
+                  <CircularProgress color="secondary" size={64} />
+                </Container>
+              </Grid>
+              <Grid item xs={9} lg={9} style={{paddingLeft:"15px"}}>
+                <Typography variant="body1">
+                  &nbsp;
+                </Typography>
+                <Typography variant="body1">
+                  &nbsp;
+                </Typography>
+              </Grid>
+            </Grid>
+            )}
+            {(!userLoading && (auth && user)) && (
             <Grid container alignContent="space-between" alignItems="center" style={{padding:"20px"}}>
               <Grid item xs={3} lg={3} style={{display:"flex",justifyContent:"center",flexDirection:"column"}}>
                 <Avatar style={{border:"1px solid #222",margin:"15px auto"}} className="toppageIcon">
@@ -105,12 +146,12 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
                   {user.displayName}
                 </Typography>
                   <Typography variant="body1">
-                    <Link to={"/u/" + user.displayName}><RefLink color="secondary" component="span">プロフィールを確認</RefLink></Link>
+                    <Link to={"/sync/settings"}><RefLink color="secondary" component="span">プロフィールを編集</RefLink></Link>
                   </Typography>
               </Grid>
             </Grid>
             )}
-            {(!auth || !user) && (
+            {(!userLoading && (!auth || !user)) && (
             <Grid container alignContent="space-between" alignItems="center" style={{padding:"20px"}}>
               <Grid item xs={3} lg={3} style={{display:"flex",justifyContent:"center",flexDirection:"column"}}>
                 <Avatar style={{border:"1px solid #222",margin:"15px auto"}} className="toppageIcon">
@@ -129,6 +170,7 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
           </div>
         </div>
         <Container style={{marginTop:"-60px"}} className="topMenuContainer">
+          {(!userLoading && (!auth || !user)) && <BeginnerAlert/>}
           <UpdateDef/>
           <Card>
             <CardContent>
@@ -137,34 +179,28 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
               </Typography>
               <div style={{overflowX:"scroll"}} className="topMenuScrollableWrapper">
               <Grid container direction="row" wrap="nowrap" alignItems="center" style={{width:"100%",margin:"20px 0 0 0"}} className="topMenuContaienrGridWrapper">
-                <Grid item direction="column" alignItems="center" onClick={()=>this.props.history.push("/camera")}>
-                  <CameraAltIcon/>
-                  <Typography color="textSecondary" variant="caption">BPIカメラ</Typography>
-                </Grid>
-                <Grid item direction="column" alignItems="center" onClick={()=>this.props.history.push("/data")}>
-                  <SaveAltIcon/>
-                  <Typography color="textSecondary" variant="caption">インポート</Typography>
-                </Grid>
-                <Grid item direction="column" alignItems="center" onClick={()=>this.props.history.push("/songs")}>
-                  <QueueMusicIcon/>
-                  <Typography color="textSecondary" variant="caption">楽曲一覧</Typography>
-                </Grid>
-                <Grid item direction="column" alignItems="center" onClick={()=>this.props.history.push("/rivals")}>
-                  <PeopleIcon/>
-                  <Typography color="textSecondary" variant="caption">ライバル</Typography>
-                </Grid>
-                <Grid item direction="column" alignItems="center" onClick={()=>this.props.history.push("/sync/settings")}>
-                  <SyncProblemIcon/>
-                  <Typography color="textSecondary" variant="caption">Sync</Typography>
+                {quickAccessTable.map((item:any)=>{
+                  if(!this.QAindexOf(item.com)) return (null);
+                  return (
+                    <Grid item direction="column" alignItems="center" onClick={()=>this.props.history.push(item.href)} key={item.name}>
+                      {item.icon}
+                      <Typography color="textSecondary" variant="caption">{item.name}</Typography>
+                    </Grid>
+                  )
+                })
+                }
+                <Grid item direction="column" alignItems="center" onClick={()=>this.props.history.push("/settings?tab=1")}>
+                  <AppsIcon/>
+                  <Typography color="textSecondary" variant="caption">表示項目を編集</Typography>
                 </Grid>
               </Grid>
               </div>
             </CardContent>
           </Card>
+          <Divider style={{margin:"25px 0"}}/>
         </Container>
-        <Divider style={{margin:"25px 0"}}/>
-        {this.state.isLoading && <Loader/>}
-        {!this.state.isLoading && (
+        {isLoading && <Loader/>}
+        {!isLoading && (
         <Container>
           <Grid container direction="row" justify="space-between" spacing={3} className="narrowCards">
             <Grid item xs={xs} sm={sm} md={md} lg={lg}>
@@ -212,11 +248,36 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
                 </CardActions>
               </Card>
             </Grid>
-            <Grid item xs={xs} sm={sm} md={md} lg={lg}>
-            </Grid>
           </Grid>
         </Container>
-      )}
+        )}
+        <Container>
+          <Divider style={{margin:"25px 0"}}/>
+          <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
+            <PeopleIcon/>&nbsp;最近スコアを更新したユーザー
+          </Typography>
+          {latestUsersLoading && <Loader/>}
+          {!latestUsersLoading && (
+          <List>
+            {recentUsers.map((item:rivalStoreData)=>{
+              return (
+                <ListItem key={item.uid} button onClick={()=>this.open(item.displayName)}>
+                  <ListItemAvatar>
+                    <Avatar>
+                      <img src={item.photoURL ? item.photoURL.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
+                        alt={item.displayName}
+                        onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(item) || alternativeImg(item.displayName)}/>
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary={item.displayName} secondary={"総合BPI:"+ item.totalBPI +" / " + updatedTime((item.serverTime as any).toDate())}/>
+                </ListItem>
+              )
+            })}
+          </List>
+          )}
+          <Button startIcon={<ArrowRightIcon/>} fullWidth size="small" onClick={()=>this.props.history.push("/rivals?tab=3")}>もっと見る</Button>
+        </Container>
+        {isModalOpen && <ModalUser isOpen={isModalOpen} currentUserName={currentUserName} handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
         <small style={{marginTop:"25px",fontSize:"8px",textAlign:"center",display:"block",padding:"15px"}}>
           <FormattedMessage id="Index.notes1"/><br/>
           <FormattedMessage id="Index.notes2"/><br/>
@@ -313,6 +374,22 @@ class UpdateDef extends React.Component<{},{
             </Button>
           </div>}
         </div>
+      </Alert>
+    );
+  }
+}
+
+
+class BeginnerAlert extends React.Component<{},{}>{
+
+  render(){
+    return (
+      <Alert variant="outlined" className="MuiPaper-root updateDefAlert" severity="info" style={{marginBottom:"25px"}}>
+        <AlertTitle>はじめての方へ</AlertTitle>
+        <p>
+          「BPIとはなにか？何を表す数字なのか？」などのよくあるご質問にお答えするページがございます。<br/>
+          <RefLink href="https://github.com/potakusan/bpimanager/wiki/BPI%E3%81%AE%E4%BB%95%E6%A7%98" target="_blank" color="secondary">こちらのページを御覧ください。</RefLink>
+        </p>
       </Alert>
     );
   }

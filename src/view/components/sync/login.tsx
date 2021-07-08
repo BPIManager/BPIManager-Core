@@ -62,7 +62,7 @@ class SyncLoginScreen extends React.Component<{
           <ul className="MuiTypography-caption">
             <li>スコアデータのクラウドへの永久保存</li>
             <li>BPIやアリーナランクに基づき、実力の近いライバルを探す</li>
-            <li>Notesやウィークリーランキングへの参加を通した他ユーザーとの交流、モチベーションの向上</li>
+            <li>Notesやウィークリーランキングへの参加を通した他ユーザーとの交流、モチベーション管理</li>
           </ul>
         <Alert severity="info">
         <Typography component="p" variant="caption" gutterBottom>

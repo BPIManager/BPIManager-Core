@@ -8,17 +8,20 @@ import Basic from "@/view/components/settings/basic";
 import View from "@/view/components/settings/view";
 import Advanced from "@/view/components/settings/advanced";
 import DebugData from "@/view/components/settings/debug";
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 interface S {
   currentTab:number
 }
 
-class Stats extends React.Component<{intl:any,global:any},S> {
+class Stats extends React.Component<{intl:any,global:any}&RouteComponentProps,S> {
 
-  constructor(props:{intl:any,global:any}){
+  constructor(props:{intl:any,global:any}&RouteComponentProps){
     super(props);
+    const search = new URLSearchParams(props.location.search);
+    const tab = Number(search.get("tab"));
     this.state ={
-      currentTab:0,
+      currentTab:tab || 0,
     }
   }
 
@@ -50,4 +53,4 @@ class Stats extends React.Component<{intl:any,global:any},S> {
   }
 }
 
-export default injectIntl(Stats);
+export default withRouter(injectIntl(Stats));
