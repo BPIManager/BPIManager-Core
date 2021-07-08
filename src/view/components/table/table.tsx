@@ -95,7 +95,7 @@ class AAATable extends React.Component<P,S> {
   }
 
   async componentDidMount(){
-    const _named = await named(12);
+    const _named = await named(12,this.props.data);
     this.setState({result:await getTable(12,_named),isLoading:false});
   }
 
