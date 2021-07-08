@@ -253,6 +253,8 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
         )}
         <Container>
           <Divider style={{margin:"25px 0"}}/>
+          <Card>
+          <CardContent>
           <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
             <PeopleIcon/>&nbsp;最近スコアを更新したユーザー
           </Typography>
@@ -276,6 +278,8 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
           </List>
           )}
           <Button startIcon={<ArrowRightIcon/>} fullWidth size="small" onClick={()=>this.props.history.push("/rivals?tab=3")}>もっと見る</Button>
+          </CardContent>
+          </Card>
         </Container>
         {isModalOpen && <ModalUser isOpen={isModalOpen} currentUserName={currentUserName} handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
         <small style={{marginTop:"25px",fontSize:"8px",textAlign:"center",display:"block",padding:"15px"}}>
