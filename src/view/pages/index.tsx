@@ -113,7 +113,7 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
           />
         </Helmet>
         <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover"}}>
-          <div style={{background:themeColor === "light" ? "transparent" : "rgba(0,0,0,.5)",display:"flex",padding:"1vh 0",width:"100%",height:"100%",paddingBottom:"60px"}}>
+          <div style={{background:themeColor === "light" ? "transparent" : "rgba(0,0,0,0)",display:"flex",padding:"1vh 0",width:"100%",height:"100%",paddingBottom:"90px"}}>
             {userLoading && (
             <Grid container alignContent="space-between" alignItems="center" style={{padding:"20px"}}>
               <Grid item xs={3} lg={3} style={{display:"flex",justifyContent:"center",flexDirection:"column"}}>
@@ -169,7 +169,7 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
             )}
           </div>
         </div>
-        <Container style={{marginTop:"-60px"}} className="topMenuContainer">
+        <Container style={{marginTop:"-90px"}} className="topMenuContainer">
           {(!userLoading && (!auth || !user)) && <BeginnerAlert/>}
           <UpdateDef/>
           <Card>

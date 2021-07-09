@@ -27,12 +27,15 @@ export default class ShareButtons extends React.Component<{withTitle:boolean,url
 export class ShareOnTwitter extends React.Component<{
   url?:string,
   text?:string,
+  isNotInline?:boolean
 },{}>{
   render(){
     return (
-      <Link target="_blank" href={`https://twitter.com/intent/tweet?url=${this.props.url || window.location.href}&text=${encodeURIComponent(this.props.text || "")}&hashtags=BPIM&related=BPIManager`} style={{display:"inline-block",padding:"0 5px"}}>
+      <Link target="_blank" href={`https://twitter.com/intent/tweet?url=${this.props.url || window.location.href}&text=${encodeURIComponent(this.props.text || "")}&hashtags=BPIM&related=BPIManager`} style={{display:this.props.isNotInline ? "flex" : "inline-block",padding:"0 5px"}}>
         <TwitterIcon style={{width:"20px",height:"20px",display:"inline-block"}} />
       </Link>
     )
   }
 }
+
+export const getShareURL = (url:string,text:string)=>`https://twitter.com/intent/tweet?url=${url || window.location.href}&text=${encodeURIComponent(text|| "")}&hashtags=BPIM&related=BPIManager`;

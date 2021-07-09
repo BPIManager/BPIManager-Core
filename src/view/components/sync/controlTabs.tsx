@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import SyncControlScreen from './control';
@@ -28,7 +27,7 @@ class SyncControlTab extends React.Component<P&RouteComponentProps,{currentTab:n
 
   render(){
     return (
-      <Container fixed  className="commonLayout" id="stat">
+      <React.Fragment>
         <Tabs
           value={this.state.currentTab}
           onChange={this.handleChange}
@@ -47,7 +46,7 @@ class SyncControlTab extends React.Component<P&RouteComponentProps,{currentTab:n
         {this.state.currentTab === 1 && <SyncControlScreen userData={this.props.userData}/>}
         {this.state.currentTab === 2 && <SyncRivalScreen/>}
         {this.state.currentTab === 3 && <PushSettings/>}
-      </Container>
+      </React.Fragment>
     );
   }
 }
