@@ -43,22 +43,33 @@ export const versionString = (input:string|number):string=>{
 export const arenaRankColor = (rank:string)=>{
   switch(rank){
     case "A1":
-    return "rgb(255, 89, 89)";
+    return "#DA4453";
     case "A2":
     case "A3":
-    return "rgb(255, 141, 23)"
+    return "#E9573F"
     case "A4":
     case "A5":
-    return "rgb(166, 23, 255)"
+    return "#D770AD"
     case "B1":
     case "B2":
-    return "rgb(89, 117, 255)"
+    return "#8CC152"
     case "B3":
     case "B4":
-    return "rgb(87, 94, 127)"
+    return "#4A89DB"
     case "B5":
-    return "rgb(27, 28, 31)"
+    return "#3BAFDA"
   }
+}
+
+export const bgColorByBPI = (totalBPI:number)=>{
+  if(totalBPI < 0) return "#967ADC";
+  if(totalBPI < 10) return "#3BAFDA";
+  if(totalBPI < 20) return "#4A89DB";
+  if(totalBPI < 30) return "#8CC152";
+  if(totalBPI < 40) return "#D770AD";
+  if(totalBPI < 50) return "#E9573F";
+  if(totalBPI >= 50) return "#DA4453";
+  return "green";
 }
 
 export const noimg = "https://files.poyashi.me/noimg.png"

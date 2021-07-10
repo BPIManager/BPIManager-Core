@@ -20,7 +20,7 @@ import {Link, Chip, Divider, Grid, GridList, GridListTile, GridListTileBar, List
 import {Link as RefLink} from "react-router-dom";
 import ClearLampView from '@/view/components/table/fromUserPage';
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
-import {arenaRankColor, alternativeImg, avatarBgColor, avatarFontColor} from '@/components/common';
+import {arenaRankColor, alternativeImg, avatarBgColor, avatarFontColor, bgColorByBPI} from '@/components/common';
 import Loader from '@/view/components/common/loader';
 import { config } from '@/config';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
@@ -128,7 +128,6 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
   }
 
   async componentDidMount(){
-    console.log(this.state.userName)
     if(!this.state.userName){
       this.fbA.auth().onAuthStateChanged(async (user: any)=> {
         if(user){
@@ -419,7 +418,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
                     {res.displayName}
                   </Typography>
                   <Chip size="small" style={{backgroundColor:this.color(res.arenaRank),color:"#fff",margin:"5px 0"}} label={res.arenaRank || "-"} />
-                  <Chip size="small" style={{backgroundColor:"#0a0729",color:"#fff",margin:"0 0 0 5px"}} label={"総合BPI:" + String(Number.isNaN(totalBPI) ? "-" : totalBPI)} />
+                  <Chip size="small" style={{backgroundColor:bgColorByBPI(totalBPI),color:"#fff",margin:"0 0 0 5px"}} label={"総合BPI:" + String(Number.isNaN(totalBPI) ? "-" : totalBPI)} />
                   <div style={{display:"flex"}}>
                     {this.getIIDXId(res.profile) !== "" &&
                       <form method="post" name="rivalSearch" action={`https://p.eagate.573.jp/game/2dx/${_currentStore()}/rival/rival_search.html#rivalsearch`}>
@@ -475,8 +474,8 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
           centered
         >
           <Tab icon={<ClearAllIcon />}/>
-          <Tab icon={<TrendingUpIcon />} />
-          <Tab icon={<RecentActorsIcon />} />
+          <Tab icon={<TrendingUpIcon />}/>
+          <Tab icon={<RecentActorsIcon />}/>
         </Tabs>
         {currentTab === 0 && (
           <React.Fragment>

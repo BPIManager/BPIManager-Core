@@ -109,7 +109,6 @@ class RivalSettings extends React.Component<P,S> {
             <Button
               variant="contained"
               color="secondary"
-              style={{background:"#dc004e"}}
               disabled={isLoading1 || isLoading2}
               onClick={this.delete}
               startIcon={<DeleteForeverIcon />}>

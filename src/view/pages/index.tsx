@@ -172,7 +172,7 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
         <Container style={{marginTop:"-90px"}} className="topMenuContainer">
           {(!userLoading && (!auth || !user)) && <BeginnerAlert/>}
           <UpdateDef/>
-          <Card>
+          <Card style={{backgroundColor: themeColor === "light" ? "#ffffff00" : themeColor === "dark" ? "#00000030": "#001625ab",backdropFilter: "blur(4px)"}}>
             <CardContent>
               <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
                 <MenuOpenIcon/>&nbsp;クイックアクセス

@@ -11,7 +11,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { rivalStoreData, rivalScoreData } from '@/types/data';
-import { Input, InputAdornment, IconButton} from '@material-ui/core/';
+import { Input, InputAdornment, IconButton, List} from '@material-ui/core/';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
 import Loader from '../common/loader';
 import Alert from '@material-ui/lab/Alert';
@@ -249,12 +249,14 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
         hasMore={!isLast}
         initialLoad={false}
       >
-      {res.map((item:rivalStoreData)=>{
-        const isAdded = rivals.indexOf(item.uid) > -1;
-        return (activated && <div key={item.uid}>
-          <UserCard open={this.open} myId={myId} item={item} processing={processing} isAdded={isAdded} addUser={this.addUser}/>
-        </div>
-      )})}
+      <List>
+        {res.map((item:rivalStoreData)=>{
+          const isAdded = rivals.indexOf(item.uid) > -1;
+          return (activated && <div key={item.uid}>
+            <UserCard open={this.open} myId={myId} item={item} processing={processing} isAdded={isAdded} addUser={this.addUser}/>
+          </div>
+        )})}
+      </List>
       {isLoading && <Loader text={"検索中です..."}/>}
       {(mode === 2 && searchInput === "") &&
       <Grid container>
