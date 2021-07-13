@@ -42,7 +42,7 @@ import Camera from '@/view/pages/camera/camera';
 import RedirectMyProfile from '@/view/pages/myprofile';
 import Index from '@/view/pages/index';
 
-class Router extends React.Component<{},{}> {
+class Router extends React.Component<{global:any},{}> {
 
   async globalUpdateScore(uName:string){
     const f = new fbActions();
@@ -61,7 +61,7 @@ class Router extends React.Component<{},{}> {
             >
               <BrowserRouter>
                 <AppBar global={global}>
-                  <Route path="/" exact component={Index}/>
+                  <Route path="/" exact render={_props=><Index global={global}/>}/>
                   <Route path="/data" exact render={_props=><Data global={global} updateGlobal={this.globalUpdateScore}/>}/>
                   <Route path="/songs" exact component={Songs}/>
                   <Route path="/lists" exact component={Lists}/>

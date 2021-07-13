@@ -54,7 +54,7 @@ export default class App extends React.Component<{},{}> {
                 <CssBaseline />
                 <Initialize global={global}/>
                 <div id={c === "dark" ? "__dark" : c === "light" ? "__light" : "__deepsea"}>
-                  <Router/>
+                  <Router global={global}/>
                 </div>
               </ThemeProvider>)
             }}

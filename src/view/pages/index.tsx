@@ -31,8 +31,14 @@ import PeopleIcon from '@material-ui/icons/People';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ModalUser from '../components/rivals/modal';
 import AppsIcon from '@material-ui/icons/Apps';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import { BeforeInstallPromptEvent } from '@/components/context/global';
 
-class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
+const blurredBackGround = {
+  backgroundColor: _currentTheme() === "light" ? "#ffffff00" : _currentTheme() === "dark" ? "#00000030": "#001625ab",
+  backdropFilter: "blur(4px)",marginBottom:"25px"};
+
+class Index extends React.Component<{global:any}&RouteComponentProps,{
   user:any,
   totalBPI:number,
   lastWeekUpdates:number,
@@ -46,7 +52,7 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
   currentUserName:string,
 }>{
 
-  constructor(props:{toggleNav:()=>void}&RouteComponentProps){
+  constructor(props:{global:any}&RouteComponentProps){
     super(props);
     this.state = {
       auth:null,
@@ -171,8 +177,9 @@ class Index extends React.Component<{toggleNav:()=>void}&RouteComponentProps,{
         </div>
         <Container style={{marginTop:"-90px"}} className="topMenuContainer">
           {(!userLoading && (!auth || !user)) && <BeginnerAlert/>}
+          <InstallAlert global={this.props.global}/>
           <UpdateDef/>
-          <Card style={{backgroundColor: themeColor === "light" ? "#ffffff00" : themeColor === "dark" ? "#00000030": "#001625ab",backdropFilter: "blur(4px)"}}>
+          <Card style={blurredBackGround}>
             <CardContent>
               <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
                 <MenuOpenIcon/>&nbsp;クイックアクセス
@@ -383,7 +390,6 @@ class UpdateDef extends React.Component<{},{
   }
 }
 
-
 class BeginnerAlert extends React.Component<{},{}>{
 
   render(){
@@ -397,4 +403,71 @@ class BeginnerAlert extends React.Component<{},{}>{
       </Alert>
     );
   }
+}
+
+class InstallAlert extends React.Component<{global:any},{hide:boolean}>{
+
+  constructor(props:{global:any}){
+    super(props);
+    this.state = {
+      hide:false
+    }
+  }
+  private available = (('standalone' in window.navigator) && (window.navigator['standalone']));
+  private getUA = ()=>{
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    if(userAgent.indexOf('iphone') !== -1) {
+      return "ios";
+    } else if(userAgent.indexOf('ipad') !== -1) {
+      return "ios";
+    } else if(userAgent.indexOf('android') !== -1) {
+      return "chrome";
+    }
+    if(userAgent.indexOf('chrome') !== -1) {
+      return "chrome";
+    } else if(userAgent.indexOf('safari') !== -1) {
+      return "ios";
+    }
+    return "";
+  }
+
+  installApp = ()=>{
+    const { global } = this.props;
+    if(global && global.prompt){
+      const p = global.prompt as BeforeInstallPromptEvent;
+      p.prompt();
+    }else{
+      alert("インストールダイアログの呼び出しに失敗しました。\nChromeのメニューより「ホーム画面に追加」をタップし、手動で追加してください。");
+    }
+  }
+
+  hideMessage = ()=>{ localStorage.setItem("hideAddToHomeScreen","true"); this.setState({hide:true}); }
+
+  render(){
+    if(localStorage.getItem("hideAddToHomeScreen") || this.state.hide) return (null);
+    if(this.getUA() === "ios" &&  this.available) return (null); // iOS PWA動作時
+    if(this.getUA() === "chrome" && window.matchMedia('(display-mode: standalone)').matches) return (null); // Chronium PWA動作時
+    if(this.getUA() === "chrome"){
+      return (
+        <Alert className="MuiPaper-root" severity="info" style={blurredBackGround}>
+          <AlertTitle>ご存知ですか？</AlertTitle>
+          <p>
+            「インストール」ボタンをタップして、ホーム画面から通常のアプリのようにBPIManagerをお使いいただけます。
+          </p>
+          <Button startIcon={<GetAppIcon/>} fullWidth color="secondary" variant="outlined" onClick={this.installApp}>インストール</Button>
+        </Alert>
+      );
+    }
+    return (
+      <Alert className="MuiPaper-root" severity="info" style={blurredBackGround}>
+        <AlertTitle>お試しください</AlertTitle>
+        <p>
+          ホーム画面に追加して、通常のアプリのようにBPIManagerをお使いいただけます。
+        </p>
+        <img src="/images/how_to_add_ios.webp" style={{width:"100%",maxWidth:"460px",display:"block",margin:"3px auto"}} alt="ホーム画面への追加手順"/>
+        <Button fullWidth style={{marginTop:"8px",display:"block",textAlign:"right"}} onClick={this.hideMessage}>次から表示しない</Button>
+      </Alert>
+    )
+  }
+
 }

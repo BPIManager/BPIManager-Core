@@ -14,7 +14,20 @@ interface S{
   userData:any,
 }
 
+export interface BeforeInstallPromptEvent extends Event {
+  readonly platforms: Array<string>;
+
+  readonly userChoice: Promise<{
+      outcome: 'accepted' | 'dismissed',
+      platform: string
+  }>;
+
+  prompt(): Promise<void>
+}
+
 export default class GlobalContainer extends Container<S> {
+
+  prompt:BeforeInstallPromptEvent|null = null;
 
   constructor(){
     super();
@@ -27,6 +40,12 @@ export default class GlobalContainer extends Container<S> {
     this.setArea = this.setArea.bind(this);
     this.setUpdateAvailable = this.setUpdateAvailable.bind(this);
     this.setUserData = this.setUserData.bind(this);
+    const self = this;
+    window.addEventListener('beforeinstallprompt', function(event) {
+      event.preventDefault();
+      self.prompt = (event as BeforeInstallPromptEvent);
+      return false;
+    });
   }
 
   state = {
