@@ -457,7 +457,6 @@ class InstallAlert extends React.Component<{global:any},{hide:boolean}>{
           <p>
             「インストール」ボタンをタップして、ホーム画面から通常のアプリのようにBPIManagerをお使いいただけます。
           </p>
-          <p>{String(this.props.global.prompt)}</p>
           <Button startIcon={<GetAppIcon/>} fullWidth color="secondary" variant="outlined" onClick={this.installApp}>インストール</Button>
         </Alert>
       );
