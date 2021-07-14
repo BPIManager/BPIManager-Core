@@ -427,6 +427,8 @@ class InstallAlert extends React.Component<{global:any},{hide:boolean}>{
       return "chrome";
     } else if(userAgent.indexOf('safari') !== -1) {
       return "ios";
+    } else if(userAgent.indexOf('edg') !== -1){
+      return "chrome";
     }
     return "";
   }
@@ -444,30 +446,34 @@ class InstallAlert extends React.Component<{global:any},{hide:boolean}>{
   hideMessage = ()=>{ localStorage.setItem("hideAddToHomeScreen","true"); this.setState({hide:true}); }
 
   render(){
+    const ua = this.getUA();
     if(localStorage.getItem("hideAddToHomeScreen") || this.state.hide) return (null);
-    if(this.getUA() === "ios" &&  this.available) return (null); // iOS PWA動作時
-    if(this.getUA() === "chrome" && window.matchMedia('(display-mode: standalone)').matches) return (null); // Chronium PWA動作時
-    if(this.getUA() === "chrome"){
+    if(ua === "ios" &&  this.available) return (null); // iOS PWA動作時
+    if(ua === "chrome" && window.matchMedia('(display-mode: standalone)').matches) return (null); // Chronium PWA動作時
+    if(ua === "chrome"){
       return (
         <Alert className="MuiPaper-root" severity="info" style={blurredBackGround}>
           <AlertTitle>ご存知ですか？</AlertTitle>
           <p>
             「インストール」ボタンをタップして、ホーム画面から通常のアプリのようにBPIManagerをお使いいただけます。
           </p>
+          <p>{String(this.props.global.prompt)}</p>
           <Button startIcon={<GetAppIcon/>} fullWidth color="secondary" variant="outlined" onClick={this.installApp}>インストール</Button>
         </Alert>
       );
     }
-    return (
-      <Alert className="MuiPaper-root" severity="info" style={blurredBackGround}>
-        <AlertTitle>お試しください</AlertTitle>
-        <p>
-          ホーム画面に追加して、通常のアプリのようにBPIManagerをお使いいただけます。
-        </p>
-        <img src="/images/how_to_add_ios.webp" style={{width:"100%",maxWidth:"460px",display:"block",margin:"3px auto"}} alt="ホーム画面への追加手順"/>
-        <Button fullWidth style={{marginTop:"8px",display:"block",textAlign:"right"}} onClick={this.hideMessage}>次から表示しない</Button>
+    if(ua === "ios"){
+      return (
+        <Alert className="MuiPaper-root" severity="info" style={blurredBackGround}>
+          <AlertTitle>お試しください</AlertTitle>
+          <p>
+            ホーム画面に追加して、通常のアプリのようにBPIManagerをお使いいただけます。
+          </p>
+          <img src="/images/how_to_add_ios.webp" style={{width:"100%",maxWidth:"460px",display:"block",margin:"3px auto"}} alt="ホーム画面への追加手順"/>
+          <Button fullWidth style={{marginTop:"8px",display:"block",textAlign:"right"}} onClick={this.hideMessage}>次から表示しない</Button>
       </Alert>
-    )
+      )
+    }
   }
 
 }

@@ -48,7 +48,6 @@ export const updateDefFile = async()=>{
           //既存曲
 
           if(t["removed"]){ //削除フラグが立っている場合削除する
-            console.log(t)
             await sdb.removeItem(t["title"]);
             await scDB.removeSpecificItemAtAllStores(t["title"]);
             await schDB.removeSpecificItemAtAllStores(t["title"]);
@@ -77,7 +76,6 @@ export const updateDefFile = async()=>{
 
   await Promise.all(promiseProducer(res.body));
   scDB.setNewSongsDBRawData(reducer(res.body));
-  console.log("WillUpdated:",updatedSongs)
   await scDB.recalculateBPI(updatedSongs);
   await schDB.recalculateBPI(updatedSongs);
   localStorage.setItem("lastDefFileVer",res.version);
