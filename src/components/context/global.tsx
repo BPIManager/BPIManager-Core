@@ -40,10 +40,6 @@ export default class GlobalContainer extends Container<S> {
     this.setArea = this.setArea.bind(this);
     this.setUpdateAvailable = this.setUpdateAvailable.bind(this);
     this.setUserData = this.setUserData.bind(this);
-    const self = this;
-    window.addEventListener('beforeinstallprompt', function(event) {
-      self.prompt = (event as BeforeInstallPromptEvent);
-    });
   }
 
   state = {
