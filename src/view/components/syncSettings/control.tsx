@@ -22,6 +22,7 @@ import CheckIcon from '@material-ui/icons/Check';
 import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
 import TouchAppIcon from '@material-ui/icons/TouchApp';
+import bpiCalcuator from '@/components/bpi';
 
 class SyncControlScreen extends React.Component<{userData:any}&RouteComponentProps,{
   isLoading:boolean,
@@ -108,6 +109,8 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
     const {isLoading,rivalData,scoreData,rawUserData,nameErrorMessage,myName,myProfile,arenaRank,sentName,showNotes,hideAlert,isPublic} = this.state;
     const nameError:boolean = myName.length !== 0 && (!/^[a-zA-Z0-9]+$/g.test(myName) || myName.length > 16);
     const profError:boolean = myProfile.length > 140;
+    const totalRank = new bpiCalcuator().rank(rivalData ? rivalData.totalBPI : -15,false);
+    const rankPer = Math.round(totalRank / new bpiCalcuator().getTotalKaidens() * 1000000) / 10000;
     if(isLoading) return <Loader text="プロファイルを取得中"/>
     const profileAvailable = ()=>{
       if(!isLoading && sentName){
@@ -115,7 +118,7 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
           <span>
             <RefLink to={"/u/" + sentName} style={{textDecoration:"none"}}><Link color="secondary" component="span">プロフィールを表示</Link></RefLink>
             <br/>
-            <Link color="secondary" href={`http://twitter.com/share?url=${config.baseUrl}${"/u/" + sentName}&text=${rivalData.displayName} 総合BPI:${String(Number.isNaN(rivalData.totalBPI) ? "-" : rivalData.totalBPI)}`}>Twitterでプロフィールを共有</Link>
+            <Link color="secondary" href={`http://twitter.com/share?url=${config.baseUrl}${"/u/" + sentName}&text=${encodeURIComponent(rivalData.displayName + " 総合BPI:" + String(Number.isNaN(rivalData.totalBPI) ? "-" : rivalData.totalBPI) + `(推定順位:${totalRank}位,皆伝上位${rankPer}%)`)}`}>Twitterでプロフィールを共有</Link>
           </span>);
       }else{
         return ("プロフィールは非公開です");
