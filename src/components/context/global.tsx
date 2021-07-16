@@ -43,7 +43,6 @@ export default class GlobalContainer extends Container<S> {
     const self = this;
     window.addEventListener('beforeinstallprompt', function(event) {
       self.prompt = (event as BeforeInstallPromptEvent);
-      return false;
     });
   }
 
