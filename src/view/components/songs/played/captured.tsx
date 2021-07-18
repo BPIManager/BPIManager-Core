@@ -103,7 +103,7 @@ class Captured extends React.Component<P,S> {
     const lastWeek = await statsAPI.eachDaySum(4,dayjs().subtract(1, 'week').format());
     const rank = bpi.rank(totalBPI,false);
     const rankPer = Math.round(rank / bpi.getTotalKaidens() * 1000000) / 10000;
-    const profileURL = this.state.userName ? config.baseUrl + "/u/" + this.state.userName : "";
+    const profileURL = this.state.userName ? config.baseUrl + "/r/u/" + this.state.userName : "";
     const url = body.extended_entities.media[0].display_url;
     const updates = await statsAPI.updatedAtToday();
     window.open(`https://twitter.com/intent/tweet?text=${(

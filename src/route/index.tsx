@@ -39,6 +39,7 @@ import WeeklyList from '@/view/pages/ranking/list';
 import HelpWR from '@/view/pages/helpWR';
 import Camera from '@/view/pages/camera/camera';
 import RedirectMyProfile from '@/view/pages/myprofile';
+import RedirectUserProfile from '@/view/pages/extra/user';
 import Index from '@/view/pages/index';
 
 class Router extends React.Component<{global:any},{}> {
@@ -79,6 +80,7 @@ class Router extends React.Component<{global:any},{}> {
                   <Route path="/share/:id" exact component={Shared}/>
                   <Route path="/u/:uid/:exactId?" exact component={User}/>
                   <Route path="/redirect/myprofile" exact component={RedirectMyProfile}/>
+                  <Route path="/r/u/:uid" exact component={RedirectUserProfile}/>
                   <Route path="/notes" exact component={Note}/>
                   <Route path="/notes/:title/:diff/:single" exact component={NoteIndv}/>
                   <Route path="/ranking/" exact component={RankingSearch}/>
