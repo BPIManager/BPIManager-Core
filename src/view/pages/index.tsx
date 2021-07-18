@@ -189,14 +189,14 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
                 {quickAccessTable.map((item:any)=>{
                   if(!this.QAindexOf(item.com)) return (null);
                   return (
-                    <Grid item direction="column" alignItems="center" onClick={()=>this.props.history.push(item.href)} key={item.name}>
+                    <Grid container direction="column" alignItems="center" onClick={()=>this.props.history.push(item.href)} key={item.name}>
                       {item.icon}
                       <Typography color="textSecondary" variant="caption">{item.name}</Typography>
                     </Grid>
                   )
                 })
                 }
-                <Grid item direction="column" alignItems="center" onClick={()=>this.props.history.push("/settings?tab=1")}>
+                <Grid container direction="column" alignItems="center" onClick={()=>this.props.history.push("/settings?tab=1")}>
                   <AppsIcon/>
                   <Typography color="textSecondary" variant="caption">表示項目を編集</Typography>
                 </Grid>

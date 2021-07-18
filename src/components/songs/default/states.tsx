@@ -37,5 +37,6 @@ export const defaultState_songsList = (initialBPIRange:string = ""):songsList_st
     orderMode:1,
     versions:verArr(),
     clearType:clearArr(),
+    openCaptureScr:false,
   }
 }

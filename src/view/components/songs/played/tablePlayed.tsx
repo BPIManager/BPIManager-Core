@@ -84,7 +84,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
     const {rowsPerPage,isOpen,currentSongData,currentScoreData,FV} = this.state;
     const {page,data,mode} = this.props;
     return (
-      <Paper style={{width:"100%",overflowX:"auto"}} className={_traditionalMode() === 1 ? "traditionalMode" : ""}>
+      <Paper style={{width:"100%",overflowX:"auto"}} id="screenCaptureTarget" className={_traditionalMode() === 1 ? "traditionalMode" : ""}>
         <React.Fragment>
           <Table>
             <TableHead>

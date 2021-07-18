@@ -644,20 +644,20 @@ text.react-calendar-heatmap-weekday-label {
   padding-bottom:0 !important;
 }
 
-.topMenuContainer .MuiGrid-item{
+.topMenuContainer .MuiGrid-container{
   display:flex;
   min-width:90px;
   margin-bottom:10px;
   cursor: pointer;
 }
 
-.topMenuContainer .MuiGrid-item svg{
+.topMenuContainer .MuiGrid-container svg{
   margin-bottom: 8px;
 }
 
 @media screen and (min-width:968px){
   .topMenuContaienrGridWrapper{justify-content: space-between !important}
-  .topMenuContainer .MuiGrid-item{
+  .topMenuContainer .MuiGrid-container{
     margin-bottom:0 !important;
   }
 }
@@ -678,3 +678,8 @@ text.react-calendar-heatmap-weekday-label {
 #__light .updateDefAlert{background:#fefefe;}
 #__dark .updateDefAlert{background:#181818;}
 #__deepsea .updateDefAlert{background:#001625;}
+
+.hide-scrollbar {
+	overflow: -moz-hidden-unscrollable;
+	overflow: hidden;
+}

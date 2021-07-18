@@ -16,7 +16,7 @@ import { rivalListsDB } from '@/components/indexedDB';
 import ShowSnackBar from '@/view/components/snackBar';
 import RivalView, { makeRivalStat } from '@/view/components/rivals/view';
 import { rivalScoreData, rivalStoreData } from '@/types/data';
-import {Link, Chip, Divider, Grid, GridList, GridListTile, GridListTileBar, List, ListItem, ListItemAvatar, ListItemText, ListItemSecondaryAction, IconButton, Button, Fab, Tabs, Tab, ListSubheader} from '@material-ui/core/';
+import {Link, Chip, Divider, Grid, GridList, GridListTile, GridListTileBar, List, ListItem, ListItemAvatar, ListItemText, ListItemSecondaryAction, IconButton, Button, Fab, Tabs, Tab, ListSubheader, TextField} from '@material-ui/core/';
 import {Link as RefLink} from "react-router-dom";
 import ClearLampView from '@/view/components/table/fromUserPage';
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
@@ -45,7 +45,7 @@ import ClearAllIcon from '@material-ui/icons/ClearAll';
 import RecentActorsIcon from '@material-ui/icons/RecentActors';
 import CheckIcon from '@material-ui/icons/Check';
 import Shift from '@/view/components/stats/shift';
-import ShareButtons from '../components/common/shareButtons';
+import { ShareList } from '../components/common/shareButtons';
 import bpiCalcuator from '@/components/bpi';
 
 interface S {
@@ -488,10 +488,17 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
               })
             }
           </List>
-          <div style={{width:"50%",margin:"10px auto"}}>
-            <p style={{textAlign:"center"}}>プロフィールをシェア</p>
-            <ShareButtons withTitle={true} url={url} text={res.displayName + " 総合BPI:" + String(Number.isNaN(totalBPI) ? "-" : totalBPI) + `(推定順位:${totalRank}位,皆伝上位${rankPer}%)`}/>
-          </div>
+          <ShareList withTitle={true} url={url} text={res.displayName + " 総合BPI:" + String(Number.isNaN(totalBPI) ? "-" : totalBPI) + `(推定順位:${totalRank}位,皆伝上位${rankPer}%)`}/>
+          <TextField
+            label="プロフィールURL"
+            size="small"
+            style={{margin:"8px"}}
+            defaultValue={url}
+            variant="outlined"
+            InputProps={{
+              readOnly: true,
+            }}
+          />
           </React.Fragment>
         )}
         {currentTab === 1 && (
@@ -607,7 +614,7 @@ class NoUserError extends React.Component<{match:any,alternativeId:string},{}>{
   }
 }
 
-class DefListCard extends React.Component<{
+export class DefListCard extends React.Component<{
   onAction:()=>any,
   disabled:boolean,
   primaryText:string,

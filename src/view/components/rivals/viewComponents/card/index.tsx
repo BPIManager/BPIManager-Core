@@ -41,17 +41,15 @@ export default class UserCard extends React.Component<{
         <ListItemText
           primary={<React.Fragment>{item.displayName}&nbsp;<small>{updatedTime(item.serverTime.toDate())}</small></React.Fragment>}
           secondary={<React.Fragment>
-            <span>
               <Tooltip title={"アリーナランク"}>
-                <Chip size="small" style={{backgroundColor:arenaRankColor(item.arenaRank),color:"#fff",margin:"5px 0"}} label={item.arenaRank || "-"} />
+                <Chip component="span" size="small" style={{backgroundColor:arenaRankColor(item.arenaRank),color:"#fff",margin:"5px 0"}} label={item.arenaRank || "-"} />
               </Tooltip>
               {item.totalBPI && (
                 <Tooltip title={"総合BPI"}>
-                  <Chip size="small" style={{backgroundColor:bgColorByBPI(item.totalBPI),color:"#fff",margin:"0 0 0 5px"}} label={item.totalBPIs ? item.totalBPIs[_currentStore()] : item.totalBPI} />
+                  <Chip component="span" size="small" style={{backgroundColor:bgColorByBPI(item.totalBPI),color:"#fff",margin:"0 0 0 5px"}} label={item.totalBPIs ? item.totalBPIs[_currentStore()] : item.totalBPI} />
                 </Tooltip>
               )}
-            </span>
-            {item.profile && <p style={{margin:"0"}}> {item.profile}</p>}
+            {item.profile && <span style={{margin:"0",display:"block"}}> {item.profile}</span>}
           </React.Fragment>}
         />
         <ListItemSecondaryAction>

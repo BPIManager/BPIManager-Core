@@ -66,6 +66,11 @@ export default class statMain {
     return this;
   }
 
+  async updatedAtToday(){
+    const scores = await new scoresDB(isSingle, _currentStore()).getAll();
+    return scores.filter((item:scoreData)=>dayjs(item.updatedAt).isSame(new Date(),"day"));
+  }
+
   async songsByClearState(){
     const songsByClearState:groupedArray[] = [
       {name:"FAILED","☆11":0,"☆12":0},

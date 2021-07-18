@@ -34,6 +34,8 @@ import { timeCompare } from '@/components/common/timeFormatter';
 import TimeRangeDialog from '../common/timeRange';
 import { songFuncInList } from '@/components/songs/func/songList';
 import { defaultState_songsList } from '@/components/songs/default/states';
+import LinkedCameraIcon from '@material-ui/icons/LinkedCamera';
+import Captured from './captured';
 
 export interface songsList_stateInt {
   isLoading:boolean,
@@ -57,7 +59,8 @@ export interface songsList_stateInt {
   orderTitle:number,
   orderMode:number,
   versions:number[],
-  clearType:number[]
+  clearType:number[],
+  openCaptureScr:boolean
 }
 
 interface P{
@@ -280,10 +283,12 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
     return new commonFunc().set(this.state).clone();
   }
 
+  openCaptureScr = ()=> this.setState({openCaptureScr:!this.state.openCaptureScr});
+
   render(){
     const {formatMessage} = this.props.intl;
     const {isFav} = this.props;
-    const {isLoading,filterByName,options,orderMode,orderTitle,mode,range,page,filterOpen,versions,timeRangeOpen,showLatestOnly,clearType} = this.state;
+    const {openCaptureScr,isLoading,filterByName,options,orderMode,orderTitle,mode,range,page,filterOpen,versions,timeRangeOpen,showLatestOnly,clearType} = this.state;
     const orders = [
       formatMessage({id:"Orders.Title"}),
       formatMessage({id:"Orders.Level"}),
@@ -302,6 +307,7 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
     }
     return (
       <Container fixed  className="commonLayout" id="songsVil">
+        {openCaptureScr && <Captured close={this.openCaptureScr}/>}
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom
           style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <div>
@@ -312,10 +318,14 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
           </div>
           <div style={{display:"flex"}}>
             <Button
-              className="filterButton"
-              onClick={this.handleToggleFilterScreen} variant="outlined" color="primary" style={{marginRight:"10px",minWidth:"40px",padding:"5px 6px"}}>
-              <FilterListIcon/>
+              startIcon={<LinkedCameraIcon/>}
+              onClick={this.openCaptureScr} size="small" color="secondary" style={{marginRight:"10px",minWidth:"40px",padding:"5px 6px"}}>
+              キャプチャ
             </Button>
+            <IconButton
+              onClick={this.handleToggleFilterScreen} color="secondary" size="small">
+              <FilterListIcon/>
+            </IconButton >
             <FormControl>
               <Select value={range} displayEmpty onChange={this.handleRangeChange}>
                 {ranges.map(item=>(
@@ -325,7 +335,7 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
             </FormControl>
           </div>
         </Typography>
-        <Grid container spacing={1} style={{margin:"5px 0"}}>
+        <Grid container spacing={1} alignItems={"center"} style={{margin:"5px 0"}}>
           <Grid item xs={6}>
             <FormControl style={{width:"100%"}}>
               <InputLabel><FormattedMessage id="Songs.mode"/></InputLabel>

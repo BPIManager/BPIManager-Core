@@ -33,7 +33,6 @@ import RivalChallengeLetters from '../view/components/rivals/rivalChallengeLette
 import Note from '@/view/pages/note';
 import NoteIndv from '@/view/pages/noteIndv';
 import HelpNotes from '@/view/pages/helpNotes';
-import HelpStart from '@/view/pages/helpStart';
 import RankingSearch from '@/view/pages/ranking/search';
 import WeeklyOnGoing from '@/view/pages/ranking/ongoing';
 import WeeklyList from '@/view/pages/ranking/list';
@@ -72,7 +71,6 @@ class Router extends React.Component<{global:any},{}> {
                   <Route path="/settings" exact render={_props=><Settings global={global}/>}/>
                   <Route path="/help" exact component={Help}/>
                   <Route path="/help/notes" exact component={HelpNotes}/>
-                  <Route path="/help/start" exact component={HelpStart}/>
                   <Route path="/help/ranking" exact component={HelpWR}/>
                   <Route path="/sync/settings" exact component={SyncIndex}/>
                   <Route path="/rivals" exact component={Rivals}/>
