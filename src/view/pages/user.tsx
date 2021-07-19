@@ -495,6 +495,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
             style={{margin:"8px"}}
             defaultValue={url}
             variant="outlined"
+            fullWidth
             InputProps={{
               readOnly: true,
             }}
