@@ -492,7 +492,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
           <TextField
             label="プロフィールURL"
             size="small"
-            style={{margin:"8px"}}
+            style={{width:"95%",margin:"0 auto 20px auto"}}
             defaultValue={url}
             variant="outlined"
             fullWidth
