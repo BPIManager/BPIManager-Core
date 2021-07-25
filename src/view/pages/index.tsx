@@ -473,6 +473,7 @@ class InstallAlert extends React.Component<{global:any},{hide:boolean}>{
       </Alert>
       )
     }
+    return (null);
   }
 
 }

@@ -662,6 +662,16 @@ text.react-calendar-heatmap-weekday-label {
   }
 }
 
+.topMenuScrollableWrapper{
+  scrollbar-color: #ccc transparent !important;
+  scrollbar-width: thin !important;
+}
+
+:root{
+  scrollbar-color: #ccc transparent !important;
+  scrollbar-width: thin !important;
+}
+
 ::-webkit-scrollbar {
   width: 9px;
 }
