@@ -369,7 +369,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     }
 
     const buttons = [
-      {icon:<ViewListIcon />,primary:"スコアを見る",secondary:(res.displayName) + "さんの登録スコアを表示します",onClick:()=>this.view(1)},
+      {icon:<ViewListIcon />,primary:"スコア比較",secondary:(res.displayName) + "さんと自分のスコアを比較します",onClick:()=>this.view(1)},
       {icon:<WbIncandescentIcon />,primary:"AAA達成表",secondary:"BPIに基づいたAAA達成難易度表を表示します",onClick:()=>this.view(2)},
       {icon:<EventNoteIcon />,primary:"ランキング",secondary:"ランキング参加履歴を表示します",onClick:()=>this.view(5)},
     ]

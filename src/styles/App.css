@@ -681,8 +681,7 @@ text.react-calendar-heatmap-weekday-label {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #555;
-  border-radius: 10px;
+  background-color: #ccc;
 }
 
 #__light .updateDefAlert{background:#fefefe;}
@@ -692,4 +691,16 @@ text.react-calendar-heatmap-weekday-label {
 .hide-scrollbar {
 	overflow: -moz-hidden-unscrollable;
 	overflow: hidden;
+}
+
+.vertStepper{
+  background:transparent !important;
+}
+
+#__deepsea .MuiStepIcon-root.MuiStepIcon-active{
+  color:#00469c !important;
+}
+
+#__dark .MuiStepIcon-root.MuiStepIcon-active {
+    color: #4e4e4e;
 }

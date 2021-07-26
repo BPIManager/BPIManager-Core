@@ -5,7 +5,6 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
-import useScrollTrigger from "@material-ui/core/useScrollTrigger";
 import Hidden from '@material-ui/core/Hidden';
 import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
@@ -13,7 +12,7 @@ import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import {Link as RefLink, Collapse, Avatar, Chip} from '@material-ui/core/';
+import {Link as RefLink, Collapse, Avatar, Chip, Menu, MenuItem} from '@material-ui/core/';
 import LibraryMusicIcon from "@material-ui/icons/LibraryMusic";
 import TrendingUpIcon from "@material-ui/icons/TrendingUp";
 import SettingsIcon from "@material-ui/icons/Settings";
@@ -24,7 +23,6 @@ import FilterNoneIcon from '@material-ui/icons/FilterNone';
 import HelpIcon from '@material-ui/icons/Help';
 import { FormattedMessage } from "react-intl";
 import PeopleIcon from '@material-ui/icons/People';
-import Slide from "@material-ui/core/Slide";
 import ShowSnackBar from "../snackBar";
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
 import { withStyles } from '@material-ui/core/styles';
@@ -87,18 +85,6 @@ const styles = (theme:any) => ({
   },
 });
 
-
-function HideOnScroll(props:HideOnScrollProps) {
-  const { children, window } = props;
-  const trigger = useScrollTrigger({ target: window ? window() : undefined });
-
-  return (
-    <Slide appear={false} direction="down" in={!trigger}>
-      {children}
-    </Slide>
-  );
-}
-
 interface HideOnScrollProps {
   children?: React.ReactElement,
   window?: () => Window,
@@ -111,6 +97,8 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
   isOpenSocial:boolean,
   errorSnack:boolean,
   user:any,
+  openMenu:boolean,
+  anchorEl:any
 }>{
 
   constructor(props:{global:any,classes:any,theme:any,children:any} & HideOnScrollProps&RouteComponentProps){
@@ -122,6 +110,8 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
       isOpenSocial: false,
       errorSnack:false,
       user:null,
+      openMenu:false,
+      anchorEl:null
     }
   }
 
@@ -162,8 +152,10 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
   handleClickSocial = ()=>this.setState({isOpenSocial:!this.state.isOpenSocial});
   toggleErrorSnack = ()=> this.setState({errorSnack:!this.state.errorSnack});
 
+  handleMenu = (event:React.MouseEvent<HTMLElement>)=> this.setState({openMenu:!this.state.openMenu,anchorEl:event.currentTarget})
+
   render(){
-    const {isOpen,isOpenSongs,isOpenMyStat,isOpenSocial,user} = this.state;
+    const {isOpen,isOpenSongs,isOpenMyStat,isOpenSocial,user,openMenu,anchorEl} = this.state;
     const page = this.props.location.pathname.split("/");
     const currentPage = ()=>{
       switch(page[1]){
@@ -291,34 +283,6 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         <div style={{margin:"8px 0",padding:"0 8px"}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
             <Logo onClick={()=>{history.push("/");if(!isPerment){this.toggleNav()}}} style={{width:"44px",height:"44px"}}/>
-            {user && (
-              <Chip
-                avatar={(
-                  <Avatar style={{width:"32px",height:"32px"}}>
-                    <img src={user.photoURL ? user.photoURL.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
-                      alt={user.displayName || "Unpublished User"}
-                      onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(user) || alternativeImg(user.displayName)}/>
-                  </Avatar>
-                )}
-                onClick={()=>{history.push("/sync/settings");if(!isPerment){this.toggleNav()}}}
-                label={"Sync"}
-                clickable
-                color="primary"
-              />
-            )}
-            {!user && (
-              <Chip
-                avatar={(
-                  <Avatar style={{width:"32px",height:"32px"}}>
-                    <LockOpenIcon/>
-                  </Avatar>
-                )}
-                onClick={()=>{history.push("/sync/settings");if(!isPerment){this.toggleNav()}}}
-                label={"ログイン"}
-                clickable
-                color="primary"
-              />
-            )}
           </div>
         </div>
         <Divider />
@@ -357,26 +321,65 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
 
     return (
       <div className={classes.root}>
-        <HideOnScroll {...this.props}>
-          <AppBar className={window.location.href.split('/').pop() === "" ? "appBarIndex " + classes.appBar : classes.appBar}>
-            <Toolbar>
-              <IconButton edge="start" color="inherit" aria-label="menu"
-                className={classes.menuButton} onClick={()=>{
+        <AppBar className={window.location.href.split('/').pop() === "" ? "appBarIndex " + classes.appBar : classes.appBar}>
+          <Toolbar>
+            <IconButton edge="start" color="inherit" aria-label="menu"
+              className={classes.menuButton} onClick={()=>{
                 if(!this.props.global.state.cannotMove){
                   return this.toggleNav();
                 }else{
                   return this.toggleErrorSnack();
                 }
-              }}>
-                <MenuIcon />
+                }}
+              >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" style={{flexGrow:1}}>
+              {(page.length === 2 || page[1] === "lists" || page[1] === "notes" || page[1] === "help" || page[1] === "sync" || page[1] === "ranking") && <FormattedMessage id={currentPage()}/>}
+              {(page.length > 2 && page[1] !== "lists" && page[1] !== "notes" && page[1] !== "help" && page[1] !== "sync" && page[1] !== "ranking") && currentPage()}
+            </Typography>
+            {user && (
+              <IconButton
+                onClick={this.handleMenu}
+                color="inherit"
+              >
+                <img src={user.photoURL ? user.photoURL.replace("_normal","") : "noimage"} style={{width:"32px",height:"32px",borderRadius:"100%"}}
+                  alt={user.displayName || "Unpublished User"}
+                  onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(user) || alternativeImg(user.displayName)}/>
               </IconButton>
-              <Typography variant="h6">
-                {(page.length === 2 || page[1] === "lists" || page[1] === "notes" || page[1] === "help" || page[1] === "sync" || page[1] === "ranking") && <FormattedMessage id={currentPage()}/>}
-                {(page.length > 2 && page[1] !== "lists" && page[1] !== "notes" && page[1] !== "help" && page[1] !== "sync" && page[1] !== "ranking") && currentPage()}
-              </Typography>
-            </Toolbar>
-          </AppBar>
-        </HideOnScroll>
+            )}
+            {!user && (
+              <Chip
+                avatar={(
+                  <Avatar style={{width:"32px",height:"32px"}}>
+                    <LockOpenIcon/>
+                  </Avatar>
+                )}
+                onClick={()=>history.push("/sync/settings")}
+                label={"ログイン"}
+                clickable
+                color="primary"
+              />
+            )}
+            <Menu
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={openMenu}
+              onClose={this.handleMenu}
+            >
+              <MenuItem style={{fontSize:"14px"}} onClick={(e)=>{history.push("/sync/settings");this.handleMenu(e);}}>Sync</MenuItem>
+              <MenuItem style={{fontSize:"14px"}} onClick={(e)=>{new fbActions().logout();this.handleMenu(e);}}>ログアウト</MenuItem>
+            </Menu>
+          </Toolbar>
+        </AppBar>
         <nav className={classes.drawer}>
           <Hidden smUp implementation="css">
             <Drawer open={isOpen} onClose={this.toggleNav}
