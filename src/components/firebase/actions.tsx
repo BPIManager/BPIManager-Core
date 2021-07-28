@@ -9,6 +9,7 @@ import { _currentStore } from "../settings";
 import { messanger } from "./message";
 import { difficultyDiscriminator } from "../songs/filter";
 import totalBPI from "../bpi/totalBPI";
+import { getRadar, radarData } from "../stats/radar";
 
 export default class fbActions{
 
@@ -140,6 +141,11 @@ export default class fbActions{
         }
         const v = "totalBPIs." + _currentStore();
         const totalBPI = await self.totalBPI();
+        const _radar = (await getRadar()).reduce((group:any,item:radarData)=>{
+          if(!group) group = {};
+          group[item.title] = item.TotalBPI;
+          return group;
+        },{});
         console.log("signed as :"+isRegisteredAs);
         if(isRegisteredAs !== ""){
           transaction.update(userRef,{
@@ -147,6 +153,7 @@ export default class fbActions{
             serverTime:self.time(),
             totalBPI:totalBPI,
             [v]:totalBPI,
+            radar:_radar,
             versions:firebase.firestore.FieldValue.arrayUnion(_currentStore()),
           });
         }
