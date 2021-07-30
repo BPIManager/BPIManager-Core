@@ -329,15 +329,27 @@ export default class fbActions{
     return query.where("isPublic","==",true).where("versions","array-contains", _currentStore());
   }
 
-  async recommendedByBPI(exactBPI?:number){
-    let query:firebase.firestore.Query = this.setUserCollection().orderBy("totalBPIs." + _currentStore(), "desc");
+  async recommendedByBPI(exactBPI?:number|null,searchBy:string = "総合BPI"){
+    const searchQuery = ()=>{
+      switch(searchBy){
+        case "総合BPI":
+          return "totalBPIs." + _currentStore();
+        default:
+          return "radar." + searchBy;
+      }
+    }
+    const q = searchQuery();
+    let query:firebase.firestore.Query = this.setUserCollection().orderBy(q, "desc");
     const total = exactBPI || (await new totalBPI().load()).currentVersion();
     const downLimit = total > 60 ? 50 : total - 5;
     const upLimit = total > 50 ? 100 : total + 5;
-    query = query.where("totalBPIs." + _currentStore(),">=",downLimit);
-    query = query.where("totalBPIs." + _currentStore(),"<=",upLimit);
+    query = query.where(q,">=",downLimit);
+    query = query.where(q,"<=",upLimit);
     query = this.versionQuery(query);
     query = query.limit(30);
+    if(searchBy !== "総合BPI"){
+      return await this.getUsers(query);
+    }
     return (await this.getUsers(query)).sort((a,b)=>{
       return Math.abs(total - (Number(a.totalBPI) || -15)) - Math.abs(total - (Number(b.totalBPI) || -15))
     })

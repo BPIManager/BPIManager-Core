@@ -21,6 +21,7 @@ import UserCard from './viewComponents/card';
 import SearchIcon from "@material-ui/icons/Search";
 import { timeCompare } from '@/components/common/timeFormatter';
 import InfiniteScroll from 'react-infinite-scroller';
+import { getRadar, radarData } from '@/components/stats/radar';
 
 interface P {
   compareUser:(rivalMeta:rivalStoreData,rivalBody:rivalScoreData[],last:rivalStoreData,arenaRank:string,currentPage:number)=>void,
@@ -47,7 +48,9 @@ interface S {
   searchInput:string,
   errorMessage:string,
   myId:string,
-  isLast:boolean
+  isLast:boolean,
+  recommendedBy:string,
+  defaultRadarNode:radarData[]
 }
 
 class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
@@ -82,11 +85,14 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
       errorMessage:"",
       myId:"",
       isLast:true,
+      recommendedBy:"総合BPI",
+      defaultRadarNode:[],
     }
     this.timeOut = 0;
   }
 
   async componentDidMount(){
+    this.setState({defaultRadarNode:await getRadar()});
     let t:any = [];
     this.fbU.auth().onAuthStateChanged(async(user: any)=> {
       t = await new fbActions().v2SetUserCollection().setDocName(user ? user.uid : "_dummy_").load();
@@ -116,11 +122,35 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
     }else if(mode === 1){ //逆ライバル
       res = (await this.fbA.addedAsRivals()).filter((item)=> item !== undefined);
     }
-    if(!res){
+    if(!res || res.length === 0){
       this.setState({isLast:true});
       return this.toggleSnack("該当ページが見つかりませんでした。","warning")
     }
     return this.setState({activated:true,res:willConcat ? this.state.res.concat(res) : res,processing:false,isLoading:false,isLast:(mode === 2 && searchInput === "") ? false : true});
+  }
+
+  refreshRecommend = async(searchBy:string = "総合BPI")=>{
+    this.setState({processing:true,isLoading:true,});
+    const {myId,defaultRadarNode} = this.state;
+    let res:rivalStoreData[] = [];
+    res = (await this.fbA.recommendedByBPI(null,searchBy)).filter((item)=>{
+        return item.uid !== myId && timeCompare(new Date(),item.timeStamp,"day") < 15
+      })
+    if(!res || res.length === 0){
+      this.setState({isLast:true});
+      return this.toggleSnack("該当ページが見つかりませんでした。","warning")
+    }
+    if(searchBy !== "総合BPI"){
+      const m = defaultRadarNode.find(item=>item.title === searchBy);
+      if(m){
+        const myBPI = m.TotalBPI;
+        res = res.sort((a,b)=>{
+          if(!a.radar || !b.radar) return -1;
+          return Math.abs(myBPI - (Number(a.radar[searchBy]) || -15)) - Math.abs(myBPI - (Number(b.radar[searchBy]) || -15))
+        })
+      }
+    }
+    return this.setState({activated:true,res:res,processing:false,isLoading:false,isLast:true});
   }
 
   addUser = async(meta:rivalStoreData):Promise<void>=>{
@@ -192,14 +222,48 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
     this.setState({processing:true,searchInput:val,isLoading:true,res:[],activated:false});
   }
 
+  concatRadar(item:any){
+    const {defaultRadarNode} = this.state;
+    if(this.props.mode !== 0) return [];
+    if(!defaultRadarNode || !item) return [];
+    const node = defaultRadarNode.slice().map( (row)=> Object.assign({},row) );
+    let res = [];
+    for(let i = 0; i < node.length; ++i){
+      const itemName = node[i]["title"];
+      if(!item.radar || !item.radar[itemName]){
+        res = [];
+        break;
+      }
+      node[i]["rivalTotalBPI"] = item.radar[itemName];
+      res.push(node[i]);
+    }
+    return res;
+  }
+
   handleModalOpen = (flag:boolean)=> this.setState({isModalOpen:flag});
   open = (uid:string)=> this.setState({isModalOpen:true,currentUserName:uid})
 
   render(){
-    const {isLoading,isModalOpen,showSnackBar,activated,res,rivals,processing,message,variant,arenaRank,currentUserName,searchInput,myId,isLast} = this.state;
+    const {isLoading,isModalOpen,showSnackBar,activated,res,rivals,processing,message,variant,arenaRank,currentUserName,searchInput,myId,isLast,recommendedBy} = this.state;
     const {mode} = this.props;
     return (
       <React.Fragment>
+        {mode === 0 && (
+          <Grid container spacing={1} style={{margin:"5px 0"}}>
+            <Grid item xs={12}>
+              <FormControl style={{width:"100%"}}>
+                <InputLabel>検索対象</InputLabel>
+                <Select value={recommendedBy} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+                  if(typeof e.target.value !== "string") return;
+                  this.setState({recommendedBy:e.target.value,res:[],activated:false});
+                  return this.refreshRecommend(e.target.value);
+                }}>
+                  {["総合BPI","NOTES","CHARGE","PEAK","CHORD","GACHIOSHI","SCRATCH","SOFLAN","DELAY","RENDA"].map(item=><MenuItem value={item} key={item}>{item}</MenuItem>)}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        )}
         {mode === 2 && (
           <form noValidate autoComplete="off">
             <Grid container spacing={1} style={{margin:"5px 0"}}>
@@ -252,9 +316,8 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
       <List>
         {res.map((item:rivalStoreData)=>{
           const isAdded = rivals.indexOf(item.uid) > -1;
-          return (activated && <div key={item.uid}>
-            <UserCard open={this.open} myId={myId} item={item} processing={processing} isAdded={isAdded} addUser={this.addUser}/>
-          </div>
+          return (activated &&
+            <UserCard key={item.uid} radarNode={this.concatRadar(item)} mode={mode} open={this.open} myId={myId} item={item} processing={processing} isAdded={isAdded} addUser={this.addUser}/>
         )})}
       </List>
       {isLoading && <Loader text={"検索中です..."}/>}

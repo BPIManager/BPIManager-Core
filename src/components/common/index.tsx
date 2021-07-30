@@ -149,10 +149,10 @@ export const rivalBgColor = (d:number)=>{
     if(d === 3) return "rgb(45 22 0)";
   }
   if(theme === "deepsea"){
-    if(d === 0) return "#005a96";
+    if(d === 0) return "#4057ff";
     if(d === 1) return "rgb(14 43 62)";
     if(d === 2) return "rgb(0 154 255)";
-    if(d === 3) return "#004382";
+    if(d === 3) return "#75bcff";
   }
   return "#000";
 }

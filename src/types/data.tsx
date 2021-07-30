@@ -65,6 +65,7 @@ export interface rivalStoreData{
   arenaRank:string,
   totalBPI?:string,
   twitter?:string,
+  radar?:{[key:string]:number}
 }
 
 export interface DBRivalStoreData{

@@ -14,6 +14,9 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import IconButton from "@material-ui/core/IconButton";
 import Divider from "@material-ui/core/Divider";
 import Tooltip from "@material-ui/core/Tooltip";
+import { radarData } from "@/components/stats/radar";
+import Radar from "@/view/components/rivals/viewComponents/ui/radar";
+import Grid from "@material-ui/core/Grid";
 
 
 export default class UserCard extends React.Component<{
@@ -23,11 +26,13 @@ export default class UserCard extends React.Component<{
   isAdded:boolean,
   myId?:string,
   addUser:(q:any)=>void,
-  hideBottomButtons?:boolean
-},{}>{
+  hideBottomButtons?:boolean,
+  mode?:number,
+  radarNode?:radarData[]
+}>{
 
   render(){
-    const {item,isAdded,myId} = this.props;
+    const {item,isAdded,myId,mode,radarNode} = this.props;
     return (
     <React.Fragment>
       <ListItem button alignItems="flex-start" onClick={()=>this.props.open(item.displayName)}>
@@ -60,6 +65,17 @@ export default class UserCard extends React.Component<{
           </Tooltip >
         </ListItemSecondaryAction>
       </ListItem>
+      {(mode === 0 && radarNode && radarNode.length > 0) && (
+        <Grid container>
+          <Grid item xs={false} sm={7}>
+          </Grid>
+          <Grid item xs={12} sm={5}>
+            <div style={{display:"block",width:"100%",height:"200px"}}>
+              <Radar withoutLegend outerRadius={60} radar={radarNode}/>
+            </div>
+          </Grid>
+        </Grid>
+      )}
       <Divider variant="inset" component="li" />
     </React.Fragment>
     )
