@@ -29,10 +29,38 @@ export default class UserCard extends React.Component<{
   hideBottomButtons?:boolean,
   mode?:number,
   radarNode?:radarData[]
+},{
+  radar?:radarData[]
 }>{
 
+  state = {
+    radar: []
+  }
+
+  componentDidMount(){
+    this.concatRadar();
+  }
+
+  concatRadar(){
+    const {item,radarNode} = this.props;
+    if(!radarNode || !item) return [];
+    const node = radarNode.slice().map( (row)=> Object.assign({},row) );
+    let res = [];
+    for(let i = 0; i < node.length; ++i){
+      const itemName = node[i]["title"];
+      if(!item.radar || !item.radar[itemName]){
+        res = [];
+        break;
+      }
+      node[i]["rivalTotalBPI"] = item.radar[itemName];
+      res.push(node[i]);
+    }
+    return this.setState({radar:res});
+  }
+
   render(){
-    const {item,isAdded,myId,mode,radarNode} = this.props;
+    const {item,isAdded,myId} = this.props;
+    const {radar} = this.state;
     return (
     <React.Fragment>
       <ListItem button alignItems="flex-start" onClick={()=>this.props.open(item.displayName)}>
@@ -65,13 +93,13 @@ export default class UserCard extends React.Component<{
           </Tooltip >
         </ListItemSecondaryAction>
       </ListItem>
-      {(mode === 0 && radarNode && radarNode.length > 0) && (
-        <Grid container>
+      {( radar && radar.length > 0 ) && (
+        <Grid container onClick={()=>this.props.open(item.displayName)}>
           <Grid item xs={false} sm={7}>
           </Grid>
           <Grid item xs={12} sm={5}>
             <div style={{display:"block",width:"100%",height:"200px"}}>
-              <Radar withoutLegend outerRadius={60} radar={radarNode}/>
+              <Radar withoutLegend outerRadius={60} radar={radar}/>
             </div>
           </Grid>
         </Grid>

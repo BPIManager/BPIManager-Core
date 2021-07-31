@@ -222,29 +222,11 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
     this.setState({processing:true,searchInput:val,isLoading:true,res:[],activated:false});
   }
 
-  concatRadar(item:any){
-    const {defaultRadarNode} = this.state;
-    if(this.props.mode !== 0) return [];
-    if(!defaultRadarNode || !item) return [];
-    const node = defaultRadarNode.slice().map( (row)=> Object.assign({},row) );
-    let res = [];
-    for(let i = 0; i < node.length; ++i){
-      const itemName = node[i]["title"];
-      if(!item.radar || !item.radar[itemName]){
-        res = [];
-        break;
-      }
-      node[i]["rivalTotalBPI"] = item.radar[itemName];
-      res.push(node[i]);
-    }
-    return res;
-  }
-
   handleModalOpen = (flag:boolean)=> this.setState({isModalOpen:flag});
   open = (uid:string)=> this.setState({isModalOpen:true,currentUserName:uid})
 
   render(){
-    const {isLoading,isModalOpen,showSnackBar,activated,res,rivals,processing,message,variant,arenaRank,currentUserName,searchInput,myId,isLast,recommendedBy} = this.state;
+    const {defaultRadarNode,isLoading,isModalOpen,showSnackBar,activated,res,rivals,processing,message,variant,arenaRank,currentUserName,searchInput,myId,isLast,recommendedBy} = this.state;
     const {mode} = this.props;
     return (
       <React.Fragment>
@@ -317,7 +299,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
         {res.map((item:rivalStoreData)=>{
           const isAdded = rivals.indexOf(item.uid) > -1;
           return (activated &&
-            <UserCard key={item.uid} radarNode={this.concatRadar(item)} mode={mode} open={this.open} myId={myId} item={item} processing={processing} isAdded={isAdded} addUser={this.addUser}/>
+            <UserCard key={item.uid} radarNode={defaultRadarNode} mode={mode} open={this.open} myId={myId} item={item} processing={processing} isAdded={isAdded} addUser={this.addUser}/>
         )})}
       </List>
       {isLoading && <Loader text={"検索中です..."}/>}

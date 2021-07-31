@@ -704,3 +704,6 @@ text.react-calendar-heatmap-weekday-label {
 #__dark .MuiStepIcon-root.MuiStepIcon-active {
     color: #4e4e4e;
 }
+
+.rivalChart .recharts-legend-item { font-size: 0.75rem; }
+.recharts-default-legend li:last-child { margin-right:0 !important; }

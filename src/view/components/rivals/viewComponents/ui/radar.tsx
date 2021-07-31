@@ -14,7 +14,7 @@ class RadarBox extends React.Component<{
     const {radar,outerRadius,withoutLegend} = this.props;
     const chartColor = _chartColor();
     return (
-    <div style={{width:"100%",height:"100%"}}>
+    <div style={{width:"100%",height:"100%"}} className="rivalChart">
       <ResponsiveContainer>
         <RadarChart outerRadius={outerRadius || 110} data={radar}>
           {!withoutLegend && <PolarGrid />}
@@ -22,7 +22,7 @@ class RadarBox extends React.Component<{
           {!withoutLegend && <PolarRadiusAxis />}
           <Radar name="You" isAnimationActive={false} dataKey="TotalBPI" stroke={rivalBgColor(3)} fill={rivalBgColor(3)} fillOpacity={0.6} />
           <Radar name="Rival" isAnimationActive={false} dataKey="rivalTotalBPI" stroke={rivalBgColor(0)} fill={rivalBgColor(0)} fillOpacity={0.6} />
-          {!withoutLegend && <Legend/>}
+          <Legend iconSize={5}/>
         </RadarChart>
       </ResponsiveContainer>
     </div>
