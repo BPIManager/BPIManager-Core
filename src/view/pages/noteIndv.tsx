@@ -83,7 +83,7 @@ class NoteIndv extends React.Component<RouteComponentProps,{
             <Typography variant="h5" gutterBottom>{params.title}{_prefixWithPS(params.diff,params.single === "sp")}</Typography>
             <ButtonGroup color="secondary" style={{margin:"8px 0"}} variant="outlined">
               <Button startIcon={<ArrowBackIosIcon/>} onClick={()=>this.props.history.push("/notes")}>楽曲一覧</Button>
-              <Button startIcon={<ContactSupportIcon/>} onClick={()=>this.props.history.push("/help/notes")}>Notesとは</Button>
+              <Button startIcon={<ContactSupportIcon/>} onClick={()=>window.open("https://docs2.poyashi.me/docs/social/notes/")}>Notesとは</Button>
             </ButtonGroup>
           </div>
         </div>

@@ -159,7 +159,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
         <Typography component="p" variant="caption" style={{textAlign:"right"}}>
           current configures:[version:{_currentStore()}] [mode:{_isSingle() === 1 ? "Single Play" : "Double Play"}] [autoSync:{_autoSync() ? "enabled" : "disabled"}]<br/>
           userId: {this.props.userData.uid}<br/>
-          <RefLink to="/help" style={{textDecoration:"none"}}><Link color="secondary" component="span">免責事項・利用について</Link></RefLink>
+          <Link color="secondary" href="https://docs2.poyashi.me/tos/">免責事項・利用について</Link>
         </Typography>
         <ShowSnackBar message={snack.message} variant="warning"
             handleClose={this.toggleErrorSnack} open={snack.open} autoHideDuration={3000}/>

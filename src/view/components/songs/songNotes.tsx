@@ -122,8 +122,8 @@ class NoNotes extends React.Component<{song:songData|null},{}>{
         <AlertTitle>投稿がありません</AlertTitle>
         <p>一番乗りで投稿しましょう！<br/>
         右下のボタンをタップして、{song.title}に関する情報（例：譜面傾向、練習に向いている曲、ギアチェンや当たり判別の方法）などを自由に書き込んでください。<br/>
-        <Link to="/help" style={{textDecoration:"none"}}><RLink color="secondary" component="span">免責事項・ご利用に関する注意</RLink></Link><br/>
-        <RLink color="secondary" href="https://gist.github.com/potakusan/7281da1405d4381dc55e19ff8a43926f">この機能について</RLink>
+        <RLink color="secondary" href="https://docs2.poyashi.me/tos/" component="a">免責事項・ご利用に関する注意</RLink><br/>
+        <RLink color="secondary" href="https://docs2.poyashi.me/docs/social/notes/">この機能について</RLink>
       </p>
       </Alert>
     );
@@ -218,7 +218,7 @@ class WriteDialog extends React.Component<WP,{
                   size="invisible"
                 />
                 <DialogContentText>
-                  <small><Link to="/help" style={{textDecoration:"none"}}><RLink color="secondary" component="span">免責事項・ご利用に関する注意</RLink></Link> | <RLink color="secondary" target="_blank" href="https://gist.github.com/potakusan/7281da1405d4381dc55e19ff8a43926f">この機能について</RLink><br/>
+                  <small><RLink href="https://docs2.poyashi.me/tos/" color="secondary">免責事項・ご利用に関する注意</RLink> | <RLink color="secondary" target="_blank" href="https://docs2.poyashi.me/docs/social/notes/">この機能について</RLink><br/>
                   Protected by reCAPTCHA | 記録されるBPI:{score.currentBPI}</small>
                 </DialogContentText>
               </div>}

@@ -390,7 +390,7 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
                   <p>
                     ランキングに参加しましょう！<br/>
                     「参加 / 更新」ボタンからスコアを登録してください。<br/>
-                    <Link color="secondary" component="span" onClick={()=>this.props.history.push("/help/ranking")}>ランキング機能のヘルプはこちらから確認できます。</Link>
+                    <Link color="secondary" href="https://docs2.poyashi.me/docs/social/ranking/">ランキング機能のヘルプはこちらから確認できます。</Link>
                   </p>
                 </Alert>
               )}

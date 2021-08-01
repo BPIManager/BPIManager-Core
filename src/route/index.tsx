@@ -9,7 +9,6 @@ import NotPlayed from "../view/pages/notPlayed";
 import Stats from "../view/pages/stats";
 import Settings from "../view/pages/settings";
 import Compare from "../view/pages/compare";
-import Help from "../view/pages/help";
 import Rivals from "../view/pages/rivals";
 import User from "../view/pages/user";
 import AAATable from "../view/pages/AAATable";
@@ -70,7 +69,6 @@ class Router extends React.Component<{global:any},{}> {
                   <Route path="/stats" exact component={Stats}/>
                   <Route path="/compare" exact component={Compare}/>
                   <Route path="/settings" exact render={_props=><Settings global={global}/>}/>
-                  <Route path="/help" exact component={Help}/>
                   <Route path="/help/notes" exact component={HelpNotes}/>
                   <Route path="/help/ranking" exact component={HelpWR}/>
                   <Route path="/sync/settings" exact component={SyncIndex}/>

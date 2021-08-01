@@ -272,7 +272,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         icon:<SettingsIcon />
       },
       {
-        to:"/help",
+        to:"https://docs2.poyashi.me",
         id:"GlobalNav.Help",
         icon:<HelpIcon />
       }
@@ -302,7 +302,13 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
           parent={{id:"GlobalNav.Parent.Social",icon:<LanguageIcon />}} isOpen={isOpenSocial}/>
         <Divider />
         {navBarBottom.map(item=>(
-          <ListItem key={item.id} onClick={()=>{history.push(item.to);if(!isPerment){this.toggleNav()}}} button>
+          <ListItem key={item.id} onClick={()=>{
+            if(item.to.indexOf("https") > -1){
+              window.open(item.to);
+              return;
+            }
+            history.push(item.to);if(!isPerment){this.toggleNav()}}
+          } button>
             <ListItemIcon>
               {item.icon}
             </ListItemIcon>

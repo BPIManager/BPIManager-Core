@@ -14,6 +14,7 @@ import LockIcon from '@material-ui/icons/Lock';
 import Avatar from '@material-ui/core/Avatar';
 import { avatarFontColor, avatarBgColor } from '@/components/common';
 import Alert from '@material-ui/lab/Alert/Alert';
+import Link from '@material-ui/core/Link';
 
 class SyncLoginScreen extends React.Component<{
   mode:number
@@ -69,7 +70,7 @@ class SyncLoginScreen extends React.Component<{
         <Typography component="p" variant="caption" gutterBottom>
           TwitterまたはGoogleを通したOAuthログインに対応しています。連携したSNSアカウントのデータはユーザー識別に用いられ、連携先アカウントにおいて自動的に投稿を作成したり、プロフィールを編集する権限はありません。<br/>
           BPIManagerアカウントの作成に際し、利用規約およびプライバシーポリシーへの同意があったものとみなします。<br/>
-          利用規約等の確認事項は「ヘルプ」よりご確認いただけます。
+          <Link color="secondary" href="https://docs2.poyashi.me/tos/">利用規約及びプライバシーポリシーはこちらからご確認ください。</Link>
         </Typography>
         </Alert>
       </Paper>

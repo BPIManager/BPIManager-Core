@@ -11,7 +11,6 @@ import Loader from '../../common/loader';
 import TextField from '@material-ui/core/TextField';
 import Alert from '@material-ui/lab/Alert/Alert';
 import {Link as RLink} from '@material-ui/core/';
-import { Link } from 'react-router-dom';
 
 interface P {
   handleToggle:()=>void,
@@ -71,7 +70,7 @@ class JoinModal extends React.Component<P,S> {
         <DialogContent>
           <p>
             ランキングにスコアデータを送信します（すでにスコアが登録されている場合、更新されます）。<br/>
-            <Link to="/help/ranking"><RLink color="secondary" component="span">ルール</RLink></Link>を確認のうえ、以下のフォームにスコアを入力して送信してください。<br/>
+            <RLink color="secondary" href="https://docs2.poyashi.me/docs/social/ranking/" component="a">ルール</RLink>を確認のうえ、以下のフォームにスコアを入力して送信してください。<br/>
             <b>登録できるスコアはランキング開催期間中に達成したもの</b>に限ります。
           </p>
           <TextField

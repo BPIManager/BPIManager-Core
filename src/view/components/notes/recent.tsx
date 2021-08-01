@@ -92,7 +92,7 @@ class NotesRecent extends React.Component<{},S> {
           <Alert variant="outlined" severity="info" style={{margin:"8px 0"}}>
             <AlertTitle>Notesとは？</AlertTitle>
             <p>Notesとは、各楽曲について攻略に役立つノートを投稿することができる機能です。
-              (<RLink to="/help/notes"><Link color="secondary" component="span">使い方など</Link></RLink>)<br/>
+              (<Link color="secondary" href="https://docs2.poyashi.me/docs/social/notes/" component="span">使い方など</Link>)<br/>
               <b><RLink to="/songs"><Link color="secondary" component="span">楽曲一覧</Link></RLink>からノートを投稿したい楽曲を開き、「NOTES」タブから書き込めます。</b><br/>
               「MYノート」から投稿済みノートを削除することができます。
             </p>

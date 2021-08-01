@@ -148,7 +148,7 @@ class RankingSearch extends React.Component<{intl:any}&RouteComponentProps,S> {
     const actions = [
       { icon:  <AddIcon/>, name: 'ランキングを作成', onClick: ()=>this.handleOpenCreateModal(false)},
       { icon: <PersonIcon />, name: '参加したランキング', onClick: ()=>this.handleModalOpen(true)},
-      { icon: <HelpIcon />, name: 'この機能について', onClick: ()=>this.props.history.push("/help/ranking")},
+      { icon: <HelpIcon />, name: 'この機能について', onClick: ()=>window.open("https://docs2.poyashi.me/docs/social/ranking/")},
     ];
     return (
       <Container className="commonLayout">
