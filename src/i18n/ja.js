@@ -4,7 +4,7 @@ const ja = {
   "GlobalNav.Parent.Stats":"実力管理",
   "GlobalNav.Parent.Social":"ソーシャル",
   "GlobalNav.Home": "ホーム",
-  "GlobalNav.Data": "データ取り込み",
+  "GlobalNav.Data": "インポート",
   "GlobalNav.FavoriteSongs": "リスト",
   "GlobalNav.SongList": "楽曲一覧",
   "GlobalNav.unregisteredSongs": "未プレイ楽曲",

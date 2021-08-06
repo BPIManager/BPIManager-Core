@@ -107,11 +107,15 @@ class Index extends React.Component<P&RouteComponentProps,{
 
   getText = async ()=>{
     let text = this.state.raw;
+    if (text !== "") {
+      return this.state.raw;
+    }
     const ua = getUA();
     if(ua !== "chrome"){
       try{
         return await navigator.clipboard.readText();
       }catch(e){
+        console.log(e);
         return text;
       }
     }
@@ -119,18 +123,15 @@ class Index extends React.Component<P&RouteComponentProps,{
     const permission = await navigator.permissions.query({name: ("clipboard-read" as PermissionName)});
 
     if(permission.state === "granted" || permission.state === "prompt"){
-      if (text === "") {
-        try{
-          text = await navigator.clipboard.readText();
-        }catch(e){
-          text = this.state.raw;
-        }
+      try{
+        return await navigator.clipboard.readText();
+      }catch(e){
+        return text;
       }
     }else{
       throw new Error("クリップボードの内容を読み取れません。フィールドにデータをコピーし、再度取り込み実行してください。");
     }
 
-    return text;
   }
 
   async execute(){
@@ -142,7 +143,6 @@ class Index extends React.Component<P&RouteComponentProps,{
       const isSingle:number = _isSingle();
       const currentStore:string = _currentStore();
       let text = await this.getText();
-      
       const isJSON = this.isJSON(text);
       const executor:importJSON|importCSV = isJSON ? new importJSON(text,isSingle,currentStore) : new importCSV(text,isSingle,currentStore);
       const calc:bpiCalculator = new bpiCalculator();
@@ -256,22 +256,23 @@ class Index extends React.Component<P&RouteComponentProps,{
               <StepLabel>インポート</StepLabel>
               <StepContent>
                 <Typography variant="caption">
-                  下のボタンをタップし、BPIManagerにスコアをインポートします。
+                  「取り込み実行」をタップし、スコアをインポートします。
                 </Typography>
-                  <React.Fragment>
 
-                    <Typography variant="caption" style={{margin:"8px 0 0 0",display:"block"}}>
-                      ＊インポートがうまく行かない場合、下のテキストボックスにテキストをペーストして再度取り込み実行してください。
-                    </Typography>
-                    <TextField
-                      onChange={this.onChangeText}
-                      value={this.state.raw}
-                      style={{width:"100%"}}
-                      margin="dense"
-                      variant="outlined"
-                      multiline
-                      rowsMax="4"/>
-                  </React.Fragment>
+                <React.Fragment>
+
+                  <Typography variant="caption" style={{margin:"8px 0 0 0",display:"block"}}>
+                    インポートに失敗する場合、下のボックスにテキストをペーストして取り込み実行してください。
+                  </Typography>
+                  <TextField
+                    onChange={this.onChangeText}
+                    value={this.state.raw}
+                    style={{width:"100%"}}
+                    margin="dense"
+                    variant="outlined"
+                    multiline
+                    rowsMax="4"/>
+                </React.Fragment>
 
                 <div style={{position:"relative"}}>
                   <Button

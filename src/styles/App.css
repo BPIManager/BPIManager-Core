@@ -694,6 +694,7 @@ text.react-calendar-heatmap-weekday-label {
 }
 
 .vertStepper{
+  padding: 24px 0 0 0 !important;
   background:transparent !important;
 }
 
