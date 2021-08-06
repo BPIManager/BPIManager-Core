@@ -28,6 +28,7 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
 import LinkIcon from '@material-ui/icons/Link';
+import { getUA } from '@/components/common';
 
 interface P{
   global:any,
@@ -104,6 +105,34 @@ class Index extends React.Component<P&RouteComponentProps,{
     }
   }
 
+  getText = async ()=>{
+    let text = this.state.raw;
+    const ua = getUA();
+    if(ua !== "chrome"){
+      try{
+        return await navigator.clipboard.readText();
+      }catch(e){
+        return text;
+      }
+    }
+
+    const permission = await navigator.permissions.query({name: ("clipboard-read" as PermissionName)});
+
+    if(permission.state === "granted" || permission.state === "prompt"){
+      if (text === "") {
+        try{
+          text = await navigator.clipboard.readText();
+        }catch(e){
+          text = this.state.raw;
+        }
+      }
+    }else{
+      throw new Error("クリップボードの内容を読み取れません。フィールドにデータをコピーし、再度取り込み実行してください。");
+    }
+
+    return text;
+  }
+
   async execute(){
     try{
       const {uid,noName} = this.state;
@@ -112,20 +141,8 @@ class Index extends React.Component<P&RouteComponentProps,{
       let errors = [];
       const isSingle:number = _isSingle();
       const currentStore:string = _currentStore();
-      let text = this.state.raw;
-      const permission = await navigator.permissions.query({name: ("clipboard-read" as PermissionName)});
-      console.log(permission);
-      if(permission.state === "granted" || permission.state === "prompt"){
-        if (text === "") {
-          try{
-            text = await navigator.clipboard.readText();
-          }catch(e){
-            text = this.state.raw;
-          }
-        }
-      }else{
-        throw new Error("クリップボードの内容を読み取れません。フィールドにデータをコピーし、再度取り込み実行してください。");
-      }
+      let text = await this.getText();
+      
       const isJSON = this.isJSON(text);
       const executor:importJSON|importCSV = isJSON ? new importJSON(text,isSingle,currentStore) : new importCSV(text,isSingle,currentStore);
       const calc:bpiCalculator = new bpiCalculator();
@@ -241,7 +258,6 @@ class Index extends React.Component<P&RouteComponentProps,{
                 <Typography variant="caption">
                   下のボタンをタップし、BPIManagerにスコアをインポートします。
                 </Typography>
-                {errors.length > 0 &&(
                   <React.Fragment>
 
                     <Typography variant="caption" style={{margin:"8px 0 0 0",display:"block"}}>
@@ -256,7 +272,7 @@ class Index extends React.Component<P&RouteComponentProps,{
                       multiline
                       rowsMax="4"/>
                   </React.Fragment>
-                )}
+
                 <div style={{position:"relative"}}>
                   <Button
                     variant="outlined"

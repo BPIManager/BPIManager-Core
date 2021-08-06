@@ -156,3 +156,22 @@ export const rivalBgColor = (d:number)=>{
   }
   return "#000";
 }
+
+export const getUA = ()=>{
+  const userAgent = window.navigator.userAgent.toLowerCase();
+  if(userAgent.indexOf('iphone') !== -1) {
+    return "ios";
+  } else if(userAgent.indexOf('ipad') !== -1) {
+    return "ios";
+  } else if(userAgent.indexOf('android') !== -1) {
+    return "chrome";
+  }
+  if(userAgent.indexOf('chrome') !== -1) {
+    return "chrome";
+  } else if(userAgent.indexOf('safari') !== -1) {
+    return "ios";
+  } else if(userAgent.indexOf('edg') !== -1){
+    return "chrome";
+  }
+  return "other";
+}

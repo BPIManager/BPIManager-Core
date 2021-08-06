@@ -10,7 +10,7 @@ import CheckIcon from '@material-ui/icons/Check';
 import WarningIcon from '@material-ui/icons/Warning';
 import { Helmet } from 'react-helmet';
 import { getAltTwitterIcon } from '@/components/rivals';
-import { alternativeImg } from '@/components/common';
+import { alternativeImg, getUA } from '@/components/common';
 import bpiCalcuator from '@/components/bpi';
 import statMain from '@/components/stats/main';
 
@@ -414,24 +414,6 @@ class InstallAlert extends React.Component<{global:any},{hide:boolean}>{
     }
   }
   private available = (('standalone' in window.navigator) && (window.navigator['standalone']));
-  private getUA = ()=>{
-    const userAgent = window.navigator.userAgent.toLowerCase();
-    if(userAgent.indexOf('iphone') !== -1) {
-      return "ios";
-    } else if(userAgent.indexOf('ipad') !== -1) {
-      return "ios";
-    } else if(userAgent.indexOf('android') !== -1) {
-      return "chrome";
-    }
-    if(userAgent.indexOf('chrome') !== -1) {
-      return "chrome";
-    } else if(userAgent.indexOf('safari') !== -1) {
-      return "ios";
-    } else if(userAgent.indexOf('edg') !== -1){
-      return "chrome";
-    }
-    return "";
-  }
 
   installApp = ()=>{
     const { global } = this.props;
@@ -446,7 +428,7 @@ class InstallAlert extends React.Component<{global:any},{hide:boolean}>{
   hideMessage = ()=>{ localStorage.setItem("hideAddToHomeScreen","true"); this.setState({hide:true}); }
 
   render(){
-    const ua = this.getUA();
+    const ua = getUA();
     if(localStorage.getItem("hideAddToHomeScreen") || this.state.hide) return (null);
     if(ua === "ios" &&  this.available) return (null); // iOS PWA動作時
     if(ua === "chrome" && window.matchMedia('(display-mode: standalone)').matches) return (null); // Chronium PWA動作時
