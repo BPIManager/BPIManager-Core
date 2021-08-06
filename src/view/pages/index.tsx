@@ -398,7 +398,7 @@ class BeginnerAlert extends React.Component<{},{}>{
         <AlertTitle>はじめての方へ</AlertTitle>
         <p>
           「BPIとはなにか？何を表す数字なのか？」などのよくあるご質問にお答えするページがございます。<br/>
-          <RefLink href="https://github.com/potakusan/bpimanager/wiki/BPI%E3%81%AE%E4%BB%95%E6%A7%98" target="_blank" color="secondary">こちらのページを御覧ください。</RefLink>
+          <RefLink href="https://docs2.poyashi.me" target="_blank" color="secondary">こちらのページを御覧ください。</RefLink>
         </p>
       </Alert>
     );

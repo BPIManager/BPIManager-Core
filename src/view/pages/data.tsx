@@ -113,12 +113,18 @@ class Index extends React.Component<P&RouteComponentProps,{
       const isSingle:number = _isSingle();
       const currentStore:string = _currentStore();
       let text = this.state.raw;
-      if (text === "") {
-        try{
-          text = await navigator.clipboard.readText();
-        }catch(e){
-          text = this.state.raw;
+      const permission = await navigator.permissions.query({name: ("clipboard-read" as PermissionName)});
+      console.log(permission);
+      if(permission.state === "granted" || permission.state === "prompt"){
+        if (text === "") {
+          try{
+            text = await navigator.clipboard.readText();
+          }catch(e){
+            text = this.state.raw;
+          }
         }
+      }else{
+        throw new Error("クリップボードの内容を読み取れません。フィールドにデータをコピーし、再度取り込み実行してください。");
       }
       const isJSON = this.isJSON(text);
       const executor:importJSON|importCSV = isJSON ? new importJSON(text,isSingle,currentStore) : new importCSV(text,isSingle,currentStore);
