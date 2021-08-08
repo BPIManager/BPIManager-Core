@@ -18,4 +18,11 @@ export const twitter = new firebase.auth.TwitterAuthProvider();
 export const google = new firebase.auth.GoogleAuthProvider();
 export default fb;
 
-export const functions = fb.functions("asia-northeast1");
+const f = fb.functions("asia-northeast1");
+
+if (window.location.hostname === "localhost") {
+  f.useFunctionsEmulator('http://localhost:5001');
+  fb.auth().signInWithEmailAndPassword("","");
+}
+
+export const functions = f;

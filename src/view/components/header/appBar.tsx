@@ -350,7 +350,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
                 color="inherit"
               >
                 <img src={user.photoURL ? user.photoURL.replace("_normal","") : "noimage"} style={{width:"32px",height:"32px",borderRadius:"100%"}}
-                  alt={user.displayName || "Unpublished User"}
+                  alt={user.displayName || "Private-mode User"}
                   onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(user) || alternativeImg(user.displayName)}/>
               </IconButton>
             )}
@@ -382,7 +382,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
               onClose={this.handleMenu}
             >
               <MenuItem style={{fontSize:"14px"}} onClick={(e)=>{history.push("/sync/settings");this.handleMenu(e);}}>Sync</MenuItem>
-              <MenuItem style={{fontSize:"14px"}} onClick={(e)=>{new fbActions().logout();this.handleMenu(e);}}>ログアウト</MenuItem>
+              <MenuItem style={{fontSize:"14px"}} onClick={(e)=>{new fbActions().logout();this.handleMenu(e);this.setState({user:null})}}>ログアウト</MenuItem>
             </Menu>
           </Toolbar>
         </AppBar>
@@ -410,10 +410,10 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         <main className={classes.content} style={{width:"100%",marginBottom:"15px"}}>
           {this.props.children}
         </main>
-        <div style={{position:"fixed",bottom:"0",zIndex:1000,textAlign:"center",padding:"5px 0",background:"#000",color:"#fff",width:"100%",fontSize:"9px"}}>
+        <div style={{position:"fixed",bottom:"0",zIndex:1000,textAlign:"center",padding:"5px 0",background:"rgba(0,0,0,.8)",backdropFilter:"blur(4px)",color:"#fff",width:"100%",fontSize:"9px"}}>
           {user && user.displayName}&nbsp;
           {(user && user.twitter) && <span>(@{user.twitter})</span>}&nbsp;
-          定義:v{_currentVersion()}
+          def:v{_currentVersion()}
         </div>
         <ShowSnackBar message={"実行中の処理があるため続行できません"} variant="warning"
             handleClose={this.toggleErrorSnack} open={this.state.errorSnack} autoHideDuration={3000}/>

@@ -175,3 +175,10 @@ export const getUA = ()=>{
   }
   return "other";
 }
+
+export const blurredBackGround = ()=> (
+  {
+    backgroundColor: _currentTheme() === "light" ? "#ffffff00" : _currentTheme() === "dark" ? "#00000030": "#001625ab",
+    backdropFilter: "blur(4px)",marginBottom:"25px"
+  }
+);

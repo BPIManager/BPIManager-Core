@@ -47,6 +47,7 @@ import CheckIcon from '@material-ui/icons/Check';
 import Shift from '@/view/components/stats/shift';
 import { ShareList } from '../components/common/shareButtons';
 import bpiCalcuator from '@/components/bpi';
+import { functions } from '@/components/firebase';
 
 interface S {
   userName:string,
@@ -229,6 +230,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
         return [];
       }
     }
+    if(!er || !ing){ return this.setState({counts:{loading:false,followers:[],followings:[]}}); }
     return this.setState({
       counts:{
         loading:false,
@@ -239,12 +241,17 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
   }
 
   counts = async(type:number = 0, id:string):Promise<any>=>{
-    return (await fetch(`https://asia-northeast1-bpimv2.cloudfunctions.net/${type === 0 ? "getFollowersCnt" : "getFollowingsCnt"}?targetId=${id}&version=${_currentStore()}`)).json().then(t=>{
-      return t;
-    }).catch(e=>{
+    try{
+      return (await functions.httpsCallable(type === 0 ? "getFollowersCnt" : "getFollowingsCnt")(
+        {
+          targetId:id,
+          version:_currentStore()
+        }
+      ))
+    }catch(e){
       console.log(e);
-      return null;
-    });
+      return (null);
+    }
   }
 
   recommended = async():Promise<void>=>{

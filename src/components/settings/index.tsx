@@ -11,7 +11,7 @@ export const _lang = ()=>{
 }
 
 export const _currentVersion = ()=>{
-  return localStorage.getItem("lastDefFileVer") || "undefined";
+  return localStorage.getItem("lastDefFileVer") || "-undefined";
 }
 
 export const _goalBPI = ()=>{

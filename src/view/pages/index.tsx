@@ -10,7 +10,7 @@ import CheckIcon from '@material-ui/icons/Check';
 import WarningIcon from '@material-ui/icons/Warning';
 import { Helmet } from 'react-helmet';
 import { getAltTwitterIcon } from '@/components/rivals';
-import { alternativeImg, getUA } from '@/components/common';
+import { alternativeImg, getUA, blurredBackGround } from '@/components/common';
 import bpiCalcuator from '@/components/bpi';
 import statMain from '@/components/stats/main';
 
@@ -34,9 +34,6 @@ import AppsIcon from '@material-ui/icons/Apps';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import { BeforeInstallPromptEvent } from '@/components/context/global';
 
-const blurredBackGround = {
-  backgroundColor: _currentTheme() === "light" ? "#ffffff00" : _currentTheme() === "dark" ? "#00000030": "#001625ab",
-  backdropFilter: "blur(4px)",marginBottom:"25px"};
 
 class Index extends React.Component<{global:any}&RouteComponentProps,{
   user:any,
@@ -109,6 +106,7 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
 
   render(){
     const themeColor = _currentTheme();
+    const bg = blurredBackGround();
     const {user,auth,isLoading,userLoading,latestUsersLoading,recentUsers,isModalOpen,currentUserName} = this.state;
     const xs = 12,sm = 6, md = 4,lg = 4;
     return (
@@ -179,7 +177,7 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
           {(!userLoading && (!auth || !user)) && <BeginnerAlert/>}
           <InstallAlert global={this.props.global}/>
           <UpdateDef/>
-          <Card style={blurredBackGround}>
+          <Card style={bg}>
             <CardContent>
               <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
                 <MenuOpenIcon/>&nbsp;クイックアクセス
@@ -429,12 +427,13 @@ class InstallAlert extends React.Component<{global:any},{hide:boolean}>{
 
   render(){
     const ua = getUA();
+    const bg = blurredBackGround();
     if(localStorage.getItem("hideAddToHomeScreen") || this.state.hide) return (null);
     if(ua === "ios" &&  this.available) return (null); // iOS PWA動作時
     if(ua === "chrome" && window.matchMedia('(display-mode: standalone)').matches) return (null); // Chronium PWA動作時
     if(ua === "chrome"){
       return (
-        <Alert className="MuiPaper-root" severity="info" style={blurredBackGround}>
+        <Alert className="MuiPaper-root" severity="info" style={bg}>
           <AlertTitle>ご存知ですか？</AlertTitle>
           <p>
             「インストール」ボタンをタップして、ホーム画面から通常のアプリのようにBPIManagerをお使いいただけます。
@@ -445,7 +444,7 @@ class InstallAlert extends React.Component<{global:any},{hide:boolean}>{
     }
     if(ua === "ios"){
       return (
-        <Alert className="MuiPaper-root" severity="info" style={blurredBackGround}>
+        <Alert className="MuiPaper-root" severity="info" style={bg}>
           <AlertTitle>お試しください</AlertTitle>
           <p>
             ホーム画面に追加して、通常のアプリのようにBPIManagerをお使いいただけます。
