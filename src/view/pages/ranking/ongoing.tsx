@@ -11,7 +11,7 @@ import TouchAppIcon from '@material-ui/icons/TouchApp';
 import JoinModal from '@/view/components/ranking/modal/join';
 import { scoresDB, songsDB } from '@/components/indexedDB';
 import { songData, scoreData } from '@/types/data';
-import { functions } from '@/components/firebase';
+import { httpsCallable } from '@/components/firebase';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select/Select';
@@ -106,7 +106,7 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
       const score = await scdb.getItem(d.title,difficultyDiscriminator(d.difficulty),d.version,1);
       const song = await sdb.getOneItemIsSingle(d.title,d.difficulty);
       const songData = song.length > 0 ? song[0] : null;
-      const res = await functions.httpsCallable("viewRanking")({
+      const res = await httpsCallable(`ranking`,`viewRanking`,{
         cId:current.id,
         includeRank:true,
         currentUser:true,
@@ -154,7 +154,7 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
         score:score,
         version:onGoing.version,
       };
-      const p = await functions.httpsCallable("joinRanking")(data);
+      const p = await httpsCallable(`ranking`,`joinRanking`,data);
       if(p.data.error){
         throw new Error(p.data.errorMessage);
       }
@@ -174,7 +174,7 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
         cId:onGoingId,
         version:onGoing.version,
       };
-      const p = await functions.httpsCallable("deleteFromRanking")(data);
+      const p = await httpsCallable(`ranking`,`deleteFromRanking`,data);
       if(p.data.error){
         throw new Error(p.data.errorMessage);
       }
@@ -189,7 +189,7 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
 
   pageLoad = async(page:number = 0)=>{
     this.setState({contentLoading:true});
-    const res = await functions.httpsCallable("viewRanking")({
+    const res = await httpsCallable(`ranking`,`viewRanking`,{
       cId:this.state.onGoingId,
       includeRank:true,
       currentUser:true,

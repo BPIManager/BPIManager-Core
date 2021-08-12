@@ -4,7 +4,7 @@ import { injectIntl } from 'react-intl';
 import Typography from '@material-ui/core/Typography';
 import { _currentStore } from '@/components/settings';
 import timeFormatter, { toDate, _isBetween, isBeforeSpecificDate } from '@/components/common/timeFormatter';
-import { functions } from '@/components/firebase';
+import { httpsCallable } from '@/components/firebase';
 import Loader from '@/view/components/common/loader';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import List from '@material-ui/core/List';
@@ -90,7 +90,7 @@ class RankingSearch extends React.Component<{intl:any}&RouteComponentProps,S> {
       endDate:toDate(new Date()),
       showFinished:showFinished,
     };
-    const res = await functions.httpsCallable("rankSearch")(data);
+    const res = await httpsCallable(`ranking`,`rankSearch`,data);
     if(res.data.error || res.data.info.length === 0){
       return this.setState({isLast:true,isLoading:false,auth:res.data.auth});
     }

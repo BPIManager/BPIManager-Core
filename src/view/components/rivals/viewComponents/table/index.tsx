@@ -150,8 +150,8 @@ export default class ScoreTable extends React.Component<Readonly<P>,S>{
           nextIconButtonProps={{
             "aria-label": "next page",
           }}
-          onChangePage={this.props.handleChangePage}
-          onChangeRowsPerPage={this.handleChangeRowsPerPage}
+          onPageChange={this.props.handleChangePage}
+          onRowsPerPageChange={this.handleChangeRowsPerPage}
         />
         {isOpen && <Details showDetails={this.showDetails} currentScoreData={currentScoreData} />}
       </Paper>

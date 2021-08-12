@@ -227,8 +227,8 @@ class MyBest extends React.Component<{},S> {
                         nextIconButtonProps={{
                           "aria-label": "next page",
                         }}
-                        onChangePage={this.handleChangePage}
-                        onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                        onPageChange={this.handleChangePage}
+                        onRowsPerPageChange={this.handleChangeRowsPerPage}
                       />
                   </Grid>
                 </Grid>

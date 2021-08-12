@@ -537,7 +537,10 @@ export const scoresDB = class extends storageWrapper{
     return await this.scores.where({title:title,storedAt:storedAt}).delete();
   }
 
-  async removeSpecificItemAtAllStores(title:string):Promise<number>{
+  async removeSpecificItemAtAllStores(title:string,diff?:string):Promise<number>{
+    if(diff){
+      return await this.scores.where({title:title,difficulty:difficultyDiscriminator(diff)}).delete();
+    }
     return await this.scores.where({title:title}).delete();
   }
 
@@ -632,7 +635,10 @@ export const scoreHistoryDB = class extends storageWrapper{
     return await this.scoreHistory.where({storedAt:_currentStore(),BPI:NaN}).delete();
   }
 
-  async removeSpecificItemAtAllStores(title:string):Promise<number>{
+  async removeSpecificItemAtAllStores(title:string,diff?:string):Promise<number>{
+    if(diff){
+      return await this.scores.where({title:title,difficulty:difficultyDiscriminator(diff)}).delete();
+    }
     return await this.scoreHistory.where({title:title}).delete();
   }
 
@@ -939,6 +945,10 @@ export const songsDB = class extends storageWrapper{
 
   async removeItemByDifficulty(title:string,diff:string):Promise<number>{
     return await this.songs.where({title:title,difficultyLevel:diff}).delete();
+  }
+
+  async _removeItemByDifficulty(title:string,diff:string):Promise<number>{
+    return await this.songs.where({title:title,difficulty:diff}).delete();
   }
 
   async removeItem(title:string):Promise<number>{

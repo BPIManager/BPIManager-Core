@@ -100,9 +100,9 @@ export default class Initialize extends React.Component<{global:any},{show:boole
     if(ax.removed){
       for (let i = 0; i < ax.removed.length; ++i){
         const t = ax.removed[i];
-        await this.songsDB.removeItem(t["title"]);
-        await this.scoresDB.removeSpecificItemAtAllStores(t["title"]);
-        await this.scoreHistoryDB.removeSpecificItemAtAllStores(t["title"]);
+        await this.songsDB._removeItemByDifficulty(t["title"],String(t["difficulty"]));
+        await this.scoresDB.removeSpecificItemAtAllStores(t["title"],t["difficulty"]);
+        await this.scoreHistoryDB.removeSpecificItemAtAllStores(t["title"],t["difficulty"]);
       }
     }
   }

@@ -166,8 +166,8 @@ export default class Compare extends React.Component<P,S> {
         nextIconButtonProps={{
           "aria-label": "next page",
         }}
-        onChangePage={this.handleChangePage}
-        onChangeRowsPerPage={this.handleChangeRowsPerPage}
+        onPageChange={this.handleChangePage}
+        onRowsPerPageChange={this.handleChangeRowsPerPage}
       />
       {isOpen &&
         <DetailedSongInformation isOpen={(isOpen as boolean)} song={currentSongData} score={currentScoreData} handleOpen={this.handleOpen}/>

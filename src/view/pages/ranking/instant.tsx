@@ -2,7 +2,7 @@ import * as React from 'react';
 import { injectIntl } from 'react-intl';
 import Button from '@material-ui/core/Button';
 import { songData } from '@/types/data';
-import { functions } from '@/components/firebase';
+import { httpsCallable } from '@/components/firebase';
 import Loader from '@/view/components/common/loader';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Alert from '@material-ui/lab/Alert/Alert';
@@ -48,7 +48,7 @@ class InstantWRView extends React.Component<{intl:any}&RouteComponentProps,S> {
   }
 
   async componentDidMount(){
-    const res = await functions.httpsCallable("rankSearch")({
+    const res = await httpsCallable(`ranking`,`rankSearch`,{
       currentUser:true,
       includeRank:false,
       showFinished:false,

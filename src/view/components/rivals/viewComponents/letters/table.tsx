@@ -162,8 +162,8 @@ export default class LettersTable extends React.Component<P,S> {
         nextIconButtonProps={{
           "aria-label": "next page",
         }}
-        onChangePage={this.handleChangePage}
-        onChangeRowsPerPage={this.handleChangeRowsPerPage}
+        onPageChange={this.handleChangePage}
+        onRowsPerPageChange={this.handleChangeRowsPerPage}
       />
       {showDetail && <SongDetail song={currentSong} score={currentScore} handleToggle={this.handleToggle}/>}
     </Paper>

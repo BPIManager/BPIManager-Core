@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import { _currentTheme, _currentStore } from '@/components/settings';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import Loader from '@/view/components/common/loader';
-import { functions } from '@/components/firebase';
+import { httpsCallable } from '@/components/firebase';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -45,7 +45,7 @@ class WeeklyList extends React.Component<{intl:any,viewInUser?:boolean,backToMai
       data["uId"] = this.props.uid || "";
       data["onlyJoined"] = true;
     }
-    const res = await functions.httpsCallable("rankList")(data);
+    const res = await httpsCallable(`ranking`,`rankList`,data);
     this.setState({isLoading:false,list:res.data});
   }
 

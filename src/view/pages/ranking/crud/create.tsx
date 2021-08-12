@@ -25,7 +25,7 @@ import { _prefixFromNum } from '@/components/songs/filter';
 import CreateIcon from '@material-ui/icons/Create';
 import UpdateIcon from '@material-ui/icons/Update';
 import Loader from '@/view/components/common/loader';
-import { functions } from '@/components/firebase';
+import { httpsCallable } from '@/components/firebase';
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import { config } from '@/config';
@@ -97,7 +97,7 @@ export default class CreateModal extends React.Component<{
       info:info,
       version:_currentStore(),
     };
-    const p = await functions.httpsCallable("createRanking")(data);
+    const p = await httpsCallable(`ranking`,`createRanking`,data);
     if(p.data.error){
       alert(p.data.errorMessage);
     }

@@ -2,6 +2,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth'
 import "firebase/functions";
+import { config } from '@/config';
 const fb = firebase.initializeApp({
   apiKey: "AIzaSyAIlzzxI0kZtIe4vvjSIiRwfqSQVZtbluM",
   authDomain: "bpimv2.firebaseapp.com",
@@ -19,10 +20,21 @@ export const google = new firebase.auth.GoogleAuthProvider();
 export default fb;
 
 const f = fb.functions("asia-northeast1");
+const isLocal = ()=> false;//window.location.hostname === "localhost";
 
-if (window.location.hostname === "localhost") {
+if (isLocal()) {
+  const uid = "";
   f.useFunctionsEmulator('http://localhost:5001');
+  auth.useEmulator('http://localhost:9099');
   fb.auth().signInWithEmailAndPassword("","");
+  firestore.collection("users").doc(uid).update({});
 }
 
 export const functions = f;
+
+export const httpsCallable = (_cat:string,endpoint:string,data:any)=>{
+  if(isLocal()){
+    return functions.httpsCallable(`${_cat}/${config.cfVersion}/${endpoint}`)(data);
+  }
+  return functions.httpsCallable(endpoint)(data);
+}

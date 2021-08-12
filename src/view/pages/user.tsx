@@ -47,7 +47,7 @@ import CheckIcon from '@material-ui/icons/Check';
 import Shift from '@/view/components/stats/shift';
 import { ShareList } from '../components/common/shareButtons';
 import bpiCalcuator from '@/components/bpi';
-import { functions } from '@/components/firebase';
+import { httpsCallable } from '@/components/firebase';
 
 interface S {
   userName:string,
@@ -242,7 +242,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
 
   counts = async(type:number = 0, id:string):Promise<any>=>{
     try{
-      return (await functions.httpsCallable(type === 0 ? "getFollowersCnt" : "getFollowingsCnt")(
+      return (await httpsCallable("users",type === 0 ? `getFollowersCnt` : `getFollowingsCnt`,
         {
           targetId:id,
           version:_currentStore()

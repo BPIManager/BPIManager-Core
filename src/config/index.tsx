@@ -5,7 +5,8 @@ export const config ={
   versionString:"beta ver0.0.8.4",
   lastUpdate:"2021/07/30 JST",
   latestStore:"28",
-  baseUrl:"https://bpi.poyashi.me"
+  baseUrl:"https://bpi.poyashi.me",
+  cfVersion:"v2"
 }
 
 export const area =[

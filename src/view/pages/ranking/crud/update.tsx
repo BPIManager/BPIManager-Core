@@ -19,7 +19,7 @@ import { toMomentHHMM, isBeforeSpecificDate, toDate } from '@/components/common/
 import Button from '@material-ui/core/Button';
 import UpdateIcon from '@material-ui/icons/Update';
 import Loader from '@/view/components/common/loader';
-import { functions } from '@/components/firebase';
+import { httpsCallable } from '@/components/firebase';
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
@@ -76,7 +76,7 @@ class EditModal extends React.Component<{
       info:info,
       id:this.props.onGoingId,
     };
-    const p = await functions.httpsCallable("editRanking")(data);
+    const p = await httpsCallable(`ranking`,`editRanking`,data);
     if(p.data.error){
       alert(p.data.errorMessage);
     }
@@ -88,7 +88,7 @@ class EditModal extends React.Component<{
     let data = {
       id:this.props.onGoingId,
     };
-    const p = await functions.httpsCallable("deleteRanking")(data);
+    const p = await httpsCallable(`ranking`,`deleteRanking`,data);
     if(p.data.error){
       alert(p.data.errorMessage);
     }

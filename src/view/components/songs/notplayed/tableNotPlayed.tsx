@@ -144,8 +144,8 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
           nextIconButtonProps={{
             "aria-label": "next page",
           }}
-          onChangePage={this.props.handleChangePage}
-          onChangeRowsPerPage={this.handleChangeRowsPerPage}
+          onPageChange={this.props.handleChangePage}
+          onRowsPerPageChange={this.handleChangeRowsPerPage}
         />
         {isOpen &&
           <DetailedSongInformation isOpen={isOpen} song={currentSongData} score={currentScoreData} handleOpen={this.handleOpen} willDelete={true} firstView={FV}/>
