@@ -64,7 +64,10 @@ class RivalStats extends React.Component<P,S> {
 
       //win:0,draw:1,lose:2
       const ex = indv.myEx > indv.rivalEx ? 0 : indv.myEx === indv.rivalEx ? 1 : 2;
-      const clear = indv.myClearState > indv.rivalClearState ? 0 : indv.myClearState === indv.rivalClearState ? 1 : 2;
+      /* ClearState === 7 の場合、 NOPLAY すべてのランプに劣後するため処理上 -999 として取り扱う */
+      const myClear = indv.myClearState === 7 ? -999 : indv.myClearState;
+      const rivalClear = indv.rivalClearState === 7 ? -999 : indv.rivalClearState;
+      const clear = myClear > rivalClear ? 0 : myClear === rivalClear ? 1 : 2;
 
       scoresAbout[ex]++;
       clearAbout[clear]++;
@@ -156,7 +159,7 @@ class RivalStats extends React.Component<P,S> {
           <Grid container spacing={3}>
             <Grid item xs={12} md={12} lg={12}>
               <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
-                RADAR(<RefLink color="secondary" target="_blank" rel="noopener noreferrer" href="https://gist.github.com/potakusan/6c570528a42b3583a807c88fd3627092">?</RefLink>)
+                RADAR(<RefLink color="secondary" target="_blank" rel="noopener noreferrer" href="https://docs2.poyashi.me/docs/manage/stats/#レーダー">?</RefLink>)
               </Typography>
               <Grid container spacing={0}>
                 <Grid item xs={12} md={12} lg={6} style={{height:"350px"}}>

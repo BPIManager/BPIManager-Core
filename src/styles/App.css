@@ -622,17 +622,17 @@ text.react-calendar-heatmap-weekday-label {
 
 .typographTitle {
     text-align: center;
-    padding-top: 30px;
-    margin-top: 70px !important;
+    padding-bottom: 10px;
+    margin-bottom: 15px !important;
 }
 
 .darkTheme .typographTitle,
 .deepSeaTheme .typographTitle{
-  border-top: 2px solid #fff;
+  border-bottom: 2px solid #ccc;
 }
 
 .lightTheme .typographTitle{
-  border-top: 2px solid #222;
+  border-bottom: 2px solid #ccc;
 }
 
 .TypographywithIcon{
@@ -708,3 +708,44 @@ text.react-calendar-heatmap-weekday-label {
 
 .rivalChart .recharts-legend-item { font-size: 0.75rem; }
 .recharts-default-legend li:last-child { margin-right:0 !important; }
+
+.keeperTriangle {
+  position: relative;
+  margin-bottom:30px;
+}
+
+.keeperTriangle::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 18px 18px 0 18px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100%);
+}
+
+.dark.keeperTriangle::before{
+  border-color: #3a3a3a transparent transparent transparent;
+}
+
+.dark.userTabs .MuiTabs-root{
+  background:#3a3a3a;
+}
+
+.deepsea.keeperTriangle::before{
+  border-color: #03304e transparent transparent transparent;
+}
+
+.deepsea.userTabs .MuiTabs-root{
+  background:#03304e;
+}
+
+.light.keeperTriangle::before{
+  border-color: #f1f1f1 transparent transparent transparent;
+}
+
+.light.userTabs .MuiTabs-root{
+  background:#f1f1f1;
+}

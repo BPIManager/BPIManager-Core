@@ -16,7 +16,7 @@ import { rivalListsDB } from '@/components/indexedDB';
 import ShowSnackBar from '@/view/components/snackBar';
 import RivalView, { makeRivalStat } from '@/view/components/rivals/view';
 import { rivalScoreData, rivalStoreData } from '@/types/data';
-import {Link, Chip, Divider, Grid, GridList, GridListTile, GridListTileBar, List, ListItem, ListItemAvatar, ListItemText, ListItemSecondaryAction, IconButton, Button, Fab, Tabs, Tab, ListSubheader, TextField} from '@material-ui/core/';
+import {Link, Divider, Grid, GridList, GridListTile, GridListTileBar, List, ListItem, ListItemAvatar, ListItemText, ListItemSecondaryAction, IconButton, Button, Fab, Tabs, Tab, TextField} from '@material-ui/core/';
 import {Link as RefLink} from "react-router-dom";
 import ClearLampView from '@/view/components/table/fromUserPage';
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
@@ -47,7 +47,8 @@ import CheckIcon from '@material-ui/icons/Check';
 import Shift from '@/view/components/stats/shift';
 import { ShareList } from '../components/common/shareButtons';
 import bpiCalcuator from '@/components/bpi';
-import { httpsCallable } from '@/components/firebase';
+import { httpsCfGet } from '@/components/firebase';
+import ThumbsUpDownIcon from '@material-ui/icons/ThumbsUpDown';
 
 interface S {
   userName:string,
@@ -242,11 +243,8 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
 
   counts = async(type:number = 0, id:string):Promise<any>=>{
     try{
-      return (await httpsCallable("users",type === 0 ? `getFollowersCnt` : `getFollowingsCnt`,
-        {
-          targetId:id,
-          version:_currentStore()
-        }
+      return (await httpsCfGet(type === 0 ? `getFollowersCnt` : `getFollowingsCnt`,
+        `targetId=${id}&version=${_currentStore()}`
       ))
     }catch(e){
       console.log(e);
@@ -407,25 +405,11 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
                       alt={res.displayName}
                       onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(res) || alternativeImg(res.displayName)}/>
                   </Avatar>
-                  {!isAdded && (
-                    <Fab size="small" color="secondary" variant="extended" onClick={()=>this.addUser()} disabled={myId === res.uid || add || processing} style={{fontWeight:"bold",fontSize: "12px"}}>
-                      <GroupAddIcon style={{fontSize:"20px"}}/>
-                      <span>追加</span>
-                    </Fab>
-                  )}
-                  {isAdded && (
-                    <Fab size="small" color="secondary" variant="extended" disabled={true} style={{fontWeight:"bold",fontSize: "12px"}}>
-                      <CheckIcon style={{fontSize:"20px"}}/>
-                      <span>ライバル</span>
-                    </Fab>
-                  )}
                 </Grid>
                 <Grid item xs={8} lg={8} style={{paddingLeft:"15px"}}>
                   <Typography variant="h4">
                     {res.displayName}
                   </Typography>
-                  <Chip size="small" style={{backgroundColor:this.color(res.arenaRank),color:"#fff",margin:"5px 0"}} label={res.arenaRank || "-"} />
-                  <Chip size="small" style={{backgroundColor:bgColorByBPI(totalBPI),color:"#fff",margin:"0 0 0 5px"}} label={"総合BPI:" + String(Number.isNaN(totalBPI) ? "-" : totalBPI)} />
                   <div style={{display:"flex"}}>
                     {this.getIIDXId(res.profile) !== "" &&
                       <form method="post" name="rivalSearch" action={`https://p.eagate.573.jp/game/2dx/${_currentStore()}/rival/rival_search.html#rivalsearch`}>
@@ -443,7 +427,9 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
                     }
                   </div>
                   {counts.loading && (
-                    <Loader isLine text="ライバル情報を読み込み中"/>
+                    <Typography component="span" variant="caption" color="textSecondary" style={{fontWeight:"bold"}}>
+                      Rivals Loading...
+                    </Typography>
                   )}
                   {!counts.loading && (
                     <React.Fragment>
@@ -462,6 +448,28 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
                   </div>
                 </Grid>
               </Grid>
+              <Grid container style={{fontWeight:"bold",textAlign:"center"}}>
+                <Grid item xs={6} style={{borderBottom:"2px solid " + this.color(res.arenaRank),color:themeColor === "light" ? "#000 ": "#fff",padding:"4px 0"}}>
+                  <span style={{fontSize:"6px"}}>アリーナランク</span><br/>
+                  {res.arenaRank || "-"}
+                </Grid>
+                <Grid item xs={6} style={{borderBottom:"2px solid " + bgColorByBPI(totalBPI),color:themeColor === "light" ? "#000 ": "#fff",padding:"4px 0"}}>
+                  <span style={{fontSize:"6px"}}>総合BPI</span><br/>
+                  {String(Number.isNaN(totalBPI) ? "-" : totalBPI)}
+                </Grid>
+              </Grid>
+              {!isAdded && (
+                <Fab size="small" color="secondary" variant="extended" onClick={()=>this.addUser()} disabled={myId === res.uid || add || processing} style={{marginTop:"15px",width:"100%",fontWeight:"bold",fontSize: "12px"}}>
+                  <GroupAddIcon style={{fontSize:"20px"}}/>
+                  <span>ライバルとして追加</span>
+                </Fab>
+              )}
+              {isAdded && (
+                <Fab size="small" color="secondary" variant="extended" disabled={true} style={{marginTop:"15px",width:"100%",fontWeight:"bold",fontSize: "12px"}}>
+                  <CheckIcon style={{fontSize:"20px"}}/>
+                  <span>ライバルです!</span>
+                </Fab>
+              )}
             </div>
           </div>
         </div>
@@ -472,18 +480,22 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
             <RefLink to={"/settings"} style={{textDecoration:"none"}}><Link color="secondary" component="span">設定</Link></RefLink>からほかのバージョンを指定の上、再度表示してください。
           </Alert>
         )}
-        <Tabs
-          value={currentTab}
-          onChange={this.handleChangeTab}
-          indicatorColor="secondary"
-          textColor="secondary"
-          variant="fullWidth"
-          centered
-        >
-          <Tab icon={<ClearAllIcon />}/>
-          <Tab icon={<TrendingUpIcon />}/>
-          <Tab icon={<RecentActorsIcon />}/>
-        </Tabs>
+        <div className={"userTabs " + themeColor}>
+          <Tabs
+            value={currentTab}
+            onChange={this.handleChangeTab}
+            indicatorColor="secondary"
+            textColor="secondary"
+            variant="fullWidth"
+            centered
+          >
+            <Tab icon={<ClearAllIcon />}/>
+            <Tab icon={<ThumbsUpDownIcon />}/>
+            <Tab icon={<TrendingUpIcon />}/>
+            <Tab icon={<RecentActorsIcon />}/>
+          </Tabs>
+        </div>
+        <section className={"keeperTriangle " + themeColor}></section>
         {currentTab === 0 && (
           <React.Fragment>
           <List>
@@ -499,7 +511,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
           <TextField
             label="プロフィールURL"
             size="small"
-            style={{width:"95%",margin:"0 auto 20px auto"}}
+            style={{width:"95%",margin:"0 auto 20px auto",display:"flex"}}
             defaultValue={url}
             variant="outlined"
             fullWidth
@@ -512,6 +524,18 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
         {currentTab === 1 && (
           <div>
             <Container className={"commonLayout " + (c === "dark" ? "darkTheme" : c === "light" ? "lightTheme" : "deepSeaTheme")}>
+              <Typography component="h5" variant="h5" color="textPrimary" className="typographTitle">ライバルとの比較</Typography>
+              <Alert severity="info" style={{margin:"20px 0"}}>
+              「スコア勝敗」「クリア勝敗」は、グラフ左から順に、「ライバルの勝利数」「引き分け」「あなたの勝利数」を表しています。
+              </Alert>
+            </Container>
+            <RivalStatViewFromUserPage full={rivalStat} rivalRawData={rivalData} backToMainPage={this.backToMainPage} name={res.displayName}/>
+          </div>
+        )}
+        {currentTab === 2 && (
+          <div>
+            <Container className={"commonLayout " + (c === "dark" ? "darkTheme" : c === "light" ? "lightTheme" : "deepSeaTheme")}>
+              <Typography component="h5" variant="h5" color="textPrimary" className="typographTitle">ライバルの統計</Typography>
               <Typography component="h6" variant="h6" color="textPrimary">
                 スコア更新ヒートマップ
               </Typography>
@@ -542,22 +566,15 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
               <Typography component="h6" variant="h6" color="textPrimary">推移グラフ</Typography>
             </Container>
             <Shift propdata={this.userStore.scoreHistory()}/>
-            <Container className={"commonLayout " + (c === "dark" ? "darkTheme" : c === "light" ? "lightTheme" : "deepSeaTheme")}>
-              <Typography component="h4" variant="h4" color="textPrimary" className="typographTitle">あなたとの比較</Typography>
-              <Alert severity="info" style={{margin:"20px 0"}}>
-                「スコア勝敗」「クリア勝敗」は、グラフ左から順に、「ライバルの勝利数」「引き分け」「あなたの勝利数」を表しています。
-              </Alert>
-            </Container>
-            <RivalStatViewFromUserPage full={rivalStat} rivalRawData={rivalData} backToMainPage={this.backToMainPage} name={res.displayName}/>
           </div>
         )}
-        {(currentTab === 2 && loadingRecommended) && <Loader/>}
-        {(currentTab === 2 && !loadingRecommended) && (
-            <div style={{display:"flex",flexWrap:"wrap",justifyContent:"space-around",margin:"15px auto",width:"90%"}}>
+        {(currentTab === 3 && loadingRecommended) && <Loader/>}
+        {(currentTab === 3 && !loadingRecommended) && (
+            <div style={{display:"flex",flexWrap:"wrap",justifyContent:"space-around",margin:"0 auto 15px auto",width:"100%"}}>
+              <Container className={"commonLayout " + (c === "dark" ? "darkTheme" : c === "light" ? "lightTheme" : "deepSeaTheme")}>
+                <Typography component="h5" variant="h5" color="textPrimary" className="typographTitle">実力が近いユーザー</Typography>
+              </Container>
               <GridList  cellHeight={180} style={{height:"400px",width:"100%"}}>
-                <GridListTile key="Subheader" cols={2} style={{ height: 'auto' }}>
-                  <ListSubheader component="div">実力が近いユーザー:</ListSubheader>
-                </GridListTile>
                 {recommendUsers.map((tile:rivalStoreData) => (
                   <GridListTile key={tile.displayName} onClick={async()=>{
                     if(!limited){

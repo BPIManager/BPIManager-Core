@@ -38,3 +38,13 @@ export const httpsCallable = (_cat:string,endpoint:string,data:any)=>{
   }
   return functions.httpsCallable(endpoint)(data);
 }
+
+export const httpsCfGet = async(endpoint:string,query?:string)=>{
+  const q = query ? "?" + query : "";
+  return (await fetch(`https://asia-northeast1-bpimv2.cloudfunctions.net/${endpoint}${q}`)).json().then(t=>{
+    return t;
+  }).catch(e=>{
+    console.log(e);
+    return null;
+  });
+}
