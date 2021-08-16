@@ -75,7 +75,7 @@ th.MuiTableCell-root.MuiTableCell-head.auto,td.auto{
 
 .MuiTableBody-root.rival .MuiTableRow-root:not(.rivalBody) th.MuiTableCell-root.MuiTableCell-head:first-child,
 .MuiTableBody-root.rival .MuiTableRow-root:not(.rivalBody) td.MuiTableCell-root.MuiTableCell-body:first-child{
-    padding: 20px 20px !important;
+    padding: 20px 8px !important;
 }
 
 .MuiInputBase-root.MuiInput-root.MuiInput-underline.MuiInputBase-formControl.MuiInput-formControl{
@@ -395,6 +395,10 @@ th.MuiTableCell-root.MuiTableCell-head:first-child{
 
   .heroGridEnd{
     display:block;
+  }
+
+  .AAATableGridItems{
+    font-size:8px !important;
   }
 }
 

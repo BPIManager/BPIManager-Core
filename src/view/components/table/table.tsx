@@ -15,6 +15,8 @@ import MenuIcon from '@material-ui/icons/Menu';
 import CloseIcon from '@material-ui/icons/Close';
 import { AAATableExampleModal } from '../AAATable/example';
 import { AAATableFilterModal } from '../AAATable/filter';
+import { _prefix } from '@/components/songs/filter';
+import { _currentTheme } from '@/components/settings';
 
 interface S {
   [key:string]:any,
@@ -136,7 +138,6 @@ class AAATable extends React.Component<P,S> {
 
   render(){
     const {result,checks,pm,targetLevel,isLoading,dialOpen,isOpenFilterModal,isOpenExampleModal} = this.state;
-
     const actions = [
       { icon:  <FilterListIcon/>, name: 'フィルタ', onClick: ()=>this.handleFilterModal()},
       { icon: <HelpIcon />, name: 'AAA達成表とは?', onClick: ()=>this.handleExampleModal()},
@@ -146,6 +147,7 @@ class AAATable extends React.Component<P,S> {
       <React.Fragment>
         {isLoading && <Loader/>}
         <AdsCard/>
+
         {!isLoading && checks.sort((a,b)=>b-a).map((key:number)=>{
           if(!result[key] || result[key].length === 0){
             return (null);
@@ -204,14 +206,15 @@ class GridItem extends React.Component<{data:CLBody,pm:number[]},{}>{
       return (null);
     }
     return(
-      <Grid item xs={12} sm={4} md={4} lg={4} style={{
+      <Grid className="AAATableGridItems" item xs={6} sm={4} md={4} lg={4} style={{
         textAlign:"center",padding:"15px 0",
         background:!Number.isNaN(data.currentBPI) ? AAATableBgColor(gap) : "#fff",
         textShadow:current >= 100 ? "0px 0px 4px #fff" :"0px 0px 0px",
-        color:current >= 100 ? "#fff" :"#000"
+        color:current >= 100 ? "#fff" :"#000",
+        border:"1px solid " + (_currentTheme() === "light" ? "#fff" : "#222"),
       }}>
         <Grid item xs={12} sm={12} md={12} lg={12}>
-        {data.title}{data.difficulty === "leggendaria" && "(†)"}{data.difficulty === "hyper" && "(H)"}
+        {data.title}{_prefix(data.difficulty)}
         </Grid>
         <Grid container>
           <Grid item xs={6} sm={6} md={6} lg={6}>
