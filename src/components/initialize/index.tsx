@@ -109,9 +109,9 @@ export default class Initialize extends React.Component<{global:any},{show:boole
   }
 
   sinusIridum = async()=>{
-    if(localStorage.getItem("sinusIridum")) return;
+    if(localStorage.getItem("sinusIridum2")) return;
     await this.songsDB._removeItemByDifficulty("Sinus Iridum","4");
-    await this.songsDB.bulkAdd(
+    await this.songsDB.bulkAdd([
     {
        "title":"Sinus Iridum",
        "wr":"-1",
@@ -123,8 +123,8 @@ export default class Initialize extends React.Component<{global:any},{show:boole
        "difficultyLevel":"12",
        "dpLevel":"0",
        "coef":-1
-    });
-    localStorage.setItem("sinusIridum","1");
+    }]);
+    localStorage.setItem("sinusIridum2","1");
     return;
   }
 
