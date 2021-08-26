@@ -64,6 +64,7 @@ export default class Initialize extends React.Component<{global:any},{show:boole
       if(!localStorage.getItem("showLatestSongs")){
         localStorage.setItem("showLatestSongs","true");
       }
+      this.sinusIridum();
       this.removeDeletedSongs();
       const songsAvailable:string[] = await this.songsDB.getAll();
       await this.scoresDB.removeNaNItems();
