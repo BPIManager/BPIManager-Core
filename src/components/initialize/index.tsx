@@ -107,6 +107,26 @@ export default class Initialize extends React.Component<{global:any},{show:boole
     }
   }
 
+  sinusIridum = async()=>{
+    if(localStorage.getItem("sinusIridum")) return;
+    await this.songsDB._removeItemByDifficulty("Sinus Iridum","4");
+    await this.songsDB.bulkAdd(
+    {
+       "title":"Sinus Iridum",
+       "wr":"-1",
+       "avg":"-1",
+       "difficulty":"4",
+       "notes":"1803",
+       "bpm":"128-256",
+       "textage":"28/sinusiri.html?1AC00",
+       "difficultyLevel":"12",
+       "dpLevel":"0",
+       "coef":-1
+    });
+    localStorage.setItem("sinusIridum","1");
+    return;
+  }
+
   render(){
     if(this.state.error){
       return (<Backdrop open>
