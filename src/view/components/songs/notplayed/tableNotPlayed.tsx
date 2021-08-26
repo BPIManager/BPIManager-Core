@@ -114,7 +114,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                     onContextMenu={e => {
                       e.preventDefault();
                     }}
-                    hover role="checkbox" tabIndex={-1} key={row.title + row.difficulty} className={ i % 2 ? "songCell isOdd" : "songCell isEven"}>
+                    hover role="checkbox" tabIndex={-1} key={row.title + row.difficulty + i} className={ i % 2 ? "songCell isOdd" : "songCell isEven"}>
                     {columns.map((column) => {
                       const d = difficultyDiscriminator(row.difficulty);
                       const prefix = d === "hyper" ? "(H)" : d === "leggendaria" ? "(†)" : "";
