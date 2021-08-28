@@ -104,7 +104,7 @@ class AAATable extends React.Component<P,S> {
   changeLevel = async (e:React.ChangeEvent<HTMLInputElement>,)=>{
     if(typeof e.target.value === "string"){
       const targetLevel = Number(e.target.value);
-      const _named = await named(targetLevel);
+      const _named = await named(targetLevel,this.props.data);
       this.setState({targetLevel:targetLevel,isLoading:true});
       return this.setState({result:await getTable(targetLevel,_named),isLoading:false});
     }
