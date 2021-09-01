@@ -152,7 +152,7 @@ export default class statMain {
     return groupedByLevel;
   }
 
-  async eachDaySum(period:number,last?:string|Date,propdata?:any):Promise<perDate[]>{
+  async eachDaySum(period:number,last?:string|Date,propdata?:any,range:number = 10):Promise<perDate[]>{
     const data = propdata || await new scoreHistoryDB().getAll(String(this.targetLevel));
     let eachDaySum:perDate[] = [];
     let eachDayShift:{[key:string]:shiftType[]} = {};
@@ -220,7 +220,7 @@ export default class statMain {
       }
       return 0;
     });
-    return eachDaySum.sort((a,b)=> timeCompare(a.name,b.name)).slice(-10);
+    return eachDaySum.sort((a,b)=> timeCompare(a.name,b.name)).slice(-1 * range);
   }
 
   getBPIShifts = (array:shiftType[])=>{

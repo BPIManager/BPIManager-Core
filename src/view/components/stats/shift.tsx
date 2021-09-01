@@ -21,6 +21,7 @@ class Shift extends React.Component<{intl:any,propdata?:any}&RouteComponentProps
       perDate:[],
       targetLevel:12,
       currentPeriod:4,
+      range:10,
       displayData:[0,1],
       showDisplayDataConfig:false,
       graphLastUpdated:new Date().getTime(),
@@ -33,12 +34,12 @@ class Shift extends React.Component<{intl:any,propdata?:any}&RouteComponentProps
   }
 
   async updateScoreData(newState?:ShiftType){
-    const {currentPeriod,targetLevel} = newState || this.state;
+    const {currentPeriod,targetLevel,range} = newState || this.state;
     const exec = this.props.propdata ? new statMain(targetLevel).setPropData(this.props.propdata) : await new statMain(targetLevel).load();
     //BPI別集計
     this.setState({
       isLoading:false,
-      perDate:await exec.eachDaySum(currentPeriod,undefined,this.props.propdata),
+      perDate:await exec.eachDaySum(currentPeriod,undefined,this.props.propdata,range),
     });
   }
 
@@ -61,6 +62,7 @@ class Shift extends React.Component<{intl:any,propdata?:any}&RouteComponentProps
 
   hasItems = (name:number)=> this.state.displayData.indexOf(name) > -1;
   currentPeriod = (name:number)=> this.state.currentPeriod === name;
+  currentRange = (name:number)=> this.state.range === name;
   /*
   0:更新楽曲数
   1:平均
@@ -86,6 +88,13 @@ class Shift extends React.Component<{intl:any,propdata?:any}&RouteComponentProps
     return this.updateScoreData(newState);
   }
 
+  handleRange = async(name:number)=>{
+    let newState = this.cloneState();
+    newState.range = name;
+    this.setState({range:name});
+    return this.updateScoreData(newState);
+  }
+
   cloneState = ()=> JSON.parse(JSON.stringify(this.state));
 
   render(){
@@ -102,6 +111,11 @@ class Shift extends React.Component<{intl:any,propdata?:any}&RouteComponentProps
       {value:4,label:"日次"},
       {value:5,label:"週次"},
       {value:6,label:"月次"}
+    ];
+    const range = [
+      {value:10,label:"10件"},
+      {value:30,label:"30件"},
+      {value:99999,label:"すべて"}
     ];
     const chartColor = _chartColor();
     const barColor = _chartBarColor("bar");
@@ -120,6 +134,7 @@ class Shift extends React.Component<{intl:any,propdata?:any}&RouteComponentProps
         <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel}/>
         <CheckBoxes title="プライマリグラフの表示項目" hasData={this.hasItems} handleNewData={this.handleItems} config={config}/>
         <CheckBoxes title="表示期間" hasData={this.currentPeriod} handleNewData={this.handlePeriod} config={period}/>
+        <CheckBoxes title="表示日数" hasData={this.currentRange} handleNewData={this.handleRange} config={range}/>
         <Divider style={{margin:"10px 0"}}/>
         {perDate.length > 0 &&
           <div style={{width:"95%",height:"450px",margin:"5px auto"}}>
@@ -166,7 +181,7 @@ class Shift extends React.Component<{intl:any,propdata?:any}&RouteComponentProps
                 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" stroke={chartColor} />
-                <YAxis orientation="left" domain={['dataMin - 0.1', 'dataMax + 0.1']} tickLine={false} axisLine={false} stroke={chartColor}/>
+                <YAxis orientation="left" domain={[dataMin => Math.floor(dataMin) - 0.1, dataMax => Math.ceil(dataMax) + 0.1]} tickLine={false} axisLine={false} stroke={chartColor}/>
                 <Tooltip contentStyle={{color:"#333"}}/>
                 <Line dataKey="shiftedBPI" name={formatMessage({id:"Stats.TotalBPI"})} stroke={lineColor} />
               </LineChart>

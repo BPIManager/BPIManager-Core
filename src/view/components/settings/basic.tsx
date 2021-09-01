@@ -347,7 +347,7 @@ class URLDialog extends React.Component<UP,{url:string}> {
           <DialogContent>
             <DialogContentText>
               <FormattedMessage id="Settings.ChangeDefinitionURL"/>
-              <RefLink color="secondary" href="https://gist.github.com/potakusan/365b8176ee6634e00fb93cdd8e6bf7a9" target="_blank" rel="noopener noreferrer">
+              <RefLink color="secondary" href="https://docs2.poyashi.me/other/def/" target="_blank" rel="noopener noreferrer">
                 <FormattedMessage id="Settings.ChangeDefinitionURL2"/>
               </RefLink>
               <FormattedMessage id="Settings.ChangeDefinitionURL3"/><br/>

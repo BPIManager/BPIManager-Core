@@ -40,7 +40,7 @@ import fbActions from "@/components/firebase/actions";
 import {ReactComponent as Logo} from "@/assets/aix2f-q5h7x.svg";
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import EventNoteIcon from '@material-ui/icons/EventNote';
-import { _currentVersion } from "@/components/settings";
+import { _currentVersion, _traditionalMode } from "@/components/settings";
 import CameraAltIcon from '@material-ui/icons/CameraAlt';
 
 interface navBars {
@@ -413,7 +413,8 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         <div style={{position:"fixed",bottom:"0",zIndex:1000,textAlign:"center",padding:"5px 0",background:"rgba(0,0,0,.8)",backdropFilter:"blur(4px)",color:"#fff",width:"100%",fontSize:"9px"}}>
           {user && user.displayName}&nbsp;
           {(user && user.twitter) && <span>(@{user.twitter})</span>}&nbsp;
-          def:v{_currentVersion()}
+          def:v{_currentVersion()}&nbsp;
+          {_traditionalMode() === 1 && <span>LEGACY</span>}&nbsp;
         </div>
         <ShowSnackBar message={"実行中の処理があるため続行できません"} variant="warning"
             handleClose={this.toggleErrorSnack} open={this.state.errorSnack} autoHideDuration={3000}/>

@@ -47,4 +47,5 @@ export interface ShiftType {
   displayData:number[],
   graphLastUpdated:number,
   currentPeriod:number,
+  range:number,
 }
