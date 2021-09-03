@@ -17,6 +17,7 @@ import { AAATableExampleModal } from '../AAATable/example';
 import { AAATableFilterModal } from '../AAATable/filter';
 import { _prefix } from '@/components/songs/filter';
 import { _currentTheme } from '@/components/settings';
+import bpiCalcuator from '@/components/bpi';
 
 interface S {
   [key:string]:any,
@@ -154,7 +155,10 @@ class AAATable extends React.Component<P,S> {
           }
           return (
             <div key={key}>
-              <div style={{width:"100%",textAlign:"center",background:"#eaeaea",color:"#000",padding:"5px 0",margin:"15px 0 5px 0"}}>{key}</div>
+              <div style={{width:"100%",textAlign:"center",background:"#eaeaea",color:"#000",padding:"5px 0",margin:"15px 0 5px 0",fontWeight:"bold"}}>
+                BPI{key}~{key === 50 ? "" : key+10}&nbsp;
+                ({new bpiCalcuator().rank(key)}位以上)
+              </div>
               <Grid container>
                 {result[key].map((item:CLBody)=><GridItem key={item.title + item.difficulty} data={item} pm={pm}/>)}
               </Grid>
