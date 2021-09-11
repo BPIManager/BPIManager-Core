@@ -13,6 +13,7 @@ const ja = {
   "GlobalNav.Rivals":"ライバル",
   "GlobalNav.Weekly":"ランキング",
   "GlobalNav.compare": "データ比較",
+  "GlobalNav.History": "更新ログ",
   "GlobalNav.AAATable":"AAA達成表",
   "GlobalNav.Tools":"ツール集",
   "GlobalNav.Camera": "BPIカメラ",

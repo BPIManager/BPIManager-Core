@@ -16,7 +16,7 @@ import importJSON from '@/components/import/json';
 import Alert from '@material-ui/lab/Alert/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import { config } from '@/config';
-import { timeCompare } from '@/components/common/timeFormatter';
+import timeFormatter, { timeCompare } from '@/components/common/timeFormatter';
 import Loader from "@/view/components/common/loader";
 import Divider from '@material-ui/core/Divider';
 import AdsCard from '@/components/ad';
@@ -224,7 +224,7 @@ class Index extends React.Component<P&RouteComponentProps,{
 
   render(){
     const spdp = _isSingle() ? "SP" : "DP";
-    const {stateText,errors,isSaving,displayName,isLoading,updatedText} = this.state;
+    const {stateText,errors,isSaving,isLoading} = this.state;
     if(isLoading){
       return (<Loader/>);
     }
@@ -306,20 +306,18 @@ class Index extends React.Component<P&RouteComponentProps,{
                 fullWidth
                 variant="outlined"
                 color="secondary"
-                onClick={()=>this.props.history.push("/songs")}
+                onClick={()=>this.props.history.push("/songs/today")}
                 style={{margin:"5px 0"}}>
-                  楽曲一覧を表示
+                  本日更新した楽曲を表示
               </Button>
-              { ( displayName ) &&
               <Button
                 fullWidth
                 variant="outlined"
                 color="secondary"
-                onClick={()=>window.open(`https://twitter.com/share?text=${updatedText}%0a&url=${config.baseUrl}/u/${displayName}`)}
+                onClick={()=>this.props.history.push("/history/" + timeFormatter(7,new Date()))}
                 style={{margin:"5px 0"}}>
-                  更新をツイート
+                  更新差分を確認
               </Button>
-              }
             </div>
           </Alert>
         }

@@ -2,7 +2,7 @@ import { toMoment } from "@/components/common/timeFormatter";
 import { verArr, clearArr } from "@/view/components/songs/common";
 import { songsList_stateInt } from "@/view/components/songs/played/songsList";
 
-export const defaultState_songsList = (initialBPIRange:string = ""):songsList_stateInt=>{
+export const defaultState_songsList = (initialBPIRange:string = "",defToday:boolean = false):songsList_stateInt=>{
   return {
     isLoading:true,
     filterByName:"",
@@ -29,7 +29,7 @@ export const defaultState_songsList = (initialBPIRange:string = ""):songsList_st
     },
     memo:false,
     showLatestOnly:false,
-    range:0,
+    range:defToday ? 1 : 0,
     page:0,
     filterOpen:false,
     timeRangeOpen:false,

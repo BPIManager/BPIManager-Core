@@ -61,8 +61,8 @@ a {
   color:#777;
 }
 
-th.MuiTableCell-root.MuiTableCell-head:first-child,
-td.MuiTableCell-root.MuiTableCell-body:first-child,
+th.MuiTableCell-root.MuiTableCell-head:first-child:not(.dense),
+td.MuiTableCell-root.MuiTableCell-body:first-child:not(.dense),
 .forceWith th.MuiTableCell-root.MuiTableCell-head {
     padding: 20px 5px !important;
     text-align: center;
@@ -753,3 +753,8 @@ text.react-calendar-heatmap-weekday-label {
 .light.userTabs .MuiTabs-root{
   background:#f1f1f1;
 }
+
+.tableTopDiff{width:35px !important;}
+.MuiTableCell-root.MuiTableCell-body.dense, .textCenter{text-align:center !important;}
+.MuiPagination-ul{flex-wrap:nowrap !important;}
+.denseCont{width: 33%; text-align:center !important;}

@@ -182,3 +182,6 @@ export const blurredBackGround = ()=> (
     backdropFilter: "blur(4px)",marginBottom:"25px"
   }
 );
+
+
+export const historyBgColor = ()=> _currentTheme() === "light" ? "#e2e2e2" : _currentTheme() === "dark" ? "#2f2f2f": "#003961";

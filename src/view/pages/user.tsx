@@ -382,6 +382,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     if(res.showNotes){
       buttons.push({icon:<CommentIcon />,primary:"投稿ノート一覧",secondary:(res.displayName) + "さんが投稿した攻略情報一覧",onClick:()=>this.view(3)});
     }
+
     const themeColor = _currentTheme();
     const url = config.baseUrl + "/u/" + encodeURI(userName);
     const totalRank = new bpiCalcuator().rank(totalBPI,false);

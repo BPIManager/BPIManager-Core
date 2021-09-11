@@ -68,7 +68,8 @@ interface P{
   full:scoreData[],
   updateScoreData:()=>Promise<void>,
   intl:any,
-  isFav:boolean
+  isFav:boolean,
+  defToday?:boolean
 }
 
 const ranges = [{val:0,label:"全期間"},{val:1,label:"本日更新"},{val:2,label:"前日更新"},{val:3,label:"今週更新"},{val:5,label:"期間指定"},{val:4,label:"1ヶ月以上未更新"}]
@@ -79,7 +80,7 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
     super(props);
     const search = new URLSearchParams(props.location.search);
     const initialBPIRange = search.get("initialBPIRange") || undefined;
-    this.state = defaultState_songsList(initialBPIRange);
+    this.state = defaultState_songsList(initialBPIRange,this.props.defToday || false);
     this.updateScoreData = this.updateScoreData.bind(this);
   }
 
@@ -97,6 +98,11 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
       allSongsData:allSongs,
       isLoading:false,
     });
+    if(this.props.defToday){
+      this.setState({
+        scoreData:this.songFilter()
+      });
+    }
   }
 
   componentDidUpdate(prevProps:P){
@@ -320,7 +326,7 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
             <Button
               startIcon={<LinkedCameraIcon/>}
               onClick={this.openCaptureScr} size="small" color="secondary" style={{marginRight:"10px",minWidth:"40px",padding:"5px 6px"}}>
-              キャプチャ
+              共有
             </Button>
             <IconButton
               onClick={this.handleToggleFilterScreen} color="secondary" size="small">

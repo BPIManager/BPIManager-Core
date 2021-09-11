@@ -606,6 +606,7 @@ export default class fbActions{
     const auth = this.authInfo();
     if(!auth) return null;
     const uid = auth.uid;
+    if(!uid) return null;
     const doc = this.setUserCollection().doc(uid);
     return firestore.collection("notes").where("uid","==",doc).orderBy("wroteAt","desc").get();
   }
@@ -620,6 +621,7 @@ export default class fbActions{
     const auth = this.authInfo();
     if(!auth) return null;
     const uid = auth.uid;
+    if(!uid) return null;
     return firestore.collection("notesLiked").where("uid","==",uid).orderBy("likedAt","desc").limit(20).get();
   }
 

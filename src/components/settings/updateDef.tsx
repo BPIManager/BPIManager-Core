@@ -49,8 +49,8 @@ export const updateDefFile = async()=>{
 
           if(t["removed"]){ //削除フラグが立っている場合削除する
             await sdb.removeItem(t["title"]);
-            await scDB.removeSpecificItemAtAllStores(t["title"]);
-            await schDB.removeSpecificItemAtAllStores(t["title"]);
+            await scDB.removeSpecificItemAtAllStores(t["title"],t["difficulty"]);
+            await schDB.removeSpecificItemAtAllStores(t["title"],t["difficulty"]);
             resolve();
           }
 

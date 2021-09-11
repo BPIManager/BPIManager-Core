@@ -39,6 +39,8 @@ export const untilDate = (to:dayjs.Dayjs|string|number) =>{
   return Math.abs(dayjs().diff(to,"d"));
 }
 
+export const toUnixTime = (t:string|dayjs.Dayjs|Date)=>dayjs(t).unix();
+
 export const toDate = (t:string|dayjs.Dayjs|Date)=>dayjs(t).toDate().toString();
 
 export const toMoment = (t:string|Date|dayjs.Dayjs)=>dayjs(t).format("YYYYMMDD");

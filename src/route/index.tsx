@@ -40,6 +40,7 @@ import Camera from '@/view/pages/camera/camera';
 import RedirectMyProfile from '@/view/pages/myprofile';
 import RedirectUserProfile from '@/view/pages/extra/user';
 import Index from '@/view/pages/index';
+import History from '@/view/pages/history';
 
 class Router extends React.Component<{global:any},{}> {
 
@@ -62,7 +63,7 @@ class Router extends React.Component<{global:any},{}> {
                 <AppBar global={global}>
                   <Route path="/" exact render={_props=><Index global={global}/>}/>
                   <Route path="/data" exact render={_props=><Data global={global} updateGlobal={this.globalUpdateScore}/>}/>
-                  <Route path="/songs" exact component={Songs}/>
+                  <Route path="/songs/:today?" exact component={Songs}/>
                   <Route path="/lists" exact component={Lists}/>
                   <Route path="/lists/:listTitle" exact component={ListsBody}/>
                   <Route path="/notPlayed" exact component={NotPlayed}/>
@@ -80,6 +81,7 @@ class Router extends React.Component<{global:any},{}> {
                   <Route path="/redirect/myprofile" exact component={RedirectMyProfile}/>
                   <Route path="/r/u/:uid" exact component={RedirectUserProfile}/>
                   <Route path="/notes" exact component={Note}/>
+                  <Route path="/history/:date?" exact component={History}/>
                   <Route path="/notes/:title/:diff/:single" exact component={NoteIndv}/>
                   <Route path="/ranking/" exact component={RankingSearch}/>
                   <Route path="/ranking/id/:id" exact component={WeeklyOnGoing}/>

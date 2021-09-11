@@ -659,7 +659,7 @@ export const scoreHistoryDB = class extends storageWrapper{
     }
   }
 
-  async getAll(diff:string = "12"):Promise<any[]>{
+  async getAll(diff:string = "12"):Promise<historyData[]>{
     try{
       return await this.scoreHistory.where(
         {storedAt:this.currentStore,isSingle:this.isSingle,difficultyLevel:diff}
@@ -697,6 +697,19 @@ export const scoreHistoryDB = class extends storageWrapper{
       if(!song){return [];}
       return await this.scoreHistory.where(
         {storedAt:this.currentStore,isSingle:this.isSingle,title:song.title,difficulty:difficultyDiscriminator(song.difficulty)}
+      ).toArray().then(t=>t.sort((a,b)=>{
+        return timeCompare(b.updatedAt,a.updatedAt)
+      }));
+    }catch(e){
+      console.error(e);
+      return [];
+    }
+  }
+
+  async _getWithinVersion(title:string,diff:string):Promise<any[]>{
+    try{
+      return await this.scoreHistory.where(
+        {storedAt:this.currentStore,isSingle:this.isSingle,title:title,difficulty:diff}
       ).toArray().then(t=>t.sort((a,b)=>{
         return timeCompare(b.updatedAt,a.updatedAt)
       }));

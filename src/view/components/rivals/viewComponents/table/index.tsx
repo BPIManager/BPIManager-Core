@@ -104,6 +104,7 @@ export default class ScoreTable extends React.Component<Readonly<P>,S>{
                   </TableRow>
                   <TableRow className="rivalBody">
                     <TableCell
+                      className="dense"
                       style={{
                         borderLeft:`4px solid ${diffColor(2,row.myClearState,2)}`,
                         position:"relative"}}
@@ -113,6 +114,7 @@ export default class ScoreTable extends React.Component<Readonly<P>,S>{
                       </span>
                     </TableCell>
                     <TableCell
+                      className="dense"
                       style={{
                         borderLeft:`4px solid ${diffColor(3,row.rivalClearState,3)}`,
                         position:"relative"}}
@@ -122,6 +124,7 @@ export default class ScoreTable extends React.Component<Readonly<P>,S>{
                       </span>
                     </TableCell>
                     <TableCell
+                      className="dense"
                       style={{
                         borderLeft:"0px",
                         position:"relative"}}

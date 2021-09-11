@@ -42,6 +42,7 @@ import LockOpenIcon from '@material-ui/icons/LockOpen';
 import EventNoteIcon from '@material-ui/icons/EventNote';
 import { _currentVersion, _traditionalMode } from "@/components/settings";
 import CameraAltIcon from '@material-ui/icons/CameraAlt';
+import HistoryIcon from '@material-ui/icons/History';
 
 interface navBars {
   to:string,
@@ -179,6 +180,8 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         return "GlobalNav.RivalCompare";
         case "sync":
         return "GlobalNav.Sync";
+        case "history":
+        return "GlobalNav.History";
         case "AAATable":
         return "GlobalNav.AAATable";
         case "tools":
@@ -267,6 +270,11 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
     ]
     const navBarBottom:navBars[] = [
       {
+        to:"/history",
+        id:"GlobalNav.History",
+        icon:<HistoryIcon />
+      },
+      {
         to:"/settings",
         id:"GlobalNav.Settings",
         icon:<SettingsIcon />
@@ -341,8 +349,8 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" style={{flexGrow:1}}>
-              {(page.length === 2 || page[1] === "lists" || page[1] === "notes" || page[1] === "help" || page[1] === "sync" || page[1] === "ranking") && <FormattedMessage id={currentPage()}/>}
-              {(page.length > 2 && page[1] !== "lists" && page[1] !== "notes" && page[1] !== "help" && page[1] !== "sync" && page[1] !== "ranking") && currentPage()}
+              {(page.length === 2 || page[1] === "lists" || page[1] === "notes" || page[1] === "songs" || page[1] === "sync" || page[1] === "ranking" || page[1] === "history") && <FormattedMessage id={currentPage()}/>}
+              {(page.length > 2 && page[1] !== "lists" && page[1] !== "notes" && page[1] !== "songs" && page[1] !== "sync" && page[1] !== "ranking" && page[1] !== "history") && currentPage()}
             </Typography>
             {user && (
               <IconButton

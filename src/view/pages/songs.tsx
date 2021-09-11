@@ -6,7 +6,7 @@ import Loader from '@/view/components/common/loader';
 import AdsCard from '@/components/ad';
 import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
-import {Link as RLink} from "react-router-dom";
+import {Link as RLink, RouteComponentProps, withRouter} from "react-router-dom";
 import { _showLatestSongs } from '@/components/settings';
 import HowToVoteIcon from '@material-ui/icons/HowToVote';
 import Typography from '@material-ui/core/Typography';
@@ -15,15 +15,18 @@ import Divider from '@material-ui/core/Divider';
 interface S {
   full:scoreData[],
   isLoading:boolean,
+  defToday:boolean,
 }
 
-export default class Songs extends React.Component<{},S> {
+class Songs extends React.Component<RouteComponentProps,S> {
 
-  constructor(props:Object){
+  constructor(props:RouteComponentProps){
     super(props);
+    const d = !!(this.props.match.params as any).today || false;
     this.state ={
       full:[],
-      isLoading:true
+      isLoading:true,
+      defToday:d,
     }
     this.updateScoreData = this.updateScoreData.bind(this);
   }
@@ -67,9 +70,11 @@ export default class Songs extends React.Component<{},S> {
     }
     return (
       <div>
-        <SongsList isFav={false} title="Songs.title" full={this.state.full} updateScoreData={this.updateScoreData}/>
+        <SongsList isFav={false} title="Songs.title" full={this.state.full} updateScoreData={this.updateScoreData} defToday={this.state.defToday}/>
         <AdsCard/>
       </div>
     );
   }
 }
+
+export default withRouter(Songs);
