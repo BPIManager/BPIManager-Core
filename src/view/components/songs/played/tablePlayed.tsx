@@ -8,7 +8,7 @@ import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 
 import {scoreData, songData} from "@/types/data";
-import { _prefix } from "@/components/songs/filter";
+import { _prefix, genTitle } from "@/components/songs/filter";
 import DetailedSongInformation from "../detailsScreen";
 import { diffColor, behindScore, bp } from "../common";
 import _djRank from "@/components/common/djRank";
@@ -29,7 +29,7 @@ const columns = [
 interface P{
   data:scoreData[],
   mode:number,
-  allSongsData:{[key:string]:songData}
+  allSongsData:Map<String,songData>
   updateScoreData:(row:songData)=>void,
   page:number,
   handleChangePage:(_e:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number)=>void
@@ -63,7 +63,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
     return this.setState({
       isOpen:!this.state.isOpen,
       FV:0,
-      currentSongData:(row ? this.props.allSongsData[row.title + _prefix(row.difficulty)] : null) as songData,
+      currentSongData:(row ? this.props.allSongsData.get(genTitle(row.title,row.difficulty)) : null) as songData,
       currentScoreData:(row ? row : null) as scoreData
     });
   }
@@ -102,7 +102,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
             <TableBody>
               {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:scoreData,i:number) => {
                 const prefix = _prefix(row.difficulty);
-                const f = this.props.allSongsData[row.title + prefix];
+                const f = this.props.allSongsData.get(row.title + prefix);
                 if(!f){return (null);}
                 const max  = f["notes"] * 2;
                 return (
@@ -135,7 +135,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                                   </span>
                                 }
                                 {(mode > 0 && mode < 6) &&
-                                  <span>-{behindScore(row,this.props.allSongsData,mode)}</span>
+                                  <span>-{behindScore(row,f,mode)}</span>
                                 }
                               </span>
                             }

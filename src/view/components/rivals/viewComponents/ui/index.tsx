@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { FormattedMessage, injectIntl } from "react-intl";
-import { songsDB } from "@/components/indexedDB";
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
 import BackspaceIcon from '@material-ui/icons/Backspace';
@@ -9,8 +8,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Table from "../table";
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import { _prefix, _prefixFromNum } from '@/components/songs/filter';
-import { _isSingle } from '@/components/settings';
+import { genTitle } from '@/components/songs/filter';
 import OrderControl from "@/view/components/songs/common/orders";
 import Button from '@material-ui/core/Button';
 import FilterListIcon from '@material-ui/icons/FilterList';
@@ -27,12 +25,13 @@ import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
 import Link from '@material-ui/core/Link';
 import { songFuncWithRival } from '@/components/songs/func/withRival';
+import songsAPI from '@/components/songs/api';
 
 interface stateInt {
   isLoading:boolean,
   filterByName:string,
   scoreData:withRivalData[],
-  allSongsData:{[key:string]:songData},
+  allSongsData:Map<String,songData>,
   options:{[key:string]:string[]},
   page:number,
   mode:number,
@@ -70,7 +69,7 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
         pm:["+","-"],
       },
       filterOpen:false,
-      allSongsData:{},
+      allSongsData:new Map(),
       page:0,
       orderTitle:11,
       orderMode:1,
@@ -89,12 +88,7 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
   handleChangePage = (_e:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number):void => this.setState({page:newPage});
 
   async componentDidMount(){
-    let allSongs:{[key:string]:songData} = {};
-    const allSongsRawData:songData[] = await new songsDB().getAll(_isSingle());
-    for(let i =0; i < allSongsRawData.length; ++i){
-      const prefix:string = _prefixFromNum(allSongsRawData[i]["difficulty"]);
-      allSongs[allSongsRawData[i]["title"] + prefix] = allSongsRawData[i];
-    }
+    let allSongs = (await new songsAPI().load()).all();
     let newState = this.clone();
     newState.allSongsData = allSongs;
     this.setState({
@@ -143,7 +137,7 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
     const sFunc = new songFuncWithRival();
 
     return this.props.full.filter((data)=>{
-      const _f = f[data.title + _prefix(data["difficulty"])];
+      const _f = f.get(genTitle(data.title,data["difficulty"]));
       const pm:string[] = this.state.options.pm;
       if(!_f){return false;}
       sFunc.setData(data);
@@ -165,8 +159,8 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
   sortedData = ():withRivalData[]=>{
     const {scoreData,orderMode,orderTitle,allSongsData} = this.state;
     const res = scoreData.sort((a,b)=> {
-      const aFull = allSongsData[a.title + _prefix(a.difficulty)];
-      const bFull = allSongsData[b.title + _prefix(b.difficulty)];
+      const aFull = allSongsData.get(genTitle(a.title,a.difficulty));
+      const bFull = allSongsData.get(genTitle(b.title,b.difficulty));
       if(aFull && bFull){
         const aMax = aFull["notes"] * 2;
         const bMax = bFull["notes"] * 2;

@@ -103,6 +103,7 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
     const chartColor = _chartColor();
     const barColor = _chartBarColor("bar");
     const lineColor = _chartBarColor("line");
+    const linePrev = _chartBarColor("YOU");
 
     const compareLastVer = ()=>{
       if(!lastVerTotalBPI){ return "0";}
@@ -123,6 +124,7 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
     }
     const rankPer = Math.round(totalRank / new bpiCalcuator().getTotalKaidens() * 1000000) / 10000;
     const social = JSON.parse(localStorage.getItem("social") || "{}");
+    console.log(groupedByLevel);
     const url = config.baseUrl + ((social && social.displayName) ? "/u/" + social.displayName : "");
     return (
       <Container fixed  style={{padding:0}}>
@@ -168,7 +170,7 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
                         <Legend/>
                         <ReferenceLine x={totalBPI} stroke={barColor} isFront={true} />
                         <Line type="monotone" dataKey={"☆" + targetLevel} stroke={lineColor} activeDot={{ r: 8 }} />
-                        {/*<Line type="monotone" dataKey={"☆" + targetLevel + "(前作)"} stroke={linePrev} activeDot={{ r: 8 }} />*/}
+                        <Line type="monotone" dataKey={"☆" + targetLevel + "(前作)"} stroke={linePrev} activeDot={{ r: 8 }} />
                       </LineChart>
                   </ResponsiveContainer>
                 </div>

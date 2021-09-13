@@ -118,6 +118,7 @@ export default class Compare extends React.Component<P,S> {
             </TableRow>
             <TableRow className="rivalBody">
               <TableCell
+                className="dense"
                 style={{
                   borderLeft:`4px solid ${coloring(0)}`,
                   position:"relative"}}
@@ -127,6 +128,7 @@ export default class Compare extends React.Component<P,S> {
                 </span>
               </TableCell>
               <TableCell
+                className="dense"
                 style={{
                   borderLeft:`4px solid ${coloring(1)}`,
                   position:"relative"
@@ -137,6 +139,7 @@ export default class Compare extends React.Component<P,S> {
                 </span>
               </TableCell>
               <TableCell
+                className="dense"
                 style={{
                   borderLeft:`4px solid ${coloring(2)}`,
                   color:row.exScore - row.compareData >= 0 ? "#00b8ff" : "#ff0000",

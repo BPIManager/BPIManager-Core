@@ -8,7 +8,7 @@ interface daysGrp {[key:string]:number};
 class historyExec {
   private data:historyData[] = [];
 
-  private classified:any = {};
+  private classified:Map<String,historyData[]> = new Map();
   private result:historyDataWithLastScore[] = [];
 
   async load(propdata:historyData[]|null = null){
@@ -22,7 +22,6 @@ class historyExec {
     if(!this.data) return [];
     this.classifyBySongs().addLastScore();
     this.result = this.sort(this.result).reverse() as historyDataWithLastScore[];
-    this.destructItem("classified");
     return this.result;
   }
 
@@ -33,22 +32,26 @@ class historyExec {
   classifyBySongs(){
     this.sort(this.data).map((item:historyData)=>{
       let target = item["title"] + item["difficulty"];
-      if(!this.classified[target]) this.classified[target] = [];
-      this.classified[target].push(item);
+      let m = this.classified.get(target);
+      if(!m || m.length === 0){
+        m = [];
+      }
+      m.push(item);
+      this.classified.set(target,m);
+      return 0;
     });
     return this;
   }
 
-  addLastScore(){
-    return Object.keys(this.classified).map((key:string)=>{
-      this.classified[key].map((item:historyData,i:number)=>{
+  addLastScore():this{
+    this.classified.forEach((group)=>{
+      group.map((item:historyData,i:number)=>{
         const getCont = (target:"exScore"|"BPI"):number=>{
-
           if(i === 0){
             if(target === "exScore") return 0;
             if(target === "BPI") return -15;
           }
-          return this.classified[key][i-1][target];
+          return group[i-1][target];
         }
         const lastScore = getCont("exScore");
         const lastBPI = getCont("BPI");
@@ -57,8 +60,10 @@ class historyExec {
           lastBPI:lastBPI
         });
         this.result.push(cont);
+        return 0;
       })
-    })
+    });
+    return this;
   }
 
   getUpdateDays():IDays[]{
@@ -79,14 +84,10 @@ class historyExec {
     return groups;
   },{})
 
-  destructItem = (item:"data"|"classified")=> this[item] = null;
-
   // 新規スコア以外を表示
   showExceptForNewRecords = (f:historyDataWithLastScore)=>{
     return f.lastScore !== 0;
   }
-
-
 
 }
 

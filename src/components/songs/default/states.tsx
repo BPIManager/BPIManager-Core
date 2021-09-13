@@ -7,7 +7,7 @@ export const defaultState_songsList = (initialBPIRange:string = "",defToday:bool
     isLoading:true,
     filterByName:"",
     scoreData:[],
-    allSongsData:{},
+    allSongsData:new Map(),
     mode:0,
     options:{
       level:["11","12"],

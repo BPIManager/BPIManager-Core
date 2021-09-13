@@ -28,6 +28,15 @@ export const _prefixWithPS = (diff:string,isSingle:boolean)=>{
   return isSingle ? `(SP${suffix})` : `(DP${suffix})`;
 }
 
+// title + diff型のキーを生成する際に、_prefix, _prefixFromNum のラッパーとして使用
+export const genTitle = (title:string,diff:string)=> {
+  if(isNaN(Number(diff))){
+    return title + _prefix(diff);
+  }
+  return title + _prefixFromNum(diff);
+}
+
+//Deprecated
 export const _prefix = (diff:string):string=> diff === "hyper" ? "(H)" : diff === "leggendaria" ? "(†)" : "";
 export const _prefixFull = (diff:string):string=> diff === "hyper" ? "H" : diff === "leggendaria" ? "L" : "A";
 export const _prefixFullNum = (diff:string):string=> diff === "3" ? "H" : diff === "10" ? "L" : "A";

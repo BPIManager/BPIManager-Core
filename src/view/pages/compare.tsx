@@ -16,6 +16,7 @@ import { compareData } from '@/types/compare';
 import { scoreData } from '@/types/data';
 import OrderControl from "@/view/components/songs/common/orders";
 import { timeCompare } from '@/components/common/timeFormatter';
+import songsAPI from '@/components/songs/api';
 
 interface S {
   [key: string]: any,
@@ -147,12 +148,13 @@ class Compare extends React.Component<{intl:any},S> {
   }
 
   async dataHandler(newState:S = this.state):Promise<void>{
+    console.time("a");
     let result:compareData[] = [];
     const f = newState.compareFrom;
     const t = newState.compareTo;
     const isSingle = _isSingle();
     const scores = new scoresDB(isSingle,f);
-    const sdb = new songsDB();
+    const sdb = await new songsAPI().load();
     const calc = new bpiCalcuator();
     const fData = await scores.getSpecificVersionAll();
     const goalBPI = _goalBPI(), goalPerc = _goalPercentage();
@@ -161,11 +163,11 @@ class Compare extends React.Component<{intl:any},S> {
       let tScore = 0;
       if(fData[i]["currentBPI"] === Infinity){continue;}
       const tData = await scores.getItem(fData[i]["title"],fData[i]["difficulty"],t,isSingle);
-      const songData = await sdb.getOneItemIsSingle(fData[i]["title"],fData[i]["difficulty"]);
-      if(!songData[0]){continue;}
-      const max = songData[0]["notes"] * 2;
-      calc.setData(songData[0]["notes"] * 2,songData[0]["avg"],songData[0]["wr"]);
-      calc.setCoef(songData[0]["coef"] || -1);
+      const songData = sdb.get(sdb.genTitle(fData[i]["title"],fData[i]["difficulty"]));
+      if(!songData){continue;}
+      const max = songData["notes"] * 2;
+      calc.setData(songData["notes"] * 2,songData["avg"],songData["wr"]);
+      calc.setCoef(songData["coef"] || -1);
       const percentager = (exScore:number):number =>{
         return Math.ceil(exScore / max * 10000) / 100;
       }
@@ -174,18 +176,18 @@ class Compare extends React.Component<{intl:any},S> {
         tScore = 0;
       }else{
         tScore = displayMode === "exScore" ? tData[0]["exScore"] :
-        displayMode === "bpi" ? calc.setPropData(songData[0],tData[0]["exScore"],isSingle) :
+        displayMode === "bpi" ? calc.setPropData(songData,tData[0]["exScore"],isSingle) :
         displayMode === "percentage" ? percentager(tData[0]["exScore"]) : 0;
       }
       if(t === "WR"){
-        tScore = displayMode === "exScore" ? songData[0]["wr"] :
+        tScore = displayMode === "exScore" ? songData["wr"] :
         displayMode === "bpi" ? 100 :
-        displayMode === "percentage" ? percentager(songData[0]["wr"]) : 0;
+        displayMode === "percentage" ? percentager(songData["wr"]) : 0;
       }
       if(t === "AVERAGE"){
-        tScore = displayMode === "exScore" ? songData[0]["avg"] :
+        tScore = displayMode === "exScore" ? songData["avg"] :
         displayMode === "bpi" ? 0 :
-        displayMode === "percentage" ? percentager(songData[0]["avg"]) : 0;
+        displayMode === "percentage" ? percentager(songData["avg"]) : 0;
       }
       if(t === "BPI"){
         tScore = displayMode === "exScore" ? calc.calcFromBPI(goalBPI,true) :
@@ -193,8 +195,8 @@ class Compare extends React.Component<{intl:any},S> {
         displayMode === "percentage" ? percentager(calc.calcFromBPI(goalBPI,true)) : 0;
       }
       if(t === "PERCENTAGE"){
-        tScore = displayMode === "exScore" ? Math.ceil(songData[0]["notes"] * 2 * goalPerc / 100) :
-        displayMode === "bpi" ? calc.setPropData(songData[0],Math.ceil(songData[0]["notes"] * 2 * goalPerc / 100),isSingle) :
+        tScore = displayMode === "exScore" ? Math.ceil(songData["notes"] * 2 * goalPerc / 100) :
+        displayMode === "bpi" ? calc.setPropData(songData,Math.ceil(songData["notes"] * 2 * goalPerc / 100),isSingle) :
         displayMode === "percentage" ? goalPerc : 0;
       }
       const percentage = percentager(fData[i]["exScore"]);
@@ -205,7 +207,7 @@ class Compare extends React.Component<{intl:any},S> {
       ) / 10000)
       result.push({
         title:fData[i]["title"],
-        songData: songData[0],
+        songData: songData,
         scoreData: fData[i],
         difficulty:fData[i]["difficulty"],
         difficultyLevel:fData[i]["difficultyLevel"],
@@ -215,6 +217,7 @@ class Compare extends React.Component<{intl:any},S> {
       });
     }
     if(!this._mounted){return;}
+    console.timeEnd("a");
     return this.setState({full:result,isLoading:false});
   }
 

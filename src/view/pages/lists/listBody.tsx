@@ -1,11 +1,12 @@
 import * as React from 'react';
 import SongsList from '@/view/components/songs/played/songsList';
-import { scoresDB, favsDB, songsDB } from '@/components/indexedDB';
+import { scoresDB, favsDB } from '@/components/indexedDB';
 import { scoreData, songData } from '@/types/data';
-import { difficultyDiscriminator } from '@/components/songs/filter';
+import { difficultyDiscriminator, genTitle } from '@/components/songs/filter';
 import { _currentStore, _isSingle } from '@/components/settings';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { defaultLists, getListsForNobi } from '@/components/lists';
+import songsAPI from '@/components/songs/api';
 
 interface S {
   full:scoreData[],
@@ -35,6 +36,7 @@ class FavBody extends React.Component<{}&RouteComponentProps,S> {
       const full = await getListsForNobi(-num);
       return this.setState({full:full,title:listInfo ? listInfo.title : "List"});
     }
+    const allSongs = (await new songsAPI().load()).all();
     const songs:songData[] = await new favsDB().getAllItemsInAList(num);
     const listInfo = await new favsDB().getListFromNum(num);
     let full:scoreData[] = [];
@@ -46,14 +48,14 @@ class FavBody extends React.Component<{}&RouteComponentProps,S> {
         continue;
       }
       if(res.length === 0){
-        const songData = await new songsDB().getOneItemIsSingle(song.title,song.difficulty);
-        if(songData.length !== 0){
+        const songData = allSongs.get(genTitle(song.title,song.difficulty));
+        if(songData){
           full.push({
             title:song.title,
             clearState:7,
             currentBPI:-15,
             difficulty:d,
-            difficultyLevel:songData[0].difficultyLevel,
+            difficultyLevel:songData.difficultyLevel,
             exScore:0,
             isSingle:_isSingle(),
             storedAt:_currentStore(),

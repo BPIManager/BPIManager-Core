@@ -207,7 +207,7 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
         {isLoading && <Loader/>}
         {!isLoading && (
         <Container>
-          <Grid container direction="row" justify="space-between" spacing={3} className="narrowCards">
+          <Grid container direction="row" justifyContent="space-between" spacing={3} className="narrowCards">
             <Grid item xs={xs} sm={sm} md={md} lg={lg}>
               <Card>
                 <CardContent>

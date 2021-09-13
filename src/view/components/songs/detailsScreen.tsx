@@ -354,6 +354,11 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
   handleMissCount = (e:React.ChangeEvent<HTMLInputElement>)=> this.setState({newMissCount:Number(e.target.value) < 0 ? 0 : Number(e.target.value)});
   handleMemo = (e:React.ChangeEvent<HTMLInputElement>)=> this.setState({hasModifiedMemo:true,newMemo:e.target.value || ""});
 
+  nextBPI = (nextBPI:number,currentScore:number)=>{
+    if(nextBPI < 0) nextBPI = 0;
+    return <span>BPI{nextBPI}まであと&nbsp;{this.calc.calcFromBPI(nextBPI,true) - currentScore}&nbsp;点</span>
+  }
+
   render(){
     const {isOpen,handleOpen,song,score} = this.props;
     const {
@@ -435,9 +440,9 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
               </Typography>
             </Grid>
           </Grid>
-          {!Number.isNaN(nextBPI) && (
+          {(!Number.isNaN(nextBPI) && nextBPI !== Infinity) && (
             <Typography component="p" variant="caption" style={{textAlign:"center",position:"relative",bottom:"7px",fontSize:"10px"}}>
-              BPI{nextBPI}まであと&nbsp;{this.calc.calcFromBPI(nextBPI,true) - currentScore}&nbsp;点
+              {this.nextBPI(nextBPI,currentScore)}
             </Typography>
           )}
           <Divider/>
@@ -451,6 +456,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
                   label={<span style={{fontSize:"13px !important"}}><FormattedMessage id="Details.typeNewScore"/></span>}
                   value={currentScore}
                   onChange={this.handleScoreInput}
+                  onKeyPress={(e)=>{if(e.key === "Enter") e.preventDefault()}}
                 />
               </form>
             </Grid>

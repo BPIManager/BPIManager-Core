@@ -1,4 +1,4 @@
-import { _prefix, lampCSVArray } from "@/components/songs/filter";
+import { lampCSVArray } from "@/components/songs/filter";
 import { B, BPIR } from "./filter";
 import { scoreData, songData } from "@/types/data";
 
@@ -16,10 +16,11 @@ export const diffColor = (i:number,clearState: number,alternative:number = 0):st
   }
 }
 
-export const behindScore = (row:scoreData,allSongsData:{[key:string]:songData},mode:number)=>{
+export const behindScore = (row:scoreData,songData:songData,mode:number)=>{
   try{
     const ghost = [1,2/3,7/9,8/9,17/18,1];
-    const max = allSongsData[row.title + _prefix(row.difficulty)]["notes"] * 2;
+    if(!songData) return 0;
+    const max = songData["notes"] * 2;
     return Math.ceil(max * ghost[mode] - row.exScore)
   }catch(e){
     return;

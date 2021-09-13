@@ -2,7 +2,6 @@ import * as React from 'react';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import { FormattedMessage } from "react-intl";
-import {songsDB} from "@/components/indexedDB";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 import { injectIntl } from "react-intl";
@@ -19,9 +18,8 @@ import {scoreData, songData} from "@/types/data";
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import { _prefix, _prefixFromNum } from '@/components/songs/filter';
 import equal from 'fast-deep-equal'
-import { _isSingle, _showLatestSongs } from '@/components/settings';
+import { _showLatestSongs } from '@/components/settings';
 import Button from '@material-ui/core/Button';
 import { bpmFilter,bpiFilter } from '../common';
 import SongsFilter, { B, BPIR } from '../common/filter';
@@ -37,11 +35,14 @@ import { defaultState_songsList } from '@/components/songs/default/states';
 import LinkedCameraIcon from '@material-ui/icons/LinkedCamera';
 import Captured from './captured';
 
+import songsAPI from '@/components/songs/api';
+import { genTitle } from '@/components/songs/filter';
+
 export interface songsList_stateInt {
   isLoading:boolean,
   filterByName:string,
   scoreData:scoreData[],
-  allSongsData:{[key:string]:songData},
+  allSongsData:Map<String,songData>,
   options:{[key:string]:string[]},
   mode:number,
   range:number,
@@ -87,12 +88,7 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
   handleChangePage = (_e:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number):void => this.setState({page:newPage});
 
   async componentDidMount(){
-    let allSongs:{[key:string]:songData} = {};
-    const allSongsRawData = await new songsDB().getAll(_isSingle());
-    for(let i =0; i < allSongsRawData.length; ++i){
-      const prefix:string = _prefixFromNum(allSongsRawData[i]["difficulty"]);
-      allSongs[allSongsRawData[i]["title"] + prefix] = allSongsRawData[i];
-    }
+    let allSongs = (await new songsAPI().load()).all();
     this.setState({
       scoreData:this.props.full,
       allSongsData:allSongs,
@@ -113,8 +109,9 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
 
   updateScoreData(row:songData):Promise<void>{
     if(row){
-      const allSongsData = Object.assign({},this.state.allSongsData);
-      allSongsData[row["title"] + _prefixFromNum(row["difficulty"])]["memo"] = row["memo"];
+      const allSongsData = this.state.allSongsData;
+      const title = genTitle(row["title"],row["difficulty"]);
+      allSongsData.set(title,row);
       this.setState({
         allSongsData:allSongsData
       })
@@ -150,12 +147,11 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
 
     const sFunc = new songFuncInList(newState);
 
-    if(Object.keys(this.state.allSongsData).length === 0) return [];
+    if(this.state.allSongsData.size === 0) return [];
     return this.props.full.filter((data)=>{
-      const _f = f[data.title + _prefix(data["difficulty"])];
+      const _f = f.get(genTitle(data.title,data["difficulty"]));
 
       sFunc.setData(data);
-
       if(!_f){return false;}
 
       const max = _f["notes"] * 2;
@@ -192,8 +188,9 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
     const {scoreData,orderMode,orderTitle,allSongsData,showLatestOnly} = this.state;
     let s = scoreData;
     let res = scoreData.sort((a,b)=> {
-      const aFull = allSongsData[a.title + _prefix(a.difficulty)];
-      const bFull = allSongsData[b.title + _prefix(b.difficulty)];
+      const aFull = allSongsData.get(genTitle(a.title,a.difficulty));
+      const bFull = allSongsData.get(genTitle(b.title,b.difficulty));
+      if(!aFull || !bFull) return -1;
       switch(orderTitle){
         case 0:
         default:
@@ -232,8 +229,9 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
     });
     if(_showLatestSongs() && orderTitle === 2){
       s = scoreData.filter((item)=>item.currentBPI === Infinity).sort((a,b)=>{
-        const aFull = allSongsData[a.title + _prefix(a.difficulty)];
-        const bFull = allSongsData[b.title + _prefix(b.difficulty)];
+        const aFull = allSongsData.get(genTitle(a.title,a.difficulty));
+        const bFull = allSongsData.get(genTitle(b.title,b.difficulty));
+        if(!aFull || !bFull) return -1;
         return b.exScore / bFull["notes"] * 2 - a.exScore / aFull["notes"] * 2;
       });
       if(showLatestOnly){

@@ -5,7 +5,7 @@ import { _isSingle, _currentStore } from "../settings";
 import { _DiscriminateRanksByNumber } from "../common/djRank";
 import { difficultyDiscriminator, difficultyParser } from "../songs/filter";
 import bpiCalcuator from "../bpi";
-import timeFormatter, { timeCompare } from "../common/timeFormatter";
+import timeFormatter, { timeCompare, isSameDay } from "../common/timeFormatter";
 import dayjs from "dayjs";
 import { distBPMI, BPMDIST, bpmFilter, distSongs, distScores } from "./bpmDist";
 const isSingle = _isSingle();
@@ -68,7 +68,7 @@ export default class statMain {
 
   async updatedAtToday(){
     const scores = await new scoresDB(isSingle, _currentStore()).getAll();
-    return scores.filter((item:scoreData)=>dayjs(item.updatedAt).isSame(new Date(),"day"));
+    return scores.filter((item:scoreData)=>isSameDay(item.updatedAt,new Date()));
   }
 
   async songsByClearState(){
@@ -137,16 +137,17 @@ export default class statMain {
   async groupedByLevel(){
     let bpis = BPITicker;
     let groupedByLevel = [];
-    const allSongsTwelvesBPI = this.groupBy(this.bpiMapper(this.getData(12)));
-    const allSongsElevensBPI = this.groupBy(this.bpiMapper(this.getData(11)));
-    const allSongsTwelvesLastBPI = this.groupBy(this.bpiMapper(this.getData(12,true)));
-    const allSongsElevensLastBPI = this.groupBy(this.bpiMapper(this.getData(11,true)));
+    const exec = (diff:number,isLast:boolean)=>this.groupBy(this.bpiMapper(this.getData(diff,isLast)));
+    const allSongsTwelvesBPI = exec(12,false);
+    const allSongsElevensBPI = exec(11,false);
+    const allSongsTwelvesLastBPI = exec(12,true);
+    const allSongsElevensLastBPI = exec(11,true);
     for(let i = 0; i < bpis.length; ++i){
       let obj:{"name":number,"☆11":number,"☆12":number,"☆11(前作)":number,"☆12(前作)":number} = {"name":bpis[i],"☆11":0,"☆12":0,"☆11(前作)":0,"☆12(前作)":0};
-      obj["☆11"] = allSongsElevensBPI[bpis[i]] ? allSongsElevensBPI[bpis[i]] : 0;
-      obj["☆12"] = allSongsTwelvesBPI[bpis[i]] ? allSongsTwelvesBPI[bpis[i]] : 0;
-      obj["☆11(前作)"] = allSongsElevensLastBPI[bpis[i]] ? allSongsElevensLastBPI[bpis[i]] : 0;
-      obj["☆12(前作)"] = allSongsTwelvesLastBPI[bpis[i]] ? allSongsTwelvesLastBPI[bpis[i]] : 0;
+      obj["☆11"] = allSongsElevensBPI[bpis[i]] || 0;
+      obj["☆12"] = allSongsTwelvesBPI[bpis[i]] || 0;
+      obj["☆11(前作)"] = allSongsElevensLastBPI[bpis[i]] || 0;
+      obj["☆12(前作)"] = allSongsTwelvesLastBPI[bpis[i]] || 0;
       groupedByLevel.push(obj);
     }
     return groupedByLevel;
@@ -315,8 +316,8 @@ export default class statMain {
       }
       return groups;
     },{});
+    const bpi = new bpiCalcuator();
     Object.keys(distByBPM).map((item:string)=>{
-      const bpi = new bpiCalcuator();
       result[item as BPMDIST] = bpi.setSongs(distByBPM[item as BPMDIST],numDistByBPM[item as BPMDIST]);
       return 0;
     });
