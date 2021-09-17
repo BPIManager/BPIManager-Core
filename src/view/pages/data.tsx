@@ -29,6 +29,7 @@ import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
 import LinkIcon from '@material-ui/icons/Link';
 import { getUA } from '@/components/common';
+import { _prefixFromNum, _prefix } from '@/components/songs/filter';
 
 interface P{
   global:any,
@@ -163,7 +164,7 @@ class Index extends React.Component<P&RouteComponentProps,{
       for(let i = 0;i < result.length;++i){
         const calcData = await calc.calc(result[i]["title"],result[i]["difficulty"],result[i]["exScore"]);
         if(calcData.error && calcData.reason){
-          const suffix = result[i]["difficulty"] === "hyper" ? "(H)" : result[i]["difficulty"] === "leggendaria" ? "(†)" : "(A)";
+          const suffix = _prefix(result[i]["difficulty"],true);
           errors.push(result[i]["title"] + suffix + " - " + calcData.reason);
           ++errorOccured;
           continue;

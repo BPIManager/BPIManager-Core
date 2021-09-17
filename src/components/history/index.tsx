@@ -26,7 +26,7 @@ class historyExec {
   }
 
   sort(obj:historyData[]|historyDataWithLastScore[]){
-    return obj.sort((a:historyData|historyDataWithLastScore,b:historyData|historyDataWithLastScore)=> toUnixTime(a.updatedAt) - toUnixTime(b.updatedAt))
+    return obj.sort((a,b)=> toUnixTime(a.updatedAt) - toUnixTime(b.updatedAt))
   }
 
   classifyBySongs(){

@@ -4,7 +4,7 @@ import { songData } from "@/types/data";
 import { songsDB } from "@/components/indexedDB";
 import bpiCalcuator from "@/components/bpi";
 import { _isSingle } from "@/components/settings";
-import { convertClearState } from "@/components/songs/filter";
+import { convertClearState, _prefix } from "@/components/songs/filter";
 import { withRivalData } from "@/components/stats/radar";
 import Loader from "@/view/components/common/loader";
 
@@ -77,7 +77,7 @@ export default class Details extends React.Component<P,{
       {title:"ランプ",my:convertClearState(currentScoreData.myClearState,1,true),rival:convertClearState(currentScoreData.rivalClearState,1,true),isWin:currentScoreData.myClearState - currentScoreData.rivalClearState},
       {title:"最終更新",my:currentScoreData.myLastUpdate,rival:currentScoreData.rivalLastUpdate},
     ]
-    const prefix = currentScoreData.difficulty === "hyper" ? "(H)" : currentScoreData.difficulty === "leggendaria" ? "(†)" : "";
+    const prefix = _prefix(currentScoreData.difficulty);
     return (
       <Dialog open={true} onClose={()=>showDetails(null)} onClick={()=>showDetails(null)}>
         <DialogTitle className="narrowDialogTitle">{currentScoreData.title}{prefix}</DialogTitle>

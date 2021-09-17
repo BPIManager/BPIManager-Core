@@ -16,6 +16,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TablePagination from '@material-ui/core/TablePagination';
 import { scoreData } from '@/types/data';
 import Loader from '../common/loader';
+import { _prefix } from '@/components/songs/filter';
 
 interface scoreByVersion{
   name:string,
@@ -195,7 +196,7 @@ class MyBest extends React.Component<{},S> {
                         </TableHead>
                         <TableBody>
                           {this.apply().slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:scoreData,i:number) => {
-                            const prefix = row.difficulty === "hyper" ? "(H)" : row.difficulty === "leggendaria" ? "(†)" : "";
+                            const prefix = _prefix(row.difficulty);
                             return (
                               <TableRow
                                 hover role="checkbox" tabIndex={-1} key={row.title + row.prefix + i} className={ i % 2 ? "isOdd" : "isEven"}>

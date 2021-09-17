@@ -217,7 +217,9 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
   }
 
   clone = ()=>{
-    return new commonFunc().set(this.state).clone();
+    let m = new commonFunc().set(this.state).clone();
+    m.allSongsData = this.state.allSongsData;
+    return m;
   }
 
   handleModeChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{

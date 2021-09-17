@@ -23,6 +23,16 @@ export default class bpiCalcuator{
   private _allTwelvesLength:number = 0;
   private _allTwelvesBPI:number[] = [];
 
+  setLength(len:number):this{
+    this._allTwelvesLength = len;
+    return this;
+  }
+
+  setBPIs(arr:number[]):this{
+    this._allTwelvesBPI = arr;
+    return this;
+  }
+
   constructor(){
     this.isSingle = _isSingle();
     this.totalKaidens = this.isSingle ? 2645 : 612;

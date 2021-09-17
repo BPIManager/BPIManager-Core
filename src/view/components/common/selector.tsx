@@ -7,7 +7,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
-const difficultiesSelector = [{label:"H",val:"hyper",name:"0"},{label:"A",val:"another",name:"1"},{label:"†",val:"leggendaria",name:"2"}];
+const difficultiesSelector = [{label:"H",val:"hyper",name:"0"},{label:"A",val:"another",name:"1"},{label:"L",val:"leggendaria",name:"2"}];
 const levelsSelector = [{label:"☆11",val:"11",name:"11"},{label:"☆12",val:"12",name:"12"}];
 const pmSelector = [{label:"+",val:"+",name:"+"},{label:"-",val:"-",name:"-"}];
 

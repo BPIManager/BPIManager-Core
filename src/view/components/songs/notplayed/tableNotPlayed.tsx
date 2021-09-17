@@ -9,7 +9,7 @@ import TableRow from "@material-ui/core/TableRow";
 
 import {scoreData, songData} from "@/types/data";
 import DetailedSongInformation from "../detailsScreen";
-import { difficultyDiscriminator } from '@/components/songs/filter';
+import { difficultyDiscriminator, _prefix } from '@/components/songs/filter';
 import { _isSingle,_currentStore } from '@/components/settings';
 
 const columns = [
@@ -117,7 +117,7 @@ export default class SongsTable extends React.Component<Readonly<P>,S>{
                     hover role="checkbox" tabIndex={-1} key={row.title + row.difficulty + i} className={ i % 2 ? "songCell isOdd" : "songCell isEven"}>
                     {columns.map((column) => {
                       const d = difficultyDiscriminator(row.difficulty);
-                      const prefix = d === "hyper" ? "(H)" : d === "leggendaria" ? "(†)" : "";
+                      const prefix = _prefix(d);
                       return (
                         <TableCell key={column.id + prefix}>
                           {row[column.id]}

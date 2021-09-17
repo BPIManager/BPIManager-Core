@@ -9,7 +9,9 @@ import timeFormatter, { timeCompare, isSameDay } from "../common/timeFormatter";
 import dayjs from "dayjs";
 import { distBPMI, BPMDIST, bpmFilter, distSongs, distScores } from "./bpmDist";
 const isSingle = _isSingle();
+
 export const BPITicker = [-20,-10,0,10,20,30,40,50,60,70,80,90,100];
+
 interface shiftType {title:string,bpi:number};
 
 export default class statMain {
@@ -138,18 +140,16 @@ export default class statMain {
     let bpis = BPITicker;
     let groupedByLevel = [];
     const exec = (diff:number,isLast:boolean)=>this.groupBy(this.bpiMapper(this.getData(diff,isLast)));
-    const allSongsTwelvesBPI = exec(12,false);
-    const allSongsElevensBPI = exec(11,false);
-    const allSongsTwelvesLastBPI = exec(12,true);
-    const allSongsElevensLastBPI = exec(11,true);
+
     for(let i = 0; i < bpis.length; ++i){
       let obj:{"name":number,"☆11":number,"☆12":number,"☆11(前作)":number,"☆12(前作)":number} = {"name":bpis[i],"☆11":0,"☆12":0,"☆11(前作)":0,"☆12(前作)":0};
-      obj["☆11"] = allSongsElevensBPI[bpis[i]] || 0;
-      obj["☆12"] = allSongsTwelvesBPI[bpis[i]] || 0;
-      obj["☆11(前作)"] = allSongsElevensLastBPI[bpis[i]] || 0;
-      obj["☆12(前作)"] = allSongsTwelvesLastBPI[bpis[i]] || 0;
+      obj["☆11"] = exec(11,false)[bpis[i]] || 0;
+      obj["☆12"] = exec(12,false)[bpis[i]] || 0;
+      obj["☆11(前作)"] = exec(12,true)[bpis[i]] || 0;
+      obj["☆12(前作)"] = exec(11,true)[bpis[i]] || 0;
       groupedByLevel.push(obj);
     }
+
     return groupedByLevel;
   }
 
@@ -157,6 +157,7 @@ export default class statMain {
     const data = propdata || await new scoreHistoryDB().getAll(String(this.targetLevel));
     let eachDaySum:perDate[] = [];
     let eachDayShift:{[key:string]:shiftType[]} = {};
+
     const sortByDate = (data:historyData[]):{[key:string]:historyData[]}=>{
       return data.reduce((groups:{[key:string]:historyData[]}, item:historyData) => {
         if(item.BPI === Infinity){
@@ -170,6 +171,7 @@ export default class statMain {
         return groups;
       }, {});
     }
+
     const allDiffs = this.objectSort(sortByDate(data));
     const _bpi = new bpiCalcuator();
     const total = (item:historyData[]):number=>{
@@ -201,22 +203,18 @@ export default class statMain {
           lastDay = item;
           return a;
         },[]);
-        _bpi.allTwelvesLength = p.length;
-        _bpi.allTwelvesBPI = p;
-        const avg = _bpi.totalBPI();
+
         const shift = this.getBPIShifts(eachDayShift[item]);
-        _bpi.allTwelvesLength = shift.length;
-        _bpi.allTwelvesBPI = shift;
-        const shiftBPI = _bpi.totalBPI();
         const BPIsArray = getBPIArray(allDiffs[item]);
+
         eachDaySum.push({
           name : item,
           sum : allDiffs[item].length,
-          shiftedBPI:shiftBPI,
+          shiftedBPI:_bpi.setBPIs(shift).setLength(shift.length).totalBPI(),
           max:Math.max(...BPIsArray),
           min:Math.min(...BPIsArray),
           med:this.getMedian(BPIsArray),
-          avg : avg ? avg : Math.round(total(allDiffs[item]) / allDiffs[item].length * 100) / 100
+          avg : _bpi.setBPIs(p).setLength(p.length).totalBPI() || Math.round(total(allDiffs[item]) / allDiffs[item].length * 100) / 100
         });
       }
       return 0;
@@ -322,9 +320,10 @@ export default class statMain {
       return 0;
     });
     return Object.keys(result).reduce((groups:distBPMI[],item:string)=>{
+      const name = item as BPMDIST;
       groups.push({
-        "name":(item as BPMDIST),
-        "BPI":result[item as BPMDIST],
+        "name":name,
+        "BPI":result[name],
       })
       return groups;
     },[]);

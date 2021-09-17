@@ -10,6 +10,7 @@ import { diffColor } from "@/view/components/songs/common";
 import { _currentViewComponents, _traditionalMode } from "@/components/settings";
 import Details from "./modal";
 import { withRivalData } from "@/components/stats/radar";
+import { _prefix } from "@/components/songs/filter";
 
 const columns = [
   { id: "difficultyLevel", label: "☆"},
@@ -80,7 +81,7 @@ export default class ScoreTable extends React.Component<Readonly<P>,S>{
               </TableRow>
             </TableHead>
               {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:withRivalData,i:number) => {
-                const prefix = row.difficulty === "hyper" ? "(H)" : row.difficulty === "leggendaria" ? "(†)" : "";
+                const prefix = _prefix(row.difficulty);
                 const a:number = mode === 0 ? row.rivalEx : mode === 1 ? row.rivalClearState : row.rivalMissCount as number;
                 const b:number = mode === 0 ? row.myEx : mode === 1 ? row.myClearState : row.myMissCount as number;
                 return (

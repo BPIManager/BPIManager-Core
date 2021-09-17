@@ -37,28 +37,28 @@ export const genTitle = (title:string,diff:string)=> {
 }
 
 //Deprecated
-export const _prefix = (diff:string):string=> diff === "hyper" ? "(H)" : diff === "leggendaria" ? "(†)" : "";
+export const _prefix = (diff:string,showAnother:boolean = false):string=> diff === "hyper" ? "[H]" : diff === "leggendaria" ? "[L]" : (showAnother ? "[A]" : "");
 export const _prefixFull = (diff:string):string=> diff === "hyper" ? "H" : diff === "leggendaria" ? "L" : "A";
 export const _prefixFullNum = (diff:string):string=> diff === "3" ? "H" : diff === "10" ? "L" : "A";
 
 export const _prefixFromNum = (difficulty:string,showAnother:boolean = false):string=>{
-  let prefix:string = showAnother ? "(A)" : "";
+  let prefix:string = showAnother ? "[A]" : "";
   if(difficulty === "3" || difficulty === "8"){
-    prefix = "(H)";
+    prefix = "[H]";
   }
   if(difficulty === "10" || difficulty === "11"){
-    prefix = "(†)";
+    prefix = "[L]";
   }
   return prefix;
 }
 
 export const _prefixFromLetters = (difficulty:string,showAnother:boolean = false):string=>{
-  let prefix:string = showAnother ? "(A)" : "";
+  let prefix:string = showAnother ? "[A]" : "";
   if(difficulty === "HYPER"){
-    prefix = "(H)";
+    prefix = "[H]";
   }
   if(difficulty === "LEGGENDARIA"){
-    prefix = "(†)";
+    prefix = "[L]";
   }
   return prefix;
 }

@@ -13,7 +13,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import { songData } from '@/types/data';
 import { DiffsTable } from '@/view/components/songs/songRivals';
 import { datasets, rivalShow } from "@/components/rivals/letters";
-import { _prefixFromNum } from '@/components/songs/filter';
+import { _prefixFromNum, _prefix } from '@/components/songs/filter';
 
 interface S {
   rowsPerPage:number,
@@ -94,7 +94,7 @@ export default class LettersTable extends React.Component<P,S> {
               </TableRow>
             </TableHead>
               {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:any,i:number) => {
-                const prefix = row.difficulty === "hyper" ? "(H)" : row.difficulty === "leggendaria" ? "(†)" : "";
+                const prefix = _prefix(row.difficulty);
                 return (
                 <TableBody className="rival" key={row.title + i} onClick={()=>this.handleOpen(row)}>
                   <TableRow
