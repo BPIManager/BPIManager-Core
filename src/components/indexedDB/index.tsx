@@ -907,9 +907,6 @@ export const songsDB = class extends storageWrapper{
   }
 
   validateCoef = (coef = -1):number=>{
-    if(coef < 0.8 && coef !== -1){
-      return 0.88;
-    }
     return coef;
   }
 
