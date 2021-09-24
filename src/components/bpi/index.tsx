@@ -11,13 +11,14 @@ export default class bpiCalcuator{
   private isSingle: number;
   private totalKaidens: number;
   private propData:songData[]|null = null;
+  private newcoef = 1.175;
 
   private m:number = 1;
   private s:number = 0;
   private k:number = 0;
   private z:number = 0;
   private traditionalMode = _traditionalMode();
-  private powCoef:number = this.traditionalMode === 1 ? 1.5 : 1.175;
+  private powCoef:number = this.traditionalMode === 1 ? 1.5 : this.newcoef;
   private pgf = (j:number):number=> j === this.m ? this.m * 0.8 : 1 + ( j / this.m - 0.5 ) / ( 1 - j / this.m );
 
   private _allTwelvesLength:number = 0;
@@ -35,20 +36,20 @@ export default class bpiCalcuator{
 
   constructor(){
     this.isSingle = _isSingle();
-    this.totalKaidens = this.isSingle ? 2645 : 612;
+    this.totalKaidens = this.isSingle ? 2352 : 612;
   }
 
   setTraditionalMode(s:number){
     this.traditionalMode = s;
-    this.powCoef = this.traditionalMode === 1 ? 1.5 : 1.175;
+    this.powCoef = this.traditionalMode === 1 ? 1.5 : this.newcoef;
     return;
   }
 
   defaultCoef(){
-    return this.traditionalMode === 1 ? 1.5 : 1.175;
+    return this.traditionalMode === 1 ? 1.5 : this.newcoef;
   }
 
-  setCoef(coef:number = 1.175){
+  setCoef(coef:number = this.newcoef){
     if(this.traditionalMode === 1){
       this.powCoef = this.defaultCoef();
       return;
@@ -114,8 +115,7 @@ export default class bpiCalcuator{
       this.k = this.propData[0]["avg"];
       this.z = this.propData[0]["wr"];
       this.m = this.propData[0]["notes"] * 2;
-      if(this.propData[0]["coef"] && this.propData[0]["coef"] > 0 && this.propData[0]["difficultyLevel"] === "12"
-      && this.propData[0]["dpLevel"] === "0"){
+      if(this.propData[0]["coef"] && this.propData[0]["coef"] > 0 && this.propData[0]["dpLevel"] === "0"){
         this.setCoef(this.propData[0]["coef"]);
       }else{
         this.setCoef();

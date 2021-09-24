@@ -260,7 +260,7 @@ class Settings extends React.Component<P,S> {
                 <RefLink component="a" onClick={this.toggleURLDialog} color="secondary" ><FormattedMessage id="Settings.defFileURLButton"/></RefLink>
               </Typography>
               <Typography variant="caption" display="block">
-                <RefLink color="secondary" href="https://github.com/potakusan/bpim-score-repo">定義ファイルに誤りなどを発見した場合、GitHubにてプルリクエストを送信することができます。</RefLink>
+                <RefLink color="secondary" href="https://github.com/BPIManager/BPIM-Scores/issues/">定義ファイルに誤りを発見した場合、こちらからお知らせください。</RefLink>
               </Typography>
               {isURLDialogOpen && <URLDialog isDialogOpen={isURLDialogOpen} exec={this.changeDefinitionURL} close={this.toggleURLDialog}/>}
               <Divider style={{margin:"10px 0"}}/>
