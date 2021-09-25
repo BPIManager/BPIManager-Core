@@ -113,21 +113,21 @@ export default class Initialize extends React.Component<{global:any},{show:boole
     await this.songsDB.bulkAdd([
     {
        "title":"Sinus Iridum",
-       "wr":"-1",
-       "avg":"-1",
+       "wr":"3430",
+       "avg":"2353",
        "difficulty":"4",
        "notes":"1803",
        "bpm":"128-256",
        "textage":"28/sinusiri.html?1AC00",
        "difficultyLevel":"12",
        "dpLevel":"0",
-       "coef":-1
+       "coef":0.94442
     },
     {
        "title":"Sinus Iridum",
        "difficulty":"3",
-       "wr":"-1",
-       "avg":"-1",
+       "wr":"2172",
+       "avg":"1817",
        "notes":"1101",
        "bpm":"128-256",
        "textage":"28/sinusiri.html?1HB00",
