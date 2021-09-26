@@ -12,7 +12,7 @@ import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import {Link as RefLink, Collapse, Avatar, Chip, Menu, MenuItem} from '@material-ui/core/';
+import {Link as RefLink, Collapse, Avatar, Chip} from '@material-ui/core/';
 import LibraryMusicIcon from "@material-ui/icons/LibraryMusic";
 import TrendingUpIcon from "@material-ui/icons/TrendingUp";
 import SettingsIcon from "@material-ui/icons/Settings";
@@ -98,8 +98,6 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
   isOpenSocial:boolean,
   errorSnack:boolean,
   user:any,
-  openMenu:boolean,
-  anchorEl:any
 }>{
 
   constructor(props:{global:any,classes:any,theme:any,children:any} & HideOnScrollProps&RouteComponentProps){
@@ -111,8 +109,6 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
       isOpenSocial: false,
       errorSnack:false,
       user:null,
-      openMenu:false,
-      anchorEl:null
     }
   }
 
@@ -153,10 +149,8 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
   handleClickSocial = ()=>this.setState({isOpenSocial:!this.state.isOpenSocial});
   toggleErrorSnack = ()=> this.setState({errorSnack:!this.state.errorSnack});
 
-  handleMenu = (event:React.MouseEvent<HTMLElement>)=> this.setState({openMenu:!this.state.openMenu,anchorEl:event.currentTarget})
-
   render(){
-    const {isOpen,isOpenSongs,isOpenMyStat,isOpenSocial,user,openMenu,anchorEl} = this.state;
+    const {isOpen,isOpenSongs,isOpenMyStat,isOpenSocial,user} = this.state;
     const page = this.props.location.pathname.split("/");
     const currentPage = ()=>{
       switch(page[1]){
@@ -354,7 +348,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
             </Typography>
             {user && (
               <IconButton
-                onClick={this.handleMenu}
+                onClick={(_e)=>{history.push("/sync/settings");}}
                 color="inherit"
               >
                 <img src={user.photoURL ? user.photoURL.replace("_normal","") : "noimage"} style={{width:"32px",height:"32px",borderRadius:"100%"}}
@@ -375,23 +369,6 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
                 color="primary"
               />
             )}
-            <Menu
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={openMenu}
-              onClose={this.handleMenu}
-            >
-              <MenuItem style={{fontSize:"14px"}} onClick={(e)=>{history.push("/sync/settings");this.handleMenu(e);}}>Sync</MenuItem>
-              <MenuItem style={{fontSize:"14px"}} onClick={(e)=>{new fbActions().logout();this.handleMenu(e);this.setState({user:null})}}>ログアウト</MenuItem>
-            </Menu>
           </Toolbar>
         </AppBar>
         <nav className={classes.drawer}>

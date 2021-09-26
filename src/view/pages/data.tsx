@@ -29,7 +29,7 @@ import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
 import LinkIcon from '@material-ui/icons/Link';
 import { getUA } from '@/components/common';
-import { _prefixFromNum, _prefix } from '@/components/songs/filter';
+import { _prefix } from '@/components/songs/filter';
 
 interface P{
   global:any,

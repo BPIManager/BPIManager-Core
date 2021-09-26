@@ -6,6 +6,9 @@ import Backdrop from "@material-ui/core/Backdrop";
 import { _currentDefinitionURL } from '../settings';
 import fbActions from '../firebase/actions';
 import Loader from '@/view/components/common/loader';
+import { songData } from '@/types/data';
+import bpiCalcuator from '../bpi';
+import { difficultyParser } from '../songs/filter';
 
 export default class Initialize extends React.Component<{global:any},{show:boolean,error:boolean,errorMessage:string,consoleMes:string,p:number}>{
   private songsDB = new songsDB();
@@ -67,8 +70,8 @@ export default class Initialize extends React.Component<{global:any},{show:boole
       this.sinusIridum();
       this.removeDeletedSongs();
       const songsAvailable:string[] = await this.songsDB.getAll();
-      await this.scoresDB.removeNaNItems();
-      await this.scoreHistoryDB.removeNaNItems();
+      this.scoresDB.removeNaNItems();
+      this.scoreHistoryDB.removeNaNItems();
 
       if(songsAvailable.length > 0){
         return this.setState({show:false});
@@ -109,32 +112,51 @@ export default class Initialize extends React.Component<{global:any},{show:boole
   }
 
   sinusIridum = async()=>{
-    await this.songsDB.removeItem("Sinus Iridum");
-    await this.songsDB.bulkAdd([
-    {
+    if(localStorage.getItem("sinusiridum_mod")) return;
+    const another:songData = {
        "title":"Sinus Iridum",
-       "wr":"3430",
-       "avg":"2353",
+       "wr":3430,
+       "avg":2353,
+       "notes":1803,
        "difficulty":"4",
-       "notes":"1803",
        "bpm":"128-256",
        "textage":"28/sinusiri.html?1AC00",
        "difficultyLevel":"12",
        "dpLevel":"0",
-       "coef":0.94442
-    },
-    {
+       "coef":0.94442,
+       "updatedAt":timeFormatter(0)
+    };
+    const hyper:songData = {
        "title":"Sinus Iridum",
        "difficulty":"3",
-       "wr":"2172",
-       "avg":"1817",
-       "notes":"1101",
+       "wr":2172,
+       "avg":1817,
+       "notes":1101,
        "bpm":"128-256",
        "textage":"28/sinusiri.html?1HB00",
        "difficultyLevel":"11",
        "dpLevel":"0",
-       "coef":-1
-    }]);
+       "coef":-1,
+       "updatedAt":timeFormatter(0)
+    };
+    const bpi = new bpiCalcuator();
+    const modify = async(type:0|1)=>{
+      try{
+        const array = type === 0 ? await this.scoresDB.getSpecificSong("Sinus Iridum") : await this.scoreHistoryDB.getSpecificSong("Sinus Iridum");
+        for(let i =0; i < array.length; ++i){
+          const t = array[i];
+          const newBPI = await bpi.setIsSingle(t.isSingle).calc(t.title,difficultyParser(t.difficulty,t.isSingle),t.exScore);
+          type === 0 ? this.scoresDB.modifyBPI(t,newBPI) : this.scoreHistoryDB.modifyBPI(t,newBPI);
+        }
+      }catch(e){
+        console.log(e);
+      }
+    }
+    await this.songsDB.removeItem("Sinus Iridum");
+    await this.songsDB.bulkAdd([another,hyper]);
+    modify(0);
+    modify(1);
+    localStorage.setItem("sinusiridum_mod","1");
     return;
   }
 

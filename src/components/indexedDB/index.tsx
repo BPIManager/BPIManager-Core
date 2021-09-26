@@ -3,7 +3,7 @@ import {scoreData,songData, rivalScoreData, DBRivalStoreData, historyData} from 
 import timeFormatter, { timeCompare } from "../common/timeFormatter";
 import {_currentStore,_isSingle} from "../settings";
 import {difficultyDiscriminator, difficultyParser, diffsUpperCase} from "../songs/filter";
-import bpiCalcuator from "../bpi";
+import bpiCalcuator, { B } from "../bpi";
 import {noimg, alternativeImg} from "../common/"
 import { DBLists } from "../../types/lists";
 
@@ -544,12 +544,16 @@ export const scoresDB = class extends storageWrapper{
     return await this.scores.where({title:title}).delete();
   }
 
+  getSpecificSong = (songTitle:string)=>this.scores.where("title").equals(songTitle).toArray();
+  modifyBPI = (t:songData,currentBPI:B)=> this.scores.where("[title+difficulty+storedAt+isSingle]").equals([t.title,t.difficulty,t.storedAt,t.isSingle]).modify(
+    {currentBPI:!currentBPI.error ? currentBPI.bpi : -15}
+  );
+
   async recalculateBPI(updatedSongs:string[] = []){
     try{
       const self = this;
       this.setCalcClass();
       const array = await this.scores.where("title").notEqual("").toArray();
-      //modify使って書き直したい
       for(let i =0; i < array.length; ++i){
         const t = array[i];
         if(!self.calculator){return;}
@@ -557,9 +561,7 @@ export const scoresDB = class extends storageWrapper{
           continue;
         }
         const bpi = await self.calculator.setIsSingle(t.isSingle).calc(t.title,difficultyParser(t.difficulty,t.isSingle),t.exScore);
-        this.scores.where("[title+difficulty+storedAt+isSingle]").equals([t.title,t.difficulty,t.storedAt,t.isSingle]).modify(
-          {currentBPI:!bpi.error ? bpi.bpi : -15}
-        );
+        this.modifyBPI(t,bpi);
       }
     }catch(e){
       console.log(e);
@@ -757,6 +759,11 @@ export const scoreHistoryDB = class extends storageWrapper{
     return await this.getAcrossVersion(m);
   }
 
+  getSpecificSong = (songTitle:string)=>this.scoreHistory.where("title").equals(songTitle).toArray();
+  modifyBPI = (t:historyData,currentBPI:B)=> this.scoreHistory.where("num").equals([t.title,t.difficulty,t.storedAt,t.isSingle]).modify(
+    {currentBPI:!currentBPI.error ? currentBPI.bpi : -15}
+  );
+
   async recalculateBPI(updatedSongs:string[] = []){
     try{
       const self = this;
@@ -770,9 +777,7 @@ export const scoreHistoryDB = class extends storageWrapper{
           continue;
         }
         const bpi = await self.calculator.setIsSingle(t.isSingle).calc(t.title,difficultyParser(t.difficulty,t.isSingle),t.exScore);
-        this.scoreHistory.where("num").equals(t.num).modify(
-          {BPI:!bpi.error ? bpi.bpi : -15}
-        );
+        this.modifyBPI(t,bpi);
       }
     }catch(e){
       console.log(e);
