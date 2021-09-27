@@ -37,6 +37,8 @@ import Captured from './captured';
 
 import songsAPI from '@/components/songs/api';
 import { genTitle } from '@/components/songs/filter';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 
 export interface songsList_stateInt {
   isLoading:boolean,
@@ -309,6 +311,7 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
     if(isLoading){
       return (<Loader/>);
     }
+    const scores = this.sortedData();
     return (
       <Container fixed  className="commonLayout" id="songsVil">
         {openCaptureScr && <Captured close={this.openCaptureScr}/>}
@@ -374,12 +377,22 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
           orderTitles={orders}
           orderMode={orderMode} orderTitle={orderTitle} handleOrderModeChange={this.handleOrderModeChange} handleOrderTitleChange={this.handleOrderTitleChange}/>
         <FilterByLevelAndDiff options={options} handleChange={this.handleChange}/>
-
-        <SongsTable
-          page={page} handleChangePage={this.handleChangePage}
-          data={this.sortedData()} mode={mode}
-          allSongsData={this.state.allSongsData}
-          updateScoreData={this.updateScoreData}/>
+        {scores.length === 0 && (
+          <Alert severity="warning" style={{margin:"10px 0"}}>
+            <AlertTitle>表示対象がありません</AlertTitle>
+            <p>
+            条件に合致する楽曲がありませんでした。<br/>
+            フィルタ条件を変更してみてください。
+            </p>
+          </Alert>
+        )}
+        {scores.length > 0 && (
+          <SongsTable
+            page={page} handleChangePage={this.handleChangePage}
+            data={scores} mode={mode}
+            allSongsData={this.state.allSongsData}
+            updateScoreData={this.updateScoreData}/>
+        )}
         {filterOpen && <SongsFilter versions={versions} clearType={clearType} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpi={this.state.bpi} bpm={this.state.bpm} memo={this.state.memo} showLatestOnly={showLatestOnly}/>}
         {timeRangeOpen && <TimeRangeDialog handleToggle={this.toggleTimeRangeDialog} dateRange={this.state.dateRange} applyTimeFilter={this.applyTimeFilter}/>}
       </Container>

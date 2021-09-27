@@ -222,7 +222,7 @@ class WriteDialog extends React.Component<WP,{
       const func = functions.httpsCallable("updateComment");
       await func({ userBPI:score.currentBPI, memo:this.state.text, id:this.props.currentId });
       this.props.closeModal(true);
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return this.setState({isLoading:false})
     }

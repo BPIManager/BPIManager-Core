@@ -25,7 +25,7 @@ export class messanger{
           console.error("NOT LOGGED IN, REFRESH TOKEN HAS BEEN ABORTED")
         }
       });
-    }catch(e){
+    }catch(e:any){
       alert(e);
     }
 
@@ -48,7 +48,7 @@ export class messanger{
         alert("非対応ブラウザです。");
         return false;
       }
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return false;
     }

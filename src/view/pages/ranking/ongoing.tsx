@@ -160,7 +160,7 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
       }
       this.pageLoad();
       return {error:false,errorMessage:""};
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return {error:true,errorMessage:e.message};
     }
@@ -180,7 +180,7 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
       }
       this.pageLoad();
       return {error:false,errorMessage:""};
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return {error:true,errorMessage:e.message};
     }

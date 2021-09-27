@@ -227,7 +227,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
           }
           return groups;
         },[]);
-      }catch(e){
+      }catch(e:any){
         return [];
       }
     }
@@ -246,7 +246,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
       return (await httpsCfGet(type === 0 ? `getFollowersCnt` : `getFollowingsCnt`,
         `targetId=${id}&version=${_currentStore()}`
       ))
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return (null);
     }
@@ -257,7 +257,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
       const {totalBPI,res} = this.state;
       const recommend:rivalStoreData[] = (await this.fbA.recommendedByBPI(totalBPI)).filter(item=>item.displayName !== res.displayName);
       return this.setState({loadingRecommended:false,recommendUsers:recommend,processing:false});
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return this.setState({loadingRecommended:false,recommendUsers:[],processing:false});
     }

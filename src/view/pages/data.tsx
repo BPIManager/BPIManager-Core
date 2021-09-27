@@ -30,6 +30,7 @@ import StepContent from '@mui/material/StepContent';
 import LinkIcon from '@mui/icons-material/Link';
 import { getUA } from '@/components/common';
 import { _prefix } from '@/components/songs/filter';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 interface P{
   global:any,
@@ -115,7 +116,7 @@ class Index extends React.Component<P&RouteComponentProps,{
     if(ua !== "chrome"){
       try{
         return await navigator.clipboard.readText();
-      }catch(e){
+      }catch(e:any){
         console.log(e);
         return text;
       }
@@ -126,7 +127,7 @@ class Index extends React.Component<P&RouteComponentProps,{
     if(permission.state === "granted" || permission.state === "prompt"){
       try{
         return await navigator.clipboard.readText();
-      }catch(e){
+      }catch(e:any){
         return text;
       }
     }else{
@@ -214,7 +215,7 @@ class Index extends React.Component<P&RouteComponentProps,{
       const updatedText = `BPIManagerでスコアを${updated}件更新しました%0a総合BPI:${totalBPI}(前日比:${showBpiDist(totalBPI,lastDay)},前週比:${showBpiDist(totalBPI,lastWeek)})%0a推定順位:${rank}位,皆伝上位${rankPer}％`;
       return this.setState({isSaving:false,raw:"",stateText:"Data.Success",errors:errors,updated:updated,updatedText:updatedText});
 
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       this.props.global.setMove(false);
       return this.setState({isSaving:false,stateText:"Data.Failed",errors:[e.message],raw:""});
@@ -274,20 +275,17 @@ class Index extends React.Component<P&RouteComponentProps,{
                     multiline
                     maxRows="4"/>
                 </React.Fragment>
-
-                <div style={{position:"relative"}}>
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    onClick={this.execute}
-                    disabled={isSaving}
-                    style={{margin:"5px 0"}}>
-                      <FormattedMessage id="Data.Execute"/><br/>
-                      (-{">"}{_currentStoreWithFullName() }&nbsp;/&nbsp;
-                      {_isSingle() === 1 ? "SP" : "DP"})
-                  </Button>
-                  {isSaving && <Loader isInner/>}
-                </div>
+                <LoadingButton
+                  variant="outlined"
+                  color="secondary"
+                  onClick={this.execute}
+                  disabled={isSaving}
+                  loading={isSaving}
+                  style={{margin:"5px 0"}}>
+                    <FormattedMessage id="Data.Execute"/><br/>
+                    (-{">"}{_currentStoreWithFullName() }&nbsp;/&nbsp;
+                    {_isSingle() === 1 ? "SP" : "DP"})
+                </LoadingButton>
               </StepContent>
             </Step>
             <Step active={errors.length > 0}>

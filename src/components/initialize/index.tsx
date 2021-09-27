@@ -93,9 +93,9 @@ export default class Initialize extends React.Component<{global:any},{show:boole
       localStorage.setItem("isSingle","1");
       localStorage.setItem("lastDefFileVer",csv.version);
       return this.setState({show:false});
-    }catch(e){
+    }catch(e:any){
       console.log(e);
-      return this.setState({error:true,errorMessage:e.message || "不明なエラーが発生したため続行できません。"})
+      return this.setState({error:true,errorMessage:"エラーが発生したため続行できません。"})
     }
   }
 
@@ -148,7 +148,7 @@ export default class Initialize extends React.Component<{global:any},{show:boole
           const newBPI = await bpi.setIsSingle(t.isSingle).calc(t.title,difficultyParser(t.difficulty,t.isSingle),t.exScore);
           type === 0 ? this.scoresDB.modifyBPI(t,newBPI) : this.scoreHistoryDB.modifyBPI(t,newBPI);
         }
-      }catch(e){
+      }catch(e:any){
         console.log(e);
       }
     }

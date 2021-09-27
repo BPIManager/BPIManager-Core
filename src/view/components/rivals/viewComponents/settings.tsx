@@ -53,7 +53,7 @@ class RivalSettings extends React.Component<P,S> {
       if(t !== ""){
         throw new Error(t);
       }
-    }catch(e){
+    }catch(e:any){
       return this.setState({updateErrorMessage:e.message,isLoading1:false,});
     }
     this.setState({updateErrorMessage:"更新が完了しました",isLoading1:false,});
@@ -72,7 +72,7 @@ class RivalSettings extends React.Component<P,S> {
       }
       this.props.toggleSnack();
       this.props.backToMainPage();
-    }catch(e){
+    }catch(e:any){
       return this.setState({deleteErrorMessage:e.message,isLoading2:false,});
     }
   }

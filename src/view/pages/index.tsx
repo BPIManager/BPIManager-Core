@@ -330,7 +330,7 @@ class UpdateDef extends React.Component<{},{
           updateInfo:data.updateInfo,
         });
       }
-    }catch(e){
+    }catch(e:any){
       console.log(e);
     }
   }
@@ -411,7 +411,7 @@ class InstallAlert extends React.Component<{global:any},{hide:boolean}>{
       hide:false
     }
   }
-  private available = (('standalone' in window.navigator) && (window.navigator['standalone']));
+  private available = (('standalone' in window.navigator) && ((window.navigator as any)['standalone']));
 
   installApp = ()=>{
     const { global } = this.props;

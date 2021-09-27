@@ -40,7 +40,7 @@ export default class App extends React.Component<{},{}> {
         messaging.onMessage(payload => {
           console.log("[FOREGROUND]Message received. ", payload);
         });
-      }catch(e){
+      }catch(e:any){
         console.log(e);
         alert("Your device is supporting FCM but an error occured while setting up functions.");
       }

@@ -24,7 +24,7 @@ export const updateDefFile = async()=>{
 
   try{
     res = await fetch(url).then(t=>t.json());
-  }catch(e){
+  }catch(e:any){
     return response("定義データの取得に失敗しました");
   }
   const updatedSongs:string[] = [];
@@ -42,7 +42,7 @@ export const updateDefFile = async()=>{
 
   const promiseProducer = (body:any[])=>{
     return body.map((t:songData) => {
-      return new Promise(async(resolve)=>{
+      return new Promise<void>(async(resolve)=>{
         const pfx = t["title"] + t["difficulty"] + (t["dpLevel"] === "0" ? "1" : "0");
         if(allSongs[pfx] && allSongs[pfx]["dpLevel"] === t["dpLevel"]){
           //既存曲

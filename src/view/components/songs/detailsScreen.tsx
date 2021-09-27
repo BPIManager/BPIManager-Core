@@ -251,7 +251,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
           allSavedLists:willAdd ? allSavedLists.concat(target.num) : allSavedLists.filter((item:number)=> item !== target.num)
         });
       }
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       alert("追加に失敗しました");
     }
@@ -321,7 +321,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
         song.memo = newMemo;
       }
       this.props.handleOpen(true,song,willDelete ? {title:score.title,difficulty:score.difficulty} : null);
-    }catch(e){
+    }catch(e:any){
       return this.setState({errorSnack:true,errorSnackMessage:e});
     }
   }

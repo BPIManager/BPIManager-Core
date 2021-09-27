@@ -66,7 +66,7 @@ export const updateRivalScore = async (rivalMeta:DBRivalStoreData):Promise<strin
       throw new Error("追加に失敗しました");
     }
     return "";
-  }catch(e){
+  }catch(e:any){
     return e.message;
   }
 }

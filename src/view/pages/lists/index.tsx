@@ -60,7 +60,7 @@ class FavLists extends React.Component<{}&RouteComponentProps,S> {
       this.setState({isLoading:false,lists:this.state.checked ? res : [
         listNobi11,listNobi12
       ].concat(res)});
-    }catch(e){
+    }catch(e:any){
       console.log(e);
     }
   }

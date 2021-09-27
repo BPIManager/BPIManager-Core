@@ -25,6 +25,7 @@ import {Link as RefLink} from '@mui/material/';
 import Loader from '@/view/components/common/loader';
 import { updateDefFile } from '@/components/settings/updateDef';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 interface S {
   isLoading:boolean,
@@ -78,7 +79,7 @@ class Settings extends React.Component<P,S> {
       const updater = await updateDefFile();
       end();
       this.setState({currentVersion:updater.newVersion,disableUpdateBtn:false,message:updater.message});
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       this.setState({disableUpdateBtn:false,message:"更新に失敗しました:" + e.message});
     }
@@ -238,15 +239,16 @@ class Settings extends React.Component<P,S> {
                   <FormattedMessage id="Settings.Update"/>
                 </Typography>
                 <div style={{position:"relative"}}>
-                  <Button
+                  <LoadingButton
                     variant="contained"
                     color="secondary"
                     onClick={this.updateDef}
+                    loading={disableUpdateBtn}
+                    loadingPosition="start"
                     disabled={disableUpdateBtn}
                     startIcon={<UpdateIcon />}>
                     <FormattedMessage id="Settings.UpdateResourcePacks"/>
-                  </Button>
-                  {disableUpdateBtn && <Loader isInner/>}
+                  </LoadingButton>
                 </div>
               </FormControl>
               <Typography variant="caption" display="block">

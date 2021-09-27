@@ -160,7 +160,7 @@ export default class fbActions{
       });
     }).then(()=>{
       return {error:false,date:timeFormatter(3),reason:"Success"};
-    }).catch(e=>{
+    }).catch((e:any)=>{
       console.log(e);
       return {error:true,date:null,reason:e.message};
     });
@@ -190,7 +190,7 @@ export default class fbActions{
       }else{
         return null;
       }
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return null;
     }
@@ -243,7 +243,7 @@ export default class fbActions{
         });
       }
       return {error:false,date:timeFormatter(3)};
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return {error:true,date:null};
     }
@@ -258,7 +258,7 @@ export default class fbActions{
       }else{
         return null;
       }
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return null;
     }
@@ -273,7 +273,7 @@ export default class fbActions{
       }else{
         return null;
       }
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return null;
     }
@@ -301,7 +301,7 @@ export default class fbActions{
         }
       }
       return res.docs;
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return [];
     }
@@ -377,7 +377,7 @@ export default class fbActions{
       }else{
         throw new Error("No Rivals Found");
       }
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return [];
     }
@@ -398,7 +398,7 @@ export default class fbActions{
       }else{
         return [];
       }
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return [];
     }
@@ -413,7 +413,7 @@ export default class fbActions{
       }else{
         return null;
       }
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return null;
     }
@@ -447,7 +447,7 @@ export default class fbActions{
       }else{
         return [];
       }
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return [];
     }
@@ -501,7 +501,7 @@ export default class fbActions{
         version:_currentStore()
       });
       return true;
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return false;
     }
@@ -533,7 +533,7 @@ export default class fbActions{
         querySnapshot.forEach((doc)=>doc.ref.delete());
       });
       return true;
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return false;
     }
@@ -546,7 +546,7 @@ export default class fbActions{
         uid:uid,
         reference:this.setUserCollection().doc(uid)
       });
-    }catch(e){
+    }catch(e:any){
       console.log(e);
     }
   }
@@ -571,7 +571,7 @@ export default class fbActions{
         }
       });
       batch.commit();
-    }catch(e){
+    }catch(e:any){
       console.log(e);
     }
   }
@@ -666,7 +666,7 @@ export default class fbActions{
         batch.commit();
         return -1;
       }
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return 0;
     }

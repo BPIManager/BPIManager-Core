@@ -101,7 +101,7 @@ class Settings extends React.Component<P,S> {
         await shdb.reset(target);
       }
       this.setState({disableDeleteBtn:false,message2:"正常に削除しました"});
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       this.setState({disableDeleteBtn:false,message2:"更新に失敗しました"});
     }
@@ -118,7 +118,7 @@ class Settings extends React.Component<P,S> {
       await scDB.recalculateBPI();
       await schDB.recalculateBPI();
       this.setState({recalculating:false,initialT:this.state.traditionalMode});
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       this.setState({recalculating:false});
     }
@@ -252,7 +252,7 @@ class Settings extends React.Component<P,S> {
               <Loader/>
             </div>
             <div>
-              <p style={{textAlign:"center"}}>再計算中です</p>
+              <p style={{textAlign:"center"}}>再計算中です<br/>画面を閉じないでください</p>
             </div>
           </Backdrop>
         }

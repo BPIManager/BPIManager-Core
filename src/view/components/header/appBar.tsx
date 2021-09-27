@@ -68,6 +68,7 @@ const styles = (theme:any) => ({
     },
   },
   appBar: {
+    zIndex:0,
     marginLeft: drawerWidth,
     [theme.breakpoints.up('sm')]: {
       width: `calc(100% - ${drawerWidth}px)`,
@@ -128,7 +129,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
     if(localStorage.getItem("social")){
       try{
         return this.setState({user:JSON.parse(localStorage.getItem("social") || "[]")});
-      }catch(e){
+      }catch(e:any){
         return this.setState({user:null});
       }
     }else{

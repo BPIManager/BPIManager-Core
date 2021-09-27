@@ -181,7 +181,7 @@ class Shift extends React.Component<{intl:any,propdata?:any}&RouteComponentProps
                 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" stroke={chartColor} />
-                <YAxis orientation="left" domain={[dataMin => Math.floor(dataMin) - 0.1, dataMax => Math.ceil(dataMax) + 0.1]} tickLine={false} axisLine={false} stroke={chartColor}/>
+                <YAxis orientation="left" domain={[(dataMin:number) => Math.floor(dataMin) - 0.1, (dataMax:number) => Math.ceil(dataMax) + 0.1]} tickLine={false} axisLine={false} stroke={chartColor}/>
                 <Tooltip contentStyle={{color:"#333"}}/>
                 <Line dataKey="shiftedBPI" name={formatMessage({id:"Stats.TotalBPI"})} stroke={lineColor} />
               </LineChart>

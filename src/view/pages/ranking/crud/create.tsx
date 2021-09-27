@@ -15,7 +15,7 @@ import {Link as RLink} from "react-router-dom";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
-import { toMoment, toMomentHHMM, d_add, isBeforeSpecificDate, toDate } from '@/components/common/timeFormatter';
+import { toMomentHHMM, d_add, isBeforeSpecificDate, toDate } from '@/components/common/timeFormatter';
 import Button from '@mui/material/Button';
 import { songData } from '@/types/data';
 import SongSearchDialog from './songSearch';
@@ -49,8 +49,8 @@ export default class CreateModal extends React.Component<{
     super(props);
     this.state = {
       rankingName:"",
-      startDate:toMoment(new Date()),
-      endDate:toMoment(d_add(7,"day")),
+      startDate:toDate(new Date()),
+      endDate:toDate(d_add(7,"day")),
       song:null,
       info:"",
       isDialogOpen:false,
@@ -62,11 +62,12 @@ export default class CreateModal extends React.Component<{
   }
 
   handleStartDateInput = (date:any) => {
-    this.setState({startDate:toMomentHHMM(date || new Date())});
+    this.setState({startDate:toDate(toMomentHHMM(date || new Date()))});
   };
 
   handleEndDateInput = (date:any) => {
-    this.setState({endDate:toMomentHHMM(date || new Date())});
+    console.log(date);
+    this.setState({endDate:toDate(toMomentHHMM(date || new Date()))});
   };
 
   dialogToggle = ()=> this.setState({isDialogOpen:!this.state.isDialogOpen});
@@ -123,7 +124,7 @@ export default class CreateModal extends React.Component<{
     }
 
     const titleError = rankingName.length > 16;
-
+    console.log(startDate);
     const form = (readOnly:boolean = false)=>{
       return (
       <form noValidate autoComplete="off">
@@ -131,7 +132,6 @@ export default class CreateModal extends React.Component<{
         required
         error={titleError}
         label="ランキングの名称"
-        variant="outlined"
         fullWidth
         value={rankingName}
         onChange={(e)=>readOnly ? ()=>null : this.setState({rankingName:e.target.value})}
@@ -152,7 +152,6 @@ export default class CreateModal extends React.Component<{
         onClick={readOnly ? ()=>null : this.dialogToggle}
         value={song ? song.title + _prefixFromNum(song.difficulty) + ` / ☆${song.difficultyLevel}` : ""}
         placeholder="タップして選択"
-        variant="outlined"
         disabled={readOnly}
         InputProps={{
           readOnly: true,
@@ -167,7 +166,7 @@ export default class CreateModal extends React.Component<{
           label="開始日付"
           value={startDate}
           renderInput={(props) => (
-            <TextField {...props} fullWidth variant="outlined"  />
+            <TextField {...props} fullWidth/>
           )}
           disabled={readOnly}
           onChange={readOnly ? ()=>null : this.handleStartDateInput}
@@ -177,7 +176,7 @@ export default class CreateModal extends React.Component<{
           label="終了日付"
           disablePast
           renderInput={(props) => (
-            <TextField {...props} fullWidth variant="outlined" />
+            <TextField {...props} fullWidth/>
           )}
           value={endDate}
           disabled={readOnly}
@@ -190,7 +189,6 @@ export default class CreateModal extends React.Component<{
         multiline
         rows={4}
         label="ランキングの概要(オプション)"
-        variant="outlined"
         placeholder=""
         value={info}
         disabled={readOnly}

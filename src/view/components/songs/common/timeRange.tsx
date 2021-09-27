@@ -6,10 +6,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import { toMoment } from '@/components/common/timeFormatter';
+import { toDate } from '@/components/common/timeFormatter';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DatePicker from '@mui/lab/DatePicker';
+import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import Alert from '@mui/material/Alert';
 import { TextField } from '@mui/material';
 
@@ -30,8 +30,8 @@ class TimeRangeDialog extends React.Component<P,S> {
   constructor(props:P){
     super(props);
     this.state = {
-      from:toMoment(props.dateRange.from),
-      to:toMoment(props.dateRange.to),
+      from:toDate(props.dateRange.from),
+      to:toDate(props.dateRange.to),
     }
   }
 
@@ -52,11 +52,11 @@ class TimeRangeDialog extends React.Component<P,S> {
   }
 
   handleFromInput = (date:any) => {
-    this.setState({from:toMoment(date || new Date())});
+    this.setState({from:toDate(date || new Date())});
   };
 
   handleToInput = (date:any) => {
-    this.setState({to:toMoment(date || new Date())});
+    this.setState({to:toDate(date || new Date())});
   };
 
   render(){
@@ -67,11 +67,11 @@ class TimeRangeDialog extends React.Component<P,S> {
         <DialogTitle>期間指定</DialogTitle>
         <DialogContent>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <Grid container>
-              <Grid item xs={12} sm={6}>
-                <DatePicker
+            <Grid container justifyContent="space-between">
+              <Grid item xs={12} sm={5} style={{marginTop:"15px"}}>
+                <MobileDatePicker
                   label="始点日付"
-                  inputFormat="YYYY/MM/DD"
+                  inputFormat="yyyy/MM/dd"
                   value={from}
                   renderInput={(props) => (
                     <TextField {...props} fullWidth />
@@ -79,10 +79,10 @@ class TimeRangeDialog extends React.Component<P,S> {
                   onChange={this.handleFromInput}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <DatePicker
+              <Grid item xs={12} sm={5} style={{marginTop:"15px"}}>
+                <MobileDatePicker
                   label="終点日付"
-                  inputFormat="YYYY/MM/DD"
+                  inputFormat="yyyy/MM/dd"
                   value={to}
                   renderInput={(props) => (
                     <TextField {...props} fullWidth />
@@ -92,7 +92,7 @@ class TimeRangeDialog extends React.Component<P,S> {
               </Grid>
             </Grid>
           </LocalizationProvider>
-          <Alert severity="info">「始点日付」と「終点日付」の間の期間中にデータを更新した楽曲を表示します。<br/>
+          <Alert severity="info" style={{marginTop:"15px"}}>「始点日付」と「終点日付」の間の期間中にデータを更新した楽曲を表示します。<br/>
           その期間以降にスコアやクリアランプを更新している場合はリストに表示されません。</Alert>
         </DialogContent>
         <DialogActions>

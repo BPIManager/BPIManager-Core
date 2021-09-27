@@ -66,7 +66,7 @@ export class Details extends React.Component<Props,{
             }
           </p>
           {header("作成者情報")}
-          <UserCard hideBottomButtons open={this.open} myId={authorData.uid} item={authorData} processing={false} isAdded={true} addUser={()=>null}/>
+          {authorData.isPublic && <UserCard hideBottomButtons open={this.open} myId={authorData.uid} item={authorData} processing={false} isAdded={true} addUser={()=>null}/>}
           {header("ランキングURL")}
           <Link href={config.baseUrl + "/ranking/id/" + onGoingId} color="secondary" component="a" target="_blank">{config.baseUrl + "/ranking/id/" + onGoingId}</Link>
 

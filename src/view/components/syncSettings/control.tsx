@@ -108,7 +108,7 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
       if(res.error){
         return this.setState({nameErrorMessage:["エラーが発生しました。次のような理由が挙げられます:","名前に使用できない文字列が含まれている、すでに使用されている名前である、アクセス権限がない"],isLoading:false});
       }
-    }catch(e){
+    }catch(e:any){
       alert("エラーが発生しました。:" + e);
     }
     this.setState({nameErrorMessage:["設定を反映しました"],isLoading:false,sentName:this.state.myName,rivalData:await this.fbA.load()});

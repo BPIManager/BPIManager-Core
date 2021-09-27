@@ -12,8 +12,7 @@ import TextField from '@mui/material/TextField';
 import Divider from '@mui/material/Divider';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DatePicker from '@mui/lab/DatePicker';
-import { toMomentHHMM, isBeforeSpecificDate, toDate } from '@/components/common/timeFormatter';
+import { isBeforeSpecificDate, toDate } from '@/components/common/timeFormatter';
 import Button from '@mui/material/Button';
 import UpdateIcon from '@mui/icons-material/Update';
 import Loader from '@/view/components/common/loader';
@@ -21,6 +20,7 @@ import { httpsCallable } from '@/components/firebase';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import AlertTitle from '@mui/material/AlertTitle';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
+import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
 
 class EditModal extends React.Component<{
   isOpen:boolean,
@@ -41,7 +41,7 @@ class EditModal extends React.Component<{
 
   constructor(props:any){
     super(props);
-    const f = toMomentHHMM(props.onGoing.until.toDate());
+    const f = toDate(props.onGoing.until.toDate());
     this.state = {
       rankingName:props.onGoing.rankName,
       endDate:f,
@@ -55,7 +55,7 @@ class EditModal extends React.Component<{
   }
 
   handleEndDateInput = (date:any) => {
-    this.setState({endDate:toMomentHHMM(date || new Date())});
+    this.setState({endDate:toDate(date || new Date())});
   };
 
   changeView = (newState:number)=>{
@@ -133,7 +133,6 @@ class EditModal extends React.Component<{
         required
         error={titleError}
         label="ランキングの名称"
-        variant="outlined"
         fullWidth
         value={rankingName}
         onChange={(e)=>readOnly ? ()=>null : this.setState({rankingName:e.target.value})}
@@ -148,14 +147,12 @@ class EditModal extends React.Component<{
       />
       <div style={{margin:"20px 0"}}/>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <DatePicker
+        <MobileDateTimePicker
           label="終了日付"
-          inputFormat="YYYY/MM/DD HH:mm"
-          disablePast
-          renderInput={(props) => (
-            <TextField {...props} fullWidth variant="outlined"  />
-          )}
           value={endDate}
+          renderInput={(props) => (
+            <TextField {...props} fullWidth/>
+          )}
           disabled={readOnly}
           onChange={readOnly ? ()=>null : this.handleEndDateInput}
         />
@@ -166,7 +163,6 @@ class EditModal extends React.Component<{
         multiline
         rows={4}
         label="ランキングの概要(オプション)"
-        variant="outlined"
         placeholder=""
         value={info}
         disabled={readOnly}

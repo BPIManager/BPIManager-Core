@@ -66,8 +66,6 @@ class DebugData extends React.Component<P,S> {
       let res = `debugger results generated at : ${new Date().toString()}\n\n### general configures\n`;
       res += JSON.stringify(_config) + "\n\n";
       res += `### user environment\n`;
-      res += "appName/appVersion:" + n.appCodeName + ":" + n.appName + "/" + n.appVersion + "\n";
-      res += "platform:" + n.platform + "\n";
       res += "userAgent:" + n.userAgent + "\n";
       res += "cookieEnabled:" + n.cookieEnabled + "\n";
       res += "onLine:" + n.onLine + "\n";
@@ -103,7 +101,6 @@ class DebugData extends React.Component<P,S> {
       const db = await new songsDB().getDBInfo();
       res += `### indexedDB data\n`;
       res += "dbver:" + JSON.stringify(db.verno) + `\n`;
-      res += "dbschema:" + JSON.stringify(db.tables);
       return this.setState({
         isLoading:false,
         text:res

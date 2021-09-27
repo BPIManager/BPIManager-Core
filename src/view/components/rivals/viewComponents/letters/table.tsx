@@ -196,7 +196,7 @@ class SongDetail extends React.Component<P2,{isLoading:boolean,dataset:datasets[
         isLoading:false,
         yourEx:score.exScore,
       })
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return this.setState({
         isLoading:false,

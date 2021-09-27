@@ -43,7 +43,7 @@ export default class Details extends React.Component<P,{
       }
       const res = bpi.setPropData(songData,input,_isSingle());
       return res;
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return -15;
     }
