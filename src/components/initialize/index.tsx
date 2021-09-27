@@ -112,7 +112,6 @@ export default class Initialize extends React.Component<{global:any},{show:boole
   }
 
   sinusIridum = async()=>{
-    if(localStorage.getItem("sinusiridum_mod")) return;
     const another:songData = {
        "title":"Sinus Iridum",
        "wr":3430,
@@ -156,7 +155,6 @@ export default class Initialize extends React.Component<{global:any},{show:boole
     await this.songsDB.bulkAdd([another,hyper]);
     modify(0);
     modify(1);
-    localStorage.setItem("sinusiridum_mod","1");
     return;
   }
 
