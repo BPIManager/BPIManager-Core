@@ -2,26 +2,26 @@ import * as React from 'react';
 import { functions } from '@/components/firebase';
 import { _currentStore } from '@/components/settings';
 import ModalUser from '../rivals/modal';
-import Slide from '@material-ui/core/Slide';
-import Dialog from '@material-ui/core/Dialog';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import { TransitionProps } from '@material-ui/core/transitions';
-import Typography from '@material-ui/core/Typography';
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import Slide from '@mui/material/Slide';
+import Dialog from '@mui/material/Dialog';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import { TransitionProps } from '@mui/material/transitions';
+import Typography from '@mui/material/Typography';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import Loader from '../common/loader';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Avatar from '@mui/material/Avatar';
 import { getAltTwitterIcon } from '@/components/rivals';
 import { alternativeImg } from '@/components/common';
-import Alert from '@material-ui/lab/Alert/Alert';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import Button from '@material-ui/core/Button';
+import Alert from '@mui/lab/Alert/Alert';
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import Button from '@mui/material/Button';
 
 interface P{
   ids:string[],
@@ -114,7 +114,12 @@ class FolloweeList extends React.Component<P,S> {
       <Dialog fullScreen open={true} onClose={handleClose} TransitionComponent={Transition}>
         <AppBar style={{ position: 'relative' }}>
           <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={handleClose}
+              aria-label="close"
+              size="large">
               <ArrowBackIosIcon />
             </IconButton>
             <Typography variant="h6">
@@ -136,12 +141,12 @@ class FolloweeList extends React.Component<P,S> {
                   </ListItemIcon>
                   <ListItemText primary={item.displayName} secondary={(item.arenaRank || "-") + " / 総合BPI:" + (item.totalBPI || "- ")} />
                   <ListItemSecondaryAction>
-                    <IconButton edge="end" aria-label="delete">
+                    <IconButton edge="end" aria-label="delete" size="large">
                       <ChevronRightIcon />
                     </IconButton>
                   </ListItemSecondaryAction>
                 </ListItem>
-              )
+              );
             })}
           </List>
         )}

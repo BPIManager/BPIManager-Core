@@ -1,14 +1,14 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import {Link as RefLink} from '@material-ui/core/';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import {Link as RefLink} from '@mui/material/';
 import { _currentTheme } from '@/components/settings';
-import ContactSupportIcon from '@material-ui/icons/ContactSupport';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import CreateIcon from '@material-ui/icons/Create';
+import ContactSupportIcon from '@mui/icons-material/ContactSupport';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import CreateIcon from '@mui/icons-material/Create';
 import { Link } from 'react-router-dom';
-import InfoIcon from '@material-ui/icons/Info';
+import InfoIcon from '@mui/icons-material/Info';
 
 export default class HelpNotes extends React.Component<{},{}> {
 

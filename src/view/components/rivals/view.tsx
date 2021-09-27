@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-import Typography from '@material-ui/core/Typography';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import Button from '@material-ui/core/Button';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import Typography from '@mui/material/Typography';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Button from '@mui/material/Button';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 import SongsUI from './viewComponents/ui';
 import Settings from './viewComponents/settings';
 import { scoresDB, rivalListsDB } from '@/components/indexedDB';
@@ -12,7 +12,7 @@ import RivalStats from './viewComponents/stats';
 import { scoreData, rivalScoreData, rivalStoreData, DBRivalStoreData } from '@/types/data';
 import { withRivalData } from '@/components/stats/radar';
 import Loader from '../common/loader';
-import Container from '@material-ui/core/Container/Container';
+import Container from '@mui/material/Container/Container';
 
 interface S {
   isLoading:boolean,

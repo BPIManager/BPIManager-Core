@@ -1,29 +1,29 @@
 import * as React from 'react';
 
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import { _currentStore, _isSingle } from '@/components/settings';
 import { rivalListsDB } from '@/components/indexedDB';
-import Alert from '@material-ui/lab/Alert';
-import AlertTitle from '@material-ui/lab/AlertTitle';
-import List from '@material-ui/core/List';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import List from '@mui/material/List';
 import fbActions from '@/components/firebase/actions';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
-import DeleteIcon from '@material-ui/icons/Delete';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import IconButton from '@material-ui/core/IconButton';
+import ListItem from '@mui/material/ListItem';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
+import IconButton from '@mui/material/IconButton';
 import timeFormatter from '@/components/common/timeFormatter';
 import { alternativeImg } from '@/components/common';
-import Divider from '@material-ui/core/Divider';
-import AddBoxIcon from '@material-ui/icons/AddBox';
-import ArrowDropDownIcon from  '@material-ui/icons/ArrowDropDown';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-import Paper from '@material-ui/core/Paper';
+import Divider from '@mui/material/Divider';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import ArrowDropDownIcon from  '@mui/icons-material/ArrowDropDown';
+import ListSubheader from '@mui/material/ListSubheader';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import MenuItem from '@mui/material/MenuItem';
+import Menu from '@mui/material/Menu';
+import Paper from '@mui/material/Paper';
 import ShowSnackBar from '../snackBar';
 import Loader from '@/view/components/common/loader';
 import { getAltTwitterIcon } from '@/components/rivals';
@@ -129,7 +129,7 @@ class SyncRivalScreen extends React.Component<P,S> {
       },[]);
       this.setState({
         processing:false,
-        userData:this.state.userData || await new fbActions().v2SetUserCollection().setDocName(user.uid).load(),
+        userData:this.state.userData || (await new fbActions().v2SetUserCollection().setDocName(user.uid).load()),
         syncData:p,
         notUploaded:(await this.rivalListsDB.getAll()).filter(item=>uidList.indexOf(item.uid) === -1)
       })
@@ -210,25 +210,25 @@ class SyncRivalScreen extends React.Component<P,S> {
             {syncData.map(item=>{
               if(!item.to)return (null);
               return (
-              <ListItem key={item.to.displayName}>
-                <ListItemAvatar>
-                  <Avatar>
-                    <img src={item.to.photoURL ? item.to.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
-                      alt={item.to.displayName}
-                      onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(item.to) || alternativeImg(item.to.displayName)}/>
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={item.to.displayName}
-                  secondary={timeFormatter(3,item.updatedAt ? item.updatedAt.toDate() : new Date())}
-                />
-                <ListItemSecondaryAction onClick={()=>this.deleteOne(item.to.uid)}>
-                  <IconButton edge="end" aria-label="delete">
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            )})}
+                <ListItem key={item.to.displayName}>
+                  <ListItemAvatar>
+                    <Avatar>
+                      <img src={item.to.photoURL ? item.to.photoURL : "noimage"} style={{width:"100%",height:"100%"}}
+                        alt={item.to.displayName}
+                        onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(item.to) || alternativeImg(item.to.displayName)}/>
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={item.to.displayName}
+                    secondary={timeFormatter(3,item.updatedAt ? item.updatedAt.toDate() : new Date())}
+                  />
+                  <ListItemSecondaryAction onClick={()=>this.deleteOne(item.to.uid)}>
+                    <IconButton edge="end" aria-label="delete" size="large">
+                      <DeleteIcon />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              );})}
           </List>
           <Divider/>
           <List
@@ -251,7 +251,11 @@ class SyncRivalScreen extends React.Component<P,S> {
                   secondary={timeFormatter(3,item.lastUpdatedAt)}
                 />
                 <ListItemSecondaryAction>
-                  <IconButton edge="end" aria-label="add" onClick={()=>this.uploadOne(item.uid)}>
+                  <IconButton
+                    edge="end"
+                    aria-label="add"
+                    onClick={()=>this.uploadOne(item.uid)}
+                    size="large">
                     <AddBoxIcon />
                   </IconButton>
                 </ListItemSecondaryAction>

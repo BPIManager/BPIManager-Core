@@ -12,7 +12,7 @@ class historyExec {
   private result:historyDataWithLastScore[] = [];
 
   async load(propdata:historyData[]|null = null){
-    this.data = propdata || await new scoreHistoryDB().getAllInSpecificVersion();
+    this.data = propdata || (await new scoreHistoryDB().getAllInSpecificVersion());
     return this;
   }
 

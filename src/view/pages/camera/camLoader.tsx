@@ -1,8 +1,8 @@
 import * as React from 'react';
-import Fab from '@material-ui/core/Fab';
-import CameraAltIcon from '@material-ui/icons/CameraAlt';
-import SettingsIcon from '@material-ui/icons/Settings';
-import IconButton from '@material-ui/core/IconButton';
+import Fab from '@mui/material/Fab';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import SettingsIcon from '@mui/icons-material/Settings';
+import IconButton from '@mui/material/IconButton';
 
 interface Props{
   rawCamData:string
@@ -20,7 +20,9 @@ export default class CameraLoader extends React.Component<Props,{}> {
             撮影
           </Fab>
         </div>
-        <IconButton style={{position:"absolute",bottom:"5%",right:"5%",margin:"15px 0"}}>
+        <IconButton
+          style={{position:"absolute",bottom:"5%",right:"5%",margin:"15px 0"}}
+          size="large">
           <SettingsIcon/>
         </IconButton>
       </div>

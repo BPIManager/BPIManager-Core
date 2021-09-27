@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { injectIntl } from 'react-intl';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import { songData } from '@/types/data';
 import { httpsCallable } from '@/components/firebase';
 import Loader from '@/view/components/common/loader';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import Alert from '@material-ui/lab/Alert/Alert';
-import AlertTitle from '@material-ui/lab/AlertTitle';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Alert from '@mui/lab/Alert/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import { withRouter,RouteComponentProps } from 'react-router-dom';
 import { _currentTheme } from '@/components/settings';
-import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import fbActions from '@/components/firebase/actions';
 
 interface S {

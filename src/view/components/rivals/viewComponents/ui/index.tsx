@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { FormattedMessage, injectIntl } from "react-intl";
-import Grid from '@material-ui/core/Grid';
-import FormControl from '@material-ui/core/FormControl';
-import BackspaceIcon from '@material-ui/icons/Backspace';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
+import Grid from '@mui/material/Grid';
+import FormControl from '@mui/material/FormControl';
+import BackspaceIcon from '@mui/icons-material/Backspace';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
 import Table from "../table";
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
+import Input from '@mui/material/Input';
+import InputLabel from '@mui/material/InputLabel';
 import { genTitle } from '@/components/songs/filter';
 import OrderControl from "@/view/components/songs/common/orders";
-import Button from '@material-ui/core/Button';
-import FilterListIcon from '@material-ui/icons/FilterList';
+import Button from '@mui/material/Button';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import { verArr, bpmFilter, clearArr } from '@/view/components/songs/common';
 import SongsFilter, { B } from '@/view/components/songs/common/filter';
 import { commonFunc } from '@/components/common';
@@ -21,11 +21,12 @@ import { songData } from '@/types/data';
 import Loader from '@/view/components/common/loader';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import timeFormatter, { timeCompare } from '@/components/common/timeFormatter';
-import Alert from '@material-ui/lab/Alert';
-import AlertTitle from '@material-ui/lab/AlertTitle';
-import Link from '@material-ui/core/Link';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import Link from '@mui/material/Link';
 import { songFuncWithRival } from '@/components/songs/func/withRival';
 import songsAPI from '@/components/songs/api';
+import { SelectChangeEvent } from '@mui/material/Select';
 
 interface stateInt {
   isLoading:boolean,
@@ -222,20 +223,20 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
     return m;
   }
 
-  handleModeChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
+  handleModeChange = (event:SelectChangeEvent<number>):void =>{
     if (typeof event.target.value !== "number") { return; }
     let newState = this.clone();
     newState.mode = event.target.value;
     return this.setState({scoreData:this.songFilter(newState),mode:event.target.value,page:0});
   }
 
-  handleOrderTitleChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
+  handleOrderTitleChange = (event:SelectChangeEvent<number>):void =>{
     const val = event.target.value;
     if (typeof val !== "number") { return; }
     return this.setState({orderTitle:val,page:0});
   }
 
-  handleOrderModeChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
+  handleOrderModeChange = (event:SelectChangeEvent<number>):void =>{
     const val = event.target.value;
     if (typeof val !== "number") { return; }
     return this.setState({orderMode:val,page:0});
@@ -251,7 +252,7 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
 
   timeFormat = ()=>{
     const {todayOnly} = this.state;
-    return timeFormatter(4,!/\d{6}/.test(todayOnly) ? new Date() : todayOnly)
+    return timeFormatter(4,!/\d{6}/.test(todayOnly) ? new Date() : todayOnly);
   }
 
   render(){
@@ -306,7 +307,7 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
                 endAdornment={
                   filterByName &&
                   <InputAdornment position="end">
-                    <IconButton onClick={()=>this.handleInputChange(null)}>
+                    <IconButton onClick={()=>this.handleInputChange(null)} size="large">
                       <BackspaceIcon/>
                     </IconButton>
                   </InputAdornment>

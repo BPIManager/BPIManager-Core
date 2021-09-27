@@ -1,16 +1,16 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 import { injectIntl, FormattedMessage } from 'react-intl';
-import Paper from '@material-ui/core/Paper';
-import FormControl from '@material-ui/core/FormControl';
+import Paper from '@mui/material/Paper';
+import FormControl from '@mui/material/FormControl';
 import { _currentViewComponents, _setCurrentViewComponents, _setShowLatestSongs, _showLatestSongs, _currentQuickAccessComponents, _setQuickAccessComponents } from '@/components/settings';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormGroup from '@material-ui/core/FormGroup';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormLabel from '@material-ui/core/FormLabel';
-import Divider from '@material-ui/core/Divider';
-import Switch from '@material-ui/core/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormGroup from '@mui/material/FormGroup';
+import Checkbox from '@mui/material/Checkbox';
+import FormLabel from '@mui/material/FormLabel';
+import Divider from '@mui/material/Divider';
+import Switch from '@mui/material/Switch';
 import Loader from '@/view/components/common/loader';
 import { quickAccessTable } from '@/components/common/quickAccess';
 

@@ -1,10 +1,10 @@
 import { Component } from "react";
 import React from "react";
-import Dialog from "@material-ui/core/Dialog";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import Container from "@material-ui/core/Container";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import Container from "@mui/material/Container";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default class ReloadModal extends Component<{registration: ServiceWorkerRegistration},{show:boolean}> {
   state = {

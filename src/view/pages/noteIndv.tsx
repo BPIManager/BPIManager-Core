@@ -1,20 +1,20 @@
 import * as React from 'react';
 import { _currentStore, _currentTheme } from '@/components/settings';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import SongNotes from '../components/songs/songNotes';
 import { scoresDB } from '@/components/indexedDB';
 import { scoreData, songData } from '@/types/data';
 import Loader from '../components/common/loader';
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import Button from '@material-ui/core/Button';
-import Alert from '@material-ui/lab/Alert/Alert';
-import AlertTitle from '@material-ui/lab/AlertTitle';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import Button from '@mui/material/Button';
+import Alert from '@mui/lab/Alert/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import timeFormatter from '@/components/common/timeFormatter';
 import { _prefixWithPS, difficultyParser } from '@/components/songs/filter';
 import { Helmet } from 'react-helmet';
-import ContactSupportIcon from '@material-ui/icons/ContactSupport';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
+import ContactSupportIcon from '@mui/icons-material/ContactSupport';
+import ButtonGroup from '@mui/material/ButtonGroup';
 
 class NoteIndv extends React.Component<RouteComponentProps,{
   song:songData|null,

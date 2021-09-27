@@ -1,18 +1,18 @@
 import { songData } from "@/types/data";
 import React from "react";
 import { songsDB } from "@/components/indexedDB";
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 import Loader from "@/view/components/common/loader";
-import TextField from "@material-ui/core/TextField";
-import List from "@material-ui/core/List";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItem from "@material-ui/core/ListItem";
-import Typography from "@material-ui/core/Typography";
+import TextField from "@mui/material/TextField";
+import List from "@mui/material/List";
+import ListItemText from "@mui/material/ListItemText";
+import ListItem from "@mui/material/ListItem";
+import Typography from "@mui/material/Typography";
 import { _prefixFromNum } from "@/components/songs/filter";
-import DialogActions from "@material-ui/core/DialogActions";
-import Button from "@material-ui/core/Button";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
 
 interface UP{
   isDialogOpen:boolean,

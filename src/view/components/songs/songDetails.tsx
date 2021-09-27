@@ -1,17 +1,17 @@
 import React from "react";
 
 import { scoreData, songData } from "@/types/data";
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableRow from "@material-ui/core/TableRow";
-import TableHead from "@material-ui/core/TableHead";
-import TableCell from "@material-ui/core/TableCell";
-import TableBody from "@material-ui/core/TableBody";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableRow from "@mui/material/TableRow";
+import TableHead from "@mui/material/TableHead";
+import TableCell from "@mui/material/TableCell";
+import TableBody from "@mui/material/TableBody";
 import { FormattedMessage } from "react-intl";
 import { lampCSVArray, _prefixFullNum } from "@/components/songs/filter";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import TextField from "@material-ui/core/TextField";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
 import { verNameArr } from "./common";
 
 interface P{
@@ -22,7 +22,7 @@ interface P{
   newClearState:number,
   memoModified:boolean,
   handleMissCount:(e:React.ChangeEvent<HTMLInputElement>)=>void,
-  handleClearState:(e:React.ChangeEvent<{value:unknown}>)=>void,
+  handleClearState:(e:SelectChangeEvent<number>)=>void,
   handleMemo:(e:React.ChangeEvent<HTMLInputElement>)=>void
 }
 

@@ -1,17 +1,9 @@
 *{
-  font-family: "Roboto", "Helvetica", "Hiragino Kaku Gothic ProN","メイリオ", sans-serif !important;
-}
-
-.App {
-  text-align: center;
+  font-family: 'Noto Sans JP',"Helvetica", "Hiragino Kaku Gothic ProN","メイリオ", sans-serif !important;
 }
 
 a {
     text-decoration: none;
-}
-
-.App-logo {
-  height: 40vmin;
 }
 
 .App-header {
@@ -46,6 +38,10 @@ a {
 
 .commonLayout{
   margin:20px auto !important;
+}
+
+.overlayDrawer{
+  z-index:1500 !important;
 }
 
 #overlayLayout{
@@ -429,10 +425,6 @@ th.MuiTableCell-root.MuiTableCell-head:first-child{
   text-decoration: none !important;
 }
 
-.MuiBackdrop-root{
-  z-index:9999 !important;
-}
-
 .MuiDrawer-root .MuiBackdrop-root, .MuiDialog-root .MuiBackdrop-root:not(.absolutelyTop){
   z-index:-1 !important;
 }
@@ -758,3 +750,7 @@ text.react-calendar-heatmap-weekday-label {
 .MuiTableCell-root.MuiTableCell-body.dense, .textCenter{text-align:center !important;}
 .MuiPagination-ul{flex-wrap:nowrap !important;}
 .denseCont{width: 33%; text-align:center !important;}
+
+.MuiPaper-root{
+ background-image:none;
+}

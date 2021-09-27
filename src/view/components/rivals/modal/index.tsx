@@ -1,12 +1,12 @@
 import * as React from 'react';
 import User from "@/view/pages/user";
 import { _currentTheme } from '@/components/settings';
-import Dialog from '@material-ui/core/Dialog';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
+import Dialog from '@mui/material/Dialog';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 export default class ModalUser extends React.Component<{
   isOpen:boolean,
@@ -49,7 +49,12 @@ export default class ModalUser extends React.Component<{
         fullScreen open={isOpen} onClose={handleOpen} style={{overflowX:"hidden",width:"100%"}}>
         <AppBar>
           <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={()=>handleOpen(false)} aria-label="close">
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={()=>handleOpen(false)}
+              aria-label="close"
+              size="large">
               <ArrowBackIosIcon />
             </IconButton>
             <Typography variant="h6" className="be-ellipsis" style={{flexGrow:1}}>
@@ -60,7 +65,7 @@ export default class ModalUser extends React.Component<{
         <Toolbar/>
         <User initialView={initialView || 0} currentUserName={currentUserName} limited={true} exact={this.props.exact || false} updateName={this.updateName}/>
       </Dialog>
-    )
+    );
   }
 
 }

@@ -1,27 +1,25 @@
 import * as React from 'react';
 import { _currentTheme } from '@/components/settings';
-import Dialog from '@material-ui/core/Dialog';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import CloseIcon from "@material-ui/icons/Close";
-import Container from '@material-ui/core/Container';
-import Alert from '@material-ui/lab/Alert/Alert';
-import TextField from '@material-ui/core/TextField';
-import Divider from '@material-ui/core/Divider';
-import MomentUtils from '@date-io/dayjs';
-import {
-  MuiPickersUtilsProvider,
-  DateTimePicker,
-} from '@material-ui/pickers';
+import Dialog from '@mui/material/Dialog';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import CloseIcon from "@mui/icons-material/Close";
+import Container from '@mui/material/Container';
+import Alert from '@mui/lab/Alert/Alert';
+import TextField from '@mui/material/TextField';
+import Divider from '@mui/material/Divider';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import DatePicker from '@mui/lab/DatePicker';
 import { toMomentHHMM, isBeforeSpecificDate, toDate } from '@/components/common/timeFormatter';
-import Button from '@material-ui/core/Button';
-import UpdateIcon from '@material-ui/icons/Update';
+import Button from '@mui/material/Button';
+import UpdateIcon from '@mui/icons-material/Update';
 import Loader from '@/view/components/common/loader';
 import { httpsCallable } from '@/components/firebase';
-import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
-import AlertTitle from '@material-ui/lab/AlertTitle';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import AlertTitle from '@mui/material/AlertTitle';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 class EditModal extends React.Component<{
@@ -149,20 +147,19 @@ class EditModal extends React.Component<{
         helperText={titleError ? "タイトルが長すぎます" : ""}
       />
       <div style={{margin:"20px 0"}}/>
-      <MuiPickersUtilsProvider utils={MomentUtils}>
-        <DateTimePicker
-          ampm={false}
-          margin="normal"
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <DatePicker
           label="終了日付"
-          format="YYYY/MM/DD HH:mm"
+          inputFormat="YYYY/MM/DD HH:mm"
           disablePast
-          inputVariant="outlined"
-          fullWidth
+          renderInput={(props) => (
+            <TextField {...props} fullWidth variant="outlined"  />
+          )}
           value={endDate}
           disabled={readOnly}
           onChange={readOnly ? ()=>null : this.handleEndDateInput}
         />
-      </MuiPickersUtilsProvider>
+      </LocalizationProvider>
       <div style={{margin:"20px 0"}}/>
       <TextField
         fullWidth
@@ -192,7 +189,12 @@ class EditModal extends React.Component<{
         fullScreen open={isOpen} onClose={()=>handleOpen(isCreating)} style={{overflowX:"hidden",width:"100%"}}>
         <AppBar>
           <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={()=>handleOpen(isCreating)} aria-label="close">
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={()=>handleOpen(isCreating)}
+              aria-label="close"
+              size="large">
               <CloseIcon />
             </IconButton>
             <Typography variant="h6" className="be-ellipsis" style={{flexGrow:1}}>
@@ -287,7 +289,7 @@ class EditModal extends React.Component<{
           )}
         </Container>
       </Dialog>
-    )
+    );
   }
 
 }

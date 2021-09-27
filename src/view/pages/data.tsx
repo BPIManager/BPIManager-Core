@@ -1,33 +1,33 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import { FormattedMessage } from "react-intl";
 import {scoresDB, importer} from "@/components/indexedDB";
-import TextField from '@material-ui/core/TextField';
+import TextField from '@mui/material/TextField';
 import importCSV from "@/components/import/csv";
 import bpiCalculator, { showBpiDist } from "@/components/bpi";
 import { _currentStore, _isSingle, _currentStoreWithFullName } from '@/components/settings';
 import { _autoSync } from '../../components/settings';
-import Link from '@material-ui/core/Link';
+import Link from '@mui/material/Link';
 import {Link as RLink, withRouter, RouteComponentProps} from "react-router-dom";
 import { scoreData } from '@/types/data';
 import importJSON from '@/components/import/json';
-import Alert from '@material-ui/lab/Alert/Alert';
-import AlertTitle from '@material-ui/lab/AlertTitle';
+import Alert from '@mui/lab/Alert/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import { config } from '@/config';
 import timeFormatter, { timeCompare } from '@/components/common/timeFormatter';
 import Loader from "@/view/components/common/loader";
-import Divider from '@material-ui/core/Divider';
+import Divider from '@mui/material/Divider';
 import AdsCard from '@/components/ad';
 import bpiCalcuator from '@/components/bpi';
 import statMain from '@/components/stats/main';
 import dayjs from 'dayjs';
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
-import StepContent from '@material-ui/core/StepContent';
-import LinkIcon from '@material-ui/icons/Link';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import StepContent from '@mui/material/StepContent';
+import LinkIcon from '@mui/icons-material/Link';
 import { getUA } from '@/components/common';
 import { _prefix } from '@/components/songs/filter';
 
@@ -272,7 +272,7 @@ class Index extends React.Component<P&RouteComponentProps,{
                     margin="dense"
                     variant="outlined"
                     multiline
-                    rowsMax="4"/>
+                    maxRows="4"/>
                 </React.Fragment>
 
                 <div style={{position:"relative"}}>

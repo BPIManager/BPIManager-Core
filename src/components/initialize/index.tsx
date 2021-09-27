@@ -1,8 +1,8 @@
 import * as React from 'react';
 import timeFormatter from "../common/timeFormatter";
 import {songsDB, scoresDB, favsDB, scoreHistoryDB, rivalListsDB} from "../indexedDB";
-import WarningIcon from '@material-ui/icons/Warning';
-import Backdrop from "@material-ui/core/Backdrop";
+import WarningIcon from '@mui/icons-material/Warning';
+import Backdrop from "@mui/material/Backdrop";
 import { _currentDefinitionURL } from '../settings';
 import fbActions from '../firebase/actions';
 import Loader from '@/view/components/common/loader';

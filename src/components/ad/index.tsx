@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import Divider from "@material-ui/core/Divider";
-import Typography from "@material-ui/core/Typography";
+import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
 declare global {
     interface Window {
         adsbygoogle: any,

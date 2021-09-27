@@ -1,27 +1,44 @@
 import * as React from 'react';
-import Button from '@material-ui/core/Button';
-import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
+import Button from '@mui/material/Button';
+import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import fbActions from '@/components/firebase/actions';
 import { _currentStore, _isSingle, _autoSync, _setAutoSync } from '@/components/settings';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import TextField from '@material-ui/core/TextField';
-import {Link, Switch, FormControlLabel, Avatar, CardHeader, Card, CardActions, CardContent, withStyles, Theme, Divider, List, ListItem, ListItemAvatar, ListItemText, Typography} from '@material-ui/core/';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+import {
+  Link,
+  Switch,
+  FormControlLabel,
+  Avatar,
+  CardHeader,
+  Card,
+  CardActions,
+  CardContent,
+  Theme,
+  Divider,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Typography,
+} from '@mui/material/';
+import withStyles from '@mui/styles/withStyles';
 import {Link as RefLink, withRouter, RouteComponentProps} from "react-router-dom";
-import Alert from '@material-ui/lab/Alert';
+import Alert from '@mui/material/Alert';
 import { config } from '@/config';
 import Loader from '../common/loader';
 import { alternativeImg, avatarBgColor, avatarFontColor } from '@/components/common';
 import { getAltTwitterIcon } from '@/components/rivals';
-import SaveIcon from '@material-ui/icons/Save';
-import { red } from '@material-ui/core/colors';
-import AlertTitle from '@material-ui/lab/AlertTitle';
-import CheckIcon from '@material-ui/icons/Check';
-import GroupAddIcon from '@material-ui/icons/GroupAdd';
-import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
-import TouchAppIcon from '@material-ui/icons/TouchApp';
+import SaveIcon from '@mui/icons-material/Save';
+import { red } from '@mui/material/colors';
+import AlertTitle from '@mui/material/AlertTitle';
+import CheckIcon from '@mui/icons-material/Check';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import SpeakerNotesIcon from '@mui/icons-material/SpeakerNotes';
+import TouchAppIcon from '@mui/icons-material/TouchApp';
 import bpiCalcuator from '@/components/bpi';
 
 class SyncControlScreen extends React.Component<{userData:any}&RouteComponentProps,{
@@ -174,7 +191,7 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
               style={{width:"100%",margin:"0px 0px 8px 0"}}/>
             <FormControl fullWidth style={{margin:"8px 0"}}>
               <InputLabel>最高アリーナランク</InputLabel>
-              <Select fullWidth value={arenaRank} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+              <Select fullWidth value={arenaRank} onChange={(e:SelectChangeEvent<string>,)=>{
                 if(typeof e.target.value !== "string") return;
                 this.setState({arenaRank:e.target.value});
               }}>

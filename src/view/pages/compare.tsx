@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { scoresDB, songsDB } from '@/components/indexedDB';
 import {_isSingle, _goalBPI, _goalPercentage, _currentStore} from "@/components/settings";
-import Container from "@material-ui/core/Container";
-import Grid from '@material-ui/core/Grid';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
+import Container from "@mui/material/Container";
+import Grid from '@mui/material/Grid';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
 import { FormattedMessage, injectIntl } from "react-intl";
 import CompareTable from "@/view/components/compare/table";
 import bpiCalcuator from '@/components/bpi';
@@ -90,13 +90,13 @@ class Compare extends React.Component<{intl:any},S> {
     this._mounted = false;
   }
 
-  handleOrderTitleChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
+  handleOrderTitleChange = (event:SelectChangeEvent<number>):void =>{
     const val = event.target.value;
     if (typeof val !== "number") { return; }
     return this.setState({orderTitle:val,page:0});
   }
 
-  handleOrderModeChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
+  handleOrderModeChange = (event:SelectChangeEvent<number>):void =>{
     const val = event.target.value;
     if (typeof val !== "number") { return; }
     return this.setState({orderMode:val,page:0});
@@ -129,7 +129,7 @@ class Compare extends React.Component<{intl:any},S> {
     return new commonFunc().set(this.state).clone();
   }
 
-  handleChange = (target:"compareFrom"|"compareTo"|"displayMode") => async (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):Promise<void> =>{
+  handleChange = (target:"compareFrom"|"compareTo"|"displayMode") => async (event:SelectChangeEvent<string>):Promise<void> =>{
     const val = event.target.value;
     if (typeof val !== "string") { return; }
     let newState:S = this.clone();

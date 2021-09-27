@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import Container from '@mui/material/Container';
+import CircularProgress from '@mui/material/CircularProgress';
+import LinearProgress from '@mui/material/LinearProgress';
 
 export default class Loader extends React.Component<{
   hasMargin?:boolean

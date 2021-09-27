@@ -1,16 +1,16 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
 import Loader from '@/view/components/common/loader';
-import Link from '@material-ui/core/Link';
-import Divider from '@material-ui/core/Divider';
-import TextField from '@material-ui/core/TextField';
+import Link from '@mui/material/Link';
+import Divider from '@mui/material/Divider';
+import TextField from '@mui/material/TextField';
 import fbActions from '@/components/firebase/actions';
 import { songsDB, scoresDB } from '@/components/indexedDB';
 import { songData, scoreData } from '@/types/data';
 import { config } from '@/config';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 
 interface P {}
 interface S{

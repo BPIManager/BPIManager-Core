@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { _currentTheme } from '@/components/settings';
-import Dialog from '@material-ui/core/Dialog';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import CloseIcon from "@material-ui/icons/Close";
+import Dialog from '@mui/material/Dialog';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import CloseIcon from "@mui/icons-material/Close";
 import { songsDB, scoresDB } from '@/components/indexedDB';
 import { scoreData, songData } from '@/types/data';
 import { _currentStore } from '@/components/settings';
@@ -69,7 +69,12 @@ export default class ModalNotes extends React.Component<{
         fullScreen open={isOpen} onClose={handleOpen} style={{overflowX:"hidden",width:"100%"}}>
         <AppBar>
           <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={()=>handleOpen(false)} aria-label="close">
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={()=>handleOpen(false)}
+              aria-label="close"
+              size="large">
               <CloseIcon />
             </IconButton>
             <Typography variant="h6" className="be-ellipsis" style={{flexGrow:1}}>
@@ -83,7 +88,7 @@ export default class ModalNotes extends React.Component<{
         {(!isLoading && song) && <SongNotes song={song} score={score}/>}
         {(!isLoading && !song) && (null)}
       </Dialog>
-    )
+    );
   }
 
 }

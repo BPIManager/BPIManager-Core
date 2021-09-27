@@ -1,21 +1,21 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
+import Container from '@mui/material/Container';
 import { injectIntl } from 'react-intl';
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import { _currentTheme, _currentStore } from '@/components/settings';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import Loader from '@/view/components/common/loader';
 import { httpsCallable } from '@/components/firebase';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListSubheader from '@material-ui/core/ListSubheader';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
 import timeFormatter, { _isBetween } from '@/components/common/timeFormatter';
 import { _prefixFullNum } from '@/components/songs/filter';
 import { versionString } from '@/components/common';
-import Button from '@material-ui/core/Button';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import Alert from '@material-ui/lab/Alert/Alert';
+import Button from '@mui/material/Button';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Alert from '@mui/lab/Alert/Alert';
 
 interface S {
   isLoading:boolean,

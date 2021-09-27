@@ -4,39 +4,40 @@ import FilterByLevelAndDiff from '../common/selector';
 import LettersTable from './viewComponents/letters/table';
 import SongsFilter, {  B } from '../songs/common/filter';
 import { verArr, bpmFilter, clearArr } from '../songs/common';
-import FilterListIcon from '@material-ui/icons/FilterList';
-import BackspaceIcon from "@material-ui/icons/Backspace";
+import FilterListIcon from '@mui/icons-material/FilterList';
+import BackspaceIcon from "@mui/icons-material/Backspace";
 import { difficultyDiscriminator } from '@/components/songs/filter';
 import { songsDB } from '@/components/indexedDB';
 import { commonFunc } from '@/components/common';
 import { songData } from '@/types/data';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import FormControl from '@material-ui/core/FormControl';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import FormControl from '@mui/material/FormControl';
 import { FormattedMessage } from 'react-intl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Input from '@material-ui/core/Input';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
+import InputLabel from '@mui/material/InputLabel';
+import Input from '@mui/material/Input';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
 import { _isSingle } from '@/components/settings';
 import OrderControl from "../songs/common/orders";
-import Container from '@material-ui/core/Container/Container';
+import Container from '@mui/material/Container/Container';
 import { timeCompare } from '@/components/common/timeFormatter';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
 import Loader from '../common/loader';
-import ListItem from '@material-ui/core/ListItem';
-import PersonAddIcon from '@material-ui/icons/PersonAdd';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import ThumbUpIcon from '@material-ui/icons/ThumbUp';
-import SearchIcon from '@material-ui/icons/Search';
+import ListItem from '@mui/material/ListItem';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import SearchIcon from '@mui/icons-material/Search';
 import { avatarBgColor, avatarFontColor } from '@/components/common';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import List from '@material-ui/core/List';
+import List from '@mui/material/List';
+import { SelectChangeEvent } from '@mui/material';
 
 interface P{
 
@@ -197,13 +198,13 @@ class RivalChallengeLetters extends React.Component<P&RouteComponentProps,stateI
     return orderMode === 0 ? sortedData : sortedData.reverse();
   }
 
-  handleOrderTitleChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
+  handleOrderTitleChange = (event:SelectChangeEvent<number>):void =>{
     const val = event.target.value;
     if (typeof val !== "number") { return; }
     return this.setState({orderTitle:val,page:0});
   }
 
-  handleOrderModeChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
+  handleOrderModeChange = (event:SelectChangeEvent<number>):void =>{
     const val = event.target.value;
     if (typeof val !== "number") { return; }
     return this.setState({orderMode:val,page:0});
@@ -266,7 +267,7 @@ class RivalChallengeLetters extends React.Component<P&RouteComponentProps,stateI
       <Container fixed className="commonLayout">
         <Grid container style={{margin:"5px 0"}}>
           <Grid item xs={10}>
-            <FormControl component="fieldset" style={{width:"100%"}}>
+            <FormControl component="fieldset" style={{width:"100%"}} variant="standard">
             <InputLabel><FormattedMessage id="Songs.filterByName"/></InputLabel>
               <Input
                 style={{width:"100%"}}

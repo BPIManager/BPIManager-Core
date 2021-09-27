@@ -1,14 +1,14 @@
 import React from "react";
-import Dialog from "@material-ui/core/Dialog";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import Divider from "@material-ui/core/Divider";
-import Typography from "@material-ui/core/Typography";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
 import UserCard from "@/view/components/rivals/viewComponents/card";
 import ModalUser from "@/view/components/rivals/modal";
 import timeFormatter from "@/components/common/timeFormatter";
 import { config } from "@/config";
-import Link from '@material-ui/core/Link';
+import Link from '@mui/material/Link';
 
 interface Props{
   closeModal:()=>void,

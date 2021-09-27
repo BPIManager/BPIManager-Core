@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { scoresDB } from '@/components/indexedDB';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 import {_isSingle,} from "@/components/settings";
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import Table from '@material-ui/core/Table';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TableCell from '@material-ui/core/TableCell';
-import TableBody from '@material-ui/core/TableBody';
-import TablePagination from '@material-ui/core/TablePagination';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Table from '@mui/material/Table';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
+import TableBody from '@mui/material/TableBody';
+import TablePagination from '@mui/material/TablePagination';
 import { scoreData } from '@/types/data';
 import Loader from '../common/loader';
 import { _prefix } from '@/components/songs/filter';
@@ -124,8 +124,8 @@ class MyBest extends React.Component<{},S> {
     });
   }
 
-  handleLevelChange = async(event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):Promise<void> =>{
-    if (typeof event.target.value !== "string") { return; }
+  handleLevelChange = async(event:SelectChangeEvent<string>):Promise<void> =>{
+    if (typeof event.target.value !== "string") return;
     this.setState({isLoading:true});
     return this.updateScoreData({targetLevel:event.target.value});
   }

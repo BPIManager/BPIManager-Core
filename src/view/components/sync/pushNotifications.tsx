@@ -1,22 +1,22 @@
 import * as React from 'react';
 
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import { _currentStore, _isSingle } from '@/components/settings';
-import Alert from '@material-ui/lab/Alert';
-import AlertTitle from '@material-ui/lab/AlertTitle';
-import List from '@material-ui/core/List';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import List from '@mui/material/List';
 import fbActions from '@/components/firebase/actions';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItem from '@mui/material/ListItem';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import { alternativeImg } from '@/components/common';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import Paper from '@material-ui/core/Paper';
-import Switch from '@material-ui/core/Switch';
+import ListSubheader from '@mui/material/ListSubheader';
+import Paper from '@mui/material/Paper';
+import Switch from '@mui/material/Switch';
 import { messanger } from '@/components/firebase/message';
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import firebase from 'firebase/app';
 import 'firebase/messaging';
 import Loader from '@/view/components/common/loader';
@@ -88,7 +88,7 @@ class PushSettings extends React.Component<P,S> {
       this.setState({
         uid:user.uid,
         processing:false,
-        userData:this.state.userData || await new fbActions().v2SetUserCollection().setDocName(user.uid).load(),
+        userData:this.state.userData || (await new fbActions().v2SetUserCollection().setDocName(user.uid).load()),
         syncData:p,
         rivalAdded:(me && me.addedNotify === true) || false
       });

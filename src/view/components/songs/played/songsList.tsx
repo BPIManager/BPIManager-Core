@@ -1,26 +1,26 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 import { FormattedMessage } from "react-intl";
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import { injectIntl } from "react-intl";
-import Grid from '@material-ui/core/Grid';
-import FormControl from '@material-ui/core/FormControl';
-import BackspaceIcon from '@material-ui/icons/Backspace';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
-import FilterListIcon from '@material-ui/icons/FilterList';
+import Grid from '@mui/material/Grid';
+import FormControl from '@mui/material/FormControl';
+import BackspaceIcon from '@mui/icons-material/Backspace';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import SongsTable from "./tablePlayed";
-import Input from '@material-ui/core/Input';
+import Input from '@mui/material/Input';
 
 import {scoreData, songData} from "@/types/data";
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import equal from 'fast-deep-equal'
 import { _showLatestSongs } from '@/components/settings';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import { bpmFilter,bpiFilter } from '../common';
 import SongsFilter, { B, BPIR } from '../common/filter';
 import OrderControl from "../common/orders";
@@ -32,7 +32,7 @@ import { timeCompare } from '@/components/common/timeFormatter';
 import TimeRangeDialog from '../common/timeRange';
 import { songFuncInList } from '@/components/songs/func/songList';
 import { defaultState_songsList } from '@/components/songs/default/states';
-import LinkedCameraIcon from '@material-ui/icons/LinkedCamera';
+import LinkedCameraIcon from '@mui/icons-material/LinkedCamera';
 import Captured from './captured';
 
 import songsAPI from '@/components/songs/api';
@@ -172,13 +172,13 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
     })
   }
 
-  handleOrderTitleChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
+  handleOrderTitleChange = (event:SelectChangeEvent<number>):void =>{
     const val = event.target.value;
     if (typeof val !== "number") { return; }
     return this.setState({orderTitle:val,page:0});
   }
 
-  handleOrderModeChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
+  handleOrderModeChange = (event:SelectChangeEvent<number>):void =>{
     const val = event.target.value;
     if (typeof val !== "number") { return; }
     return this.setState({orderMode:val,page:0});
@@ -244,14 +244,14 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
     return orderMode === 0  ? res : res.reverse();
   }
 
-  handleModeChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
+  handleModeChange = (event:SelectChangeEvent<number>):void =>{
     if (typeof event.target.value !== "number") { return; }
     let newState = this.clone();
     newState.mode = event.target.value;
     return this.setState({scoreData:this.songFilter(newState),mode:event.target.value,page:0});
   }
 
-  handleRangeChange = (event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void =>{
+  handleRangeChange = (event:SelectChangeEvent<number>):void =>{
     if (typeof event.target.value !== "number") { return; }
     if(event.target.value === 5){
       this.toggleTimeRangeDialog();
@@ -361,7 +361,7 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
                 endAdornment={
                   filterByName &&
                   <InputAdornment position="end">
-                    <IconButton onClick={()=>this.handleInputChange(null)}>
+                    <IconButton onClick={()=>this.handleInputChange(null)} size="large">
                       <BackspaceIcon/>
                     </IconButton>
                   </InputAdornment>

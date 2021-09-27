@@ -1,24 +1,24 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 import { FormattedMessage } from "react-intl";
 
 import SongsTable from "./tableNotPlayed";
-import BackspaceIcon from '@material-ui/icons/Backspace';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
-import Grid from '@material-ui/core/Grid';
-import FormControl from '@material-ui/core/FormControl';
+import BackspaceIcon from '@mui/icons-material/Backspace';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import Grid from '@mui/material/Grid';
+import FormControl from '@mui/material/FormControl';
 
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
+import Input from '@mui/material/Input';
+import InputLabel from '@mui/material/InputLabel';
 
 import {songData} from "@/types/data";
 import { difficultyDiscriminator } from '@/components/songs/filter';
 import equal from 'fast-deep-equal'
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import SongsFilter, { B } from '../common/filter';
-import FilterListIcon from '@material-ui/icons/FilterList';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import { bpmFilter,verArr } from '../common';
 import { commonFunc } from '@/components/common';
 import FilterByLevelAndDiff from '@/view/components/common/selector';
@@ -196,7 +196,7 @@ export default class NotPlayList extends React.Component<P,stateInt> {
                 endAdornment={
                   filterByName &&
                   <InputAdornment position="end">
-                    <IconButton onClick={()=>this.handleInputChange(null)}>
+                    <IconButton onClick={()=>this.handleInputChange(null)} size="large">
                       <BackspaceIcon/>
                     </IconButton>
                   </InputAdornment>

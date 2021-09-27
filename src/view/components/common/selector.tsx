@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { FormattedMessage } from "react-intl";
-import Grid from '@material-ui/core/Grid';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
+import Grid from '@mui/material/Grid';
+import FormLabel from '@mui/material/FormLabel';
+import FormControl from '@mui/material/FormControl';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
 const difficultiesSelector = [{label:"H",val:"hyper",name:"0"},{label:"A",val:"another",name:"1"},{label:"L",val:"leggendaria",name:"2"}];
 const levelsSelector = [{label:"☆11",val:"11",name:"11"},{label:"☆12",val:"12",name:"12"}];

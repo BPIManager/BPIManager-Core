@@ -1,48 +1,48 @@
 import React from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import Hidden from '@material-ui/core/Hidden';
-import Drawer from "@material-ui/core/Drawer";
-import List from "@material-ui/core/List";
-import Divider from "@material-ui/core/Divider";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import {Link as RefLink, Collapse, Avatar, Chip} from '@material-ui/core/';
-import LibraryMusicIcon from "@material-ui/icons/LibraryMusic";
-import TrendingUpIcon from "@material-ui/icons/TrendingUp";
-import SettingsIcon from "@material-ui/icons/Settings";
-import SaveAltIcon from "@material-ui/icons/SaveAlt";
-import BorderColorIcon from '@material-ui/icons/BorderColor';
-import BookmarkIcon from '@material-ui/icons/Bookmark';
-import FilterNoneIcon from '@material-ui/icons/FilterNone';
-import HelpIcon from '@material-ui/icons/Help';
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import Hidden from '@mui/material/Hidden';
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import {Link as RefLink, Collapse, Avatar, Chip} from '@mui/material/';
+import LibraryMusicIcon from "@mui/icons-material/LibraryMusic";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import SettingsIcon from "@mui/icons-material/Settings";
+import SaveAltIcon from "@mui/icons-material/SaveAlt";
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import FilterNoneIcon from '@mui/icons-material/FilterNone';
+import HelpIcon from '@mui/icons-material/Help';
 import { FormattedMessage } from "react-intl";
-import PeopleIcon from '@material-ui/icons/People';
+import PeopleIcon from '@mui/icons-material/People';
 import ShowSnackBar from "../snackBar";
-import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
-import { withStyles } from '@material-ui/core/styles';
+import WbIncandescentIcon from '@mui/icons-material/WbIncandescent';
+import withStyles from '@mui/styles/withStyles';
 import { config } from "@/config";
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import ExpandMore from '@material-ui/icons/ExpandMore';
-import QueueMusicIcon from '@material-ui/icons/QueueMusic';
-import LanguageIcon from '@material-ui/icons/Language';
-import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
-import ThumbsUpDownIcon from '@material-ui/icons/ThumbsUpDown';
-import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import QueueMusicIcon from '@mui/icons-material/QueueMusic';
+import LanguageIcon from '@mui/icons-material/Language';
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import ThumbsUpDownIcon from '@mui/icons-material/ThumbsUpDown';
+import SpeakerNotesIcon from '@mui/icons-material/SpeakerNotes';
 import { getAltTwitterIcon } from "@/components/rivals";
 import { alternativeImg } from "@/components/common";
 import fbActions from "@/components/firebase/actions";
 import {ReactComponent as Logo} from "@/assets/aix2f-q5h7x.svg";
-import LockOpenIcon from '@material-ui/icons/LockOpen';
-import EventNoteIcon from '@material-ui/icons/EventNote';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import EventNoteIcon from '@mui/icons-material/EventNote';
 import { _currentVersion, _traditionalMode } from "@/components/settings";
-import CameraAltIcon from '@material-ui/icons/CameraAlt';
-import HistoryIcon from '@material-ui/icons/History';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import HistoryIcon from '@mui/icons-material/History';
 
 interface navBars {
   to:string,
@@ -331,15 +331,19 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
       <div className={classes.root}>
         <AppBar className={window.location.href.split('/').pop() === "" ? "appBarIndex " + classes.appBar : classes.appBar}>
           <Toolbar>
-            <IconButton edge="start" color="inherit" aria-label="menu"
-              className={classes.menuButton} onClick={()=>{
-                if(!this.props.global.state.cannotMove){
-                  return this.toggleNav();
-                }else{
-                  return this.toggleErrorSnack();
-                }
-                }}
-              >
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              className={classes.menuButton}
+              onClick={()=>{
+                  if(!this.props.global.state.cannotMove){
+                    return this.toggleNav();
+                  }else{
+                    return this.toggleErrorSnack();
+                  }
+                  }}
+              size="large">
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" style={{flexGrow:1}}>
@@ -350,7 +354,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
               <IconButton
                 onClick={(_e)=>{history.push("/sync/settings");}}
                 color="inherit"
-              >
+                size="large">
                 <img src={user.photoURL ? user.photoURL.replace("_normal","") : "noimage"} style={{width:"32px",height:"32px",borderRadius:"100%"}}
                   alt={user.displayName || "Private-mode User"}
                   onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(user) || alternativeImg(user.displayName)}/>
@@ -380,7 +384,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
             {drawer(false)}
             </Drawer>
           </Hidden>
-          <Hidden xsDown implementation="css">
+          <Hidden smDown implementation="css">
             <Drawer
               classes={{
                 paper: classes.drawerPaper,

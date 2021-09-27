@@ -1,11 +1,11 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
+import Container from '@mui/material/Container';
 import fbActions from '@/components/firebase/actions';
 import Loader from '@/view/components/common/loader';
-import List from '@material-ui/core/List';
+import List from '@mui/material/List';
 import ModalNotes from './modal';
-import Alert from '@material-ui/lab/Alert/Alert';
-import AlertTitle from '@material-ui/lab/AlertTitle/AlertTitle';
+import Alert from '@mui/lab/Alert/Alert';
+import AlertTitle from '@mui/lab/AlertTitle/AlertTitle';
 import { EachMemo } from '../songs/songNotes';
 
 interface S{

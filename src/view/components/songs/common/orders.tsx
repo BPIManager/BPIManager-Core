@@ -1,15 +1,15 @@
 import * as React from 'react';
 
-import Grid from '@material-ui/core/Grid';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import Grid from '@mui/material/Grid';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import { FormattedMessage } from "react-intl";
 
 interface P {
-  handleOrderModeChange:(event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>)=>void,
-  handleOrderTitleChange:(event:React.ChangeEvent<{name?:string|undefined; value:unknown;}>)=>void,
+  handleOrderModeChange:(event:SelectChangeEvent<number>)=>void,
+  handleOrderTitleChange:(event:SelectChangeEvent<number>)=>void,
   orderTitle:number,
   orderMode:number,
   orderTitles:string[]

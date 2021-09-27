@@ -1,26 +1,26 @@
 import React from 'react';
 import { favsDB } from '@/components/indexedDB';
 import Loader from '@/view/components/common/loader';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
-import ListItemText from '@material-ui/core/ListItemText';
+import ListItem from '@mui/material/ListItem';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
+import ListItemText from '@mui/material/ListItemText';
 import { DBLists } from '@/types/lists';
 import { alternativeImg } from '@/components/common';
-import Container from '@material-ui/core/Container';
-import SettingsIcon from '@material-ui/icons/Settings';
-import Button from '@material-ui/core/Button';
+import Container from '@mui/material/Container';
+import SettingsIcon from '@mui/icons-material/Settings';
+import Button from '@mui/material/Button';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import * as H from 'history';
 import ListAdd from "./add";
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import IconButton from '@material-ui/core/IconButton';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import Divider from '@mui/material/Divider';
 import AdsCard from '@/components/ad';
-import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 import { listNobi11, listNobi12 } from '@/components/lists';
 
 interface S {
@@ -149,7 +149,11 @@ class ListComponent extends React.Component<CP,{}> {
         <ListItemText primary={`${data.title}` + (data.length !== -1 ? `(${data.length})` : "")} secondary={text} onClick={()=>this.props.history.push("/lists/" + data.num)} />
         {data.length !== -1 &&
         <ListItemSecondaryAction>
-          <IconButton edge="end" aria-label="comments" onClick={()=>this.props.toggleEditListScreen(data.num)}>
+          <IconButton
+            edge="end"
+            aria-label="comments"
+            onClick={()=>this.props.toggleEditListScreen(data.num)}
+            size="large">
             <SettingsIcon/>
           </IconButton>
         </ListItemSecondaryAction>

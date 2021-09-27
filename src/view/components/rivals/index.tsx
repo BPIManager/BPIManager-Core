@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 import RivalLists from "./list";
 import RecentlyAdded from "./recent";
 import { rivalScoreData, rivalStoreData, DBRivalStoreData } from '@/types/data';
@@ -40,10 +40,10 @@ class RivalIndex extends React.Component<P,S> {
           onChange={this.handleChange}
           indicatorColor="primary"
           variant="scrollable"
-          scrollButtons="on"
+          scrollButtons
           textColor="secondary"
           style={{margin:"5px 0"}}
-        >
+          allowScrollButtonsMobile>
           <Tab label="一覧" />
           <Tab label="おすすめ" />
           <Tab label="逆ライバル" />

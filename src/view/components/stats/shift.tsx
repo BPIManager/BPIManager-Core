@@ -1,13 +1,13 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
+import Container from '@mui/material/Container';
 import {_chartColor, _chartBarColor} from "@/components/settings";
 import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, Legend, LineChart} from 'recharts';
-import {FormControlLabel, FormControl, FormLabel, Checkbox, FormGroup, Divider, Typography} from '@material-ui/core/';
+import {FormControlLabel, FormControl, FormLabel, Checkbox, FormGroup, Divider, Typography} from '@mui/material/';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '../common/loader';
 import { ShiftType } from '@/types/stats';
 import statMain from '@/components/stats/main';
-import Alert from '@material-ui/lab/Alert/Alert';
+import Alert from '@mui/lab/Alert/Alert';
 import { ChangeLevel } from './main';
 import { injectIntl } from 'react-intl';
 import AdsCard from '@/components/ad';

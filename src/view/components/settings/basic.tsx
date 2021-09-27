@@ -1,30 +1,30 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import Paper from '@material-ui/core/Paper';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import Divider from '@material-ui/core/Divider';
+import Paper from '@mui/material/Paper';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Divider from '@mui/material/Divider';
 import { Subscribe } from 'unstated';
 import GlobalContainer from '@/components/context/global';
-import Button from '@material-ui/core/Button';
-import UpdateIcon from '@material-ui/icons/Update';
+import Button from '@mui/material/Button';
+import UpdateIcon from '@mui/icons-material/Update';
 import { _currentVersion, _currentDefinitionURL, _setCurrentDefinitionURL, _setAutoSync, _autoSync, _weeklyRanking } from '@/components/settings';
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogActions from '@material-ui/core/DialogActions';
-import Switch from '@material-ui/core/Switch';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogActions from '@mui/material/DialogActions';
+import Switch from '@mui/material/Switch';
 import { area } from '@/config';
-import TextField from '@material-ui/core/TextField';
-import {Link as RefLink} from '@material-ui/core/';
+import TextField from '@mui/material/TextField';
+import {Link as RefLink} from '@mui/material/';
 import Loader from '@/view/components/common/loader';
 import { updateDefFile } from '@/components/settings/updateDef';
-import AutorenewIcon from '@material-ui/icons/Autorenew';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
 
 interface S {
   isLoading:boolean,
@@ -98,7 +98,7 @@ class Settings extends React.Component<P,S> {
             <Paper style={{padding:"15px"}}>
               <FormControl>
                 <InputLabel><FormattedMessage id="Settings.language"/></InputLabel>
-                <Select value={state.lang} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+                <Select value={state.lang} onChange={(e:SelectChangeEvent<string>,)=>{
                   if(typeof e.target.value === "string"){
                     setLang(e.target.value)
                   }
@@ -113,7 +113,7 @@ class Settings extends React.Component<P,S> {
               <Divider style={{margin:"10px 0"}}/>
               <FormControl>
                 <InputLabel><FormattedMessage id="Settings.theme"/></InputLabel>
-                <Select value={state.theme} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+                <Select value={state.theme} onChange={(e:SelectChangeEvent<string>,)=>{
                   if(typeof e.target.value === "string"){
                     setTheme(e.target.value)
                   }
@@ -129,7 +129,7 @@ class Settings extends React.Component<P,S> {
               <Divider style={{margin:"10px 0"}}/>
               <FormControl>
                 <InputLabel><FormattedMessage id="Settings.dataStore"/></InputLabel>
-                <Select value={state.store} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+                <Select value={state.store} onChange={(e:SelectChangeEvent<string>)=>{
                   if(typeof e.target.value === "string"){
                     setStore(e.target.value)
                   }
@@ -266,7 +266,7 @@ class Settings extends React.Component<P,S> {
               <Divider style={{margin:"10px 0"}}/>
               <FormControl>
                 <InputLabel><FormattedMessage id="Settings.AreaTitle"/></InputLabel>
-                <Select value={state.area} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+                <Select value={state.area} onChange={(e:SelectChangeEvent<number>)=>{
                   if(typeof e.target.value === "number"){
                     setArea(e.target.value)
                   }

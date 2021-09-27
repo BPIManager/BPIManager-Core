@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { FormattedMessage } from 'react-intl';
-import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
 import fbActions from '@/components/firebase/actions';
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import { _currentStore, _isSingle, _autoSync } from '@/components/settings';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
+import ButtonGroup from '@mui/material/ButtonGroup';
 import { scoresDB, scoreHistoryDB } from '@/components/indexedDB';
-import {Link, CircularProgress, Paper} from '@material-ui/core/';
+import {Link, CircularProgress, Paper} from '@mui/material/';
 import {Link as RefLink} from "react-router-dom";
-import Alert from '@material-ui/lab/Alert';
-import AlertTitle from '@material-ui/lab/AlertTitle';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import ShowSnackBar from '../snackBar';
 
 class SyncControlScreen extends React.Component<{userData:any},{

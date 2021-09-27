@@ -1,37 +1,37 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
+import Container from '@mui/material/Container';
 import { injectIntl } from 'react-intl';
-import Typography from '@material-ui/core/Typography';
-import WarningIcon from '@material-ui/icons/Warning';
+import Typography from '@mui/material/Typography';
+import WarningIcon from '@mui/icons-material/Warning';
 import { _currentStore, _isSingle, _currentTheme } from '@/components/settings';
 import fbActions from '@/components/firebase/actions';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import Paper from '@material-ui/core/Paper';
-import Avatar from '@material-ui/core/Avatar';
-import GroupAddIcon from '@material-ui/icons/GroupAdd';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import ViewListIcon from '@material-ui/icons/ViewList';
-import TwitterIcon from '@material-ui/icons/Twitter';
+import Paper from '@mui/material/Paper';
+import Avatar from '@mui/material/Avatar';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import ViewListIcon from '@mui/icons-material/ViewList';
+import TwitterIcon from '@mui/icons-material/Twitter';
 import { rivalListsDB } from '@/components/indexedDB';
 import ShowSnackBar from '@/view/components/snackBar';
 import RivalView, { makeRivalStat } from '@/view/components/rivals/view';
 import { rivalScoreData, rivalStoreData } from '@/types/data';
-import {Link, Divider, Grid, GridList, GridListTile, GridListTileBar, List, ListItem, ListItemAvatar, ListItemText, ListItemSecondaryAction, IconButton, Button, Fab, Tabs, Tab, TextField} from '@material-ui/core/';
+import {Link, Divider, Grid, ImageList, ImageListItem, ImageListItemBar, List, ListItem, ListItemAvatar, ListItemText, ListItemSecondaryAction, IconButton, Button, Fab, Tabs, Tab, TextField} from '@mui/material/';
 import {Link as RefLink} from "react-router-dom";
 import ClearLampView from '@/view/components/table/fromUserPage';
-import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
+import WbIncandescentIcon from '@mui/icons-material/WbIncandescent';
 import {arenaRankColor, alternativeImg, avatarBgColor, avatarFontColor, bgColorByBPI} from '@/components/common';
 import Loader from '@/view/components/common/loader';
 import { config } from '@/config';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import CommentIcon from '@material-ui/icons/Comment';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import CommentIcon from '@mui/icons-material/Comment';
 import NotesView from '../components/notes/user';
 import { Helmet } from 'react-helmet';
 import { getTwitterName, getAltTwitterIcon } from '@/components/rivals';
 import { withRivalData, radarData, getRadar } from '@/components/stats/radar';
 import RivalStatViewFromUserPage from '../components/rivals/viewComponents/statsFromUserPage';
-import Alert from '@material-ui/lab/Alert/Alert';
-import EventNoteIcon from '@material-ui/icons/EventNote';
+import Alert from '@mui/lab/Alert/Alert';
+import EventNoteIcon from '@mui/icons-material/EventNote';
 import WeeklyList from '@/view/pages/ranking/list';
 import getUserData from '@/components/user';
 import FolloweeCounter from '../components/users/count';
@@ -40,15 +40,15 @@ import CalendarHeatmap from 'react-calendar-heatmap';
 import { toDate, subtract } from '@/components/common/timeFormatter';
 import 'react-calendar-heatmap/dist/styles.css';
 import ReactTooltip from "react-tooltip";
-import TrendingUpIcon from '@material-ui/icons/TrendingUp';
-import ClearAllIcon from '@material-ui/icons/ClearAll';
-import RecentActorsIcon from '@material-ui/icons/RecentActors';
-import CheckIcon from '@material-ui/icons/Check';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import ClearAllIcon from '@mui/icons-material/ClearAll';
+import RecentActorsIcon from '@mui/icons-material/RecentActors';
+import CheckIcon from '@mui/icons-material/Check';
 import Shift from '@/view/components/stats/shift';
 import { ShareList } from '../components/common/shareButtons';
 import bpiCalcuator from '@/components/bpi';
 import { httpsCfGet } from '@/components/firebase';
-import ThumbsUpDownIcon from '@material-ui/icons/ThumbsUpDown';
+import ThumbsUpDownIcon from '@mui/icons-material/ThumbsUpDown';
 
 interface S {
   userName:string,
@@ -575,9 +575,9 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
               <Container className={"commonLayout " + (c === "dark" ? "darkTheme" : c === "light" ? "lightTheme" : "deepSeaTheme")}>
                 <Typography component="h5" variant="h5" color="textPrimary" className="typographTitle">実力が近いユーザー</Typography>
               </Container>
-              <GridList  cellHeight={180} style={{height:"400px",width:"100%"}}>
+              <ImageList style={{height:"400px",width:"100%"}}>
                 {recommendUsers.map((tile:rivalStoreData) => (
-                  <GridListTile key={tile.displayName} onClick={async()=>{
+                  <ImageListItem key={tile.displayName} onClick={async()=>{
                     if(!limited){
                       this.props.history.replace("/u/" + tile.displayName);
                     }else{
@@ -591,13 +591,13 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
                   }}>
                   <img src={tile.photoURL.replace("_normal","")} alt={tile.displayName}
                     onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(tile) || alternativeImg(tile.displayName)}/>
-                  <GridListTileBar
+                  <ImageListItemBar
                     title={tile.displayName}
                     subtitle={"総合BPI " + String(tile.totalBPI || "-")}
                   />
-                </GridListTile>
+                </ImageListItem>
               ))}
-            </GridList>
+            </ImageList>
           </div>
         )}
         <ShowSnackBar message={message} variant={message === "ライバルを追加しました" ? "success" : "error"}
@@ -659,11 +659,11 @@ export class DefListCard extends React.Component<{
         </ListItemAvatar>
         <ListItemText primary={primaryText} secondary={secondaryText} />
         <ListItemSecondaryAction onClick={onAction}>
-          <IconButton edge="end">
+          <IconButton edge="end" size="large">
             <ArrowForwardIosIcon />
           </IconButton>
         </ListItemSecondaryAction>
       </ListItem>
-    )
+    );
   }
 }

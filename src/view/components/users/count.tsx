@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import FolloweeList from './list';
-import Link from '@material-ui/core/Link';
+import Link from '@mui/material/Link';
 
 interface P{
   ids:string[],

@@ -19,7 +19,7 @@ export class messanger{
       new fbActions().auth().onAuthStateChanged(async(user: any)=> {
         console.info("Login Status:" + user);
         if(user && user.uid){
-          const token = refreshedToken || await this.getToken();
+          const token = refreshedToken || (await this.getToken());
           new fbActions().updateToken(user.uid,token);
         }else{
           console.error("NOT LOGGED IN, REFRESH TOKEN HAS BEEN ABORTED")

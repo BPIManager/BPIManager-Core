@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
+import Container from '@mui/material/Container';
 import { injectIntl } from 'react-intl';
 import RivalView from "@/view/components/rivals/view";
 import ShowSnackBar from '@/view/components/snackBar';

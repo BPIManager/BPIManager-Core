@@ -1,15 +1,15 @@
 import * as React from 'react';
 
-import Paper from '@material-ui/core/Paper';
-import FormControl from '@material-ui/core/FormControl';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import UpdateIcon from '@material-ui/icons/Update';
+import Paper from '@mui/material/Paper';
+import FormControl from '@mui/material/FormControl';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import UpdateIcon from '@mui/icons-material/Update';
 import fbActions from '@/components/firebase/actions';
 import { _isSingle, _currentStore } from '@/components/settings';
 import { rivalListsDB } from '@/components/indexedDB';
-import Divider from '@material-ui/core/Divider';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import Divider from '@mui/material/Divider';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { DBRivalStoreData } from '@/types/data';
 import { updateRivalScore } from "@/components/rivals";
 import Loader from '@/view/components/common/loader';

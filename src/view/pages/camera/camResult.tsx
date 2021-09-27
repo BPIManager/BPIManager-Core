@@ -1,30 +1,30 @@
 import * as React from 'react';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Container from '@material-ui/core/Container';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import ReplayIcon from '@material-ui/icons/Replay';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormHelperText from '@mui/material/FormHelperText';
+import Container from '@mui/material/Container';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import ReplayIcon from '@mui/icons-material/Replay';
 import bpiCalcuator, { B } from '@/components/bpi';
 import { difficultyParser, _prefixFromLetters, difficultyDiscriminator, diffsUpperCase } from '@/components/songs/filter';
 import { _isSingle } from '@/components/settings';
-import Divider from '@material-ui/core/Divider';
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
+import Divider from '@mui/material/Divider';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
 import { songData, scoreData } from '@/types/data';
 import _djRank from '@/components/common/djRank';
-import CheckIcon from '@material-ui/icons/Check';
+import CheckIcon from '@mui/icons-material/Check';
 import { scoresDB, scoreHistoryDB } from '@/components/indexedDB';
-import Alert from '@material-ui/lab/Alert/Alert';
-import { Link, ButtonGroup } from '@material-ui/core';
+import Alert from '@mui/lab/Alert/Alert';
+import { Link, ButtonGroup } from '@mui/material';
 import {ReactComponent as TwitterIcon} from "@/assets/twitter.svg";
 import SongSearchDialog from './songSearch';
 import { CameraClass } from '@/components/camera/songs';
-import ThumbUpIcon from '@material-ui/icons/ThumbUp';
-import ThumbDownIcon from '@material-ui/icons/ThumbDown';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import Loader from '@/view/components/common/loader';
 import { untilDate } from '@/components/common/timeFormatter';
 
@@ -176,14 +176,15 @@ export default class CameraResult extends React.Component<Props,{
     return false;
   }
 
-  changeSongTitle = (e:React.ChangeEvent<any>)=>{
+  changeSongTitle = (e:SelectChangeEvent<string>)=>{
     this.setState({currentSongTitle:e.target.value,saved:false});
     return this.checkNewSongMax(e.target.value,null,null);
   }
 
-  changeSongDifficulty = (e:React.ChangeEvent<any>)=>{
-    this.setState({currentDifficulty:e.target.value,saved:false});
-    return this.checkNewSongMax(null,e.target.value,null);
+  changeSongDifficulty = (e:SelectChangeEvent<diffsUpperCase>)=>{
+    const diff = e.target.value as diffsUpperCase;
+    this.setState({currentDifficulty:diff,saved:false});
+    return this.checkNewSongMax(null,diff,null);
   }
 
   changeExScore = (event:React.ChangeEvent<HTMLInputElement>)=>{
