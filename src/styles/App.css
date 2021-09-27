@@ -97,6 +97,9 @@ th.MuiTableCell-root.MuiTableCell-head{
   background:#313131 !important;
 }
 
+#__dark .apbar{ background-color: #121212ed; }
+#__deepsea .apbar{ background-color: #001625ed; }
+#__light .apbar{ background-color: #591711ed; }
 
 a.link{
   text-decoration:none;

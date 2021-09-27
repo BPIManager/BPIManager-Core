@@ -68,7 +68,8 @@ const styles = (theme:any) => ({
     },
   },
   appBar: {
-    zIndex:0,
+    zIndex:1,
+    backdropFilter:"blur(3px)",
     marginLeft: drawerWidth,
     [theme.breakpoints.up('sm')]: {
       width: `calc(100% - ${drawerWidth}px)`,
@@ -330,7 +331,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
 
     return (
       <div className={classes.root}>
-        <AppBar className={window.location.href.split('/').pop() === "" ? "appBarIndex " + classes.appBar : classes.appBar}>
+        <AppBar className={window.location.href.split('/').pop() === "" ? "appBarIndex " + classes.appBar + " apbar" : classes.appBar + " apbar"}>
           <Toolbar>
             <IconButton
               edge="start"
