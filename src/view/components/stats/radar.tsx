@@ -1,11 +1,11 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
+import Container from '@mui/material/Container';
 import { injectIntl } from 'react-intl';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 import {_isSingle, _chartColor, _chartBarColor} from "@/components/settings";
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar} from 'recharts';
-import {Table, TableRow, TableCell, TableBody} from '@material-ui/core/';
+import {Table, TableRow, TableCell, TableBody} from '@mui/material/';
 import { getRadar, Details, radarData } from '@/components/stats/radar';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '@/view/components/common/loader';

@@ -1,9 +1,9 @@
 import * as React from 'react';
 
 import { rivalScoreData } from '@/types/data';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import ClearLampTable from './table';
 
 interface S {

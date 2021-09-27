@@ -1,8 +1,8 @@
 import * as React from 'react';
 import timeFormatter from "../common/timeFormatter";
 import {songsDB, scoresDB, favsDB, scoreHistoryDB, rivalListsDB} from "../indexedDB";
-import WarningIcon from '@material-ui/icons/Warning';
-import Backdrop from "@material-ui/core/Backdrop";
+import WarningIcon from '@mui/icons-material/Warning';
+import Backdrop from "@mui/material/Backdrop";
 import { _currentDefinitionURL } from '../settings';
 import fbActions from '../firebase/actions';
 import Loader from '@/view/components/common/loader';
@@ -93,9 +93,9 @@ export default class Initialize extends React.Component<{global:any},{show:boole
       localStorage.setItem("isSingle","1");
       localStorage.setItem("lastDefFileVer",csv.version);
       return this.setState({show:false});
-    }catch(e){
+    }catch(e:any){
       console.log(e);
-      return this.setState({error:true,errorMessage:e.message || "不明なエラーが発生したため続行できません。"})
+      return this.setState({error:true,errorMessage:"エラーが発生したため続行できません。"})
     }
   }
 
@@ -112,7 +112,6 @@ export default class Initialize extends React.Component<{global:any},{show:boole
   }
 
   sinusIridum = async()=>{
-    if(localStorage.getItem("sinusiridum_mod")) return;
     const another:songData = {
        "title":"Sinus Iridum",
        "wr":3430,
@@ -148,7 +147,7 @@ export default class Initialize extends React.Component<{global:any},{show:boole
           const newBPI = await bpi.setIsSingle(t.isSingle).calc(t.title,difficultyParser(t.difficulty,t.isSingle),t.exScore);
           type === 0 ? this.scoresDB.modifyBPI(t,newBPI) : this.scoreHistoryDB.modifyBPI(t,newBPI);
         }
-      }catch(e){
+      }catch(e:any){
         console.log(e);
       }
     }
@@ -156,7 +155,6 @@ export default class Initialize extends React.Component<{global:any},{show:boole
     await this.songsDB.bulkAdd([another,hyper]);
     modify(0);
     modify(1);
-    localStorage.setItem("sinusiridum_mod","1");
     return;
   }
 

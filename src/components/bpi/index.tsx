@@ -78,7 +78,7 @@ export default class bpiCalcuator{
         this.setCoef(this.defaultCoef());
       }
       return this.exec();
-    }catch(e){
+    }catch(e:any){
       return -15;
     }
   }
@@ -95,7 +95,7 @@ export default class bpiCalcuator{
         this.powCoef = this.defaultCoef();
       }
       return this.exec();
-    }catch(e){
+    }catch(e:any){
       return -15;
     }
   }
@@ -122,8 +122,9 @@ export default class bpiCalcuator{
       }
       return {error:false,bpi:this.exec(),difficultyLevel:this.propData[0]["difficultyLevel"]};
 
-    }catch(e){
-      return {error:true,bpi:NaN,reason:e.message || e};
+    }catch(e:any){
+      console.log(e);
+      return {error:true,bpi:NaN,reason: e.message};
     }
   }
 

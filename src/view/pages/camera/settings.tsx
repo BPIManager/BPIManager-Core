@@ -1,17 +1,17 @@
 import React from "react";
-import Dialog from "@material-ui/core/Dialog";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import DialogActions from "@material-ui/core/DialogActions";
-import Button from "@material-ui/core/Button";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import { Switch, FormGroup, FormLabel, Divider } from "@material-ui/core";
-import { Link } from '@material-ui/core';
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormHelperText from "@mui/material/FormHelperText";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import { Switch, FormGroup, FormLabel, Divider } from "@mui/material";
+import { Link } from '@mui/material';
 
 interface Props{
   toggleSettings:()=>void
@@ -51,7 +51,7 @@ export class CameraSettings extends React.Component<Props,{
     });
   }
 
-  setCam = (e:React.ChangeEvent<any>)=>{
+  setCam = (e:SelectChangeEvent<any>)=>{
     if(e.target){
       const {cams} = this.state;
       const target = cams.find(item=>item.deviceId === e.target.value);

@@ -10,10 +10,10 @@ import { DBLists } from "../../types/lists";
 const storageWrapper = class extends Dexie{
   target: string = "scores";
   //あとで書いとく
-  protected scores:Dexie.Table<scoreData, (string|number)[]>;
+  protected scores:Dexie.Table<scoreData, string|number|(string|number)[]>;
   protected songs:Dexie.Table<songData, number>;
   protected scoreHistory: Dexie.Table<historyData, number>;
-  protected rivals:Dexie.Table<rivalScoreData, (string|number)[]>;
+  protected rivals:Dexie.Table<rivalScoreData, string|number|(string|number)[]>;
   protected rivalLists: Dexie.Table<DBRivalStoreData, string>;
   protected favLists: Dexie.Table<any, string>;
   protected favSongs: Dexie.Table<any, string>;
@@ -185,7 +185,7 @@ export const favsDB = class extends storageWrapper{
   async getAllLists():Promise<DBLists[]>{
     try{
       return await this.favLists.toArray();
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return [];
     }
@@ -199,7 +199,7 @@ export const favsDB = class extends storageWrapper{
       }else{
         return null;
       }
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return null;
     }
@@ -215,7 +215,7 @@ export const favsDB = class extends storageWrapper{
         "length":0,
         "updatedAt":timeFormatter(3),
       });
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return "";
     }
@@ -229,7 +229,7 @@ export const favsDB = class extends storageWrapper{
         "icon":icon || alternativeImg(title),
         "updatedAt":timeFormatter(3),
       });
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return "";
     }
@@ -246,7 +246,7 @@ export const favsDB = class extends storageWrapper{
         "updatedAt":timeFormatter(3),
       });
       return true;
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return false;
     }
@@ -255,7 +255,7 @@ export const favsDB = class extends storageWrapper{
   async getListsFromSong(title:string,difficulty:string){
     try{
       return this.favSongs.where("[title+difficulty]").equals([title,difficulty]).toArray();
-    }catch(e){
+    }catch(e:any){
       return [];
     }
   }
@@ -264,7 +264,7 @@ export const favsDB = class extends storageWrapper{
     try{
       await this.favLists.where({num:target}).delete();
       await this.favSongs.where("listedOn").equals(target).delete();
-    }catch(e){
+    }catch(e:any){
       return;
     }
   }
@@ -277,7 +277,7 @@ export const favsDB = class extends storageWrapper{
       }else{
         throw new Error()
       }
-    }catch(e){
+    }catch(e:any){
       return -1;
     }
   }
@@ -290,7 +290,7 @@ export const favsDB = class extends storageWrapper{
       }else{
         throw new Error()
       }
-    }catch(e){
+    }catch(e:any){
       return -1;
     }
   }
@@ -298,7 +298,7 @@ export const favsDB = class extends storageWrapper{
   async getListSum():Promise<number>{
     try{
       return (await this.favLists.toArray()).length;
-    }catch(e){
+    }catch(e:any){
       return -1;
     }
   }
@@ -306,7 +306,7 @@ export const favsDB = class extends storageWrapper{
   async getAllItemsInAList(num:number):Promise<any[]>{
     try{
       return await this.favSongs.where({listedOn:num}).toArray();
-    }catch(e){
+    }catch(e:any){
       return [];
     }
   }
@@ -318,7 +318,7 @@ export const favsDB = class extends storageWrapper{
         "difficulty":difficulty,
         "listedOn":target,
       });
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return;
     }
@@ -331,7 +331,7 @@ export const favsDB = class extends storageWrapper{
         "difficulty":difficulty,
         "listedOn":target,
       }).delete();
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return;
     }
@@ -373,7 +373,7 @@ export const scoresDB = class extends storageWrapper{
         isSingle:_isSingle(),
       }).toArray();
       return currentData;
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return [];
     }
@@ -385,7 +385,7 @@ export const scoresDB = class extends storageWrapper{
         isSingle:_isSingle(),
       }).toArray();
       return currentData;
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return [];
     }
@@ -398,7 +398,7 @@ export const scoresDB = class extends storageWrapper{
         isSingle:_isSingle(),
       }).toArray();
       return this;
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return this;
     }
@@ -411,7 +411,7 @@ export const scoresDB = class extends storageWrapper{
         isSingle:this.isSingle,
       }).toArray();
       return currentData;
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return [];
     }
@@ -430,7 +430,7 @@ export const scoresDB = class extends storageWrapper{
     try{
       if(!this.currentData){await this.loadStore();}
       return this.currentData.filter(item=>item.difficultyLevel === diff);
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return [];
     }
@@ -445,7 +445,7 @@ export const scoresDB = class extends storageWrapper{
         group[item.title + item.difficulty] = item.currentBPI;
         return group;
       },{}));
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return [];
     }
@@ -476,7 +476,7 @@ export const scoresDB = class extends storageWrapper{
         isSingle:item["isSingle"],
         updatedAt : item["updatedAt"]
       })
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return;
     }
@@ -497,19 +497,19 @@ export const scoresDB = class extends storageWrapper{
         isSingle:item["isSingle"],
         updatedAt : item["updatedAt"]
       })
-    }catch(e){
+    }catch(e:any){
       console.error(e);
     }
   }
 
-  async updateScore(score:scoreData|null,data:{currentBPI:number,exScore:number,clearState:number,missCount:number}):Promise<boolean>{
+  async updateScore(score:scoreData|null,data:{currentBPI?:number,exScore?:number,clearState?:number,missCount?:number}):Promise<boolean>{
     try{
       if(!score){return false;}
       if(score.updatedAt === "-"){
         //put
         let newScoreData:scoreData = score;
-        newScoreData.currentBPI = data.currentBPI;
-        newScoreData.exScore = data.exScore;
+        newScoreData.currentBPI = data.currentBPI || -15;
+        newScoreData.exScore = data.exScore || 0;
         newScoreData.updatedAt = timeFormatter(0);
         await this.scores.add(newScoreData);
       }else{
@@ -527,7 +527,7 @@ export const scoresDB = class extends storageWrapper{
         await this.scores.where("[title+difficulty+storedAt+isSingle]").equals([score.title,score.difficulty,score.storedAt,score.isSingle]).modify(newData);
       }
       return true;
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return false;
     }
@@ -563,7 +563,7 @@ export const scoresDB = class extends storageWrapper{
         const bpi = await self.calculator.setIsSingle(t.isSingle).calc(t.title,difficultyParser(t.difficulty,t.isSingle),t.exScore);
         this.modifyBPI(t,bpi);
       }
-    }catch(e){
+    }catch(e:any){
       console.log(e);
     }
   }
@@ -606,7 +606,7 @@ export const scoreHistoryDB = class extends storageWrapper{
         isSingle:score.isSingle,
       });
       return true;
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return false;
     }
@@ -627,7 +627,7 @@ export const scoreHistoryDB = class extends storageWrapper{
         isSingle:score.isSingle,
       });
       return true;
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return false;
     }
@@ -653,7 +653,7 @@ export const scoreHistoryDB = class extends storageWrapper{
         willUpdate:t.length === 0 ? true : Number(item.exScore) > Number(t[t.length - 1].exScore),
         lastScore:t.length === 0 ? -1 : t[t.length-1].exScore
       };
-    }catch(e){
+    }catch(e:any){
       return {
         willUpdate:false,
         lastScore:0,
@@ -666,7 +666,7 @@ export const scoreHistoryDB = class extends storageWrapper{
       return await this.scoreHistory.where(
         {storedAt:this.currentStore,isSingle:this.isSingle,difficultyLevel:diff}
       ).toArray();
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return [];
     }
@@ -677,7 +677,7 @@ export const scoreHistoryDB = class extends storageWrapper{
       return await this.scoreHistory.where(
         {storedAt:this.currentStore,isSingle:this.isSingle}
       ).toArray();
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return [];
     }
@@ -688,7 +688,7 @@ export const scoreHistoryDB = class extends storageWrapper{
       return await this.scoreHistory.where(
         {storedAt:storedAt ? storedAt : this.currentStore,isSingle:this.isSingle}
       ).delete();
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return 0;
     }
@@ -702,7 +702,7 @@ export const scoreHistoryDB = class extends storageWrapper{
       ).toArray().then(t=>t.sort((a,b)=>{
         return timeCompare(b.updatedAt,a.updatedAt)
       }));
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return [];
     }
@@ -715,7 +715,7 @@ export const scoreHistoryDB = class extends storageWrapper{
       ).toArray().then(t=>t.sort((a,b)=>{
         return timeCompare(b.updatedAt,a.updatedAt)
       }));
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return [];
     }
@@ -742,7 +742,7 @@ export const scoreHistoryDB = class extends storageWrapper{
         return 0;
       });
       return res.reverse();
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return [];
     }
@@ -779,7 +779,7 @@ export const scoreHistoryDB = class extends storageWrapper{
         const bpi = await self.calculator.setIsSingle(t.isSingle).calc(t.title,difficultyParser(t.difficulty,t.isSingle),t.exScore);
         this.modifyBPI(t,bpi);
       }
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       console.log("failed recalculate [scoreHistoryDB] - ");
       return;
@@ -817,7 +817,7 @@ export const songsDB = class extends storageWrapper{
         this.songs.where("dpLevel").equals("0") :
         this.songs.where("dpLevel").notEqual("0");
       return willCollection ? data : await data.toArray();
-    }catch(e){
+    }catch(e:any){
       return [];
     }
   }
@@ -827,7 +827,7 @@ export const songsDB = class extends storageWrapper{
       return this.getAll(_isSingle()).then(result=>{
         return result.filter((item:songData)=>item.difficultyLevel === level && item.wr !== -1).length;
       })
-    }catch(e){
+    }catch(e:any){
       return 1;
     }
   }
@@ -835,7 +835,7 @@ export const songsDB = class extends storageWrapper{
   async getAllWithAllPlayModes():Promise<any>{
     try{
       return await this.songs.toCollection().toArray();
-    }catch(e){
+    }catch(e:any){
       return [];
     }
   }
@@ -847,7 +847,7 @@ export const songsDB = class extends storageWrapper{
   async getItem(title:string):Promise<any[]>{
     try{
       return await this.songs.where({title:title}).toArray();
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return [];
     }
@@ -866,7 +866,7 @@ export const songsDB = class extends storageWrapper{
     };
     try{
       return await this.songs.where("[title+difficulty]").equals([title,diffs()]).toArray();
-    }catch(e){
+    }catch(e:any){
       return [];
     }
   }
@@ -885,7 +885,7 @@ export const songsDB = class extends storageWrapper{
         memo:newMemo
       });
       return true;
-    }catch(e){
+    }catch(e:any){
       return false;
     }
   }
@@ -905,7 +905,7 @@ export const songsDB = class extends storageWrapper{
         coef:item["coef"] ? this.validateCoef(Number(item["coef"])) : -1,
         updatedAt: item["updatedAt"] || timeFormatter(0),
       })
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return 1;
     }
@@ -928,7 +928,7 @@ export const songsDB = class extends storageWrapper{
         coef:Number(this.validateCoef(item["coef"] || -1)),
         updatedAt: timeFormatter(0),
       })
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return 1;
     }
@@ -952,7 +952,7 @@ export const songsDB = class extends storageWrapper{
         difficultyLevel: newDifficultyLevel
       })
       return 0;
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return 1;
     }
@@ -969,7 +969,7 @@ export const songsDB = class extends storageWrapper{
   async removeItem(title:string):Promise<number>{
     try{
       return await this.songs.where({title:title}).delete();
-    }catch(e){
+    }catch(e:any){
       console.error(e);
       return 1;
     }
@@ -991,7 +991,7 @@ export const rivalListsDB = class extends storageWrapper{
   async getAll():Promise<DBRivalStoreData[]>{
     try{
       return this.rivalLists.where("[isSingle+storedAt]").equals([_isSingle(),_currentStore()]).toArray();
-    }catch(e){
+    }catch(e:any){
       return [];
     }
   }
@@ -999,7 +999,7 @@ export const rivalListsDB = class extends storageWrapper{
   async getRivalLength():Promise<number>{
     try{
       return (await this.rivalLists.where("[isSingle+storedAt]").equals([_isSingle(),_currentStore()]).toArray()).length;
-    }catch(e){
+    }catch(e:any){
       return 0;
     }
   }
@@ -1007,7 +1007,7 @@ export const rivalListsDB = class extends storageWrapper{
   async getAllUserScores():Promise<rivalScoreData[]>{
     try{
       return this.rivals.where({isSingle:_isSingle(),storedAt:_currentStore()}).toArray();
-    }catch(e){
+    }catch(e:any){
       return [];
     }
   }
@@ -1015,7 +1015,7 @@ export const rivalListsDB = class extends storageWrapper{
   async getAllScores(uid:string):Promise<rivalScoreData[]>{
     try{
       return this.rivals.where({rivalName:uid,isSingle:_isSingle(),storedAt:_currentStore()}).toArray();
-    }catch(e){
+    }catch(e:any){
       return [];
     }
   }
@@ -1023,7 +1023,7 @@ export const rivalListsDB = class extends storageWrapper{
   async getAllScoresWithTitle(title:string,difficulty:string):Promise<rivalScoreData[]>{
     try{
       return this.rivals.where({isSingle:_isSingle(),storedAt:_currentStore(),title:title,difficulty:difficulty}).toArray();
-    }catch(e){
+    }catch(e:any){
       return [];
     }
   }
@@ -1045,7 +1045,7 @@ export const rivalListsDB = class extends storageWrapper{
       }else{
         return {name:"UNKNOWN",icon:noimg};
       }
-    }catch(e){
+    }catch(e:any){
       return {name:"UNKNOWN",icon:noimg};
     }
   }

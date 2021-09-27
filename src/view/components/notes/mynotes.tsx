@@ -1,30 +1,30 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
+import Container from '@mui/material/Container';
 import fbActions from '@/components/firebase/actions';
 import Loader from '@/view/components/common/loader';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
 import { _prefixWithPS } from '@/components/songs/filter';
 import { updatedTime } from '@/components/common/timeFormatter';
 import ModalNotes from './modal';
-import Alert from '@material-ui/lab/Alert/Alert';
-import AlertTitle from '@material-ui/lab/AlertTitle';
-import Link from '@material-ui/core/Link';
+import Alert from '@mui/lab/Alert/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import Link from '@mui/material/Link';
 import {Link as RLink} from "react-router-dom";
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import TextField from '@material-ui/core/TextField';
-import DialogActions from '@material-ui/core/DialogActions';
-import Button from '@material-ui/core/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import TextField from '@mui/material/TextField';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
 import { _currentStore } from '@/components/settings';
 import { scoreData } from '@/types/data';
 import { scoresDB } from '@/components/indexedDB';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import IconButton from '@material-ui/core/IconButton';
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
+import IconButton from '@mui/material/IconButton';
 import { StyledBadge } from '../songs/songNotes';
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { functions } from '@/components/firebase';
 
 interface S{
@@ -165,14 +165,14 @@ class MyNotes extends React.Component<{},S> {
                 }} key={i}>
                 <ListItemText primary={<span>{data.songName + _prefixWithPS(data.songDiff,data.isSingle)}&nbsp;<small>{updatedTime(data.wroteAt.toDate())}</small></span>} secondary={note} />
                 <ListItemSecondaryAction>
-                  <IconButton aria-label="likeButton" disabled>
+                  <IconButton aria-label="likeButton" disabled size="large">
                     <StyledBadge badgeContent={data.likeCount || 0} color="secondary">
                       <FavoriteBorderIcon />
                     </StyledBadge>
                   </IconButton>
                 </ListItemSecondaryAction>
               </ListItem>
-            )
+            );
           })}
           </List>
             {myNotes.length === 0 && (
@@ -222,7 +222,7 @@ class WriteDialog extends React.Component<WP,{
       const func = functions.httpsCallable("updateComment");
       await func({ userBPI:score.currentBPI, memo:this.state.text, id:this.props.currentId });
       this.props.closeModal(true);
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return this.setState({isLoading:false})
     }

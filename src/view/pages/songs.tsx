@@ -4,13 +4,13 @@ import { scoresDB } from '@/components/indexedDB';
 import { scoreData } from '@/types/data';
 import Loader from '@/view/components/common/loader';
 import AdsCard from '@/components/ad';
-import Container from '@material-ui/core/Container';
-import Link from '@material-ui/core/Link';
+import Container from '@mui/material/Container';
+import Link from '@mui/material/Link';
 import {Link as RLink, RouteComponentProps, withRouter} from "react-router-dom";
 import { _showLatestSongs } from '@/components/settings';
-import HowToVoteIcon from '@material-ui/icons/HowToVote';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
+import HowToVoteIcon from '@mui/icons-material/HowToVote';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
 
 interface S {
   full:scoreData[],

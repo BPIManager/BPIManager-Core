@@ -2,7 +2,7 @@ import * as React from 'react';
 import { CameraClass, OCRExScore } from '@/components/camera/songs';
 import CameraMode from './camView';
 import { CameraSettings } from './settings';
-import Backdrop from '@material-ui/core/Backdrop';
+import Backdrop from '@mui/material/Backdrop';
 import Loader from '@/view/components/common/loader';
 import CameraResult from './camResult';
 import { songData, scoreData } from '@/types/data';

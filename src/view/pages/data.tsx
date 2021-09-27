@@ -1,35 +1,36 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import { FormattedMessage } from "react-intl";
 import {scoresDB, importer} from "@/components/indexedDB";
-import TextField from '@material-ui/core/TextField';
+import TextField from '@mui/material/TextField';
 import importCSV from "@/components/import/csv";
 import bpiCalculator, { showBpiDist } from "@/components/bpi";
 import { _currentStore, _isSingle, _currentStoreWithFullName } from '@/components/settings';
 import { _autoSync } from '../../components/settings';
-import Link from '@material-ui/core/Link';
+import Link from '@mui/material/Link';
 import {Link as RLink, withRouter, RouteComponentProps} from "react-router-dom";
 import { scoreData } from '@/types/data';
 import importJSON from '@/components/import/json';
-import Alert from '@material-ui/lab/Alert/Alert';
-import AlertTitle from '@material-ui/lab/AlertTitle';
+import Alert from '@mui/lab/Alert/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import { config } from '@/config';
 import timeFormatter, { timeCompare } from '@/components/common/timeFormatter';
 import Loader from "@/view/components/common/loader";
-import Divider from '@material-ui/core/Divider';
+import Divider from '@mui/material/Divider';
 import AdsCard from '@/components/ad';
 import bpiCalcuator from '@/components/bpi';
 import statMain from '@/components/stats/main';
 import dayjs from 'dayjs';
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
-import StepContent from '@material-ui/core/StepContent';
-import LinkIcon from '@material-ui/icons/Link';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import StepContent from '@mui/material/StepContent';
+import LinkIcon from '@mui/icons-material/Link';
 import { getUA } from '@/components/common';
 import { _prefix } from '@/components/songs/filter';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 interface P{
   global:any,
@@ -115,7 +116,7 @@ class Index extends React.Component<P&RouteComponentProps,{
     if(ua !== "chrome"){
       try{
         return await navigator.clipboard.readText();
-      }catch(e){
+      }catch(e:any){
         console.log(e);
         return text;
       }
@@ -126,7 +127,7 @@ class Index extends React.Component<P&RouteComponentProps,{
     if(permission.state === "granted" || permission.state === "prompt"){
       try{
         return await navigator.clipboard.readText();
-      }catch(e){
+      }catch(e:any){
         return text;
       }
     }else{
@@ -214,7 +215,7 @@ class Index extends React.Component<P&RouteComponentProps,{
       const updatedText = `BPIManagerでスコアを${updated}件更新しました%0a総合BPI:${totalBPI}(前日比:${showBpiDist(totalBPI,lastDay)},前週比:${showBpiDist(totalBPI,lastWeek)})%0a推定順位:${rank}位,皆伝上位${rankPer}％`;
       return this.setState({isSaving:false,raw:"",stateText:"Data.Success",errors:errors,updated:updated,updatedText:updatedText});
 
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       this.props.global.setMove(false);
       return this.setState({isSaving:false,stateText:"Data.Failed",errors:[e.message],raw:""});
@@ -272,22 +273,19 @@ class Index extends React.Component<P&RouteComponentProps,{
                     margin="dense"
                     variant="outlined"
                     multiline
-                    rowsMax="4"/>
+                    maxRows="4"/>
                 </React.Fragment>
-
-                <div style={{position:"relative"}}>
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    onClick={this.execute}
-                    disabled={isSaving}
-                    style={{margin:"5px 0"}}>
-                      <FormattedMessage id="Data.Execute"/><br/>
-                      (-{">"}{_currentStoreWithFullName() }&nbsp;/&nbsp;
-                      {_isSingle() === 1 ? "SP" : "DP"})
-                  </Button>
-                  {isSaving && <Loader isInner/>}
-                </div>
+                <LoadingButton
+                  variant="outlined"
+                  color="secondary"
+                  onClick={this.execute}
+                  disabled={isSaving}
+                  loading={isSaving}
+                  style={{margin:"5px 0"}}>
+                    <FormattedMessage id="Data.Execute"/><br/>
+                    (-{">"}{_currentStoreWithFullName() }&nbsp;/&nbsp;
+                    {_isSingle() === 1 ? "SP" : "DP"})
+                </LoadingButton>
               </StepContent>
             </Step>
             <Step active={errors.length > 0}>

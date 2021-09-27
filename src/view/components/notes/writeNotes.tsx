@@ -1,36 +1,36 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
+import Container from '@mui/material/Container';
 import fbActions from '@/components/firebase/actions';
 import Loader from '@/view/components/common/loader';
 import { scoresDB } from '@/components/indexedDB';
 import { scoreDataWithNotes, scoreData } from '@/types/data';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemText from '@material-ui/core/ListItemText';
-import BackspaceIcon from '@material-ui/icons/Backspace';
-import Avatar from '@material-ui/core/Avatar';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ListItemText from '@mui/material/ListItemText';
+import BackspaceIcon from '@mui/icons-material/Backspace';
+import Avatar from '@mui/material/Avatar';
 import { _prefix } from '@/components/songs/filter';
-import Pagination from '@material-ui/lab/Pagination';
-import AddIcon from '@material-ui/icons/Add';
-import DoneIcon from '@material-ui/icons/Done';
+import Pagination from '@mui/material/Pagination';
+import AddIcon from '@mui/icons-material/Add';
+import DoneIcon from '@mui/icons-material/Done';
 import { avatarBgColor, avatarFontColor, commonFunc } from '@/components/common';
 import ModalNotes from './modal';
-import Alert from '@material-ui/lab/Alert/Alert';
-import AlertTitle from '@material-ui/lab/AlertTitle';
-import Grid from '@material-ui/core/Grid';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
+import Alert from '@mui/lab/Alert/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import Grid from '@mui/material/Grid';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { FormattedMessage } from 'react-intl';
-import Input from '@material-ui/core/Input';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
-import MenuItem from '@material-ui/core/MenuItem';
+import Input from '@mui/material/Input';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import MenuItem from '@mui/material/MenuItem';
 import { timeCompare } from '@/components/common/timeFormatter';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import Button from '@material-ui/core/Button';
-import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Button from '@mui/material/Button';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 interface S{
   isLoading:boolean,
@@ -75,7 +75,7 @@ class WriteNotes extends React.Component<{},S> {
     const scores = await new scoresDB().getAll();
     let withNotes:scoreDataWithNotes[] = [];
     let obj:{[key:string]:any} = {};
-    let wroteNotes = await this.fbA.loadMyNotes() || null;
+    let wroteNotes = (await this.fbA.loadMyNotes()) || null;
     if(wroteNotes){
       const n = wroteNotes.docs;
       obj = n.reduce((groups:{[key:string]:boolean},item:any)=>{
@@ -124,7 +124,7 @@ class WriteNotes extends React.Component<{},S> {
     return this.setState({show:this.songFilter(newState),filterByName:newState.filterByName,page:1});
   }
 
-  handleSortChange = (e:React.ChangeEvent<{name?:string|undefined; value:unknown;}>):void=>{
+  handleSortChange = (e:SelectChangeEvent<number>):void=>{
     const val = e.target.value;
     let newState = this.clone();
     if (typeof val !== "number") { return; }
@@ -189,7 +189,7 @@ class WriteNotes extends React.Component<{},S> {
                 endAdornment={
                   filterByName &&
                   <InputAdornment position="end">
-                    <IconButton onClick={()=>this.handleInputChange(null)}>
+                    <IconButton onClick={()=>this.handleInputChange(null)} size="large">
                       <BackspaceIcon/>
                     </IconButton>
                   </InputAdornment>

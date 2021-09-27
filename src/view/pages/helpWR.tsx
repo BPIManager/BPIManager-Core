@@ -1,11 +1,11 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
 import { _currentTheme } from '@/components/settings';
-import ContactSupportIcon from '@material-ui/icons/ContactSupport';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import Button from '@material-ui/core/Button';
+import ContactSupportIcon from '@mui/icons-material/ContactSupport';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import Button from '@mui/material/Button';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 class HelpWR extends React.Component<RouteComponentProps,{}> {

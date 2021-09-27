@@ -1,16 +1,16 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
+import Container from '@mui/material/Container';
 import { historyDataWithLastScore } from '@/types/history';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import Loader from '@/view/components/common/loader';
-import Pagination from '@material-ui/lab/Pagination/Pagination';
+import Pagination from '@mui/lab/Pagination/Pagination';
 import { _prefix } from '@/components/songs/filter';
 import HistoryDataReceiver from '@/components/history';
-import TableContainer from '@material-ui/core/TableContainer';
-import { Table, TableRow, TableCell, TableBody, Dialog, DialogTitle, DialogContent, TableHead } from '@material-ui/core';
+import TableContainer from '@mui/material/TableContainer';
+import { Table, TableRow, TableCell, TableBody, Dialog, DialogTitle, DialogContent, TableHead } from '@mui/material';
 import { historyBgColor } from '@/components/common';
 import { historyData } from '@/types/data';
 import { scoreHistoryDB } from '@/components/indexedDB';
@@ -63,7 +63,7 @@ class History extends React.Component<RouteComponentProps,S> {
     })
   }
 
-  changeDate = (input:React.ChangeEvent<{name?:string|undefined; value:unknown;}>)=>{
+  changeDate = (input:SelectChangeEvent<string>)=>{
     const date = input.target.value as string;
     return this.setState({
       currentDate:date,
@@ -94,7 +94,7 @@ class History extends React.Component<RouteComponentProps,S> {
 }
 
 
-interface IDateSelector {days:IDays[],currentDate:string,handleChange:(input:React.ChangeEvent<{name?:string|undefined; value:unknown;}>)=>void}
+interface IDateSelector {days:IDays[],currentDate:string,handleChange:(input:SelectChangeEvent<string>)=>void}
 class DateSelector extends React.Component<IDateSelector>{
 
   getAllCount = ()=> this.props.days.reduce((sum:number,item:IDays)=> sum += item.num,0);

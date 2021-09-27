@@ -1,19 +1,19 @@
 import * as React from 'react';
 
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import fbActions from '@/components/firebase/actions';
 import Loader from '../../common/loader';
-import List from '@material-ui/core/List';
+import List from '@mui/material/List';
 import ModalNotes from '../modal';
-import Alert from '@material-ui/lab/Alert/Alert';
-import AlertTitle from '@material-ui/lab/AlertTitle';
+import Alert from '@mui/lab/Alert/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import { EachMemo } from '../../songs/songNotes';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
 interface S {
   notes:any[],
@@ -91,7 +91,7 @@ class NotesView extends React.Component<P,S> {
           <div>
             <FormControl fullWidth style={{marginTop:"8px"}}>
               <InputLabel>並び替えを変更</InputLabel>
-              <Select fullWidth value={sort} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+              <Select fullWidth value={sort} onChange={(e:SelectChangeEvent<number>)=>{
                 if(typeof e.target.value !== "number") return;
                 this.setState({sort:e.target.value});
                 this.changeSort(e.target.value);

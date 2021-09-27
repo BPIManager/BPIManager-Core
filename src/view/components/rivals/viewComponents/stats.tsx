@@ -1,12 +1,12 @@
 import * as React from 'react';
 
-import Typography from '@material-ui/core/Typography';
-import Switch from '@material-ui/core/Switch';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Typography from '@mui/material/Typography';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import { getRadar, Details, radarData, withRivalData } from '@/components/stats/radar';
 import { _isSingle } from '@/components/settings';
-import Grid from '@material-ui/core/Grid';
-import {Link as RefLink, Table, TableBody, TableRow, TableCell, TableHead, Divider} from '@material-ui/core/';
+import Grid from '@mui/material/Grid';
+import {Link as RefLink, Table, TableBody, TableRow, TableCell, TableHead, Divider} from '@mui/material/';
 import Loader from '@/view/components/common/loader';
 import { rivalScoreData } from '@/types/data';
 import Radar from "./ui/radar";

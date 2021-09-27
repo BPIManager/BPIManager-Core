@@ -22,7 +22,7 @@ export const behindScore = (row:scoreData,songData:songData,mode:number)=>{
     if(!songData) return 0;
     const max = songData["notes"] * 2;
     return Math.ceil(max * ghost[mode] - row.exScore)
-  }catch(e){
+  }catch(e:any){
     return;
   }
 }

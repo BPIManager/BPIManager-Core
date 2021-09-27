@@ -1,14 +1,13 @@
 import React from 'react';
-import clsx from 'clsx';
-import Button from '@material-ui/core/Button';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import ErrorIcon from '@material-ui/icons/Error';
-import InfoIcon from '@material-ui/icons/Info';
-import { amber, green } from '@material-ui/core/colors';
-import Snackbar from '@material-ui/core/Snackbar';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
-import WarningIcon from '@material-ui/icons/Warning';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ErrorIcon from '@mui/icons-material/Error';
+import InfoIcon from '@mui/icons-material/Info';
+import { amber, green } from '@mui/material/colors';
+import Snackbar from '@mui/material/Snackbar';
+import WarningIcon from '@mui/icons-material/Warning';
+import { Theme } from '@mui/material/styles';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 const variantIcon = {
   success: CheckCircleIcon,
@@ -53,52 +52,22 @@ export interface Props {
   handleClose?:()=>void
 }
 
-function SnackBarWrapper(props: Props) {
-  const classes = styles();
-  const { className, message, onClose, variant, ...other } = props;
-  const Icon = variantIcon[variant];
-
-  return (
-    <SnackbarContent
-      className={clsx(classes[variant], className)}
-      aria-describedby="client-snackbar"
-      message={
-        <span id="client-snackbar" className={classes.message}>
-          <Icon className={clsx(classes.icon, classes.iconVariant)} />
-          {message}
-        </span>
-      }
-      action={[
-        <Button onClick={onClose} color="inherit" size="small" key="ok">
-          Ok
-        </Button>,
-      ]}
-      {...other}
-    />
-  );
-}
-
 export default function ShowSnackBar(props:Props) {
+  const classes = styles();
   if(!props.open){
     return (null);
   }
   return (
-    <div>
       <Snackbar
+        className={classes.message}
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'left',
+          horizontal: 'center',
         }}
         open={props.open}
         autoHideDuration={props.autoHideDuration ? props.autoHideDuration : 2000}
         onClose={props.handleClose}
-      >
-        <SnackBarWrapper
-          onClose={props.handleClose}
-          variant={props.variant}
-          message={props.message}
-        />
-      </Snackbar>
-    </div>
+        message={props.message}
+      />
   );
 }

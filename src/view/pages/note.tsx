@@ -1,8 +1,8 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
+import Container from '@mui/material/Container';
 import { injectIntl } from 'react-intl';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 import NotesRecent from '../components/notes/recent';
 import NotesLiked from '../components/notes/liked';
 import MyNotes from '../components/notes/mynotes';
@@ -34,9 +34,9 @@ class Tools extends React.Component<{intl:any},S> {
           indicatorColor="primary"
           textColor="secondary"
           variant="scrollable"
-          scrollButtons="on"
+          scrollButtons
           style={{margin:"5px 0"}}
-        >
+          allowScrollButtonsMobile>
           <Tab label="最新の投稿" />
           <Tab label="書き込む・探す" />
           <Tab label="いいねした投稿" />

@@ -154,7 +154,7 @@ export default class statMain {
   }
 
   async eachDaySum(period:number,last?:string|Date,propdata?:any,range:number = 10):Promise<perDate[]>{
-    const data = propdata || await new scoreHistoryDB().getAll(String(this.targetLevel));
+    const data = propdata || (await new scoreHistoryDB().getAll(String(this.targetLevel)));
     let eachDaySum:perDate[] = [];
     let eachDayShift:{[key:string]:shiftType[]} = {};
 

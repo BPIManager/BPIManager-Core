@@ -1,24 +1,24 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import Paper from '@material-ui/core/Paper';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import Button from '@material-ui/core/Button';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogActions from '@material-ui/core/DialogActions';
+import Paper from '@mui/material/Paper';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Button from '@mui/material/Button';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogActions from '@mui/material/DialogActions';
 import { _currentVersion, _setTraditionalMode, _traditionalMode, _currentStore, _isSingle } from '@/components/settings';
 import { scoresDB, scoreHistoryDB, songsDB, rivalListsDB } from '@/components/indexedDB';
-import Divider from '@material-ui/core/Divider';
-import { Switch, Backdrop } from '@material-ui/core';
-import CachedIcon from '@material-ui/icons/Cached';
+import Divider from '@mui/material/Divider';
+import { Switch, Backdrop } from '@mui/material';
+import CachedIcon from '@mui/icons-material/Cached';
 import Loader from '../common/loader';
 import fbActions from '@/components/firebase/actions';
 import ExportButton from '@/components/settings/exportButton';
@@ -101,7 +101,7 @@ class Settings extends React.Component<P,S> {
         await shdb.reset(target);
       }
       this.setState({disableDeleteBtn:false,message2:"正常に削除しました"});
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       this.setState({disableDeleteBtn:false,message2:"更新に失敗しました"});
     }
@@ -118,7 +118,7 @@ class Settings extends React.Component<P,S> {
       await scDB.recalculateBPI();
       await schDB.recalculateBPI();
       this.setState({recalculating:false,initialT:this.state.traditionalMode});
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       this.setState({recalculating:false});
     }
@@ -205,7 +205,7 @@ class Settings extends React.Component<P,S> {
           */}
           <FormControl>
             <InputLabel><FormattedMessage id="Settings.dataClear"/></InputLabel>
-            <Select value={currentResetStore} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+            <Select value={currentResetStore} onChange={(e:SelectChangeEvent<string>,)=>{
               if(typeof e.target.value !== "string") return;
               this.setState({currentResetStore:e.target.value});
             }}>
@@ -252,7 +252,7 @@ class Settings extends React.Component<P,S> {
               <Loader/>
             </div>
             <div>
-              <p style={{textAlign:"center"}}>再計算中です</p>
+              <p style={{textAlign:"center"}}>再計算中です<br/>画面を閉じないでください</p>
             </div>
           </Backdrop>
         }

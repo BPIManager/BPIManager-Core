@@ -20,7 +20,7 @@ export default class favLists {
       }
       await new favsDB().setListLength(target,willAdd);
       return true;
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return false;
     }

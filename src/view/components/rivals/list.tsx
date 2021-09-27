@@ -1,36 +1,36 @@
 import * as React from 'react';
 
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
-import ListItemText from '@material-ui/core/ListItemText';
+import ListItem from '@mui/material/ListItem';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
+import ListItemText from '@mui/material/ListItemText';
 import ShowSnackBar from '../snackBar';
 import { rivalListsDB } from '@/components/indexedDB';
 import { DBRivalStoreData } from '@/types/data';
 import { updateRivalScore, getAltTwitterIcon } from "@/components/rivals";
-import Backdrop from "@material-ui/core/Backdrop";
+import Backdrop from "@mui/material/Backdrop";
 import timeFormatter,{timeCompare} from "@/components/common/timeFormatter";
 import Loader from '@/view/components/common/loader';
 import { alternativeImg, avatarBgColor, avatarFontColor } from '@/components/common';
-import Alert from '@material-ui/lab/Alert/Alert';
-import Divider from '@material-ui/core/Divider';
-import List from '@material-ui/core/List';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-import IconButton from '@material-ui/core/IconButton';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import SyncIcon from '@material-ui/icons/Sync';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import SettingsIcon from '@material-ui/icons/Settings';
+import Alert from '@mui/lab/Alert/Alert';
+import Divider from '@mui/material/Divider';
+import List from '@mui/material/List';
+import ListSubheader from '@mui/material/ListSubheader';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import IconButton from '@mui/material/IconButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import SyncIcon from '@mui/icons-material/Sync';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import ThumbUpIcon from '@material-ui/icons/ThumbUp';
-import SearchIcon from '@material-ui/icons/Search';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import SearchIcon from '@mui/icons-material/Search';
 import AdsCard from '@/components/ad';
-import Link from '@material-ui/core/Link';
-import AlertTitle from '@material-ui/lab/AlertTitle';
+import Link from '@mui/material/Link';
+import AlertTitle from '@mui/material/AlertTitle';
 interface S {
   isAddOpen:boolean,
   showSnackBar:boolean,
@@ -145,9 +145,12 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
           subheader={
             <ListSubheader component="div" disableSticky>
               ライバル一覧
-              <IconButton edge="end" style={{float:"right"}}
+              <IconButton
+                edge="end"
+                style={{float:"right"}}
                 aria-haspopup="true"
-                onClick={()=>this.toggleMenu(true)}>
+                onClick={()=>this.toggleMenu(true)}
+                size="large">
                   <SettingsIcon />
               </IconButton>
             </ListSubheader>
@@ -185,12 +188,12 @@ class RivalLists extends React.Component<P&RouteComponentProps,S> {
                 </ListItemAvatar>
                 <ListItemText primary={item.name} secondary={item.desc} />
                 <ListItemSecondaryAction onClick={item.func}>
-                  <IconButton edge="end">
+                  <IconButton edge="end" size="large">
                     <ArrowForwardIosIcon />
                   </IconButton>
                 </ListItemSecondaryAction>
               </ListItem>
-            )
+            );
           })
         }
         </List>

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container/Container';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
 
 class NotFound extends React.Component<{},{}> {
 

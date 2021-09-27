@@ -1,24 +1,24 @@
 import * as React from 'react';
 
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import fbActions from '@/components/firebase/actions';
 import { _currentStore, _isSingle } from '@/components/settings';
 import { rivalListsDB } from '@/components/indexedDB';
-import Grid from '@material-ui/core/Grid';
+import Grid from '@mui/material/Grid';
 import ShowSnackBar from '../snackBar';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import { rivalStoreData, rivalScoreData } from '@/types/data';
-import { Input, InputAdornment, IconButton, List} from '@material-ui/core/';
+import { Input, InputAdornment, IconButton, List} from '@mui/material/';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
 import Loader from '../common/loader';
-import Alert from '@material-ui/lab/Alert';
-import AlertTitle from '@material-ui/lab/AlertTitle';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import ModalUser from './modal';
 import UserCard from './viewComponents/card';
-import SearchIcon from "@material-ui/icons/Search";
+import SearchIcon from "@mui/icons-material/Search";
 import { timeCompare } from '@/components/common/timeFormatter';
 import InfiniteScroll from 'react-infinite-scroller';
 import { getRadar, radarData } from '@/components/stats/radar';
@@ -235,7 +235,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
             <Grid item xs={12}>
               <FormControl style={{width:"100%"}}>
                 <InputLabel>検索対象</InputLabel>
-                <Select value={recommendedBy} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+                <Select value={recommendedBy} onChange={(e:SelectChangeEvent<string>,)=>{
                   if(typeof e.target.value !== "string") return;
                   this.setState({recommendedBy:e.target.value,res:[],activated:false});
                   return this.refreshRecommend(e.target.value);
@@ -253,7 +253,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
               <Grid item xs={6}>
                 <FormControl style={{width:"100%"}}>
                   <InputLabel>アリーナランク</InputLabel>
-                  <Select value={arenaRank} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+                  <Select value={arenaRank} onChange={(e:SelectChangeEvent<string>,)=>{
                     if(typeof e.target.value !== "string") return;
                     this.setState({arenaRank:e.target.value,res:[],activated:false});
                     return searchInput ? this.incrementalSearch(searchInput,e.target.value) : this.search(null,null,e.target.value);
@@ -271,7 +271,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
                 onChange={(e)=>this.incrementalSearch(e.target.value,arenaRank)}
                 endAdornment={
                   <InputAdornment position="end">
-                    <IconButton>
+                    <IconButton size="large">
                       <SearchIcon />
                     </IconButton>
                   </InputAdornment>

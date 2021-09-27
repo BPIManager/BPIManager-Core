@@ -1,14 +1,14 @@
 import React from "react";
-import Dialog from "@material-ui/core/Dialog";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import Divider from "@material-ui/core/Divider";
-import Typography from "@material-ui/core/Typography";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
 import UserCard from "@/view/components/rivals/viewComponents/card";
 import ModalUser from "@/view/components/rivals/modal";
 import timeFormatter from "@/components/common/timeFormatter";
 import { config } from "@/config";
-import Link from '@material-ui/core/Link';
+import Link from '@mui/material/Link';
 
 interface Props{
   closeModal:()=>void,
@@ -66,7 +66,7 @@ export class Details extends React.Component<Props,{
             }
           </p>
           {header("作成者情報")}
-          <UserCard hideBottomButtons open={this.open} myId={authorData.uid} item={authorData} processing={false} isAdded={true} addUser={()=>null}/>
+          {authorData.isPublic && <UserCard hideBottomButtons open={this.open} myId={authorData.uid} item={authorData} processing={false} isAdded={true} addUser={()=>null}/>}
           {header("ランキングURL")}
           <Link href={config.baseUrl + "/ranking/id/" + onGoingId} color="secondary" component="a" target="_blank">{config.baseUrl + "/ranking/id/" + onGoingId}</Link>
 

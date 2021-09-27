@@ -1,19 +1,19 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
+import Container from '@mui/material/Container';
 import fbActions from '@/components/firebase/actions';
 import Loader from '@/view/components/common/loader';
-import List from '@material-ui/core/List';
+import List from '@mui/material/List';
 import ModalNotes from './modal';
-import Alert from '@material-ui/lab/Alert/Alert';
-import AlertTitle from '@material-ui/lab/AlertTitle';
-import Link from '@material-ui/core/Link';
-import Button from '@material-ui/core/Button';
+import Alert from '@mui/lab/Alert/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import Link from '@mui/material/Link';
+import Button from '@mui/material/Button';
 import {Link as RLink} from "react-router-dom";
-import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import { EachMemo } from '../songs/songNotes';
 
 interface S{
@@ -104,7 +104,7 @@ class NotesRecent extends React.Component<{},S> {
         }
         <FormControl fullWidth style={{marginTop:"8px"}}>
           <InputLabel>並び替えを変更</InputLabel>
-          <Select fullWidth value={sort} onChange={(e:React.ChangeEvent<{ value: unknown }>,)=>{
+          <Select fullWidth value={sort} onChange={(e:SelectChangeEvent<number>)=>{
             if(typeof e.target.value !== "number") return;
             this.setState({sort:e.target.value});
             this.changeSort(e.target.value);

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import { scoresDB,songsDB } from '../indexedDB';
 import { _isSingle, _currentStore } from '.';
 import { difficultyDiscriminator, lampArray } from '../songs/filter';

@@ -1,18 +1,17 @@
 import * as React from 'react';
 
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import { toMoment } from '@/components/common/timeFormatter';
-import MomentUtils from '@date-io/dayjs';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
-import Alert from '@material-ui/lab/Alert';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import { toDate } from '@/components/common/timeFormatter';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import MobileDatePicker from '@mui/lab/MobileDatePicker';
+import Alert from '@mui/material/Alert';
+import { TextField } from '@mui/material';
 
 interface P {
   handleToggle:()=>void,
@@ -31,8 +30,8 @@ class TimeRangeDialog extends React.Component<P,S> {
   constructor(props:P){
     super(props);
     this.state = {
-      from:toMoment(props.dateRange.from),
-      to:toMoment(props.dateRange.to),
+      from:toDate(props.dateRange.from),
+      to:toDate(props.dateRange.to),
     }
   }
 
@@ -53,11 +52,11 @@ class TimeRangeDialog extends React.Component<P,S> {
   }
 
   handleFromInput = (date:any) => {
-    this.setState({from:toMoment(date || new Date())});
+    this.setState({from:toDate(date || new Date())});
   };
 
   handleToInput = (date:any) => {
-    this.setState({to:toMoment(date || new Date())});
+    this.setState({to:toDate(date || new Date())});
   };
 
   render(){
@@ -67,31 +66,33 @@ class TimeRangeDialog extends React.Component<P,S> {
       <Dialog open={true} onClose={handleToggle}>
         <DialogTitle>期間指定</DialogTitle>
         <DialogContent>
-          <MuiPickersUtilsProvider utils={MomentUtils}>
-            <Grid container>
-              <Grid item xs={12} sm={6}>
-                <KeyboardDatePicker
-                  margin="normal"
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <Grid container justifyContent="space-between">
+              <Grid item xs={12} sm={5} style={{marginTop:"15px"}}>
+                <MobileDatePicker
                   label="始点日付"
-                  format="YYYY/MM/DD"
+                  inputFormat="yyyy/MM/dd"
                   value={from}
-                  fullWidth
+                  renderInput={(props) => (
+                    <TextField {...props} fullWidth />
+                  )}
                   onChange={this.handleFromInput}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <KeyboardDatePicker
-                  margin="normal"
+              <Grid item xs={12} sm={5} style={{marginTop:"15px"}}>
+                <MobileDatePicker
                   label="終点日付"
-                  format="YYYY/MM/DD"
+                  inputFormat="yyyy/MM/dd"
                   value={to}
-                  fullWidth
+                  renderInput={(props) => (
+                    <TextField {...props} fullWidth />
+                  )}
                   onChange={this.handleToInput}
                 />
               </Grid>
             </Grid>
-          </MuiPickersUtilsProvider>
-          <Alert severity="info">「始点日付」と「終点日付」の間の期間中にデータを更新した楽曲を表示します。<br/>
+          </LocalizationProvider>
+          <Alert severity="info" style={{marginTop:"15px"}}>「始点日付」と「終点日付」の間の期間中にデータを更新した楽曲を表示します。<br/>
           その期間以降にスコアやクリアランプを更新している場合はリストに表示されません。</Alert>
         </DialogContent>
         <DialogActions>

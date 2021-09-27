@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 import SyncControlScreen from './control';
 import SyncRivalScreen from './rival';
 import PushSettings from "./pushNotifications";
@@ -34,9 +34,9 @@ class SyncControlTab extends React.Component<P&RouteComponentProps,{currentTab:n
           indicatorColor="primary"
           textColor="secondary"
           variant="scrollable"
-          scrollButtons="on"
+          scrollButtons
           style={{margin:"5px 0"}}
-        >
+          allowScrollButtonsMobile>
           <Tab label="プロフィール" />
           <Tab label="データ" />
           <Tab label="ライバル" />

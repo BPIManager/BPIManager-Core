@@ -1,5 +1,5 @@
 import React from "react";
-import { Dialog, DialogTitle, DialogContent, Table, TableHead, TableRow, TableCell, TableBody} from "@material-ui/core";
+import { Dialog, DialogTitle, DialogContent, Table, TableHead, TableRow, TableCell, TableBody} from "@mui/material";
 import { songData } from "@/types/data";
 import { songsDB } from "@/components/indexedDB";
 import bpiCalcuator from "@/components/bpi";
@@ -43,7 +43,7 @@ export default class Details extends React.Component<P,{
       }
       const res = bpi.setPropData(songData,input,_isSingle());
       return res;
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return -15;
     }

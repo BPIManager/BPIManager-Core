@@ -1,37 +1,37 @@
 import * as React from 'react';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import {Link as RefLink, Divider, Avatar, Grid, Typography, CardActions, Card, CardContent, Container, CircularProgress, ListItem, ListItemAvatar, ListItemText, List} from '@material-ui/core/';
+import {Link as RefLink, Divider, Avatar, Grid, Typography, CardActions, Card, CardContent, Container, CircularProgress, ListItem, ListItemAvatar, ListItemText, List} from '@mui/material/';
 import { _currentVersion, _currentTheme, _currentQuickAccessComponents } from '@/components/settings';
-import UpdateIcon from '@material-ui/icons/Update';
+import UpdateIcon from '@mui/icons-material/Update';
 import Loader from '@/view/components/common/loader';
 import { updateDefFile } from '@/components/settings/updateDef';
-import CheckIcon from '@material-ui/icons/Check';
-import WarningIcon from '@material-ui/icons/Warning';
+import CheckIcon from '@mui/icons-material/Check';
+import WarningIcon from '@mui/icons-material/Warning';
 import { Helmet } from 'react-helmet';
 import { getAltTwitterIcon } from '@/components/rivals';
 import { alternativeImg, getUA, blurredBackGround } from '@/components/common';
 import bpiCalcuator from '@/components/bpi';
 import statMain from '@/components/stats/main';
 
-import TimelineIcon from '@material-ui/icons/Timeline';
-import LibraryMusicIcon from '@material-ui/icons/LibraryMusic';
-import MenuOpenIcon from '@material-ui/icons/MenuOpen';
-import Alert from '@material-ui/lab/Alert/Alert';
-import AlertTitle from '@material-ui/lab/AlertTitle/AlertTitle';
+import TimelineIcon from '@mui/icons-material/Timeline';
+import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
+import MenuOpenIcon from '@mui/icons-material/MenuOpen';
+import Alert from '@mui/lab/Alert/Alert';
+import AlertTitle from '@mui/lab/AlertTitle/AlertTitle';
 import { FormattedMessage } from 'react-intl';
-import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
+import WbIncandescentIcon from '@mui/icons-material/WbIncandescent';
 import { named, getTable, CLBody } from '@/components/aaaDiff/data';
 import fbActions from '@/components/firebase/actions';
 import { scoresDB } from '@/components/indexedDB';
 import { scoreData, rivalStoreData } from '@/types/data';
 import { isSameWeek, updatedTime } from '@/components/common/timeFormatter';
 import { quickAccessTable } from '@/components/common/quickAccess';
-import PeopleIcon from '@material-ui/icons/People';
-import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import PeopleIcon from '@mui/icons-material/People';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ModalUser from '../components/rivals/modal';
-import AppsIcon from '@material-ui/icons/Apps';
-import GetAppIcon from '@material-ui/icons/GetApp';
+import AppsIcon from '@mui/icons-material/Apps';
+import GetAppIcon from '@mui/icons-material/GetApp';
 import { BeforeInstallPromptEvent } from '@/components/context/global';
 
 
@@ -330,7 +330,7 @@ class UpdateDef extends React.Component<{},{
           updateInfo:data.updateInfo,
         });
       }
-    }catch(e){
+    }catch(e:any){
       console.log(e);
     }
   }
@@ -411,7 +411,7 @@ class InstallAlert extends React.Component<{global:any},{hide:boolean}>{
       hide:false
     }
   }
-  private available = (('standalone' in window.navigator) && (window.navigator['standalone']));
+  private available = (('standalone' in window.navigator) && ((window.navigator as any)['standalone']));
 
   installApp = ()=>{
     const { global } = this.props;

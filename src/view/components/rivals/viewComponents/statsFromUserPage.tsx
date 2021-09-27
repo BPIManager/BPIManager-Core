@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-//import Tabs from '@material-ui/core/Tabs';
-//import Tab from '@material-ui/core/Tab';
+//import Tabs from '@mui/material/Tabs';
+//import Tab from '@mui/material/Tab';
 //import Main from "@/view/components/stats/main";
 import { rivalScoreData } from '@/types/data';
-import Container from '@material-ui/core/Container/Container';
+import Container from '@mui/material/Container/Container';
 import RivalStats from './stats';
 import { withRivalData } from '@/components/stats/radar';
 

@@ -61,7 +61,7 @@ export default class importJSON {
           });
         }
         return resolve(1);
-      }catch(e){
+      }catch(e:any){
         console.log(e);
         return reject(e);
       }

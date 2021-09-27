@@ -18,7 +18,7 @@ export default class getUserData{
       }
       this.all = store;
       return this.all ? (this.all.scores || []) : [];
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return [];
     }

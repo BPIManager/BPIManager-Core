@@ -1,26 +1,26 @@
 import React from "react";
-import Dialog from "@material-ui/core/Dialog";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import CloseIcon from "@material-ui/icons/Close";
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import TwitterIcon from '@material-ui/icons/Twitter';
+import Dialog from "@mui/material/Dialog";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import CloseIcon from "@mui/icons-material/Close";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import TwitterIcon from '@mui/icons-material/Twitter';
 import { _prefixFromNum, getSongSuffixForIIDXInfo } from "@/components/songs/filter";
-import Grid from "@material-ui/core/Grid";
-import Divider from "@material-ui/core/Divider";
-import TextField from "@material-ui/core/TextField";
+import Grid from "@mui/material/Grid";
+import Divider from "@mui/material/Divider";
+import TextField from "@mui/material/TextField";
 import { FormattedMessage } from "react-intl";
-import Paper from "@material-ui/core/Paper";
+import Paper from "@mui/material/Paper";
 import bpiCalcuator, { B } from "@/components/bpi";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import YouTubeIcon from '@material-ui/icons/YouTube';
-import ThumbsUpDownIcon from '@material-ui/icons/ThumbsUpDown';
-import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import YouTubeIcon from '@mui/icons-material/YouTube';
+import ThumbsUpDownIcon from '@mui/icons-material/ThumbsUpDown';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import ShowSnackBar from "../snackBar";
-import {Button, Tooltip, List, ListItem, SwipeableDrawer, ListItemIcon, ListItemText, ListSubheader, Backdrop} from '@material-ui/core';
+import {Button, Tooltip, List, ListItem, SwipeableDrawer, ListItemIcon, ListItemText, ListSubheader, Backdrop, SelectChangeEvent} from '@mui/material';
 import BPIChart from "./bpiChart";
 import SongDetails from "./songDetails";
 import SongDiffs from "./songDiffs";
@@ -33,21 +33,21 @@ import fbActions from "@/components/firebase/actions";
 import SongRivals from "./songRivals";
 import Loader from "../common/loader";
 import favLists from "./common/lists";
-import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import Filter1Icon from '@material-ui/icons/Filter1';
+import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import Filter1Icon from '@mui/icons-material/Filter1';
 import { config } from "@/config";
 
 import { DBLists } from "@/types/lists";
 import { scoreData, songData } from "@/types/data";
 import SongNotes from "./songNotes";
 
-import BarChartIcon from '@material-ui/icons/BarChart';
-import QueueMusicIcon from '@material-ui/icons/QueueMusic';
-import HistoryIcon from '@material-ui/icons/History';
-import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
-import RateReviewIcon from '@material-ui/icons/RateReview';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import QueueMusicIcon from '@mui/icons-material/QueueMusic';
+import HistoryIcon from '@mui/icons-material/History';
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+import RateReviewIcon from '@mui/icons-material/RateReview';
 
 interface P{
   isOpen:boolean,
@@ -251,7 +251,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
           allSavedLists:willAdd ? allSavedLists.concat(target.num) : allSavedLists.filter((item:number)=> item !== target.num)
         });
       }
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       alert("追加に失敗しました");
     }
@@ -321,7 +321,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
         song.memo = newMemo;
       }
       this.props.handleOpen(true,song,willDelete ? {title:score.title,difficulty:score.difficulty} : null);
-    }catch(e){
+    }catch(e:any){
       return this.setState({errorSnack:true,errorSnackMessage:e});
     }
   }
@@ -350,7 +350,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
     );
   }
 
-  handleClearState = (e:React.ChangeEvent<{ value: unknown }>)=> this.setState({newClearState:Number(e.target.value) < 0 ? 0 : Number(e.target.value)});
+  handleClearState = (e:SelectChangeEvent<number>)=> this.setState({newClearState:Number(e.target.value) < 0 ? 0 : Number(e.target.value)});
   handleMissCount = (e:React.ChangeEvent<HTMLInputElement>)=> this.setState({newMissCount:Number(e.target.value) < 0 ? 0 : Number(e.target.value)});
   handleMemo = (e:React.ChangeEvent<HTMLInputElement>)=> this.setState({hasModifiedMemo:true,newMemo:e.target.value || ""});
 
@@ -378,7 +378,12 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
       <Dialog id="detailedScreen" className={c === "dark" ? "darkDetailedScreen" : c === "light" ? "lightDetailedScreen" : "deepSeaDetailedScreen"} fullScreen open={isOpen} onClose={handleOpen} style={{overflowX:"hidden",width:"100%"}}>
         <AppBar>
           <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={()=>handleOpen(false)} aria-label="close">
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={()=>handleOpen(false)}
+              aria-label="close"
+              size="large">
               <CloseIcon />
             </IconButton>
             <Typography variant="h6" className="be-ellipsis" style={{flexGrow:1}}>
@@ -463,14 +468,17 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
             <Grid item xs={1} style={{display:"flex",alignItems:"center",justifyContent:"flex-end"}}>
               <div style={{margin:"10px 6px 0"}}>
                 <Tooltip title="楽曲をリストに追加/削除">
-                  <IconButton style={{margin:"0 6px 0"}}
+                  <IconButton
+                    style={{margin:"0 6px 0"}}
                     aria-haspopup="true"
-                    onClick={()=>this.toggleListsMenu(true)}>
+                    onClick={()=>this.toggleListsMenu(true)}
+                    size="large">
                       <PlaylistAddCheckIcon/>
                     </IconButton>
                   </Tooltip>
                   <SwipeableDrawer
                     anchor="bottom"
+                    className="overlayDrawer"
                     open={openListsMenu}
                     onClose={()=>this.toggleListsMenu(false)}
                     onOpen={()=>this.toggleListsMenu(true)}
@@ -500,14 +508,17 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
             </Grid>
             <Grid item xs={1} style={{display:"flex",alignItems:"center",justifyContent:"flex-end"}}>
               <Tooltip title="外部サイト連携">
-                <IconButton style={{margin:"0 6px 0",position:"relative",top:"5px"}}
+                <IconButton
+                  style={{margin:"0 6px 0",position:"relative",top:"5px"}}
                   aria-haspopup="true"
-                  onClick={()=>this.toggleMenu(true)}>
+                  onClick={()=>this.toggleMenu(true)}
+                  size="large">
                   <MoreVertIcon />
                 </IconButton>
               </Tooltip>
               <SwipeableDrawer
                 anchor="bottom"
+                className="overlayDrawer"
                 open={openShareMenu}
                 onClose={()=>this.toggleMenu(false)}
                 onOpen={()=>this.toggleMenu(true)}

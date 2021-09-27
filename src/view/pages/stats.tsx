@@ -1,8 +1,8 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
+import Container from '@mui/material/Container';
 import { injectIntl } from 'react-intl';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 
 import Main from "@/view/components/stats/main";
 import Scatter from "@/view/components/stats/scatter";
@@ -36,9 +36,9 @@ class Stats extends React.Component<{intl:any},S> {
           indicatorColor="primary"
           textColor="secondary"
           variant="scrollable"
-          scrollButtons="on"
+          scrollButtons
           style={{margin:"5px 0"}}
-        >
+          allowScrollButtonsMobile>
           <Tab label="基本" />
           <Tab label="レーダー" />
           <Tab label="推移" />

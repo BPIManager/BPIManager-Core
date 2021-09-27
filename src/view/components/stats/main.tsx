@@ -1,13 +1,13 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 import { FormattedMessage, injectIntl } from 'react-intl';
-import Grid from '@material-ui/core/Grid';
+import Grid from '@mui/material/Grid';
 import bpiCalcuator, { showBpiDist } from '@/components/bpi';
 import {_chartColor, _chartBarColor, pieColor, _currentStore} from "@/components/settings";
 import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, LineChart, BarChart, ReferenceLine, Pie, PieChart, Cell, Legend} from 'recharts';
 import _withOrd from '@/components/common/ord';
-import {FormControlLabel, FormControl, RadioGroup, Radio, FormLabel} from '@material-ui/core/';
+import {FormControlLabel, FormControl, RadioGroup, Radio, FormLabel} from '@mui/material/';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '../common/loader';
 import { S, groupedArray } from '@/types/stats';

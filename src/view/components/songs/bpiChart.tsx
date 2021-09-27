@@ -4,8 +4,8 @@ import { scoreData, songData } from "@/types/data";
 import {BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer, Label} from "recharts";
 import { _chartColor,_chartBarColor } from "@/components/settings";
 import { chartData } from "./detailsScreen";
-import InfoIcon from '@material-ui/icons/Info';
-import Link from "@material-ui/core/Link";
+import InfoIcon from '@mui/icons-material/Info';
+import Link from "@mui/material/Link";
 
 interface P{
   song:songData|null,

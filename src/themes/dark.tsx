@@ -1,8 +1,8 @@
-import { createTheme } from "@material-ui/core";
+import { createTheme, adaptV4Theme } from "@mui/material";
 
-export const theme = createTheme({
+export const theme = createTheme(adaptV4Theme({
   palette: {
-    type: 'dark',
+    mode: 'dark',
     primary: {
       main: '#1a1a1a',
       light: '#ce6c52',
@@ -13,7 +13,6 @@ export const theme = createTheme({
     },
     background: {
       default: '#0a0a0a',
-      paper: '#181818',
     },
   },
 
@@ -34,6 +33,27 @@ export const theme = createTheme({
     },
   },
 
+  props: {
+    MuiTextField:{
+      variant:"standard"
+    },
+    MuiButton: {
+      color: "secondary"
+    },
+    MuiSelect: {
+      variant: 'standard',
+    },
+    MuiInputLabel: {
+      variant: 'standard',
+    },
+    MuiSwitch: {
+      color: "secondary"
+    },
+    MuiCheckbox: {
+      color: "secondary"
+    }
+  },
+
   overrides: {
     MuiButton: {
       root: {
@@ -41,6 +61,6 @@ export const theme = createTheme({
       },
     },
   },
-});
+}));
 
 export default theme;

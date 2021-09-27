@@ -1,20 +1,44 @@
 import React from "react";
 
 import { scoreData, songData } from "@/types/data";
-import Container from "@material-ui/core/Container";
+import Container from "@mui/material/Container";
 import Loader from "../common/loader";
 import fbActions from "@/components/firebase/actions";
-import Alert from "@material-ui/lab/Alert/Alert";
-import AlertTitle from "@material-ui/lab/AlertTitle/AlertTitle";
-import Fab from "@material-ui/core/Fab";
-import EditIcon from '@material-ui/icons/Edit';
+import Alert from "@mui/lab/Alert/Alert";
+import AlertTitle from "@mui/lab/AlertTitle/AlertTitle";
+import Fab from "@mui/material/Fab";
+import EditIcon from '@mui/icons-material/Edit';
 import { Link } from "react-router-dom";
-import { Link as RLink, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Button, Divider, InputLabel, FormControl, Select, MenuItem, Grid, IconButton, withStyles, createStyles, Theme, Badge, ListItem, ListItemText, ListItemSecondaryAction } from "@material-ui/core/";
+import {
+  Link as RLink,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  TextField,
+  DialogActions,
+  Button,
+  Divider,
+  InputLabel,
+  FormControl,
+  Select,
+  MenuItem,
+  Grid,
+  IconButton,
+  Theme,
+  Badge,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+  SelectChangeEvent,
+} from "@mui/material/";
+import withStyles from '@mui/styles/withStyles';
+import createStyles from '@mui/styles/createStyles';
 import timeFormatter, { updatedTime } from "@/components/common/timeFormatter";
 import ReCAPTCHA from "react-google-recaptcha";
 import { difficultyDiscriminator, _prefixWithPS } from "@/components/songs/filter";
-import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
-import LinkIcon from '@material-ui/icons/Link';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import LinkIcon from '@mui/icons-material/Link';
 
 interface P{
   song:songData|null,
@@ -52,7 +76,7 @@ class SongNotes extends React.Component<P,S> {
 
   handleToggle = ()=> this.setState({isOpen:!this.state.isOpen});
 
-  handleChange = (event: React.ChangeEvent<{ value: unknown }>)=> {
+  handleChange = (event: SelectChangeEvent<number>)=> {
     if(typeof event.target.value !== "number"){return;}
     this.setState({currentSort:event.target.value,isLoading:true});
     this.load(true,event.target.value);
@@ -174,7 +198,7 @@ class WriteDialog extends React.Component<WP,{
           token:token,
         })
       });
-      if(response.status === 200 && (await response.json() || {"error":true})["error"] === false){
+      if(response.status === 200 && ((await response.json()) || {"error":true})["error"] === false){
         this.props.saveAndReload();
         this.props.close();
       }
@@ -307,7 +331,7 @@ export class EachMemo extends React.Component<{
         <ListItem button onClick={()=>onClick(it)}>
           <ListItemText primary={<span>{it.songName + _prefixWithPS(it.songDiff,it.isSingle)}&nbsp;<small>{updatedTime(wroteAt.toDate())}</small></span>} secondary={note} />
           <ListItemSecondaryAction>
-            <IconButton aria-label="likeButton" onClick={this.favButton}>
+            <IconButton aria-label="likeButton" onClick={this.favButton} size="large">
               <StyledBadge badgeContent={likeCount || 0} color="secondary">
                 <FavoriteBorderIcon />
               </StyledBadge>
@@ -319,9 +343,9 @@ export class EachMemo extends React.Component<{
     return (
       <React.Fragment>
         <p>{memo}</p>
-        <Grid container justify="space-around" alignItems="center">
+        <Grid container justifyContent="space-around" alignItems="center">
           <Grid item>
-            <IconButton aria-label="likeButton" onClick={this.favButton}>
+            <IconButton aria-label="likeButton" onClick={this.favButton} size="large">
               <StyledBadge badgeContent={likeCount || 0} color="secondary">
                 <FavoriteBorderIcon />
               </StyledBadge>

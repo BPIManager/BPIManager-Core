@@ -1,19 +1,19 @@
 import React from "react";
 
 import { scoreData, songData } from "@/types/data";
-import Container from "@material-ui/core/Container";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import Table from "@material-ui/core/Table";
-import TableRow from "@material-ui/core/TableRow";
+import Container from "@mui/material/Container";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import Table from "@mui/material/Table";
+import TableRow from "@mui/material/TableRow";
 import { alternativeImg } from "@/components/common";
 import Loader from "../common/loader";
 import { datasets, rivalShow } from "@/components/rivals/letters";
-import Alert from "@material-ui/lab/Alert/Alert";
-import AlertTitle from "@material-ui/lab/AlertTitle";
+import Alert from "@mui/lab/Alert/Alert";
+import AlertTitle from '@mui/material/AlertTitle';
 import {Link as RLink} from "react-router-dom";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 
 interface P{
   song:songData|null,

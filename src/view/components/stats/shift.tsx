@@ -1,13 +1,13 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
+import Container from '@mui/material/Container';
 import {_chartColor, _chartBarColor} from "@/components/settings";
 import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, Legend, LineChart} from 'recharts';
-import {FormControlLabel, FormControl, FormLabel, Checkbox, FormGroup, Divider, Typography} from '@material-ui/core/';
+import {FormControlLabel, FormControl, FormLabel, Checkbox, FormGroup, Divider, Typography} from '@mui/material/';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Loader from '../common/loader';
 import { ShiftType } from '@/types/stats';
 import statMain from '@/components/stats/main';
-import Alert from '@material-ui/lab/Alert/Alert';
+import Alert from '@mui/lab/Alert/Alert';
 import { ChangeLevel } from './main';
 import { injectIntl } from 'react-intl';
 import AdsCard from '@/components/ad';
@@ -181,7 +181,7 @@ class Shift extends React.Component<{intl:any,propdata?:any}&RouteComponentProps
                 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" stroke={chartColor} />
-                <YAxis orientation="left" domain={[dataMin => Math.floor(dataMin) - 0.1, dataMax => Math.ceil(dataMax) + 0.1]} tickLine={false} axisLine={false} stroke={chartColor}/>
+                <YAxis orientation="left" domain={[(dataMin:number) => Math.floor(dataMin) - 0.1, (dataMax:number) => Math.ceil(dataMax) + 0.1]} tickLine={false} axisLine={false} stroke={chartColor}/>
                 <Tooltip contentStyle={{color:"#333"}}/>
                 <Line dataKey="shiftedBPI" name={formatMessage({id:"Stats.TotalBPI"})} stroke={lineColor} />
               </LineChart>

@@ -1,45 +1,45 @@
 import * as React from 'react';
-import Container from '@material-ui/core/Container';
+import Container from '@mui/material/Container';
 import { injectIntl } from 'react-intl';
 import weeklyStore from '@/components/firebase/ranking';
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import { _prefixFullNum, difficultyDiscriminator } from '@/components/songs/filter';
 import { _currentTheme } from '@/components/settings';
 import timeFormatter, { untilDate, _isBetween, isBeforeSpecificDate } from '@/components/common/timeFormatter';
-import Button from '@material-ui/core/Button';
-import TouchAppIcon from '@material-ui/icons/TouchApp';
+import Button from '@mui/material/Button';
+import TouchAppIcon from '@mui/icons-material/TouchApp';
 import JoinModal from '@/view/components/ranking/modal/join';
 import { scoresDB, songsDB } from '@/components/indexedDB';
 import { songData, scoreData } from '@/types/data';
 import { httpsCallable } from '@/components/firebase';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select/Select';
+import MenuItem from '@mui/material/MenuItem';
 import Loader from '@/view/components/common/loader';
 import { ShareOnTwitter } from '@/view/components/common/shareButtons';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
-import ListItemText from '@material-ui/core/ListItemText';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
+import ListItemText from '@mui/material/ListItemText';
 import { getAltTwitterIcon } from '@/components/rivals';
 import bpiCalcuator from '@/components/bpi';
 import ModalUser from '@/view/components/rivals/modal';
-import Divider from '@material-ui/core/Divider';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
+import Divider from '@mui/material/Divider';
+import ButtonGroup from '@mui/material/ButtonGroup';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import Link from '@material-ui/core/Link';
-import Alert from '@material-ui/lab/Alert/Alert';
-import AlertTitle from '@material-ui/lab/AlertTitle';
-import Badge from '@material-ui/core/Badge';
+import Link from '@mui/material/Link';
+import Alert from '@mui/lab/Alert/Alert';
+import AlertTitle from '@mui/lab/AlertTitle';
+import Badge from '@mui/material/Badge';
 import { verNameArr } from '@/view/components/songs/common';
 import DeleteModal from '@/view/components/ranking/modal/delete';
 import { borderColor } from '@/components/common';
-import EditIcon from '@material-ui/icons/Edit';
+import EditIcon from '@mui/icons-material/Edit';
 import EditModal from './crud/update';
 import fbActions from '@/components/firebase/actions';
-import InfoIcon from '@material-ui/icons/Info';
+import InfoIcon from '@mui/icons-material/Info';
 import { Details } from './rankingInfo';
 
 interface S {
@@ -160,7 +160,7 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
       }
       this.pageLoad();
       return {error:false,errorMessage:""};
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return {error:true,errorMessage:e.message};
     }
@@ -180,7 +180,7 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
       }
       this.pageLoad();
       return {error:false,errorMessage:""};
-    }catch(e){
+    }catch(e:any){
       console.log(e);
       return {error:true,errorMessage:e.message};
     }
@@ -200,7 +200,7 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
     this.setState({contentLoading:false,page:page,rank:this.calcBPI(res.data)});
   }
 
-  pageChange = (_e:React.ChangeEvent<{ value: unknown }>)=>{
+  pageChange = (_e:SelectChangeEvent<number>)=>{
     if(typeof _e.target.value !== "number") return;
     return this.pageLoad(_e.target.value);
   }
@@ -246,7 +246,7 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
     const isBefore = isBeforeSpecificDate(new Date(),onGoing.since.toDate());
     const paging = (
       <div style={{display:"flex",justifyContent:"flex-end"}}>
-        <FormControl>
+        <FormControl variant="standard">
           <InputLabel>ページ</InputLabel>
           <Select value={page} onChange={this.pageChange}>
           {
@@ -273,7 +273,11 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
               {onGoing.title}({_prefixFullNum(onGoing.difficulty)})
             </Typography>
             <Typography component="small" variant="caption" color="textPrimary" gutterBottom>
-              <Link color="secondary" component="span" onClick={()=>this.open(authorData.uid)}>{authorData.displayName}</Link>さんが開催<br/><br/>
+              <Link
+                color="secondary"
+                component="span"
+                onClick={()=>this.open(authorData.uid)}
+                underline="hover">{authorData.displayName}</Link>さんが開催<br/><br/>
               {song && <span>VERSION:{verNameArr[Number(song["textage"].replace(/\/.*?$/,""))]},☆{song["difficultyLevel"]}</span>}<br/>
               開催期間:{timeFormatter(4,onGoing.since.toDate())}~{timeFormatter(4,onGoing.until.toDate())}<br/>
               {remainTime()} / {rank.info.users}人参加中
@@ -335,7 +339,11 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
               {(rank.info.rank && rank.info.rank !== -1 && isBetween) && (
                 <div style={{textAlign:"center"}}>
                   <Divider style={{margin:"10px 0"}}/>
-                  <Link color="secondary" component="span" onClick={()=>this.deleteScore(true)}>登録済みのスコアを削除</Link>
+                  <Link
+                    color="secondary"
+                    component="span"
+                    onClick={()=>this.deleteScore(true)}
+                    underline="hover">登録済みのスコアを削除</Link>
                 </div>
               )}
               <Divider style={{margin:"15px 0"}}/>
@@ -390,7 +398,10 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
                   <p>
                     ランキングに参加しましょう！<br/>
                     「参加 / 更新」ボタンからスコアを登録してください。<br/>
-                    <Link color="secondary" href="https://docs2.poyashi.me/docs/social/ranking/">ランキング機能のヘルプはこちらから確認できます。</Link>
+                    <Link
+                      color="secondary"
+                      href="https://docs2.poyashi.me/docs/social/ranking/"
+                      underline="hover">ランキング機能のヘルプはこちらから確認できます。</Link>
                   </p>
                 </Alert>
               )}

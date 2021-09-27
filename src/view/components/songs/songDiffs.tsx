@@ -1,18 +1,18 @@
 import React from "react";
 
 import { scoreData, songData, historyData } from "@/types/data";
-import Container from "@material-ui/core/Container";
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
+import Container from "@mui/material/Container";
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { FormattedMessage } from "react-intl";
 import {scoreHistoryDB} from "@/components/indexedDB";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import Table from "@material-ui/core/Table";
-import TableRow from "@material-ui/core/TableRow";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import Table from "@mui/material/Table";
+import TableRow from "@mui/material/TableRow";
 import timeFormatter from "@/components/common/timeFormatter";
 import Loader from "../common/loader";
 
@@ -42,8 +42,8 @@ class SongDiffs extends React.Component<P,S> {
     this.updateScoreData();
   }
 
-  handleChange = (event: React.ChangeEvent<{ value: unknown }>)=> {
-    if(typeof event.target.value !== "number"){return;}
+  handleChange = (event: SelectChangeEvent<number>)=> {
+    if(typeof event.target.value !== "number") return;
     this.setState({current:event.target.value,isLoading:true});
     this.updateScoreData(event.target.value);
   }

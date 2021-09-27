@@ -2,17 +2,17 @@ import * as React from 'react';
 
 import { rivalScoreData } from '@/types/data';
 import { CLBody, named, getTable } from '@/components/aaaDiff/data';
-import Grid from '@material-ui/core/Grid';
-import Divider from '@material-ui/core/Divider';
+import Grid from '@mui/material/Grid';
+import Divider from '@mui/material/Divider';
 import Loader from '@/view/components/common/loader';
 import AdsCard from '@/components/ad';
-import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon/SpeedDialIcon';
-import SpeedDial from '@material-ui/lab/SpeedDial';
-import SpeedDialAction from '@material-ui/lab/SpeedDialAction/SpeedDialAction';
-import FilterListIcon from '@material-ui/icons/FilterList';
-import HelpIcon from '@material-ui/icons/Help';
-import MenuIcon from '@material-ui/icons/Menu';
-import CloseIcon from '@material-ui/icons/Close';
+import SpeedDialIcon from '@mui/lab/SpeedDialIcon/SpeedDialIcon';
+import SpeedDial from '@mui/material/SpeedDial';
+import SpeedDialAction from '@mui/lab/SpeedDialAction/SpeedDialAction';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import HelpIcon from '@mui/icons-material/Help';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 import { AAATableExampleModal } from '../AAATable/example';
 import { AAATableFilterModal } from '../AAATable/filter';
 import { _prefix } from '@/components/songs/filter';
@@ -179,8 +179,7 @@ class AAATable extends React.Component<P,S> {
             <SpeedDialAction
               key={action.name}
               icon={action.icon}
-              tooltipTitle={action.name}
-              tooltipOpen
+              title={action.name}
               onClick={action.onClick}
             />
           ))}
