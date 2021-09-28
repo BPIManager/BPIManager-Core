@@ -172,7 +172,7 @@ legend.MuiFormLabel-root{
   font-size:10px;
   color:#ff0000;
   position:absolute;
-  z-index:9;
+  z-index:3;
   right:5px;
   top:5px;
   white-space: nowrap;
@@ -183,7 +183,7 @@ legend.MuiFormLabel-root{
   font-size:10px;
   color:#909090;
   position:absolute;
-  z-index:9;
+  z-index:3;
   right:5px;
   bottom:0;
   white-space: nowrap;
@@ -401,13 +401,10 @@ th.MuiTableCell-root.MuiTableCell-head:first-child{
   }
 }
 
-.sc3Items button{
-  width:20% !important;
-}
-
 .scrollableSpacebetween .MuiTabs-flexContainer{
   justify-content:space-between;
 }
+
 
 .indexGrids{
   display:flex;
@@ -756,4 +753,17 @@ text.react-calendar-heatmap-weekday-label {
 
 .MuiPaper-root{
  background-image:none;
+}
+#mainFilters .MuiFormGroup-root{
+  flex-wrap:nowrap !important;
+}
+.MuiGrid-item{
+  padding-left: 0 !important;
+}
+.MuiGrid-root{
+  width: 100% !important;
+}
+
+.detailsScreenTopGrid,.MuiGrid-root{
+  margin-left: 0 !important;
 }

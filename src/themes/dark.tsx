@@ -16,23 +16,6 @@ export const theme = createTheme(adaptV4Theme({
     },
   },
 
-  'breakpoints': {
-    'keys': [
-      'xs',
-      'sm',
-      'md',
-      'lg',
-      'xl',
-    ],
-    'values': {
-      'xs': 360,
-      'sm': 768,
-      'md': 992,
-      'lg': 1400,
-      'xl': 1800,
-    },
-  },
-
   props: {
     MuiTextField:{
       variant:"standard"

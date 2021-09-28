@@ -406,7 +406,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
         }
         <Toolbar/>
         <Paper>
-          <Grid container spacing={3}>
+          <Grid container spacing={3} justifyContent="space-around" className="detailsScreenTopGrid">
             <Grid onClick={this.toggleShowBPI} item xs={4} style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",margin:"10px 0",cursor:"pointer"}}>
               <Tooltip title="プラス/マイナス表記の切り替え">
                 <div style={{textAlign:"center"}}>
@@ -451,7 +451,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
             </Typography>
           )}
           <Divider/>
-          <Grid container>
+          <Grid container flexWrap="nowrap" >
             <Grid item xs={10}>
               <form noValidate autoComplete="off" style={{margin:"10px 6px 0"}} className="detailedInputForm">
                 <TextField

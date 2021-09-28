@@ -68,7 +68,7 @@ const styles = (theme:any) => ({
     },
   },
   appBar: {
-    zIndex:1,
+    zIndex:5,
     backdropFilter:"blur(3px)",
     marginLeft: drawerWidth,
     [theme.breakpoints.up('sm')]: {
