@@ -4,7 +4,7 @@ import fbActions from '@/components/firebase/actions';
 import Loader from '@/view/components/common/loader';
 import List from '@mui/material/List';
 import ModalNotes from './modal';
-import Alert from '@mui/lab/Alert/Alert';
+import Alert from '@mui/material/Alert/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';

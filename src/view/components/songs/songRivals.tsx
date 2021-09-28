@@ -10,7 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import { alternativeImg } from "@/components/common";
 import Loader from "../common/loader";
 import { datasets, rivalShow } from "@/components/rivals/letters";
-import Alert from "@mui/lab/Alert/Alert";
+import Alert from "@mui/material/Alert/Alert";
 import AlertTitle from '@mui/material/AlertTitle';
 import {Link as RLink} from "react-router-dom";
 import Button from "@mui/material/Button";

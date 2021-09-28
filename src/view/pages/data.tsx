@@ -13,7 +13,7 @@ import Link from '@mui/material/Link';
 import {Link as RLink, withRouter, RouteComponentProps} from "react-router-dom";
 import { scoreData } from '@/types/data';
 import importJSON from '@/components/import/json';
-import Alert from '@mui/lab/Alert/Alert';
+import Alert from '@mui/material/Alert/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import { config } from '@/config';
 import timeFormatter, { timeCompare } from '@/components/common/timeFormatter';

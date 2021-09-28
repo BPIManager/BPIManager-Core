@@ -4,8 +4,8 @@ import fbActions from '@/components/firebase/actions';
 import Loader from '@/view/components/common/loader';
 import List from '@mui/material/List';
 import ModalNotes from './modal';
-import Alert from '@mui/lab/Alert/Alert';
-import AlertTitle from '@mui/lab/AlertTitle/AlertTitle';
+import Alert from '@mui/material/Alert/Alert';
+import AlertTitle from '@mui/material/AlertTitle/AlertTitle';
 import { EachMemo } from '../songs/songNotes';
 
 interface S{

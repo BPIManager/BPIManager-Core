@@ -18,7 +18,7 @@ import { songData, scoreData } from '@/types/data';
 import _djRank from '@/components/common/djRank';
 import CheckIcon from '@mui/icons-material/Check';
 import { scoresDB, scoreHistoryDB } from '@/components/indexedDB';
-import Alert from '@mui/lab/Alert/Alert';
+import Alert from '@mui/material/Alert/Alert';
 import { Link, ButtonGroup } from '@mui/material';
 import {ReactComponent as TwitterIcon} from "@/assets/twitter.svg";
 import SongSearchDialog from './songSearch';

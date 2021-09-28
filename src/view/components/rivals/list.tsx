@@ -12,7 +12,7 @@ import Backdrop from "@mui/material/Backdrop";
 import timeFormatter,{timeCompare} from "@/components/common/timeFormatter";
 import Loader from '@/view/components/common/loader';
 import { alternativeImg, avatarBgColor, avatarFontColor } from '@/components/common';
-import Alert from '@mui/lab/Alert/Alert';
+import Alert from '@mui/material/Alert/Alert';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import ListSubheader from '@mui/material/ListSubheader';

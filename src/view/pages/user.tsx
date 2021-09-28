@@ -30,7 +30,7 @@ import { Helmet } from 'react-helmet';
 import { getTwitterName, getAltTwitterIcon } from '@/components/rivals';
 import { withRivalData, radarData, getRadar } from '@/components/stats/radar';
 import RivalStatViewFromUserPage from '../components/rivals/viewComponents/statsFromUserPage';
-import Alert from '@mui/lab/Alert/Alert';
+import Alert from '@mui/material/Alert/Alert';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import WeeklyList from '@/view/pages/ranking/list';
 import getUserData from '@/components/user';
@@ -514,7 +514,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
             size="small"
             style={{width:"95%",margin:"0 auto 20px auto",display:"flex"}}
             defaultValue={url}
-            variant="outlined"
+            variant="standard"
             fullWidth
             InputProps={{
               readOnly: true,

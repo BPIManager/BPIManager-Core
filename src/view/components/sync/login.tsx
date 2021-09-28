@@ -13,7 +13,7 @@ import ListSubheader from '@mui/material/ListSubheader';
 import LockIcon from '@mui/icons-material/Lock';
 import Avatar from '@mui/material/Avatar';
 import { avatarFontColor, avatarBgColor } from '@/components/common';
-import Alert from '@mui/lab/Alert/Alert';
+import Alert from '@mui/material/Alert/Alert';
 import Link from '@mui/material/Link';
 
 class SyncLoginScreen extends React.Component<{

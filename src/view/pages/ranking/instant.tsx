@@ -5,7 +5,7 @@ import { songData } from '@/types/data';
 import { httpsCallable } from '@/components/firebase';
 import Loader from '@/view/components/common/loader';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import Alert from '@mui/lab/Alert/Alert';
+import Alert from '@mui/material/Alert/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import { withRouter,RouteComponentProps } from 'react-router-dom';
 import { _currentTheme } from '@/components/settings';

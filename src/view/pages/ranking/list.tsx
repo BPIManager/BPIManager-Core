@@ -15,7 +15,7 @@ import { _prefixFullNum } from '@/components/songs/filter';
 import { versionString } from '@/components/common';
 import Button from '@mui/material/Button';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import Alert from '@mui/lab/Alert/Alert';
+import Alert from '@mui/material/Alert/Alert';
 
 interface S {
   isLoading:boolean,

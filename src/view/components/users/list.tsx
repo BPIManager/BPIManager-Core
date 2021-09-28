@@ -18,7 +18,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
 import { getAltTwitterIcon } from '@/components/rivals';
 import { alternativeImg } from '@/components/common';
-import Alert from '@mui/lab/Alert/Alert';
+import Alert from '@mui/material/Alert/Alert';
 import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Button from '@mui/material/Button';

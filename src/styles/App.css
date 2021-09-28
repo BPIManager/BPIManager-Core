@@ -379,8 +379,8 @@ th.MuiTableCell-root.MuiTableCell-head:first-child{
   }
 
   .userpageIcon{
-    width:100px !important;
-    height:100px !important;
+    width:80px !important;
+    height:80px !important;
   }
 
   .heroTitle{
@@ -468,21 +468,7 @@ div#root > div > .MuiContainer-root{
 .MuiAlert-message{
   width:100%;
 }
-/*
 
-.MuiContainer-root{
-  padding-left: 4px !important;
-  padding-right: 4px !important;
-}
-
-
-@media screen and (max-width:360px){
-  .commonLayout{
-    max-width:95% !important;
-  }
-}
-
- */
 html,body{
   width:100% !important;
   margin:0;
@@ -754,14 +740,27 @@ text.react-calendar-heatmap-weekday-label {
 .MuiPaper-root{
  background-image:none;
 }
-#mainFilters .MuiFormGroup-root{
+
+:not(#detailedScreen) #mainFilters .MuiFormGroup-root{
   flex-wrap:nowrap !important;
 }
+
+#detailedScreen #mainFilters > div{
+  flex-wrap:wrap !important;
+}
+
 .MuiGrid-item{
   padding-left: 0 !important;
 }
 .MuiGrid-root{
   width: 100% !important;
+}
+
+.sc3Items button{
+  min-width: 0px !important;
+}
+.sc3Items .MuiTabs-flexContainer{
+  justify-content: space-around !important;
 }
 
 .detailsScreenTopGrid,.MuiGrid-root{

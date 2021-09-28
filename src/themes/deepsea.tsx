@@ -1,6 +1,6 @@
-import { createTheme, adaptV4Theme } from "@mui/material";
+import { createTheme } from "@mui/material";
 
-export const theme = createTheme(adaptV4Theme({
+export const theme = createTheme(({
   palette: {
     mode: 'dark',
     primary: {
@@ -20,20 +20,20 @@ export const theme = createTheme(adaptV4Theme({
       A700: '#0031d0',
     },
     secondary: {
-    50: '#edf0f1',
-    100: '#d3d9dd',
-    200: '#b6c0c6',
-    300: '#99a6af',
-    400: '#83939d',
-    500: '#6d808c',
-    600: '#657884',
-    700: '#5a6d79',
-    800: '#50636f',
-    900: '#3e505c',
-    A100: '#b4e1ff',
-    A200: '#81cdff',
-    A400: '#4eb8ff',
-    A700: '#35aeff',
+      50: '#edf0f1',
+      100: '#d3d9dd',
+      200: '#b6c0c6',
+      300: '#99a6af',
+      400: '#83939d',
+      500: '#6d808c',
+      600: '#657884',
+      700: '#5a6d79',
+      800: '#50636f',
+      900: '#3e505c',
+      A100: '#b4e1ff',
+      A200: '#81cdff',
+      A400: '#4eb8ff',
+      A700: '#35aeff',
     },
     background: {
       paper: '#001625',
@@ -41,34 +41,43 @@ export const theme = createTheme(adaptV4Theme({
     },
   },
 
-  props: {
+  components: {
     MuiTextField:{
-      variant:"standard"
+      defaultProps:{
+        variant:"standard"
+      }
     },
     MuiButton: {
-      color: "secondary"
+      defaultProps:{
+        color: "secondary"
+      },
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+        }
+      }
     },
     MuiSelect: {
-      variant: 'standard',
+      defaultProps:{
+        variant: 'standard',
+      }
     },
     MuiInputLabel: {
-      variant: 'standard',
+      defaultProps:{
+        variant: 'standard',
+      }
     },
     MuiSwitch: {
-      color: "secondary"
+      defaultProps:{
+        color: "secondary"
+      }
     },
     MuiCheckbox: {
-      color: "secondary"
-    }
-  },
-
-  overrides: {
-    MuiButton: {
-      root: {
-        textTransform: 'none',
-      },
+      defaultProps:{
+        color: "secondary"
+      }
     },
-  },
+  }
 }));
 
 export default theme;

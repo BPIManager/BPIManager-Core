@@ -16,7 +16,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DoneIcon from '@mui/icons-material/Done';
 import { avatarBgColor, avatarFontColor, commonFunc } from '@/components/common';
 import ModalNotes from './modal';
-import Alert from '@mui/lab/Alert/Alert';
+import Alert from '@mui/material/Alert/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Grid from '@mui/material/Grid';
 import FormControl from '@mui/material/FormControl';

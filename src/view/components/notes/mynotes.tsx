@@ -8,7 +8,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { _prefixWithPS } from '@/components/songs/filter';
 import { updatedTime } from '@/components/common/timeFormatter';
 import ModalNotes from './modal';
-import Alert from '@mui/lab/Alert/Alert';
+import Alert from '@mui/material/Alert/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Link from '@mui/material/Link';
 import {Link as RLink} from "react-router-dom";

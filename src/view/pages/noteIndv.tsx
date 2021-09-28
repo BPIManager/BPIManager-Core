@@ -8,7 +8,7 @@ import { scoreData, songData } from '@/types/data';
 import Loader from '../components/common/loader';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import Button from '@mui/material/Button';
-import Alert from '@mui/lab/Alert/Alert';
+import Alert from '@mui/material/Alert/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import timeFormatter from '@/components/common/timeFormatter';
 import { _prefixWithPS, difficultyParser } from '@/components/songs/filter';
