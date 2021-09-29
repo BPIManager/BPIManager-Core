@@ -36,6 +36,7 @@ import AlertTitle from '@mui/material/AlertTitle/AlertTitle';
 import Link from '@mui/material/Link';
 import {Link as RLink} from "react-router-dom";
 import { config } from '@/config';
+import { AppBar,Tab,Tabs } from '@mui/material';
 
 interface S {
   isLoading:boolean,
@@ -48,7 +49,8 @@ interface S {
   isOpenCreateModal:boolean,
   showFinished:boolean,
   dialOpen:boolean,
-  isOpenUserPage:boolean
+  isOpenUserPage:boolean,
+  currentTab:number,
 }
 
 class RankingSearch extends React.Component<{intl:any}&RouteComponentProps,S> {
@@ -57,6 +59,7 @@ class RankingSearch extends React.Component<{intl:any}&RouteComponentProps,S> {
   constructor(props:{intl:any}&RouteComponentProps){
     super(props);
     this.state ={
+      currentTab:0,
       isLoading:true,
       rankingList:[],
       auth:null,
@@ -128,29 +131,43 @@ class RankingSearch extends React.Component<{intl:any}&RouteComponentProps,S> {
     return newData;
   }
 
-  toggleFinished = ()=>{
+  handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
     const p = !this.state.showFinished;
     this.setState({
       showFinished:p,
+      currentTab:newValue,
       isLast:false,
       offset:0,
       rankingList:[],
-    })
+    });
     this.next(p,[],true);
-  }
-
+  };
   toggleDial = ()=> this.setState({dialOpen:!this.state.dialOpen});
 
   handleModalOpen = (flag:boolean)=> this.setState({isOpenUserPage:flag});
 
   render(){
-    const {isLoading,rankingList,auth,isLast,isOpenRanking,currentRankingId,isOpenCreateModal,showFinished,dialOpen,isOpenUserPage} = this.state;
+    const {isLoading,rankingList,auth,isLast,isOpenRanking,currentRankingId,isOpenCreateModal,dialOpen,isOpenUserPage} = this.state;
     const actions = [
       { icon:  <AddIcon/>, name: 'ランキングを作成', onClick: ()=>this.handleOpenCreateModal(false)},
       { icon: <PersonIcon />, name: '参加したランキング', onClick: ()=>this.handleModalOpen(true)},
       { icon: <HelpIcon />, name: 'この機能について', onClick: ()=>window.open("https://docs2.poyashi.me/docs/social/ranking/")},
     ];
     return (
+      <React.Fragment>
+        <AppBar position="static" className="subAppBar">
+          <Tabs
+            value={this.state.currentTab}
+            onChange={this.handleChange}
+            indicatorColor="secondary"
+            variant="scrollable"
+            scrollButtons centered
+            textColor="secondary"
+            allowScrollButtonsMobile>
+            <Tab label="開催中・開催予定" />
+            <Tab label="終了済み" />
+          </Tabs>
+        </AppBar>
       <Container className="commonLayout">
         {(_currentStore() !== config.latestStore ) && (
           <Alert severity="error" style={{margin:"10px 0"}}>
@@ -162,10 +179,6 @@ class RankingSearch extends React.Component<{intl:any}&RouteComponentProps,S> {
             </p>
           </Alert>
         )}
-        <ButtonGroup disableElevation variant="contained" color="secondary" fullWidth>
-          <Button disabled={!showFinished} onClick={this.toggleFinished}>開催中/開催予定</Button>
-          <Button disabled={showFinished} onClick={this.toggleFinished}>終了済み</Button>
-        </ButtonGroup>
         <InfiniteScroll
           pageStart={0}
           loadMore={()=>this.next()}
@@ -248,6 +261,7 @@ class RankingSearch extends React.Component<{intl:any}&RouteComponentProps,S> {
           }
           {isOpenUserPage && <ModalUser initialView={5} isOpen={isOpenUserPage} exact currentUserName={auth.uid} handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
       </Container>
+    </React.Fragment>
     );
   }
 }

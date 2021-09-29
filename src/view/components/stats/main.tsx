@@ -153,7 +153,7 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
                 <FormattedMessage id="Stats.Distribution"/>
               </Typography>
               {(groupedByLevel.length > 0) &&
-                <div style={{width:"95%",height:"100%",margin:"5px auto"}}>
+                <div style={{width:"95%",height:"100%",margin:"5px auto"}} className="bpilinechart">
                   <ResponsiveContainer width="100%">
                     <LineChart
                       data={groupedByLevel}
@@ -166,7 +166,7 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
                         <XAxis type={"number"} dataKey="name" stroke={chartColor} ticks={this.xAxisTicker()} domain={[-20,100]}/>
                         <YAxis stroke={chartColor}/>
                         <Tooltip contentStyle={{color:"#333"}}/>
-                        <Legend margin={{bottom:10}}/>
+                        <Legend/>
                         <ReferenceLine x={totalBPI} stroke={barColor} isFront={true} />
                         <Line type="monotone" dataKey={"☆" + targetLevel} stroke={lineColor} activeDot={{ r: 8 }} />
                         <Line type="monotone" dataKey={"☆" + targetLevel + "(前作)"} stroke={linePrev} activeDot={{ r: 8 }} />

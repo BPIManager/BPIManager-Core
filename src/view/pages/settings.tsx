@@ -9,6 +9,7 @@ import View from "@/view/components/settings/view";
 import Advanced from "@/view/components/settings/advanced";
 import DebugData from "@/view/components/settings/debug";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { AppBar } from '@mui/material';
 
 interface S {
   currentTab:number
@@ -31,27 +32,29 @@ class Stats extends React.Component<{intl:any,global:any}&RouteComponentProps,S>
 
   render(){
     return (
-      <Container fixed  className="commonLayout" id="stat">
-        <Tabs
+      <React.Fragment>
+        <AppBar position="static" className="subAppBar">
+          <Tabs
           value={this.state.currentTab}
           onChange={this.handleChange}
-          indicatorColor="primary"
-          textColor="secondary"
+          indicatorColor="secondary"
           variant="scrollable"
-          scrollButtons
-          allowScrollButtonsMobile
-          style={{margin:"5px 0"}}
-        >
-          <Tab label={<FormattedMessage id="Settings.Tabs.Common"/>} />
-          <Tab label={<FormattedMessage id="Settings.Tabs.View"/>} />
-          <Tab label={<FormattedMessage id="Settings.Tabs.Etc"/>} />
-          <Tab label={<FormattedMessage id="Settings.Tabs.Debug"/>} />
-        </Tabs>
-        {this.state.currentTab === 0 && <Basic global={this.props.global}/>}
-        {this.state.currentTab === 1 && <View global={this.props.global}/>}
-        {this.state.currentTab === 2 && <Advanced global={this.props.global}/>}
-        {this.state.currentTab === 3 && <DebugData/>}
-      </Container>
+          scrollButtons centered
+          textColor="secondary"
+          allowScrollButtonsMobile>
+            <Tab label={<FormattedMessage id="Settings.Tabs.Common"/>} />
+            <Tab label={<FormattedMessage id="Settings.Tabs.View"/>} />
+            <Tab label={<FormattedMessage id="Settings.Tabs.Etc"/>} />
+            <Tab label={<FormattedMessage id="Settings.Tabs.Debug"/>} />
+          </Tabs>
+        </AppBar>
+        <Container fixed  className="commonLayout" id="stat">
+          {this.state.currentTab === 0 && <Basic global={this.props.global}/>}
+          {this.state.currentTab === 1 && <View global={this.props.global}/>}
+          {this.state.currentTab === 2 && <Advanced global={this.props.global}/>}
+          {this.state.currentTab === 3 && <DebugData/>}
+        </Container>
+      </React.Fragment>
     );
   }
 }

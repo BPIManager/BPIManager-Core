@@ -97,9 +97,19 @@ th.MuiTableCell-root.MuiTableCell-head{
   background:#313131 !important;
 }
 
-#__dark .apbar{ background-color: #121212ed; }
-#__deepsea .apbar{ background-color: #001625ed; }
-#__light .apbar{ background-color: #591711ed; }
+header.apbar{
+  box-shadow:0 0 0 !important;
+}
+
+@media screen and (min-width:600px){
+  .subAppBar{
+    margin-top:8px !important;
+  }
+}
+
+#__dark header.MuiPaper-root{ background-color: #121212ed; }
+#__deepsea header.MuiPaper-root{ background-color: #001625ed; }
+#__light header.MuiPaper-root{ background-color: #591711ed; }
 
 a.link{
   text-decoration:none;
@@ -765,4 +775,10 @@ text.react-calendar-heatmap-weekday-label {
 
 .detailsScreenTopGrid,.MuiGrid-root{
   margin-left: 0 !important;
+}
+
+.bpilinechart .recharts-legend-wrapper{
+  bottom:60px !important;
+  position:relative !important;
+  left:0 !important;
 }

@@ -46,13 +46,13 @@ class Stats extends React.Component<{intl:any}&RouteComponentProps,S> {
 
   render(){
     const {currentView,currentUser,message,showSnackBar,rivalMeta,descendingRivalData,lastVisible,arenaRank,recentView} = this.state;
+    if(currentView === 0) return <RivalIndex showEachRival={this.showEachRival} compareUser={this.compareUser} backToRecentPage={recentView} last={lastVisible} arenaRank={arenaRank}/>
     return (
       <Container fixed  style={{margin:"20px auto"}}>
-        {currentView === 0 && <RivalIndex showEachRival={this.showEachRival} compareUser={this.compareUser} backToRecentPage={recentView} last={lastVisible} arenaRank={arenaRank}/>}
         {(rivalMeta && currentView === 1) && <RivalView showAllScore={false} toggleSnack={this.toggleSnack} backToMainPage={this.backToMainPage} rivalData={currentUser} rivalMeta={rivalMeta}/>}
         {(rivalMeta && currentView === 2) && <RivalView showAllScore={false} toggleSnack={this.toggleSnack} backToMainPage={this.backToMainPage} rivalData={rivalMeta.uid} rivalMeta={rivalMeta} descendingRivalData={descendingRivalData} isNotRival={true}/>}
         <ShowSnackBar message={message} variant="success"
-            handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>
+          handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000}/>
       </Container>
     );
   }
