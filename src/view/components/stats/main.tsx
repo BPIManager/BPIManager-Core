@@ -155,7 +155,10 @@ class Main extends React.Component<{intl:any,derived?:rivalScoreData[]}&RouteCom
               {(groupedByLevel.length > 0) &&
                 <div style={{width:"95%",height:"100%",margin:"5px auto"}} className="bpilinechart">
                   <ResponsiveContainer width="100%">
-                    <LineChart data={groupedByLevel}>
+                    <LineChart data={groupedByLevel}
+                    margin={{
+                    top: 5, right: 30, left: -30, bottom: 30,
+                    }}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis type={"number"} dataKey="name" stroke={chartColor} ticks={this.xAxisTicker()} domain={[-20,100]}/>
                       <YAxis stroke={chartColor}/>
