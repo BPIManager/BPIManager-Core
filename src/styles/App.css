@@ -1,6 +1,3 @@
-*{
-  font-family: 'Noto Sans JP',"Helvetica", "Hiragino Kaku Gothic ProN","メイリオ", sans-serif !important;
-}
 
 a {
     text-decoration: none;
@@ -107,9 +104,9 @@ header.apbar{
   }
 }
 
-#__dark header.MuiPaper-root{ background-color: #121212ed; }
-#__deepsea header.MuiPaper-root{ background-color: #001625ed; }
-#__light header.MuiPaper-root{ background-color: #591711ed; }
+#__dark header.MuiPaper-root{ background-color: #121212e1; }
+#__deepsea header.MuiPaper-root{ background-color: #001625e1; }
+#__light header.MuiPaper-root{ background-color: #591711e1; }
 
 a.link{
   text-decoration:none;

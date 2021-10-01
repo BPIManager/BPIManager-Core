@@ -35,10 +35,13 @@ class SyncIndex extends React.Component<{},S> {
       return (<Loader hasMargin text="連携情報を取得中"/>);
     }
     return (
-      <Container fixed  className="commonLayout">
-        {!userData && <SyncLoginScreen mode={0}/>}
+      <React.Fragment>
+        {!userData && (
+          <Container fixed  className="commonLayout" id="stat">
+            <SyncLoginScreen mode={0}/>
+          </Container>)}
         {userData && <ControlTab userData={userData}/>}
-      </Container>
+      </React.Fragment>
     );
   }
 }

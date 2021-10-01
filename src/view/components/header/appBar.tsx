@@ -88,6 +88,93 @@ const styles = (theme:any) => ({
   },
 });
 
+
+const songs:navBars[] = [
+  {
+    to:"/lists",
+    id:"GlobalNav.FavoriteSongs",
+    icon:<BookmarkIcon />
+  },
+  {
+    to:"/songs",
+    id:"GlobalNav.SongList",
+    icon:<LibraryMusicIcon />
+  },
+  {
+    to:"/notPlayed",
+    id:"GlobalNav.unregisteredSongs",
+    icon:<BorderColorIcon />
+  },
+];
+const myStat:navBars[] = [
+  {
+    to:"/compare",
+    id:"GlobalNav.compare",
+    icon:<FilterNoneIcon />
+  },
+  {
+    to:"/stats",
+    id:"GlobalNav.Statistics",
+    icon:<TrendingUpIcon />
+  },
+  {
+    to:"/AAATable",
+    id:"GlobalNav.AAATable",
+    icon:<WbIncandescentIcon />
+  }
+]
+const social:navBars[] = [
+  {
+    to:"/rivals",
+    id:"GlobalNav.Rivals",
+    icon:<PeopleIcon />
+  },
+  {
+    to:"/rivalCompare",
+    id:"GlobalNav.RivalCompare",
+    icon:<ThumbsUpDownIcon />
+  },
+  {
+    to:"/notes",
+    id:"GlobalNav.Notes",
+    icon:<SpeakerNotesIcon />
+  },
+  {
+    to:"/ranking/",
+    id:"GlobalNav.Weekly",
+    icon:<EventNoteIcon />
+  }
+]
+const navBarTop:navBars[] = [
+  {
+    to:"/camera",
+    id:"GlobalNav.Camera",
+    icon:<CameraAltIcon/>
+  },
+  {
+    to:"/data",
+    id:"GlobalNav.Data",
+    icon:<SaveAltIcon />
+  },
+]
+const navBarBottom:navBars[] = [
+  {
+    to:"/history",
+    id:"GlobalNav.History",
+    icon:<HistoryIcon />
+  },
+  {
+    to:"/settings",
+    id:"GlobalNav.Settings",
+    icon:<SettingsIcon />
+  },
+  {
+    to:"https://docs2.poyashi.me",
+    id:"GlobalNav.Help",
+    icon:<HelpIcon />
+  }
+]
+
 interface HideOnScrollProps {
   children?: React.ReactElement,
   window?: () => Window,
@@ -196,91 +283,6 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         return "BPIManager"
       }
     }
-    const songs:navBars[] = [
-      {
-        to:"/lists",
-        id:"GlobalNav.FavoriteSongs",
-        icon:<BookmarkIcon />
-      },
-      {
-        to:"/songs",
-        id:"GlobalNav.SongList",
-        icon:<LibraryMusicIcon />
-      },
-      {
-        to:"/notPlayed",
-        id:"GlobalNav.unregisteredSongs",
-        icon:<BorderColorIcon />
-      },
-    ];
-    const myStat:navBars[] = [
-      {
-        to:"/compare",
-        id:"GlobalNav.compare",
-        icon:<FilterNoneIcon />
-      },
-      {
-        to:"/stats",
-        id:"GlobalNav.Statistics",
-        icon:<TrendingUpIcon />
-      },
-      {
-        to:"/AAATable",
-        id:"GlobalNav.AAATable",
-        icon:<WbIncandescentIcon />
-      }
-    ]
-    const social:navBars[] = [
-      {
-        to:"/rivals",
-        id:"GlobalNav.Rivals",
-        icon:<PeopleIcon />
-      },
-      {
-        to:"/rivalCompare",
-        id:"GlobalNav.RivalCompare",
-        icon:<ThumbsUpDownIcon />
-      },
-      {
-        to:"/notes",
-        id:"GlobalNav.Notes",
-        icon:<SpeakerNotesIcon />
-      },
-      {
-        to:"/ranking/",
-        id:"GlobalNav.Weekly",
-        icon:<EventNoteIcon />
-      }
-    ]
-    const navBarTop:navBars[] = [
-      {
-        to:"/camera",
-        id:"GlobalNav.Camera",
-        icon:<CameraAltIcon/>
-      },
-      {
-        to:"/data",
-        id:"GlobalNav.Data",
-        icon:<SaveAltIcon />
-      },
-    ]
-    const navBarBottom:navBars[] = [
-      {
-        to:"/history",
-        id:"GlobalNav.History",
-        icon:<HistoryIcon />
-      },
-      {
-        to:"/settings",
-        id:"GlobalNav.Settings",
-        icon:<SettingsIcon />
-      },
-      {
-        to:"https://docs2.poyashi.me",
-        id:"GlobalNav.Help",
-        icon:<HelpIcon />
-      }
-    ]
     const { classes,history } = this.props;
     const drawer = (isPerment:boolean)=>(
       <React.Fragment>
