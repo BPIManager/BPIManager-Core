@@ -46,14 +46,6 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
   auth:any,
   isLoading:boolean,
   userLoading:boolean,
-  latestUsersLoading:boolean,
-  recentUsers:rivalStoreData[],
-  isModalOpen:boolean,
-  currentUserName:string,
-  rankingListLoading:boolean,
-  rankingList:any[],
-  isOpenRanking:boolean,
-  currentRankingId:string,
 }>{
 
   constructor(props:{global:any}&RouteComponentProps){
@@ -66,14 +58,6 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
       remains:0,
       isLoading:true,
       userLoading:true,
-      latestUsersLoading:true,
-      recentUsers:[],
-      rankingList:[],
-      isModalOpen:false,
-      rankingListLoading:true,
-      currentUserName:"",
-      isOpenRanking:false,
-      currentRankingId:"",
     }
   }
 
@@ -99,29 +83,7 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
       remains:concatted.filter((item:CLBody)=>item.bpi > (Number.isNaN(item.currentBPI) ? -999 : item.currentBPI)).length,
       isLoading:false
     });
-    this.getRanking();
-    return this.getRecentUsers();
-  }
-
-  getRecentUsers = async()=>{
-    const res = await new fbActions().recentUpdated(null,null,"すべて");
-    return this.setState({latestUsersLoading:false,recentUsers:res.slice(0,5)});
-  }
-
-  getRanking = async()=>{
-    const res = await getRanking(false,0);
-    if(res.data.error || res.data.info.length === 0){
-      return this.setState({rankingListLoading:false,rankingList:[]});
-    }
-    const list = await expandUserData(res.data.info);
-    return this.setState({rankingList:list,rankingListLoading:false});
-  }
-
-  handleOpenRanking = (rankId:string = "")=>{
-    this.setState({
-      isOpenRanking:!this.state.isOpenRanking,
-      currentRankingId:rankId
-    })
+    return;
   }
 
   QAindexOf = (needle:string)=>{
@@ -129,15 +91,11 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
     return str.indexOf(needle) > -1;
   }
 
-  handleModalOpen = (flag:boolean)=> this.setState({isModalOpen:flag});
-  open = (uid:string)=> this.setState({isModalOpen:true,currentUserName:uid});
-
   render(){
     const themeColor = _currentTheme();
     const bg = blurredBackGround();
-    const {user,auth,isLoading,userLoading,latestUsersLoading,recentUsers,isModalOpen,currentUserName,rankingListLoading,rankingList,isOpenRanking,currentRankingId} = this.state;
+    const {user,auth,isLoading,userLoading} = this.state;
     const xs = 12,sm = 6, md = 4,lg = 4;
-    console.log(rankingList);
     return (
       <div>
         <Helmet>
@@ -285,59 +243,8 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
           </Grid>
         </Container>
         )}
-        {(rankingListLoading || rankingList.length > 0) && (
-        <Container>
-          <Divider style={{margin:"25px 0"}}/>
-          <Card>
-          <CardContent>
-          <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
-            <EventNoteIcon/>&nbsp;現在開催中のランキング
-          </Typography>
-          {rankingListLoading && <Loader/>}
-          {(!rankingListLoading && rankingList.length > 0) && (
-          <List>
-            {rankingList.map((item,i)=><RankListItem key={i} item={item} handleOpenRanking={this.handleOpenRanking}/>)}
-          </List>
-          )}
-          <Button startIcon={<ArrowRightIcon/>} fullWidth size="small" onClick={()=>this.props.history.push("/ranking/")}>もっと見る</Button>
-          </CardContent>
-          </Card>
-        </Container>
-        )}
-        <Container>
-          <Divider style={{margin:"25px 0"}}/>
-          <Card>
-          <CardContent>
-          <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
-            <PeopleIcon/>&nbsp;最近スコアを更新したユーザー
-          </Typography>
-          {latestUsersLoading && <Loader/>}
-          {!latestUsersLoading && (
-          <List>
-            {recentUsers.map((item:rivalStoreData)=>{
-              return (
-                <ListItem key={item.uid} button onClick={()=>this.open(item.displayName)}>
-                  <ListItemAvatar>
-                    <Avatar>
-                      <img src={item.photoURL ? item.photoURL.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
-                        alt={item.displayName}
-                        onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(item) || alternativeImg(item.displayName)}/>
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary={item.displayName} secondary={"総合BPI:"+ item.totalBPI +" / " + updatedTime((item.serverTime as any).toDate())}/>
-                </ListItem>
-              )
-            })}
-          </List>
-          )}
-          <Button startIcon={<ArrowRightIcon/>} fullWidth size="small" onClick={()=>this.props.history.push("/rivals?tab=3")}>もっと見る</Button>
-          </CardContent>
-          </Card>
-        </Container>
-        {isOpenRanking &&
-          <WeeklyModal isOpen={isOpenRanking} rankingId={currentRankingId} handleOpen={this.handleOpenRanking}/>
-        }
-        {isModalOpen && <ModalUser isOpen={isModalOpen} currentUserName={currentUserName} handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
+        <RankList history={this.props.history}/>
+        <RecentUsers history={this.props.history}/>
         <small style={{marginTop:"25px",fontSize:"8px",textAlign:"center",display:"block",padding:"15px"}}>
           <FormattedMessage id="Index.notes1"/><br/>
           <FormattedMessage id="Index.notes2"/><br/>
@@ -508,4 +415,125 @@ class InstallAlert extends React.Component<{global:any},{hide:boolean}>{
     return (null);
   }
 
+}
+
+class RankList extends React.Component<{history:any},{loading:boolean,list:any[],open:boolean,id:string}>{
+
+  state = {
+    loading:true,
+    list:[],
+    open:false,
+    id:""
+  }
+
+  componentDidMount(){
+    this.getRanking();
+  }
+
+  handleOpenRanking = (rankId:string = "")=> this.setState(
+    {
+      open:!this.state.open,
+      id:rankId
+    }
+  )
+
+  getRanking = async()=>{
+    const res = await getRanking(false,0);
+    if(res.data.error || res.data.info.length === 0){
+      return this.setState({loading:false,list:[]});
+    }
+    const list = await expandUserData(res.data.info);
+    return this.setState({list:list,loading:false});
+  }
+
+  render(){
+    const {loading,list,open,id} = this.state;
+    if(!loading && list.length === 0){
+      return (null);
+    }
+    return (
+      <React.Fragment>
+        <Container>
+          <Divider style={{margin:"25px 0"}}/>
+          <Card>
+            <CardContent>
+              <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
+                <EventNoteIcon/>&nbsp;現在開催中のランキング
+              </Typography>
+              {loading && <Loader/>}
+              {(!loading && list.length > 0) && (
+                <List>
+                  {list.map((item,i)=><RankListItem key={i} item={item} handleOpenRanking={this.handleOpenRanking}/>)}
+                </List>
+              )}
+              <Button startIcon={<ArrowRightIcon/>} fullWidth size="small" onClick={()=>this.props.history.push("/ranking/")}>もっと見る</Button>
+            </CardContent>
+          </Card>
+        </Container>
+        {open &&
+          <WeeklyModal isOpen={open} rankingId={id} handleOpen={this.handleOpenRanking}/>
+        }
+      </React.Fragment>
+    )
+  }
+}
+
+class RecentUsers extends React.Component<{history:any},{loading:boolean,list:any[],open:boolean,username:string}>{
+
+  state = {
+    loading:true,
+    list:[],
+    open:false,
+    username:""
+  }
+
+  componentDidMount(){
+    this.getRecentUsers();
+  }
+
+  handleModalOpen = (flag:boolean)=> this.setState({open:flag});
+  open = (uid:string)=> this.setState({open:true,username:uid});
+
+  getRecentUsers = async()=>{
+    const res = await new fbActions().recentUpdated(null,null,"すべて");
+    return this.setState({loading:false,list:res.slice(0,5)});
+  }
+
+  render(){
+    const {loading,list,open,username} = this.state;
+    const {history} = this.props;
+    return (
+    <React.Fragment>
+      <Container>
+        <Divider style={{margin:"25px 0"}}/>
+        <Card>
+          <CardContent>
+            <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
+              <PeopleIcon/>&nbsp;最近スコアを更新したユーザー
+            </Typography>
+            {loading && <Loader/>}
+            {!loading && (
+              <List>
+                {list.map((item:rivalStoreData)=>(
+                  <ListItem key={item.uid} button onClick={()=>this.open(item.displayName)}>
+                    <ListItemAvatar>
+                      <Avatar>
+                        <img src={item.photoURL ? item.photoURL.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
+                        alt={item.displayName}
+                        onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(item) || alternativeImg(item.displayName)}/>
+                      </Avatar>
+                    </ListItemAvatar>
+                  <ListItemText primary={item.displayName} secondary={"総合BPI:"+ item.totalBPI +" / " + updatedTime((item.serverTime as any).toDate())}/>
+                </ListItem>
+                ))}
+              </List>
+            )}
+            <Button startIcon={<ArrowRightIcon/>} fullWidth size="small" onClick={()=>history.push("/rivals?tab=3")}>もっと見る</Button>
+          </CardContent>
+        </Card>
+      </Container>
+      {open && <ModalUser isOpen={open} currentUserName={username} handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
+    </React.Fragment>
+    );
+  }
 }
