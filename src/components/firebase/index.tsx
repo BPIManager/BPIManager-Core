@@ -20,7 +20,7 @@ export const google = new firebase.auth.GoogleAuthProvider();
 export default fb;
 
 const f = fb.functions("asia-northeast1");
-const isLocal = ()=> false;//window.location.hostname === "localhost";
+const isLocal = ()=> false; //window.location.hostname === "localhost";
 
 if (isLocal()) {
   const uid = "";

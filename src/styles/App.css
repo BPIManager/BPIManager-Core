@@ -344,13 +344,6 @@ th.MuiTableCell-root.MuiTableCell-head:first-child{
   width:20% !important;
 }
 
-#__dark tr.MuiTableRow-root.rivalBody {
-  background: #3a3a3a;
-}
-
-#__light tr.MuiTableRow-root.rivalBody {
-  background: #fbfbfb;
-}
 
 #__dark #users .MuiButton-outlinedPrimary{
   color:#fff;
@@ -779,3 +772,5 @@ text.react-calendar-heatmap-weekday-label {
   position:relative !important;
   left:0 !important;
 }
+
+.rankDetailModal .MuiListItem-container{list-style-type:none;}

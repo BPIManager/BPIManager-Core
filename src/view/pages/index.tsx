@@ -13,7 +13,7 @@ import { getAltTwitterIcon } from '@/components/rivals';
 import { alternativeImg, getUA, blurredBackGround } from '@/components/common';
 import bpiCalcuator from '@/components/bpi';
 import statMain from '@/components/stats/main';
-
+import EventNoteIcon from '@mui/icons-material/EventNote';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
@@ -33,6 +33,9 @@ import ModalUser from '../components/rivals/modal';
 import AppsIcon from '@mui/icons-material/Apps';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import { BeforeInstallPromptEvent } from '@/components/context/global';
+import { expandUserData, getRanking } from '@/components/ranking/api';
+import { RankListItem } from './ranking/search';
+import WeeklyModal from './ranking/modal';
 
 
 class Index extends React.Component<{global:any}&RouteComponentProps,{
@@ -47,6 +50,10 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
   recentUsers:rivalStoreData[],
   isModalOpen:boolean,
   currentUserName:string,
+  rankingListLoading:boolean,
+  rankingList:any[],
+  isOpenRanking:boolean,
+  currentRankingId:string,
 }>{
 
   constructor(props:{global:any}&RouteComponentProps){
@@ -61,8 +68,12 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
       userLoading:true,
       latestUsersLoading:true,
       recentUsers:[],
+      rankingList:[],
       isModalOpen:false,
-      currentUserName:""
+      rankingListLoading:true,
+      currentUserName:"",
+      isOpenRanking:false,
+      currentRankingId:"",
     }
   }
 
@@ -88,12 +99,29 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
       remains:concatted.filter((item:CLBody)=>item.bpi > (Number.isNaN(item.currentBPI) ? -999 : item.currentBPI)).length,
       isLoading:false
     });
+    this.getRanking();
     return this.getRecentUsers();
   }
 
   getRecentUsers = async()=>{
     const res = await new fbActions().recentUpdated(null,null,"すべて");
     return this.setState({latestUsersLoading:false,recentUsers:res.slice(0,5)});
+  }
+
+  getRanking = async()=>{
+    const res = await getRanking(false,0);
+    if(res.data.error || res.data.info.length === 0){
+      return this.setState({rankingListLoading:false,rankingList:[]});
+    }
+    const list = await expandUserData(res.data.info);
+    return this.setState({rankingList:list,rankingListLoading:false});
+  }
+
+  handleOpenRanking = (rankId:string = "")=>{
+    this.setState({
+      isOpenRanking:!this.state.isOpenRanking,
+      currentRankingId:rankId
+    })
   }
 
   QAindexOf = (needle:string)=>{
@@ -107,8 +135,9 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
   render(){
     const themeColor = _currentTheme();
     const bg = blurredBackGround();
-    const {user,auth,isLoading,userLoading,latestUsersLoading,recentUsers,isModalOpen,currentUserName} = this.state;
+    const {user,auth,isLoading,userLoading,latestUsersLoading,recentUsers,isModalOpen,currentUserName,rankingListLoading,rankingList,isOpenRanking,currentRankingId} = this.state;
     const xs = 12,sm = 6, md = 4,lg = 4;
+    console.log(rankingList);
     return (
       <div>
         <Helmet>
@@ -256,6 +285,25 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
           </Grid>
         </Container>
         )}
+        {(rankingListLoading || rankingList.length > 0) && (
+        <Container>
+          <Divider style={{margin:"25px 0"}}/>
+          <Card>
+          <CardContent>
+          <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
+            <EventNoteIcon/>&nbsp;現在開催中のランキング
+          </Typography>
+          {rankingListLoading && <Loader/>}
+          {(!rankingListLoading && rankingList.length > 0) && (
+          <List>
+            {rankingList.map((item,i)=><RankListItem key={i} item={item} handleOpenRanking={this.handleOpenRanking}/>)}
+          </List>
+          )}
+          <Button startIcon={<ArrowRightIcon/>} fullWidth size="small" onClick={()=>this.props.history.push("/ranking/")}>もっと見る</Button>
+          </CardContent>
+          </Card>
+        </Container>
+        )}
         <Container>
           <Divider style={{margin:"25px 0"}}/>
           <Card>
@@ -286,6 +334,9 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
           </CardContent>
           </Card>
         </Container>
+        {isOpenRanking &&
+          <WeeklyModal isOpen={isOpenRanking} rankingId={currentRankingId} handleOpen={this.handleOpenRanking}/>
+        }
         {isModalOpen && <ModalUser isOpen={isModalOpen} currentUserName={currentUserName} handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
         <small style={{marginTop:"25px",fontSize:"8px",textAlign:"center",display:"block",padding:"15px"}}>
           <FormattedMessage id="Index.notes1"/><br/>

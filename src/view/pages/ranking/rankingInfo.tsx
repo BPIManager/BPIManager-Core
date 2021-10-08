@@ -54,7 +54,7 @@ export class Details extends React.Component<Props,{
       );
     }
     return (
-      <Dialog open={true} onClose={closeModal}>
+      <Dialog open={true} onClose={closeModal} className="rankDetailModal">
         <DialogTitle className="narrowDialogTitle">ランキング詳細</DialogTitle>
         <DialogContent className="narrowDialogContent">
           {header("ランキング情報")}

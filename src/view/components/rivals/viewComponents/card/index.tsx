@@ -12,7 +12,6 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 import IconButton from "@mui/material/IconButton";
-import Divider from "@mui/material/Divider";
 import Tooltip from "@mui/material/Tooltip";
 import { radarData } from "@/components/stats/radar";
 import Radar from "@/view/components/rivals/viewComponents/ui/radar";
@@ -108,7 +107,6 @@ export default class UserCard extends React.Component<{
             </Grid>
           </Grid>
         )}
-        <Divider variant="inset" component="li" />
       </React.Fragment>
     );
   }

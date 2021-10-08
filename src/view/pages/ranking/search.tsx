@@ -11,7 +11,6 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
-import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
 import fbActions from '@/components/firebase/actions';
 import { getAltTwitterIcon } from '@/components/rivals';
@@ -20,7 +19,6 @@ import InfiniteScroll from 'react-infinite-scroller';
 import WeeklyModal from "./modal";
 import { timeDiff } from '@/components/common';
 import CreateModal from './crud/create';
-import ButtonGroup from '@mui/material/ButtonGroup';
 import Button from '@mui/material/Button';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import PersonIcon from '@mui/icons-material/Person';
@@ -37,6 +35,7 @@ import Link from '@mui/material/Link';
 import {Link as RLink} from "react-router-dom";
 import { config } from '@/config';
 import { AppBar,Tab,Tabs } from '@mui/material';
+import { expandUserData, getRanking } from '@/components/ranking/api';
 
 interface S {
   isLoading:boolean,
@@ -81,23 +80,11 @@ class RankingSearch extends React.Component<{intl:any}&RouteComponentProps,S> {
   next = async(showFinished:boolean = this.state.showFinished,oldList:any = [],force:boolean = false)=>{
     if(this.state.isLast && !force) return;
     this.setState({isLoading:true});
-    let data = {
-      includeRank:false,
-      currentUser:true,
-      version:_currentStore(),
-      uId:"",
-      onlyJoined:false,
-      offset:oldList.length,
-      split:10,
-      order:showFinished ? "desc" : "asc",
-      endDate:toDate(new Date()),
-      showFinished:showFinished,
-    };
-    const res = await httpsCallable(`ranking`,`rankSearch`,data);
+    const res = await getRanking(showFinished,oldList.length);
     if(res.data.error || res.data.info.length === 0){
       return this.setState({isLast:true,isLoading:false,auth:res.data.auth});
     }
-    const list = oldList.concat(await this.expandData(res.data.info));
+    const list = oldList.concat(await expandUserData(res.data.info));
     return this.setState({
       isLoading:false,
       rankingList:list,
@@ -118,17 +105,6 @@ class RankingSearch extends React.Component<{intl:any}&RouteComponentProps,S> {
     this.setState({
       isOpenCreateModal:!this.state.isOpenCreateModal,
     })
-  }
-
-  expandData = async(data:any)=>{
-    let newData = [];
-    for(let i = 0; i < data.length; ++i){
-      const item = data[i];
-      const user = await this.fbA.searchByExactId(item.authorId);
-      item.authorRef = user;
-      newData.push(item);
-    }
-    return newData;
   }
 
   handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
@@ -186,41 +162,8 @@ class RankingSearch extends React.Component<{intl:any}&RouteComponentProps,S> {
           initialLoad={false}
         >
         <List>
-          {rankingList.map((item,i)=>{
-            const isBetween = _isBetween(new Date().toString(),timeFormatter(0,item.since._seconds * 1000),timeFormatter(0,item.until._seconds * 1000));
-            const isBefore = isBeforeSpecificDate(new Date(),item.since._seconds * 1000);
-            const period = ()=>{
-              if(isBetween) return "(開催中)";
-              if(!isBetween && isBefore) return "(開催予定)";
-              if(!isBetween && !isBefore) return "";
-            }
-            return (
-              <div key={i}>
-                <ListItem button alignItems="flex-start" onClick={()=>this.handleOpenRanking(item.cid)}>
-                  <ListItemAvatar>
-                    <Avatar alt={item.authorRef ? item.authorRef.displayName : ""} src={getAltTwitterIcon(item.authorRef ? item.authorRef : "")} />
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={(item.rankName || "無題のランキング") + " " + period()}
-                    secondary={
-                      <React.Fragment>
-                        <Typography
-                          component="span"
-                          variant="body2"
-                          color="textPrimary"
-                        >
-                          {item.title}
-                        </Typography>
-                        &nbsp;{item.sum + "人が参加中("+timeDiff(item.until._seconds * 1000)+")"}
-                      </React.Fragment>
-                    }
-                  />
-                </ListItem>
-                <Divider variant="inset" component="li" />
-              </div>
-            )
-          })}
-          </List>
+          {rankingList.map((item,i)=><RankListItem key={i} item={item} handleOpenRanking={this.handleOpenRanking}/>)}
+        </List>
           {isLoading && <Loader text="読み込んでいます"/>}
           {isLast && (
             <div style={{display:"flex",alignItems:"center",flexDirection:"column"}}>
@@ -266,6 +209,45 @@ class RankingSearch extends React.Component<{intl:any}&RouteComponentProps,S> {
   }
 }
 
+export class RankListItem extends React.Component<{item:any,handleOpenRanking:(key:string)=>void},{}>{
 
+  render(){
+    const {item} = this.props;
+    const isBetween = _isBetween(new Date().toString(),timeFormatter(0,item.since._seconds * 1000),timeFormatter(0,item.until._seconds * 1000));
+    const isBefore = isBeforeSpecificDate(new Date(),item.since._seconds * 1000);
+    const period = ()=>{
+      if(isBetween) return "(開催中)";
+      if(!isBetween && isBefore) return "(開催予定)";
+      if(!isBetween && !isBefore) return "";
+    }
+    return (
+      <div>
+        <ListItem button alignItems="flex-start" onClick={()=>this.props.handleOpenRanking(item.cid)}>
+          <ListItemAvatar>
+            <img src={item.authorRef.photoURL ? item.authorRef.photoURL.replace("_normal","") : "noimage"} style={{width:"44px",height:"44px",borderRadius:"100%"}}
+              alt={item.authorRef.displayName}
+              onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(item.authorRef)}/>
+          </ListItemAvatar>
+          <ListItemText
+            primary={(item.rankName || "無題のランキング") + " " + period()}
+            secondary={
+              <React.Fragment>
+                <Typography
+                  component="span"
+                  variant="body2"
+                  color="textPrimary"
+                >
+                  {item.title}
+                </Typography>
+                &nbsp;{item.sum + "人が参加中("+timeDiff(item.until._seconds * 1000)+")"}
+              </React.Fragment>
+            }
+          />
+        </ListItem>
+        <Divider variant="inset" component="li" />
+      </div>
+    )
+  }
+}
 
 export default withRouter(injectIntl(RankingSearch));
