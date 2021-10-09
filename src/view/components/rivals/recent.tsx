@@ -23,6 +23,8 @@ import { timeCompare } from '@/components/common/timeFormatter';
 import InfiniteScroll from 'react-infinite-scroller';
 import { getRadar, radarData } from '@/components/stats/radar';
 
+const sortNames = ["最近更新","総合BPIが高い順"]
+
 interface P {
   compareUser:(rivalMeta:rivalStoreData,rivalBody:rivalScoreData[],last:rivalStoreData,arenaRank:string,currentPage:number)=>void,
   last:rivalStoreData|null,
@@ -50,7 +52,8 @@ interface S {
   myId:string,
   isLast:boolean,
   recommendedBy:string,
-  defaultRadarNode:radarData[]
+  defaultRadarNode:radarData[],
+  sortStyle:number
 }
 
 class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
@@ -87,6 +90,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
       isLast:true,
       recommendedBy:"総合BPI",
       defaultRadarNode:[],
+      sortStyle:0,
     }
     this.timeOut = 0;
   }
@@ -108,7 +112,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
     });
   }
 
-  search = async(last:rivalStoreData|null = null,endAt:rivalStoreData|null = null,arenaRank = this.state.arenaRank,willConcat:boolean = true):Promise<void>=>{
+  search = async(last:rivalStoreData|null = null,endAt:rivalStoreData|null = null,arenaRank = this.state.arenaRank,sortStyle = this.state.sortStyle, willConcat:boolean = true):Promise<void>=>{
     const {mode} = this.props;
     const {myId,searchInput} = this.state;
     this.setState({processing:true,isLoading:true,});
@@ -118,12 +122,12 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
         return item.uid !== myId && timeCompare(new Date(),item.timeStamp,"day") < 15
       })
     }else if(mode === 2){ //最近更新
-      res = await this.fbA.recentUpdated(last,endAt,arenaRank);
+      res = await this.fbA.recentUpdated(last,endAt,arenaRank,sortStyle);
     }else if(mode === 1){ //逆ライバル
       res = (await this.fbA.addedAsRivals()).filter((item)=> item !== undefined);
     }
     if(!res || res.length === 0){
-      this.setState({isLast:true});
+      this.setState({isLast:true,activated:true});
       return this.toggleSnack("該当ページが見つかりませんでした。","warning")
     }
     return this.setState({activated:true,res:willConcat ? this.state.res.concat(res) : res,processing:false,isLoading:false,isLast:(mode === 2 && searchInput === "") ? false : true});
@@ -192,10 +196,10 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
     return this.setState({message:message,showSnackBar:!this.state.showSnackBar,processing:false,variant:variant,isLoading:false});
   }
 
-  incrementalSearch = async (val:string,arenaRank:string):Promise<void>=>{
+  incrementalSearch = async (val:string,arenaRank:string,sortStyle:number = this.state.sortStyle):Promise<void>=>{
     const searchExec = async()=>{
       if(!val){
-        return await this.search(null,null,arenaRank,false);
+        return await this.search(null,null,arenaRank,sortStyle,false);
       }
       let res = await this.fbA.searchAllRival(val);
       if(arenaRank !== "すべて"){
@@ -213,7 +217,17 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
         return (a1.findIndex(function(v2){
           return (v1.uid===v2.uid)
         }) === i1);
-      }).sort((a,b)=>timeCompare(b.timeStamp,a.timeStamp)) || [],errorMessage:!res ? "条件に合致するユーザーが見つかりませんでした。" : "",processing:false,isLoading:false,});
+      }).sort((a,b)=>{
+        if(sortStyle === 1){
+          const _a = a["totalBPIs"];
+          const _b = b["totalBPIs"];
+          const aBPI = _a ? _a[_currentStore()] || -15 : -15;
+          const bBPI = _a ? _b[_currentStore()] || -15 : -15;
+          console.log(a,b,aBPI,bBPI);
+          return bBPI - aBPI;
+        }
+        return timeCompare(b.timeStamp,a.timeStamp)
+      }) || [],errorMessage:!res ? "条件に合致するユーザーが見つかりませんでした。" : "",processing:false,isLoading:false});
     }
     if(this.timeOut) clearTimeout(this.timeOut);
     this.timeOut = setTimeout(() => {
@@ -226,7 +240,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
   open = (uid:string)=> this.setState({isModalOpen:true,currentUserName:uid})
 
   render(){
-    const {defaultRadarNode,isLoading,isModalOpen,showSnackBar,activated,res,rivals,processing,message,variant,arenaRank,currentUserName,searchInput,myId,isLast,recommendedBy} = this.state;
+    const {defaultRadarNode,isLoading,isModalOpen,showSnackBar,activated,res,rivals,processing,message,variant,arenaRank,currentUserName,searchInput,myId,isLast,recommendedBy,sortStyle} = this.state;
     const {mode} = this.props;
     return (
       <React.Fragment>
@@ -249,14 +263,26 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
         {mode === 2 && (
           <form noValidate autoComplete="off">
             <Grid container spacing={1} style={{margin:"5px 0"}}>
-              <Grid item xs={6}/>
+              <Grid item xs={6}>
+                <FormControl style={{width:"100%"}}>
+                  <InputLabel>並び替え</InputLabel>
+                  <Select value={sortNames[sortStyle]} onChange={(e:SelectChangeEvent<string>,)=>{
+                    if(typeof e.target.value !== "string") return;
+                    const st = sortNames.indexOf(e.target.value);
+                    this.setState({sortStyle:st,res:[],activated:false});
+                    return searchInput ? this.incrementalSearch(searchInput,arenaRank,st) : this.search(null,null,arenaRank,st);
+                  }}>
+                    {sortNames.map(item=><MenuItem value={item} key={item}>{item}</MenuItem>)}
+                  </Select>
+                </FormControl>
+              </Grid>
               <Grid item xs={6}>
                 <FormControl style={{width:"100%"}}>
                   <InputLabel>アリーナランク</InputLabel>
                   <Select value={arenaRank} onChange={(e:SelectChangeEvent<string>,)=>{
                     if(typeof e.target.value !== "string") return;
                     this.setState({arenaRank:e.target.value,res:[],activated:false});
-                    return searchInput ? this.incrementalSearch(searchInput,e.target.value) : this.search(null,null,e.target.value);
+                    return searchInput ? this.incrementalSearch(searchInput,e.target.value) : this.search(null,null,e.target.value,sortStyle);
                   }}>
                     {["すべて","A1","A2","A3","A4","A5","B1","B2","B3","B4","B5"].map(item=><MenuItem value={item} key={item}>{item}</MenuItem>)}
                   </Select>
@@ -285,7 +311,8 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
         <Alert severity="error" style={{margin:"10px 0"}}>
           <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>Error</AlertTitle>
           <p>
-            条件に合致するユーザーが見つかりませんでした。
+            条件に合致するユーザーが見つかりませんでした。<br/>
+            一部ソートの組み合わせは、最新のIIDXバージョンでのみご利用いただけます。
           </p>
         </Alert>
       </div>}
@@ -306,7 +333,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps,S> {
       {(mode === 2 && searchInput === "") &&
       <Grid container>
         <Grid item xs={12}>
-          <Button disabled={processing} onClick={this.next} variant="outlined" color="secondary" fullWidth>
+          <Button disabled={ (processing || isLast) } onClick={this.next} variant="outlined" color="secondary" fullWidth>
             次の10件を表示
           </Button>
         </Grid>

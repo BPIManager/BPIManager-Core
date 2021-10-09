@@ -307,14 +307,23 @@ export default class fbActions{
     }
   }
 
-  async recentUpdated(last:rivalStoreData|null,endAt:rivalStoreData|null,arenaRank:string):Promise<rivalStoreData[]>{
-    let query:firebase.firestore.Query = this.setUserCollection().orderBy("serverTime", "desc");
+  async recentUpdated(last:rivalStoreData|null,endAt:rivalStoreData|null,arenaRank:string,sortStyle:number = 0):Promise<rivalStoreData[]>{
+    let query:firebase.firestore.Query = this.setUserCollection();
+    if(sortStyle === 1){
+      query = query.orderBy("totalBPIs." + _currentStore(), "desc");
+    }else{
+      query = query.orderBy("serverTime", "desc");
+    }
     if(arenaRank !== "すべて"){
       query = query.where("arenaRank","==",arenaRank);
     }
     query = this.versionQuery(query);
     if(last){
-      query = query.startAfter(last.serverTime);
+      if(sortStyle === 0){
+        query = query.startAfter(last.serverTime);
+      }else if(sortStyle === 1){
+        query = query.startAfter(last["totalBPIs"] ? last["totalBPIs"][_currentStore()] : -15);
+      }
     }
     if(endAt){
       query = query.endAt(endAt.serverTime);

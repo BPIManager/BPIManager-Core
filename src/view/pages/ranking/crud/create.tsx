@@ -57,7 +57,7 @@ export default class CreateModal extends React.Component<{
       display:0,
       isCreating:false,
       result:null,
-      rankId:"",
+      rankId:""
     }
   }
 

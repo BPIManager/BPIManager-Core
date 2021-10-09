@@ -326,7 +326,8 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
           {config.versionString}&nbsp;
           {config.lastUpdate}<br/>
           <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink><br/>
-          <RefLink color="secondary" href="https://forms.gle/yVCa8sP2ndEQNaxg8">アンケートにご協力下さい </RefLink>
+          <RefLink color="secondary" href="https://docs.google.com/forms/d/e/1FAIpQLScoOOBWeytFTF-g3Pfa6TVGYgcvLOQ-pVT8YbOYm6lGww16Mw/viewform">ご要望・お問合せフォーム </RefLink><br/>
+          <RefLink color="secondary" href="https://github.com/BPIManager">Available on GitHub</RefLink>
         </Typography>
       </React.Fragment>
     );
