@@ -3,8 +3,7 @@ import Container from '@mui/material/Container';
 import { injectIntl } from 'react-intl';
 import Typography from '@mui/material/Typography';
 import { _currentStore } from '@/components/settings';
-import timeFormatter, { toDate, _isBetween, isBeforeSpecificDate } from '@/components/common/timeFormatter';
-import { httpsCallable } from '@/components/firebase';
+import timeFormatter, { _isBetween, isBeforeSpecificDate } from '@/components/common/timeFormatter';
 import Loader from '@/view/components/common/loader';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import List from '@mui/material/List';
@@ -12,7 +11,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
-import fbActions from '@/components/firebase/actions';
 import { getAltTwitterIcon } from '@/components/rivals';
 import AddIcon from '@mui/icons-material/Add';
 import InfiniteScroll from 'react-infinite-scroller';
@@ -53,7 +51,6 @@ interface S {
 }
 
 class RankingSearch extends React.Component<{intl:any}&RouteComponentProps,S> {
-  private fbA:fbActions = new fbActions();
 
   constructor(props:{intl:any}&RouteComponentProps){
     super(props);

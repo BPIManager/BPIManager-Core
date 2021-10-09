@@ -15,11 +15,11 @@ import {Link as RLink} from "react-router-dom";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
-import { toMomentHHMM, d_add, isBeforeSpecificDate, toDate } from '@/components/common/timeFormatter';
+import timeFormatter, { toMomentHHMM, d_add, isBeforeSpecificDate, toDate } from '@/components/common/timeFormatter';
 import Button from '@mui/material/Button';
 import { songData } from '@/types/data';
 import SongSearchDialog from './songSearch';
-import { _prefixFromNum } from '@/components/songs/filter';
+import { difficultyDiscriminator, diffsUpperCase, _prefixFromNum } from '@/components/songs/filter';
 import CreateIcon from '@mui/icons-material/Create';
 import UpdateIcon from '@mui/icons-material/Update';
 import Loader from '@/view/components/common/loader';
@@ -27,6 +27,24 @@ import { httpsCallable } from '@/components/firebase';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import AlertTitle from '@mui/material/AlertTitle';
 import { config } from '@/config';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select/Select';
+import MenuItem from '@mui/material/MenuItem';
+
+const defaultSong:songData = {
+  title:"",
+  difficulty:"3",
+  wr:0,
+  avg:0,
+  notes:0,
+  bpm:"100",
+  textage:"/",
+  difficultyLevel:"12",
+  dpLevel:"0",
+  updatedAt:timeFormatter(3),
+  coef:-1,
+}
 
 export default class CreateModal extends React.Component<{
   isOpen:boolean,
@@ -42,7 +60,8 @@ export default class CreateModal extends React.Component<{
   display:number,
   isCreating:boolean,
   result:any,
-  rankId:string
+  rankId:string,
+  customSong:boolean
 }>{
 
   constructor(props:any){
@@ -57,7 +76,8 @@ export default class CreateModal extends React.Component<{
       display:0,
       isCreating:false,
       result:null,
-      rankId:""
+      rankId:"",
+      customSong:false
     }
   }
 
@@ -103,10 +123,22 @@ export default class CreateModal extends React.Component<{
     this.setState({isCreating:false,display:3,result:p,rankId:p.data.rankId || ""})
   }
 
+  changeSongInfo = (target:string,value:any)=>{
+    if(target === "wr" || target === "avg" || target === "notes"){
+      value = Number(value) as number;
+    }else{
+      value = String(value) as string;
+    }
+    this.setState({song:Object.assign(defaultSong,{
+      [target]:value
+    })});
+  }
+
   render(){
     const c = _currentTheme();
     const {isOpen,handleOpen} = this.props;
-    const {startDate,endDate,rankingName,song,info,isDialogOpen,display,isCreating} = this.state;
+    const {startDate,endDate,rankingName,song,info,isDialogOpen,display,isCreating,customSong} = this.state;
+    console.log(song);
     const isDisabled = ()=>{
       if(!rankingName){
         return true;
@@ -119,6 +151,10 @@ export default class CreateModal extends React.Component<{
       }
       if(isBeforeSpecificDate(endDate,new Date())){
         return true;
+      }
+      if(customSong){
+        if(!song.title) return true;
+        if(!song.notes) return true;
       }
       return false;
     }
@@ -145,6 +181,7 @@ export default class CreateModal extends React.Component<{
         helperText={titleError ? "タイトルが長すぎます" : ""}
       />
       <div style={{margin:"20px 0"}}/>
+      {!customSong && (
       <TextField
         fullWidth
         required
@@ -160,6 +197,12 @@ export default class CreateModal extends React.Component<{
           shrink: true,
         }}
       />
+      )}
+      {customSong && <CustomSong change={this.changeSongInfo} song={song}/>}
+      <Button onClick={()=>this.setState({customSong:!customSong,song:null})}>
+      {customSong && <span>リストから楽曲を選ぶ</span>}
+      {!customSong && <span>手動で楽曲を設定する</span>}
+      </Button>
       <div style={{margin:"20px 0"}}/>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <MobileDateTimePicker
@@ -310,4 +353,92 @@ export default class CreateModal extends React.Component<{
     );
   }
 
+}
+
+class CustomSong extends React.Component<{change:(target:string,value:any)=>void,song:songData|null},{}>{
+
+  updateDiff = (e:SelectChangeEvent<"HYPER"|"ANOTHER"|"LEGGENDARIA">)=>{
+    const v = e.target.value;
+    const value = v === "HYPER" ? "3" : v === "ANOTHER" ? "4" : "10";
+    this.props.change("difficulty",value);
+  }
+
+  render(){
+    const song = this.props.song || defaultSong;
+    return (
+      <React.Fragment>
+        <TextField
+          fullWidth
+          required
+          label="対象楽曲名"
+          onChange={(e)=>this.props.change("title",e.target.value)}
+          value={song.title}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        <FormControl variant="standard" fullWidth>
+          <InputLabel>難易度(表記)</InputLabel>
+          <Select value={difficultyDiscriminator(song.difficulty,true) as diffsUpperCase} onChange={this.updateDiff} fullWidth>
+          {
+            ["HYPER","ANOTHER","LEGGENDARIA"].map((item:string)=>{
+              return (<MenuItem key={item} value={item}>{item}</MenuItem>);
+            })
+          }
+          </Select>
+        </FormControl>
+        <FormControl variant="standard" fullWidth>
+          <InputLabel>難易度(12段階)</InputLabel>
+          <Select value={song.difficultyLevel} onChange={(e)=>this.props.change("difficultyLevel",e.target.value)} fullWidth>
+          {
+            [...Array(12)].map((_, i) => i + 1).map((item:number)=>{
+              return (<MenuItem key={item} value={String(item)}>☆{item}</MenuItem>);
+            })
+          }
+          </Select>
+        </FormControl>
+        <TextField
+          fullWidth
+          required
+          label="ノート数"
+          type="number"
+          onChange={(e)=>this.props.change("notes",e.target.value)}
+          value={song.notes}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        <TextField
+          fullWidth
+          label="全国1位(オプション)"
+          type="number"
+          onChange={(e)=>this.props.change("wr",e.target.value)}
+          value={song.wr}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        <TextField
+          fullWidth
+          label="皆伝平均(オプション)"
+          type="number"
+          onChange={(e)=>this.props.change("avg",e.target.value)}
+          value={song.avg}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        <TextField
+          fullWidth
+          label="譜面係数(オプション)"
+          type="number"
+          onChange={(e)=>this.props.change("coef",e.target.value)}
+          value={song.coef}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+      </React.Fragment>
+    )
+  }
 }

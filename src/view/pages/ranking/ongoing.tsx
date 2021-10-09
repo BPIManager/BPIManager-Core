@@ -9,7 +9,7 @@ import timeFormatter, { untilDate, _isBetween, isBeforeSpecificDate } from '@/co
 import Button from '@mui/material/Button';
 import TouchAppIcon from '@mui/icons-material/TouchApp';
 import JoinModal from '@/view/components/ranking/modal/join';
-import { scoresDB, songsDB } from '@/components/indexedDB';
+import { scoresDB } from '@/components/indexedDB';
 import { songData, scoreData } from '@/types/data';
 import { httpsCallable } from '@/components/firebase';
 import FormControl from '@mui/material/FormControl';
@@ -33,7 +33,6 @@ import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Badge from '@mui/material/Badge';
-import { verNameArr } from '@/view/components/songs/common';
 import DeleteModal from '@/view/components/ranking/modal/delete';
 import { borderColor } from '@/components/common';
 import EditIcon from '@mui/icons-material/Edit';
@@ -92,7 +91,6 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
   async load(getUserData:boolean = false){
     const fb = new weeklyStore();
     const fba = new fbActions();
-    const sdb = new songsDB();
     const scdb = new scoresDB();
     let authorData = null;
 
@@ -104,8 +102,7 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
       const d = current.data();
       if(!d){return this.setState({isLoading:false});}
       const score = await scdb.getItem(d.title,difficultyDiscriminator(d.difficulty),d.version,1);
-      const song = await sdb.getOneItemIsSingle(d.title,d.difficulty);
-      const songData = song.length > 0 ? song[0] : null;
+      const songData = d.song;
       const res = await httpsCallable(`ranking`,`viewRanking`,{
         cId:current.id,
         includeRank:true,
@@ -269,6 +266,9 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
             <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
               {onGoing.rankName || "無題のランキング"}
             </Typography>
+            <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
+              {song && <span>☆{song["difficultyLevel"]}</span>}
+            </Typography>
             <Typography component="h4" variant="h4" color="textPrimary" gutterBottom>
               {onGoing.title}({_prefixFullNum(onGoing.difficulty)})
             </Typography>
@@ -278,7 +278,6 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
                 component="span"
                 onClick={()=>this.open(authorData.uid)}
                 underline="hover">{authorData.displayName}</Link>さんが開催<br/><br/>
-              {song && <span>VERSION:{verNameArr[Number(song["textage"].replace(/\/.*?$/,""))]},☆{song["difficultyLevel"]}</span>}<br/>
               開催期間:{timeFormatter(4,onGoing.since.toDate())}~{timeFormatter(4,onGoing.until.toDate())}<br/>
               {remainTime()} / {rank.info.users}人参加中
             </Typography>
@@ -384,7 +383,7 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
                           </Badge>
                           </Badge>
                         </ListItemAvatar>
-                        <ListItemText primary={item.name} secondary={`EXSCORE:${item.exScore}(${item.PER}%) / BPI:${item.BPI}`} />
+                        <ListItemText primary={item.name} secondary={`EXSCORE:${item.exScore}(${item.PER}%) / BPI:${item.BPI !== Infinity ? item.BPI : " - "}`} />
                       </ListItem>
                     )
                   })}
