@@ -236,7 +236,8 @@ class Index extends React.Component<P&RouteComponentProps,{
           <Alert severity="error" style={{margin:"10px 0"}}>
             <AlertTitle>スコア保存先をご確認ください</AlertTitle>
             <p>
-              スコアデータの保存先が最新のIIDXバージョンではありません。保存先が間違っていませんか？<br/>
+              スコアデータの保存先が最新のIIDXバージョンではありません。(現在選択中:{_currentStoreWithFullName()})<br/>
+              保存先が間違っていませんか？<br/>
               <RLink to="/settings" style={{textDecoration:"none"}}><Link color="secondary" component="span">設定画面からスコアの保存先を変更する</Link></RLink>。
             </p>
           </Alert>

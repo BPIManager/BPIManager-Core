@@ -103,7 +103,7 @@ export const _setTraditionalMode = (newState:number = 0)=>{
 
 export const _currentStoreWithFullName = ()=>{
   const t:string = localStorage.getItem("currentStore") || "28";
-  return t === "26" ? "26 Rootage" : t === "27" ? "27 HEROIC VERSE" : t === "INF" ? "INFINITAS" : "28 BISTROVER"
+  return t === "26" ? "26 Rootage" : t === "27" ? "27 HEROIC VERSE" : t === "INF" ? "INFINITAS" : t === "28" ? "28 BISTROVER" : "29 CastHour";
 }
 
 export const _weeklyRanking = ()=>{

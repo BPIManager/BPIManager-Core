@@ -3,7 +3,7 @@ import timeFormatter, { untilDate } from "../common/timeFormatter";
 export const makeHeatmap = (scores:any)=>{
   const p = scores.reduce((group:any,item:any)=>{
     const date = timeFormatter(7,item.updatedAt);
-    if(untilDate(item.updatedAt) > 180) return group;
+    if(untilDate(item.updatedAt,false) > 180) return group;
     if(!group) group = {};
     if(!group[date]) group[date] = 0;
     group[date]++;

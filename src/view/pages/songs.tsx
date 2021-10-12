@@ -63,7 +63,7 @@ class Songs extends React.Component<RouteComponentProps,S> {
           <p>
             *1 CSVを用いたインポートにはeAMUSEMENTプレミアムコースへの加入が必要です。<br/>
             *2 ブックマークレットを用いたインポートにはeAMUSEMENTベーシックコースまたはプレミアムコースへの加入が必要です。<br/>
-            CSV・ブックマークレットを用いたインポートの方法については、「データ取り込み」ページに記載の説明文をお読みください。
+            CSV・ブックマークレットを用いたインポートの方法については、ヘルプをご確認ください。
           </p>
         </Container>
       )

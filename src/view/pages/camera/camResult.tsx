@@ -233,7 +233,7 @@ export default class CameraResult extends React.Component<Props,{
                       {score && <span>{exScore - score.exScore > 0 && "+"}{exScore - score.exScore}</span>}
                       {!score && <span>+{exScore}</span>}
                     </Typography>
-                    {score && <small style={{textAlign:"center"}}>{untilDate(score.updatedAt)}日前<br/>EX:{score.exScore}</small>}
+                    {score && <small style={{textAlign:"center"}}>{untilDate(score.updatedAt)}前<br/>EX:{score.exScore}</small>}
                     {!score && <small style={{textAlign:"center"}}>登録スコアなし<br/>&nbsp;</small>}
                   </div>
                 </Grid>
@@ -246,7 +246,7 @@ export default class CameraResult extends React.Component<Props,{
                       {rekidai && <span>{exScore - rekidai.exScore > 0 && "+"}{exScore - rekidai.exScore}</span>}
                       {!rekidai && <span>+{exScore}</span>}
                     </Typography>
-                    {rekidai && <small style={{textAlign:"center"}}>IIDX{rekidai.storedAt}で{untilDate(rekidai.updatedAt)}日前<br/>自己歴代スコア:{rekidai.exScore}</small>}
+                    {rekidai && <small style={{textAlign:"center"}}>IIDX{rekidai.storedAt}で{untilDate(rekidai.updatedAt)}前<br/>自己歴代スコア:{rekidai.exScore}</small>}
                     {!rekidai && <small style={{textAlign:"center"}}>登録スコアなし<br/>&nbsp;</small>}
                   </div>
                 </Grid>

@@ -138,7 +138,6 @@ export default class CreateModal extends React.Component<{
     const c = _currentTheme();
     const {isOpen,handleOpen} = this.props;
     const {startDate,endDate,rankingName,song,info,isDialogOpen,display,isCreating,customSong} = this.state;
-    console.log(song);
     const isDisabled = ()=>{
       if(!rankingName){
         return true;
@@ -160,7 +159,6 @@ export default class CreateModal extends React.Component<{
     }
 
     const titleError = rankingName.length > 16;
-    console.log(startDate);
     const form = (readOnly:boolean = false)=>{
       return (
       <form noValidate autoComplete="off">

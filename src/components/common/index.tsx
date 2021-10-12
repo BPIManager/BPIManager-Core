@@ -128,7 +128,7 @@ export const avatarFontColor = themeColor === "light" ? "#222" : "#efefef";
 
 export const timeDiff = (seconds:number)=>{
   if(isBeforeSpecificDate(new Date(),seconds)){ // 今日の日付が終了日付より前か？
-    return "残り"+ untilDate(seconds) +"日";
+    return "残り"+ untilDate(seconds) +"";
   }
   return "終了済み";
 }

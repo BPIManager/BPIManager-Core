@@ -35,8 +35,17 @@ const timeFormatter = (type = 0,date:string|Date|number = new Date()):string =>{
 export const timeCompare = (from:dayjs.Dayjs|string|Date,to:dayjs.Dayjs|string|number,type:"s"|"day" = "s") =>{
   return dayjs(from).diff(to,type);
 }
-export const untilDate = (to:dayjs.Dayjs|string|number) =>{
-  return Math.abs(dayjs().diff(to,"d"));
+export const untilDate = (to:dayjs.Dayjs|string|number,withSuffix:boolean = true) =>{
+  const date = Math.abs(dayjs().diff(to,"d"));
+
+  if(withSuffix === false){
+    return date;
+  }
+
+  if(date === 0){
+    return Math.abs(dayjs().diff(to,"hour")) + "時間"
+  }
+  return date + "日";
 }
 
 export const toUnixTime = (t:string|dayjs.Dayjs|Date)=>dayjs(t).unix();

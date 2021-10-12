@@ -255,9 +255,9 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
         </FormControl>
       </div>);
     const remainTime = ()=>{
-        if(isBetween) return `終了まで残り${untilDate(onGoing.until.toDate())}日`;
+        if(isBetween) return `終了まで残り${untilDate(onGoing.until.toDate())}`;
         if(!isBetween && !isBefore) return `終了済みのランキング`;
-        if(!isBetween && isBefore) return `開催まであと${untilDate(onGoing.until.toDate())}日`;
+        if(!isBetween && isBefore) return `開催まであと${untilDate(onGoing.since.toDate())}`;
     }
     return (
       <div>
@@ -327,7 +327,7 @@ class WeeklyOnGoing extends React.Component<{intl:any,rankingId?:string}&RouteCo
                   <Typography component="p" variant="caption" color="textPrimary" gutterBottom style={{textAlign:"center"}}>
                         {(isBetween) && `「参加 / 更新」ボタンからスコアを登録！`}
                         {(!isBetween && !isBefore) && `終了済みのランキングです`}
-                        {(!isBetween && isBefore) && `開催まであと${untilDate(onGoing.until.toDate())}日お待ち下さい`}
+                        {(!isBetween && isBefore) && `開催まであと${untilDate(onGoing.since.toDate())}お待ち下さい`}
                     <br/><br/>
                     <ShareOnTwitter
                       text={`「${onGoing.rankName}」\n対象楽曲：${onGoing.title}(${_prefixFullNum(onGoing.difficulty)})\n集計期間：${remainTime()}`}
