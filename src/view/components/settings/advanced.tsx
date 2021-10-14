@@ -55,7 +55,7 @@ class Settings extends React.Component<P,S> {
       currentVersion:_currentVersion(),
       message:"",
       message2:"",
-      currentResetStore:"28",
+      currentResetStore:"29",
       disableDeleteBtn:false,
       isDialogOpen:false,
       isURLDialogOpen:false,
@@ -212,6 +212,7 @@ class Settings extends React.Component<P,S> {
               <MenuItem value="26">26 Rootage</MenuItem>
               <MenuItem value="27">27 HEROIC VERSE</MenuItem>
               <MenuItem value="28">28 BISTROVER</MenuItem>
+              <MenuItem value="29">29 CastHour</MenuItem>
               <MenuItem value="INF">INFINITAS</MenuItem>
               <MenuItem value="Songs Database">Songs Database</MenuItem>
               <MenuItem value="Rivals">Rivals</MenuItem>
@@ -290,6 +291,7 @@ class AlertDialog extends React.Component<{isDialogOpen:boolean,exec:()=>void,cl
                 currentResetStore === "26" ? "26 Rootage" :
                 currentResetStore === "27" ? "27 HEROIC VERSE" :
                 currentResetStore === "28" ? "28 BISTROVER" :
+                currentResetStore === "29" ? "29 CastHour" :
                 currentResetStore === "INF" ? "INFINITAS" :
                 currentResetStore === "Songs Database" ? "Songs Database" : "Rivals"}
             </DialogContentText>
