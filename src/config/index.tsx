@@ -1,18 +1,10 @@
-import timeFormatter from "@/components/common/timeFormatter";
-
-//IIDX28→29移行措置
-const latestStore = ()=>{
-  if(timeFormatter(4) === "2021/10/12") return "28";
-  return "29";
-}
-
 export const config ={
   versionNumber:"86",
   client:"ca-pub-1494631468121976",
   slot:"6952909012",
   versionString:"beta ver0.0.8.6d",
   lastUpdate:"2021/10/14 JST",
-  latestStore:latestStore(),
+  latestStore:"29",
   baseUrl:"https://bpi.poyashi.me",
   cfVersion:"v2"
 }
