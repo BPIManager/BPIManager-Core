@@ -171,13 +171,14 @@ export default class fbActions{
     const s = await new scoresDB().getAll();
     bpi.setTraditionalMode(0);
     const _s = s.filter(item=>item.difficultyLevel === "12");
-    bpi.allTwelvesBPI = _s.reduce((group:number[],item:any)=>{
+    const m = _s.reduce((group:number[],item:any)=>{
       if(item.currentBPI !== Infinity){
         group.push(item.currentBPI);
       }
       return group;
     },[]);
-    bpi.allTwelvesLength = await new songsDB().getSongsNum("12");
+    bpi.allTwelvesBPI = m;
+    bpi.allTwelvesLength = m.length;
     return bpi.totalBPI();
   }
 
