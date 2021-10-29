@@ -137,7 +137,7 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
                   {user.displayName}
                 </Typography>
                   <Typography variant="body1">
-                    <Link to={"/sync/settings"}><RefLink color="secondary" component="span">プロフィールを編集</RefLink></Link>
+                    <Link to={"/sync/settings"}><RefLink color="secondary" component="span"><FormattedMessage id="Index.EditProfile"/></RefLink></Link>
                   </Typography>
               </Grid>
             </Grid>
@@ -150,10 +150,10 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
               </Grid>
               <Grid item xs={9} lg={9} style={{paddingLeft:"15px"}}>
                 <Typography variant="body1">
-                  ログインしていません
+                  <FormattedMessage id="Index.NotLoggedIn"/>
                 </Typography>
                 <Typography variant="body1">
-                  <Link to="/sync/settings"><RefLink color="secondary" component="span">ログインして全機能を開放</RefLink></Link>
+                  <Link to="/sync/settings"><RefLink color="secondary" component="span"><FormattedMessage id="Index.SignIn"/></RefLink></Link>
                 </Typography>
               </Grid>
             </Grid>
@@ -167,7 +167,7 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
           <Card style={bg}>
             <CardContent>
               <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
-                <MenuOpenIcon/>&nbsp;クイックアクセス
+                <MenuOpenIcon/>&nbsp;<FormattedMessage id="Index.QuickAccess"/>
               </Typography>
               <div style={{overflowX:"scroll"}} className="topMenuScrollableWrapper">
               <Grid container direction="row" wrap="nowrap" alignItems="center" style={{width:"100%",margin:"20px 0 0 0"}} className="topMenuContaienrGridWrapper">
@@ -183,7 +183,9 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
                 }
                 <Grid container direction="column" alignItems="center" onClick={()=>this.props.history.push("/settings?tab=1")}>
                   <AppsIcon/>
-                  <Typography color="textSecondary" variant="caption">表示項目を編集</Typography>
+                  <Typography color="textSecondary" variant="caption">
+                    <FormattedMessage id="Index.EditQA"/>
+                  </Typography>
                 </Grid>
               </Grid>
               </div>
@@ -199,14 +201,14 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
-                    <TimelineIcon/>&nbsp;総合BPI(☆12)
+                    <TimelineIcon/>&nbsp;<FormattedMessage id="Stats.TotalBPI"/>(☆12)
                   </Typography>
                   <Typography color="textSecondary" variant="h2">
                     {this.state.totalBPI}
                   </Typography>
                 </CardContent>
                 <CardActions>
-                  <Button size="small" onClick={()=>this.props.history.push("/stats")}>統計をすべて表示</Button>
+                  <Button size="small" onClick={()=>this.props.history.push("/stats")}><FormattedMessage id="Index.ShowTotalBPI"/></Button>
                 </CardActions>
               </Card>
             </Grid>
@@ -214,14 +216,14 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
-                    <LibraryMusicIcon/>&nbsp;今週更新した楽曲数
+                    <LibraryMusicIcon/>&nbsp;<FormattedMessage id="Index.UpdatedInWeek"/>
                   </Typography>
                   <Typography color="textSecondary" variant="h2">
                     {this.state.lastWeekUpdates}
                   </Typography>
                 </CardContent>
                 <CardActions>
-                  <Button size="small" onClick={()=>this.props.history.push("/songs")}>楽曲一覧を表示</Button>
+                  <Button size="small" onClick={()=>this.props.history.push("/songs")}><FormattedMessage id="Index.ShowSongs"/></Button>
                 </CardActions>
               </Card>
             </Grid>
@@ -229,14 +231,14 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
-                    <WbIncandescentIcon/>&nbsp;残り未AAA楽曲数(☆12)
+                    <WbIncandescentIcon/>&nbsp;<FormattedMessage id="Index.AAARemain"/>(☆12)
                   </Typography>
                   <Typography color="textSecondary" variant="h2">
                     {this.state.remains}
                   </Typography>
                 </CardContent>
                 <CardActions>
-                  <Button size="small" onClick={()=>this.props.history.push("/AAATable")}>AAA達成表を表示</Button>
+                  <Button size="small" onClick={()=>this.props.history.push("/AAATable")}><FormattedMessage id="Index.ShowAAA"/></Button>
                 </CardActions>
               </Card>
             </Grid>
@@ -458,7 +460,8 @@ class RankList extends React.Component<{history:any},{loading:boolean,list:any[]
           <Card>
             <CardContent>
               <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
-                <EventNoteIcon/>&nbsp;現在開催中のランキング
+                <EventNoteIcon/>&nbsp;
+                <FormattedMessage id="Index.OngoingWR"/>
               </Typography>
               {loading && <Loader/>}
               {(!loading && list.length > 0) && (
@@ -466,7 +469,9 @@ class RankList extends React.Component<{history:any},{loading:boolean,list:any[]
                   {list.map((item,i)=><RankListItem key={i} item={item} handleOpenRanking={this.handleOpenRanking}/>)}
                 </List>
               )}
-              <Button startIcon={<ArrowRightIcon/>} fullWidth size="small" onClick={()=>this.props.history.push("/ranking/")}>もっと見る</Button>
+              <Button startIcon={<ArrowRightIcon/>} fullWidth size="small" onClick={()=>this.props.history.push("/ranking/")}>
+                <FormattedMessage id="ShowMore"/>
+              </Button>
             </CardContent>
           </Card>
         </Container>
@@ -509,7 +514,8 @@ class RecentUsers extends React.Component<{history:any},{loading:boolean,list:an
         <Card>
           <CardContent>
             <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
-              <PeopleIcon/>&nbsp;最近スコアを更新したユーザー
+              <PeopleIcon/>&nbsp;
+              <FormattedMessage id="Index.RecentlyUpdated"/>
             </Typography>
             {loading && <Loader/>}
             {!loading && (
@@ -528,7 +534,9 @@ class RecentUsers extends React.Component<{history:any},{loading:boolean,list:an
                 ))}
               </List>
             )}
-            <Button startIcon={<ArrowRightIcon/>} fullWidth size="small" onClick={()=>history.push("/rivals?tab=3")}>もっと見る</Button>
+            <Button startIcon={<ArrowRightIcon/>} fullWidth size="small" onClick={()=>history.push("/rivals?tab=3")}>
+              <FormattedMessage id="ShowMore"/>
+            </Button>
           </CardContent>
         </Card>
       </Container>

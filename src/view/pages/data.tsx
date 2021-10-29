@@ -244,28 +244,32 @@ class Index extends React.Component<P&RouteComponentProps,{
         )}
         <Stepper orientation="vertical" className="vertStepper">
           <Step active>
-            <StepLabel>公式サイトからCSVをコピー</StepLabel>
+            <StepLabel>
+              <FormattedMessage id="Data.Copy"/>
+            </StepLabel>
             <StepContent>
               <Typography variant="caption">
                 <Link color="secondary" href={"https://p.eagate.573.jp/game/2dx/"+_currentStore()+"/djdata/score_download.html?style=" + spdp} target="_blank" rel="noopener noreferrer">
-                  ここをクリック<LinkIcon style={{ fontSize: 15 }} />
+                  <FormattedMessage id="Data.ClickHere"/><LinkIcon style={{ fontSize: 15 }} />
                 </Link>
-                してCSVをテキストデータでクリップボードにコピーします。
+                <FormattedMessage id="Data.CopyAfter"/>
               </Typography>
               <Navigation/>
             </StepContent>
           </Step>
             <Step active>
-              <StepLabel>インポート</StepLabel>
+              <StepLabel>
+                <FormattedMessage id="Data.Import"/>
+              </StepLabel>
               <StepContent>
                 <Typography variant="caption">
-                  「取り込み実行」をタップし、スコアをインポートします。
+                  <FormattedMessage id="Data.ImportText"/>
                 </Typography>
 
                 <React.Fragment>
 
                   <Typography variant="caption" style={{margin:"8px 0 0 0",display:"block"}}>
-                    インポートに失敗する場合、下のボックスにテキストをペーストして取り込み実行してください。
+                    <FormattedMessage id="Data.ImportFails"/>
                   </Typography>
                   <TextField
                     onChange={this.onChangeText}
@@ -290,17 +294,17 @@ class Index extends React.Component<P&RouteComponentProps,{
               </StepContent>
             </Step>
             <Step active={errors.length > 0}>
-              <StepLabel>インポート結果</StepLabel>
+              <StepLabel><FormattedMessage id="Data.Result"/></StepLabel>
               <StepContent>
                 <Typography variant="caption">
-                下記にインポート結果を表示しています。
+                <FormattedMessage id="Data.ResultText"/>
                 </Typography>
               </StepContent>
             </Step>
         </Stepper>
         {(errors.length > 0 && stateText !== "Data.Failed") &&
           <Alert severity="success" style={{margin:"10px 0"}}>
-            <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}>処理が終了しました</AlertTitle>
+            <AlertTitle style={{marginTop:"0px",fontWeight:"bold"}}><FormattedMessage id="Data.End"/></AlertTitle>
             <div style={{width:"100%"}}>
               <Button
                 fullWidth
@@ -308,7 +312,7 @@ class Index extends React.Component<P&RouteComponentProps,{
                 color="secondary"
                 onClick={()=>this.props.history.push("/songs/today")}
                 style={{margin:"5px 0"}}>
-                  本日更新した楽曲を表示
+                  <FormattedMessage id="Data.ShowUpdated"/>
               </Button>
               <Button
                 fullWidth
@@ -316,7 +320,7 @@ class Index extends React.Component<P&RouteComponentProps,{
                 color="secondary"
                 onClick={()=>this.props.history.push("/history/" + timeFormatter(7,new Date()))}
                 style={{margin:"5px 0"}}>
-                  更新差分を確認
+                  <FormattedMessage id="Data.ShowUpdatedHistory"/>
               </Button>
             </div>
           </Alert>
