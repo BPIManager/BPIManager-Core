@@ -29,7 +29,7 @@ export const behindScore = (row:scoreData,songData:songData,mode:number)=>{
 
 export const verArr = (include:boolean = true):number[]=>{
   let t = include ? [1.5] : [];
-  for (let i = 3; i < 29; ++i){
+  for (let i = 3; i < verNameArr.length; ++i){
     t.push(i);
   }
   return t;
@@ -70,6 +70,7 @@ export const verNameArr = [
   "26 Rootage",
   "27 HEROIC VERSE",
   "28 BISTROVER",
+  "29 CastHour",
 ]
 
 export const bp = (bp:number):string=>{

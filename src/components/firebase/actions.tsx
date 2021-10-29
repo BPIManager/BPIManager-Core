@@ -1,6 +1,6 @@
 import fb, { twitter,firestore, google } from ".";
 import timeFormatter from "../common/timeFormatter";
-import { scoresDB, scoreHistoryDB, songsDB } from "../indexedDB";
+import { scoresDB, scoreHistoryDB } from "../indexedDB";
 import platform from "platform";
 import firebase from 'firebase/app';
 import { rivalStoreData, scoreData, DBRivalStoreData, songData } from "../../types/data";

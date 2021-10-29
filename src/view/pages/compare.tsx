@@ -17,6 +17,7 @@ import { scoreData } from '@/types/data';
 import OrderControl from "@/view/components/songs/common/orders";
 import { timeCompare } from '@/components/common/timeFormatter';
 import songsAPI from '@/components/songs/api';
+import { versionTitles } from '@/components/common/versions';
 
 interface S {
   [key: string]: any,
@@ -55,8 +56,8 @@ class Compare extends React.Component<{intl:any},S> {
         pm:["+","-"],
       },
       filterByName:"",
-      compareFrom:"28",
-      compareTo:"27",
+      compareFrom:_currentStore(),
+      compareTo:String(Number(_currentStore()) - 1),
       page:0,
       rowsPerPage:10,
       displayMode:"exScore",
@@ -69,19 +70,19 @@ class Compare extends React.Component<{intl:any},S> {
 
   async componentDidMount(){
     this._mounted = true;
-    const bpi12 = new bpiCalcuator(), bpi11 = new bpiCalcuator();
     const isSingle = _isSingle();
     const db = await new scoresDB(isSingle,_currentStore()).loadStore();
     const bpiMapper = (t:scoreData[])=>t.map((item:scoreData)=>item.currentBPI);
-    const twelves = await db.getItemsBySongDifficulty("12");
-    bpi12.allTwelvesBPI = bpiMapper(twelves);
-    bpi12.allTwelvesLength = await new songsDB().getSongsNum();
-    const elevens = await db.getItemsBySongDifficulty("11");
-    bpi11.allTwelvesBPI = bpiMapper(elevens);
-    bpi11.allTwelvesLength = await new songsDB().getSongsNum("11");
+    const totalBPI = async (diff:string)=>{
+      const calc = new bpiCalcuator();
+      const twelves = await db.getItemsBySongDifficulty(diff);
+      calc.allTwelvesBPI = bpiMapper(twelves);
+      calc.allTwelvesLength = await new songsDB().getSongsNum();
+      return calc.totalBPI();
+    }
     this.setState({
-      total12BPI:bpi12.totalBPI(),
-      total11BPI:bpi11.totalBPI()
+      total12BPI:await totalBPI("12"),
+      total11BPI:await totalBPI("11")
     });
     this.dataHandler();
   }
@@ -291,9 +292,7 @@ class Compare extends React.Component<{intl:any},S> {
             <FormControl style={{width:"100%"}}>
               <InputLabel><FormattedMessage id="Compare.From"/></InputLabel>
               <Select value={compareFrom} onChange={this.handleChange("compareFrom")}>
-                <MenuItem value={"28"}>28 BISTROVER</MenuItem>
-                <MenuItem value={"27"}>27 HEROIC VERSE</MenuItem>
-                <MenuItem value={"26"}>26 Rootage</MenuItem>
+                {versionTitles.map((item)=><MenuItem value={item.num}>{item.title}</MenuItem>)}
               </Select>
             </FormControl>
           </Grid>
@@ -301,9 +300,7 @@ class Compare extends React.Component<{intl:any},S> {
             <FormControl style={{width:"100%"}}>
               <InputLabel><FormattedMessage id="Compare.To"/></InputLabel>
               <Select value={compareTo} onChange={this.handleChange("compareTo")}>
-                <MenuItem value={"28"}>28 BISTROVER</MenuItem>
-                <MenuItem value={"27"}>27 HEROIC VERSE</MenuItem>
-                <MenuItem value={"26"}>26 Rootage</MenuItem>
+                {versionTitles.map((item)=><MenuItem value={item.num}>{item.title}</MenuItem>)}
                 <MenuItem value={"BPI"}>TARGET BPI</MenuItem>
                 <MenuItem value={"PERCENTAGE"}>TARGET PERCENTAGE</MenuItem>
                 <MenuItem value={"WR"}>WORLD RECORD</MenuItem>

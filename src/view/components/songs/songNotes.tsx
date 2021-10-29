@@ -203,7 +203,7 @@ class WriteDialog extends React.Component<WP,{
         this.props.close();
       }
     }else{
-      alert("No ReCaptcha Signature! Please reload this page and try again.");
+      alert("No reCAPTCHA Signature returned. Please reload this page and try again.");
     }
   }
 

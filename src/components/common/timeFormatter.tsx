@@ -9,7 +9,7 @@ dayjs.extend(isBetween);
 dayjs.extend(weekOfYear);
 dayjs.extend(relativeTime);
 
-const timeFormatter = (type = 0,date:string|Date|number = new Date()):string =>{
+const timeFormatter = (type = 0,date:string|Date|number|dayjs.Dayjs = new Date()):string =>{
   const m = dayjs(date);
   switch (type){
     case 0:
@@ -52,12 +52,8 @@ export const toUnixTime = (t:string|dayjs.Dayjs|Date)=>dayjs(t).unix();
 
 export const toDate = (t:string|dayjs.Dayjs|Date)=>dayjs(t).toDate().toString();
 
-export const toMoment = (t:string|Date|dayjs.Dayjs)=>dayjs(t).format("YYYYMMDD");
-
-export const toMomentHHMM = (t:string|Date|dayjs.Dayjs)=>dayjs(t).format("YYYYMMDD HH:mm");
-
 export const isSameDay = (a:string|Date|dayjs.Dayjs,b:string|Date|dayjs.Dayjs = new Date())=>{
-  return toMoment(a) === toMoment(b);
+  return timeFormatter(3,a) === timeFormatter(3,b);
 }
 
 export const isSameWeek = (a:string|Date|dayjs.Dayjs,b:string|Date|dayjs.Dayjs)=>{

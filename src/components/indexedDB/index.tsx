@@ -591,6 +591,11 @@ export const scoreHistoryDB = class extends storageWrapper{
     this.currentStore = _currentStore();
   }
 
+  setStore = (store:string)=> {
+    this.currentStore = store;
+    return this;
+  }
+
   //newer method
   _add(score:scoreData|null,forceUpdateTime:boolean = false):boolean{
     try{

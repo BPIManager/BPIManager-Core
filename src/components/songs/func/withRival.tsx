@@ -1,5 +1,5 @@
+import timeFormatter from "@/components/common/timeFormatter";
 import { withRivalData } from "@/components/stats/radar";
-import { toMoment } from "@/components/common/timeFormatter";
 import { songFuncCommon } from "./common";
 
 export class songFuncWithRival extends songFuncCommon{
@@ -34,7 +34,7 @@ export class songFuncWithRival extends songFuncCommon{
     if(!todayOnly){
       return true;
     }else{
-      return toMoment(this.data.rivalLastUpdate) === toMoment(todayOnly === "1" ? new Date() : todayOnly);
+      return timeFormatter(3,this.data.rivalLastUpdate) === timeFormatter(3,todayOnly === "1" ? new Date() : todayOnly);
     }
   }
 

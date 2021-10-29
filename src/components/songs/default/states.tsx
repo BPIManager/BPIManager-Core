@@ -1,4 +1,4 @@
-import { toMoment } from "@/components/common/timeFormatter";
+import timeFormatter from "@/components/common/timeFormatter";
 import { verArr, clearArr } from "@/view/components/songs/common";
 import { songsList_stateInt } from "@/view/components/songs/played/songsList";
 
@@ -24,8 +24,8 @@ export const defaultState_songsList = (initialBPIRange:string = "",defToday:bool
       max:initialBPIRange && initialBPIRange !== "100" ? Number(initialBPIRange) + 10 : "",
     },
     dateRange:{
-      from:toMoment(new Date()),
-      to:toMoment(new Date()),
+      from:timeFormatter(3,new Date()),
+      to:timeFormatter(3,new Date()),
     },
     memo:false,
     showLatestOnly:false,

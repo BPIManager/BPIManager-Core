@@ -15,7 +15,7 @@ import {Link as RLink} from "react-router-dom";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
-import timeFormatter, { toMomentHHMM, d_add, isBeforeSpecificDate, toDate } from '@/components/common/timeFormatter';
+import timeFormatter, { d_add, isBeforeSpecificDate, toDate } from '@/components/common/timeFormatter';
 import Button from '@mui/material/Button';
 import { songData } from '@/types/data';
 import SongSearchDialog from './songSearch';
@@ -82,12 +82,12 @@ export default class CreateModal extends React.Component<{
   }
 
   handleStartDateInput = (date:any) => {
-    this.setState({startDate:toDate(toMomentHHMM(date || new Date()))});
+    this.setState({startDate:toDate(timeFormatter(0,date || new Date()))});
   };
 
   handleEndDateInput = (date:any) => {
     console.log(date);
-    this.setState({endDate:toDate(toMomentHHMM(date || new Date()))});
+    this.setState({endDate:toDate(timeFormatter(0,date || new Date()))});
   };
 
   dialogToggle = ()=> this.setState({isDialogOpen:!this.state.isDialogOpen});

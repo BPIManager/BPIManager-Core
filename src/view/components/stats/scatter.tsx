@@ -13,6 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Loader from '@/view/components/common/loader';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
+import { versionTitles } from '@/components/common/versions';
 
 interface scatterGraph{
   label:string,
@@ -72,7 +73,7 @@ class ScatterGraph extends React.Component<{},S> {
     for(let item in currentVer){
       const current = currentVer[item];
       const last = targetVersion === "OBPI" ? goalBPI : lastVer[current.title + current.difficulty];
-      const x = way === 0 && last !== 0 ? Math.ceil( 1000 * current.currentBPI / last )  / 10  - 100 : way === 1 ? current.currentBPI - last : last;
+      const x = way === 0 && last !== 0 ? Math.ceil( 1000 * current.currentBPI / last )  / 10  - 100 : (way === 1 || way === 2) ? current.currentBPI - last : last;
       if((last && !Number.isNaN(last)) && (current.currentBPI && !Number.isNaN(current.currentBPI)) && (x && !Number.isNaN(x))){
         const p = {
           label:current.title + _prefix(current.difficulty),
@@ -115,7 +116,7 @@ class ScatterGraph extends React.Component<{},S> {
         return (
           <div className="custom-tooltip">
             <p><b>{p.label}</b></p>
-            <p>{way === 0 ? "上昇率" : "差"}:{p.x > 0 && "+"}{p.x.toFixed(1)}{way === 0 && "%"}</p>
+            <p>{way === 0 ? "上昇率" : "差"}:{p.x > 0 && "+"}{p.x.toFixed(2)}{way === 0 && "%"}</p>
             <p>今作:{p.y}</p>
             <p>前作:{p.last}</p>
           </div>
@@ -134,9 +135,7 @@ class ScatterGraph extends React.Component<{},S> {
                   <FormControl style={{width:"100%"}}>
                     <InputLabel>比較元</InputLabel>
                     <Select value={currentVersion} onChange={this.handleChanger("currentVersion")}>
-                      <MenuItem value={"28"}>28 BISTROVER</MenuItem>
-                      <MenuItem value={"27"}>27 HEROIC VERSE</MenuItem>
-                      <MenuItem value={"26"}>26 Rootage</MenuItem>
+                      {versionTitles.map((item)=><MenuItem value={item.num}>{item.title}</MenuItem>)}
                     </Select>
                   </FormControl>
                 </Grid>
@@ -144,9 +143,7 @@ class ScatterGraph extends React.Component<{},S> {
                   <FormControl component="fieldset" style={{width:"100%"}}>
                     <InputLabel>比較先</InputLabel>
                     <Select value={targetVersion} onChange={this.handleChanger("targetVersion")}>
-                      <MenuItem value={"28"}>28 BISTROVER</MenuItem>
-                      <MenuItem value={"27"}>27 HEROIC VERSE</MenuItem>
-                      <MenuItem value={"26"}>26 Rootage</MenuItem>
+                      {versionTitles.map((item)=><MenuItem value={item.num}>{item.title}</MenuItem>)}
                     </Select>
                   </FormControl>
                 </Grid>
