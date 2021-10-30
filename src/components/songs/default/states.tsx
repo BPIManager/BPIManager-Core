@@ -24,8 +24,8 @@ export const defaultState_songsList = (initialBPIRange:string = "",defToday:bool
       max:initialBPIRange && initialBPIRange !== "100" ? Number(initialBPIRange) + 10 : "",
     },
     dateRange:{
-      from:timeFormatter(3,new Date()),
-      to:timeFormatter(3,new Date()),
+      from:timeFormatter(1,new Date()),
+      to:timeFormatter(1,new Date()),
     },
     memo:false,
     showLatestOnly:false,

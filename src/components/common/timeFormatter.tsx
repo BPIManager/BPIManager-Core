@@ -53,7 +53,7 @@ export const toUnixTime = (t:string|dayjs.Dayjs|Date)=>dayjs(t).unix();
 export const toDate = (t:string|dayjs.Dayjs|Date)=>dayjs(t).toDate().toString();
 
 export const isSameDay = (a:string|Date|dayjs.Dayjs,b:string|Date|dayjs.Dayjs = new Date())=>{
-  return timeFormatter(3,a) === timeFormatter(3,b);
+  return timeFormatter(1,a) === timeFormatter(1,b);
 }
 
 export const isSameWeek = (a:string|Date|dayjs.Dayjs,b:string|Date|dayjs.Dayjs)=>{

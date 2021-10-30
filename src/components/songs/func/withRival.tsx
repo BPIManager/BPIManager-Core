@@ -34,7 +34,7 @@ export class songFuncWithRival extends songFuncCommon{
     if(!todayOnly){
       return true;
     }else{
-      return timeFormatter(3,this.data.rivalLastUpdate) === timeFormatter(3,todayOnly === "1" ? new Date() : todayOnly);
+      return timeFormatter(1,this.data.rivalLastUpdate) === timeFormatter(1,todayOnly === "1" ? new Date() : todayOnly);
     }
   }
 
