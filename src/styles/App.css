@@ -741,10 +741,6 @@ text.react-calendar-heatmap-weekday-label {
  background-image:none;
 }
 
-:not(#detailedScreen) #mainFilters .MuiFormGroup-root{
-  flex-wrap:nowrap !important;
-}
-
 #detailedScreen #mainFilters > div{
   flex-wrap:wrap !important;
 }

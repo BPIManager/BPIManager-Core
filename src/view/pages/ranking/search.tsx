@@ -134,7 +134,7 @@ class RankingSearch extends React.Component<{intl:any}&RouteComponentProps,S> {
             onChange={this.handleChange}
             indicatorColor="secondary"
             variant="scrollable"
-            scrollButtons centered
+            scrollButtons
             textColor="secondary"
             allowScrollButtonsMobile>
             <Tab label="開催中・開催予定" />

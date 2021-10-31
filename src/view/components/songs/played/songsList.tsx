@@ -75,7 +75,7 @@ interface P{
   defToday?:boolean
 }
 
-const ranges = [{val:0,label:"全期間"},{val:1,label:"本日更新"},{val:2,label:"前日更新"},{val:3,label:"今週更新"},{val:5,label:"期間指定"},{val:4,label:"1ヶ月以上未更新"}]
+const ranges = [{val:0},{val:1},{val:2},{val:3},{val:5},{val:4}]
 
 class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt> {
 
@@ -327,7 +327,7 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
             <Button
               startIcon={<LinkedCameraIcon/>}
               onClick={this.openCaptureScr} size="small" color="secondary" style={{marginRight:"10px",minWidth:"40px",padding:"5px 6px"}}>
-              共有
+              <FormattedMessage id="Songs.Share"/>
             </Button>
             <IconButton
               onClick={this.handleToggleFilterScreen} color="secondary" size="small">
@@ -336,7 +336,7 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
             <FormControl>
               <Select value={range} displayEmpty onChange={this.handleRangeChange}>
                 {ranges.map(item=>(
-                  <MenuItem value={item.val} key={item.val}>{item.label}</MenuItem>
+                  <MenuItem value={item.val} key={item.val}><FormattedMessage id={`Songs.Range${item.val}`}/></MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -358,7 +358,6 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
             <InputLabel><FormattedMessage id="Songs.filterByName"/></InputLabel>
               <Input
                 style={{width:"100%"}}
-                placeholder={"(ex.)255"}
                 value={filterByName}
                 onChange={this.handleInputChange}
                 endAdornment={

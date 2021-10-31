@@ -37,7 +37,7 @@ class Stats extends React.Component<{intl:any},S> {
             onChange={this.handleChange}
             indicatorColor="secondary"
             variant="scrollable"
-            scrollButtons centered
+            scrollButtons
             textColor="secondary"
             allowScrollButtonsMobile>
             <Tab label="基本" />

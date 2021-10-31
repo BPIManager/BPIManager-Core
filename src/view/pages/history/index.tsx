@@ -81,8 +81,8 @@ class History extends React.Component<RouteComponentProps,S> {
       <Container fixed  className="commonLayout" id="stat">
         <DateSelector days={days} currentDate={currentDate} handleChange={this.changeDate}/>
         <Pagination count={Math.ceil(filtered.length / showNumber)} page={page} color="secondary" onChange={this.changePage} style={{marginBottom:"15px"}} />
-          {filtered.slice((page - 1) * 10, page * 10 ).map((item:historyDataWithLastScore)=> (
-              <React.Fragment key={item.title + item.difficulty}>
+          {filtered.slice((page - 1) * 10, page * 10 ).map((item:historyDataWithLastScore,i:number)=> (
+              <React.Fragment key={item.title + item.difficulty + i}>
                 <HistoryView item={item}/>
               </React.Fragment>
             )

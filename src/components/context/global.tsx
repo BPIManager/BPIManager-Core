@@ -42,7 +42,6 @@ export default class GlobalContainer extends Container<S> {
     this.setUserData = this.setUserData.bind(this);
     const self = this;
     window.addEventListener('beforeinstallprompt', function(event) {
-      console.log(event)
       event.preventDefault();
       self.prompt = (event as BeforeInstallPromptEvent);
       return false;

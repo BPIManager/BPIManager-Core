@@ -149,7 +149,6 @@ class Compare extends React.Component<{intl:any},S> {
   }
 
   async dataHandler(newState:S = this.state):Promise<void>{
-    console.time("a");
     let result:compareData[] = [];
     const f = newState.compareFrom;
     const t = newState.compareTo;
@@ -218,7 +217,6 @@ class Compare extends React.Component<{intl:any},S> {
       });
     }
     if(!this._mounted){return;}
-    console.timeEnd("a");
     return this.setState({full:result,isLoading:false});
   }
 

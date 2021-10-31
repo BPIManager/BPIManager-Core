@@ -15,6 +15,7 @@ import Avatar from '@mui/material/Avatar';
 import { avatarFontColor, avatarBgColor } from '@/components/common';
 import Alert from '@mui/material/Alert/Alert';
 import Link from '@mui/material/Link';
+import { FormattedMessage } from 'react-intl';
 
 class SyncLoginScreen extends React.Component<{
   mode:number
@@ -30,13 +31,13 @@ class SyncLoginScreen extends React.Component<{
             <LockIcon fontSize="large"/>
           </Avatar>
           <Typography component="h5" variant="h5" style={{textAlign:"center",marginTop:"10px"}}>
-            ログイン
+            <FormattedMessage id={"SignIn"}/>
           </Typography>
           <Divider style={{margin:"10px 0"}}/>
           <List
             subheader={
               <ListSubheader component="div" disableSticky>
-                連携サービスを選択
+                <FormattedMessage id={"SignInWith"}/>
               </ListSubheader>
             }>
             {[
@@ -45,7 +46,7 @@ class SyncLoginScreen extends React.Component<{
             ].map((item,i)=>{
               return (
                 <ListItem key={i} button onClick={item.func}>
-                  <ListItemText primary={<span>{item.name}でログイン</span>} secondary={item.desc} />
+                  <ListItemText primary={<span><FormattedMessage id={"SignInWithPre"}/>{item.name}<FormattedMessage id={"SignInWithAfter"}/></span>} secondary={item.desc} />
                   <ListItemSecondaryAction onClick={item.func}>
                     <IconButton edge="end" size="large">
                       <ArrowForwardIosIcon />
@@ -58,19 +59,21 @@ class SyncLoginScreen extends React.Component<{
           </List>
           <Divider style={{margin:"10px 0"}}/>
           <Typography component="p" variant="caption" gutterBottom>
-            <b>ログインでできること</b>
+            <b>
+              <FormattedMessage id={"Signin.title"}/>
+            </b>
           </Typography>
             <ul className="MuiTypography-caption">
-              <li>スコアデータのクラウドへの永久保存</li>
-              <li>自分のスコアを他人と共有する</li>
-              <li>BPIやアリーナランクに基づき、実力の近いライバルを探す</li>
-              <li>Notesやウィークリーランキングへの参加を通した他ユーザーとの交流、モチベーション管理</li>
+              <li><FormattedMessage id={"Signin.list1"}/></li>
+              <li><FormattedMessage id={"Signin.list2"}/></li>
+              <li><FormattedMessage id={"Signin.list3"}/></li>
+              <li><FormattedMessage id={"Signin.list4"}/></li>
             </ul>
           <Alert severity="info">
           <Typography component="p" variant="caption" gutterBottom>
-            TwitterまたはGoogleを通したOAuthログインに対応しています。連携したSNSアカウントのデータはユーザー識別に用いられ、連携先アカウントにおいて自動的に投稿を作成したり、プロフィールを編集する権限はありません。<br/>
-            BPIManagerアカウントの作成に際し、利用規約およびプライバシーポリシーへの同意があったものとみなします。<br/>
-            <Link color="secondary" href="https://docs2.poyashi.me/tos/">利用規約及びプライバシーポリシーはこちらからご確認ください。</Link>
+            <FormattedMessage id={"Signin.warn1"}/><br/>
+            <FormattedMessage id={"Signin.warn2"}/><br/>
+            <Link color="secondary" href="https://docs2.poyashi.me/tos/"><FormattedMessage id={"Signin.warn3"}/></Link>
           </Typography>
           </Alert>
         </Paper>

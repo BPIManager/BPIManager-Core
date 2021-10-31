@@ -44,7 +44,7 @@ class RivalIndex extends React.Component<P,S> {
           indicatorColor="secondary"
           variant="scrollable"
           textColor="secondary"
-          scrollButtons centered
+          scrollButtons
           allowScrollButtonsMobile>
             <Tab label="一覧" />
             <Tab label="おすすめ" />

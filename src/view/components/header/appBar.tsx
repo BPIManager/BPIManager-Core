@@ -373,7 +373,7 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
                   </Avatar>
                 )}
                 onClick={()=>history.push("/sync/settings")}
-                label={"ログイン"}
+                label={<FormattedMessage id={"SignIn"}/>}
                 clickable
                 color="primary"
               />

@@ -190,7 +190,6 @@ export default class NotPlayList extends React.Component<P,stateInt> {
             <InputLabel><FormattedMessage id="Songs.filterByName"/></InputLabel>
               <Input
                 style={{width:"100%"}}
-                placeholder={"(ex.)255"}
                 value={filterByName}
                 onChange={this.handleInputChange}
                 endAdornment={

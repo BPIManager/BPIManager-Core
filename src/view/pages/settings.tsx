@@ -39,7 +39,7 @@ class Stats extends React.Component<{intl:any,global:any}&RouteComponentProps,S>
           onChange={this.handleChange}
           indicatorColor="secondary"
           variant="scrollable"
-          scrollButtons centered
+          scrollButtons
           textColor="secondary"
           allowScrollButtonsMobile>
             <Tab label={<FormattedMessage id="Settings.Tabs.Common"/>} />

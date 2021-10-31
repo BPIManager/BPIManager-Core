@@ -223,6 +223,27 @@ const ja = {
   "Data.End":"処理が終了しました",
   "Data:ShowUpdated":"本日更新した楽曲を表示",
   "Data.ShowUpdatedHistory":"更新差分を確認",
+  "SignIn":"ログイン",
+  "Songs.Share":"共有",
+  "Songs.Range0":"全期間",
+  "Songs.Range1":"本日更新",
+  "Songs.Range2":"前日更新",
+  "Songs.Range3":"今週更新",
+  "Songs.Range4":"期間指定",
+  "Songs.Range5":"1ヶ月以上未更新",
+
+  "SignInWith":"連携サービスを選択",
+  "SignInWithPre":" ",
+  "SignInWithAfter":"でログイン",
+
+  "Signin.title":"ログインでできること",
+  "Signin.list1":"スコアデータのクラウドへの永久保存",
+  "Signin.list2":"自分のスコアを他人と共有する",
+  "Signin.list3":"BPIやアリーナランクに基づき、実力の近いライバルを探す",
+  "Signin.list4":"Notesやウィークリーランキングへの参加を通した他ユーザーとの交流",
+  "Signin.warn1":"TwitterまたはGoogleを通したOAuthログインに対応しています。連携したSNSアカウントのデータはユーザー識別に用いられ、連携先アカウントにおいて自動的に投稿を作成したり、プロフィールを編集する権限はありません。",
+  "Signin.warn2":"BPIManagerアカウントの作成に際し、利用規約およびプライバシーポリシーへの同意があったものとみなします。",
+  "Signin.warn3":"利用規約及びプライバシーポリシーはこちらからご確認ください。",
 };
 
 export default ja;
