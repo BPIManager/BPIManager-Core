@@ -113,7 +113,7 @@ class Item extends React.Component<{
         <Typography component="div" className="spaceBetween" sx={{ fontSize: 14, alignItems:"center"}} color="text.secondary" gutterBottom>
           <p style={{padding:"4px 0 4px 5px",margin:0,borderLeft:"3px solid " + barColor}}>
           ☆{song.difficultyLevel}<br/>
-          {row.title}
+          {row.title}{_prefix(row.difficulty)}
           </p>
           <div style={{textAlign:"right",padding:"0 0 0 3px",margin:0}}>
           BPI&nbsp;{row.currentBPI.toFixed(2)}<br/>
