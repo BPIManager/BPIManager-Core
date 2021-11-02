@@ -112,12 +112,22 @@ class Item extends React.Component<{
       <CardContent style={{padding:0,cursor:"pointer"}} onClick={()=>this.props.handleOpen(false,row)}>
         <Typography component="div" className="spaceBetween" sx={{ fontSize: 14, alignItems:"center"}} color="text.secondary" gutterBottom>
           <p style={{padding:"4px 0 4px 5px",margin:0,borderLeft:"3px solid " + barColor}}>
-          ☆{song.difficultyLevel}<br/>
+          <span style={{fontSize:"12px"}}>☆{song.difficultyLevel}</span><br/>
           {row.title}{_prefix(row.difficulty)}
           </p>
           <div style={{textAlign:"right",padding:"0 0 0 3px",margin:0}}>
-          BPI&nbsp;{row.currentBPI.toFixed(2)}<br/>
-          <span style={{fontSize:"12px"}}>{new bpiCalcuator().rank(row.currentBPI)}位</span>
+          {row.currentBPI !== Infinity && (
+            <React.Fragment>
+            <span style={{fontSize:"12px"}}>{new bpiCalcuator().rank(row.currentBPI)}位</span><br/>
+              BPI&nbsp;{row.currentBPI.toFixed(2)}
+            </React.Fragment>
+          )}
+          {row.currentBPI === Infinity && (
+            <React.Fragment>
+            <span style={{fontSize:"12px"}}>-</span><br/>
+              BPI&nbsp; -
+            </React.Fragment>
+          )}
           </div>
         </Typography>
         <LinearProgressWithLabel per={per}/>
