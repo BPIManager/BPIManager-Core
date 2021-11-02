@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import Paper from '@mui/material/Paper';
 import FormControl from '@mui/material/FormControl';
-import { _currentViewComponents, _setCurrentViewComponents, _setShowLatestSongs, _showLatestSongs, _currentQuickAccessComponents, _setQuickAccessComponents } from '@/components/settings';
+import { _currentViewComponents, _setCurrentViewComponents, _setShowLatestSongs, _showLatestSongs, _currentQuickAccessComponents, _setQuickAccessComponents, _showRichView, _setShowRichView } from '@/components/settings';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Checkbox from '@mui/material/Checkbox';
@@ -18,7 +18,8 @@ interface S {
   isLoading:boolean,
   currentVersion:string[],
   quickAccess:string[],
-  showLatestSongs:boolean
+  showLatestSongs:boolean,
+  showRichView:boolean,
 }
 
 interface P{
@@ -35,6 +36,7 @@ class Settings extends React.Component<P,S> {
       currentVersion:_currentViewComponents().split(","),
       quickAccess:_currentQuickAccessComponents().split(","),
       showLatestSongs:_showLatestSongs(),
+      showRichView:_showRichView(),
     }
   }
 
@@ -67,7 +69,7 @@ class Settings extends React.Component<P,S> {
   }
 
   render(){
-    const {isLoading,showLatestSongs} = this.state;
+    const {isLoading,showLatestSongs,showRichView} = this.state;
     if(isLoading){
       return (<Loader/>);
     }
@@ -129,6 +131,21 @@ class Settings extends React.Component<P,S> {
           <Typography variant="caption" display="block">
             トップページ「クイックアクセス」に表示する機能を編集します。<br/>
             よく使う機能をお好みで選択してください。
+          </Typography>
+          <Divider style={{margin:"10px 0"}}/>
+          <FormLabel component="legend">リッチ ビューを使用 (beta)</FormLabel>
+          <Switch
+            checked={showRichView}
+            onChange={(e:React.ChangeEvent<HTMLInputElement>,)=>{
+              if(typeof e.target.checked === "boolean"){
+                _setShowRichView(e.target.checked);
+                return this.setState({showRichView:e.target.checked})
+              }
+            }}
+          />
+          <Typography variant="caption" display="block">
+          プレイ済み楽曲リストにおいて、グラフィカルな楽曲一覧表示を使用します。<br/>
+          (補助表示の設定項目は無視されます)
           </Typography>
         </Paper>
       </Container>

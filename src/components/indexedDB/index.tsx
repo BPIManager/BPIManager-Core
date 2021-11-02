@@ -545,6 +545,11 @@ export const scoresDB = class extends storageWrapper{
   }
 
   getSpecificSong = (songTitle:string)=>this.scores.where("title").equals(songTitle).toArray();
+
+  _getSpecificSong = async(songTitle:string,diff:string,isSingle:number)=> (
+    await this.scores.where({title:songTitle,isSingle:isSingle}).toArray()
+  ).filter(item=>item.difficulty === diff);
+
   modifyBPI = (t:songData,currentBPI:B)=> this.scores.where("[title+difficulty+storedAt+isSingle]").equals([t.title,t.difficulty,t.storedAt,t.isSingle]).modify(
     {currentBPI:!currentBPI.error ? currentBPI.bpi : -15}
   );

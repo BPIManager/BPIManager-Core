@@ -50,7 +50,10 @@ class Captured extends React.Component<P,S> {
 
   captureUpdates = async()=>{
     const target = document.getElementById("screenCaptureTarget");
-    if(!target) return;
+    if(!target){
+      console.log("Capture target not found");
+      return;
+    }
     this.setState({capturing:true});
     const s = await (await this.fetcher("token","")).json();
     const token = s.token;

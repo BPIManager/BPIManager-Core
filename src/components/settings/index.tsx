@@ -114,6 +114,14 @@ export const _setWeeklyRanking = (isEnable:boolean)=>{
   return isEnable ? localStorage.setItem("weeklyRanking","true") : localStorage.removeItem("weeklyRanking");
 }
 
+export const _showRichView = ()=>{
+  return localStorage.getItem("showRichView") === "true";
+}
+
+export const _setShowRichView = (newState:boolean)=>{
+  return localStorage.setItem("showRichView",String(newState));
+}
+
 export const _chartColor = ()=>{
   const c = _currentTheme();
   if(c === "dark" || c === "deepsea"){

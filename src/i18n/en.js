@@ -221,7 +221,7 @@ const ja = {
   "Data.Result":"Result",
   "Data.ResultText":"The Consequence of the importation this time is shown below.",
   "Data.End":"Execution ended",
-  "Data:ShowUpdated":"View all songs updated today",
+  "Data.ShowUpdated":"View all songs updated today",
   "Data.ShowUpdatedHistory":"Check update diff",
   "SignIn":"Sign in",
   "Songs.Share":"Share",

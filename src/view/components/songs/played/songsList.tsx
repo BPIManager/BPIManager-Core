@@ -19,7 +19,7 @@ import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import equal from 'fast-deep-equal'
-import { _showLatestSongs } from '@/components/settings';
+import { _showLatestSongs, _showRichView } from '@/components/settings';
 import Button from '@mui/material/Button';
 import { bpmFilter,bpiFilter } from '../common';
 import SongsFilter, { B, BPIR } from '../common/filter';
@@ -39,6 +39,7 @@ import songsAPI from '@/components/songs/api';
 import { genTitle } from '@/components/songs/filter';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
+import SongsRichTable from './beta/richView';
 
 export interface songsList_stateInt {
   isLoading:boolean,
@@ -87,7 +88,7 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
     this.updateScoreData = this.updateScoreData.bind(this);
   }
 
-  handleChangePage = (_e:React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage:number):void => this.setState({page:newPage});
+  handleChangePage = (_e:any, newPage:number):void => this.setState({page:newPage});
 
   async componentDidMount(){
     let allSongs = (await new songsAPI().load()).all();
@@ -294,6 +295,7 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
   render(){
     const {formatMessage} = this.props.intl;
     const {isFav} = this.props;
+    const showRichView = _showRichView();
     const {openCaptureScr,isLoading,filterByName,options,orderMode,orderTitle,mode,range,page,filterOpen,versions,timeRangeOpen,showLatestOnly,clearType} = this.state;
     const orders = [
       formatMessage({id:"Orders.Title"}),
@@ -385,8 +387,15 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
             </p>
           </Alert>
         )}
-        {scores.length > 0 && (
+        {(!showRichView && scores.length > 0) && (
           <SongsTable
+            page={page} handleChangePage={this.handleChangePage}
+            data={scores} mode={mode}
+            allSongsData={this.state.allSongsData}
+            updateScoreData={this.updateScoreData}/>
+        )}
+        {(showRichView && scores.length > 0) && (
+          <SongsRichTable
             page={page} handleChangePage={this.handleChangePage}
             data={scores} mode={mode}
             allSongsData={this.state.allSongsData}
