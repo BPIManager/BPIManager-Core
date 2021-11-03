@@ -19,7 +19,7 @@ import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import equal from 'fast-deep-equal'
-import { _showLatestSongs, _showRichView } from '@/components/settings';
+import { _setShowRichView, _showLatestSongs } from '@/components/settings';
 import Button from '@mui/material/Button';
 import { bpmFilter,bpiFilter } from '../common';
 import SongsFilter, { B, BPIR } from '../common/filter';
@@ -40,6 +40,8 @@ import { genTitle } from '@/components/songs/filter';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import SongsRichTable from './beta/richView';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 export interface songsList_stateInt {
   isLoading:boolean,
@@ -64,7 +66,8 @@ export interface songsList_stateInt {
   orderMode:number,
   versions:number[],
   clearType:number[],
-  openCaptureScr:boolean
+  openCaptureScr:boolean,
+  showRichView:boolean,
 }
 
 interface P{
@@ -295,8 +298,7 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
   render(){
     const {formatMessage} = this.props.intl;
     const {isFav} = this.props;
-    const showRichView = _showRichView();
-    const {openCaptureScr,isLoading,filterByName,options,orderMode,orderTitle,mode,range,page,filterOpen,versions,timeRangeOpen,showLatestOnly,clearType} = this.state;
+    const {showRichView,openCaptureScr,isLoading,filterByName,options,orderMode,orderTitle,mode,range,page,filterOpen,versions,timeRangeOpen,showLatestOnly,clearType} = this.state;
     const orders = [
       formatMessage({id:"Orders.Title"}),
       formatMessage({id:"Orders.Level"}),
@@ -401,6 +403,17 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
             allSongsData={this.state.allSongsData}
             updateScoreData={this.updateScoreData}/>
         )}
+        <FormControlLabel style={{float:"right"}} control={
+        <Switch
+          checked={showRichView}
+          onChange={(e:React.ChangeEvent<HTMLInputElement>,)=>{
+            if(typeof e.target.checked === "boolean"){
+              _setShowRichView(e.target.checked);
+              return this.setState({showRichView:e.target.checked,page:0})
+            }
+          }}
+        />} label="リッチ ビューを使用" />
+        <div style={{clear:"both"}}/>
         {filterOpen && <SongsFilter versions={versions} clearType={clearType} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpi={this.state.bpi} bpm={this.state.bpm} memo={this.state.memo} showLatestOnly={showLatestOnly}/>}
         {timeRangeOpen && <TimeRangeDialog handleToggle={this.toggleTimeRangeDialog} dateRange={this.state.dateRange} applyTimeFilter={this.applyTimeFilter}/>}
       </Container>

@@ -93,7 +93,7 @@ export default class SongsRichTable extends React.Component<Readonly<P>,S>{
         <Pagination count={Math.ceil(data.length / rowsPerPage)} page={page+1} color="secondary" onChange={this.change}/>
         <div id="screenCaptureTarget" style={{backgroundColor:bgColor}}>
           <Grid container spacing={2} style={{marginTop:"15px"}}>
-            {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:scoreData,i:number) => {
+            {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:scoreData,_i:number) => {
               const prefix = _prefix(row.difficulty);
               const f = this.props.allSongsData.get(row.title + prefix);
               const m = winlose ? winlose.find((item:any)=>item.title === row.title && item.difficulty === row.difficulty) : null;

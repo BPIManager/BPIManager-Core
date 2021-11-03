@@ -1,4 +1,5 @@
 import timeFormatter from "@/components/common/timeFormatter";
+import { _showRichView } from "@/components/settings";
 import { verArr, clearArr } from "@/view/components/songs/common";
 import { songsList_stateInt } from "@/view/components/songs/played/songsList";
 
@@ -38,5 +39,6 @@ export const defaultState_songsList = (initialBPIRange:string = "",defToday:bool
     versions:verArr(),
     clearType:clearArr(),
     openCaptureScr:false,
+    showRichView:_showRichView(),
   }
 }
