@@ -772,3 +772,15 @@ text.react-calendar-heatmap-weekday-label {
 .rankDetailModal .MuiListItem-container{list-style-type:none;}
 .spaceBetween{display:flex;justify-content: space-between;}
 .spaceBetween > .MuiTypography-root { font-size:12px !important; }
+.gridWithPad.MuiGrid-item{padding-top:0;}
+#__light .listHighlighted {color:#000 !important;}
+#__dark .listHighlighted , #__deepsea .listHighlighted{color:#fff !important;}
+@media screen and (min-width:1200px){.gridWithPad{padding:0 16px !important;}}
+@media screen and (max-width:340px){.MuiPagination-ul{transform:scale(0.83);}}
+.withClearLamp{transition:.2s;position: relative;}
+.gridWithPad .MuiCardContent-root{
+  transition:.2s;
+}
+.gridWithPad .MuiCardContent-root:hover{
+  transform:scale(1.01);
+}
