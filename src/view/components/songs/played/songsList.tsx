@@ -412,7 +412,7 @@ class SongsList extends React.Component<P&RouteComponentProps,songsList_stateInt
               return this.setState({showRichView:e.target.checked,page:0})
             }
           }}
-        />} label="リッチ ビューを使用" />
+        />} label="詳細ビューを使用" />
         <div style={{clear:"both"}}/>
         {filterOpen && <SongsFilter versions={versions} clearType={clearType} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpi={this.state.bpi} bpm={this.state.bpm} memo={this.state.memo} showLatestOnly={showLatestOnly}/>}
         {timeRangeOpen && <TimeRangeDialog handleToggle={this.toggleTimeRangeDialog} dateRange={this.state.dateRange} applyTimeFilter={this.applyTimeFilter}/>}

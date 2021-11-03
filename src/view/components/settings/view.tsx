@@ -133,7 +133,7 @@ class Settings extends React.Component<P,S> {
             よく使う機能をお好みで選択してください。
           </Typography>
           <Divider style={{margin:"10px 0"}}/>
-          <FormLabel component="legend">リッチ ビューを使用 (beta)</FormLabel>
+          <FormLabel component="legend">詳細ビューを使用 (beta)</FormLabel>
           <Switch
             checked={showRichView}
             onChange={(e:React.ChangeEvent<HTMLInputElement>,)=>{
