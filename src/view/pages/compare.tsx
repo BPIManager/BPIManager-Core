@@ -290,7 +290,7 @@ class Compare extends React.Component<{intl:any},S> {
             <FormControl style={{width:"100%"}}>
               <InputLabel><FormattedMessage id="Compare.From"/></InputLabel>
               <Select value={compareFrom} onChange={this.handleChange("compareFrom")}>
-                {versionTitles.map((item)=><MenuItem value={item.num}>{item.title}</MenuItem>)}
+                {versionTitles.map((item)=><MenuItem key={item.num} value={item.num}>{item.title}</MenuItem>)}
               </Select>
             </FormControl>
           </Grid>
@@ -298,7 +298,7 @@ class Compare extends React.Component<{intl:any},S> {
             <FormControl style={{width:"100%"}}>
               <InputLabel><FormattedMessage id="Compare.To"/></InputLabel>
               <Select value={compareTo} onChange={this.handleChange("compareTo")}>
-                {versionTitles.map((item)=><MenuItem value={item.num}>{item.title}</MenuItem>)}
+                {versionTitles.map((item)=><MenuItem key={item.num} value={item.num}>{item.title}</MenuItem>)}
                 <MenuItem value={"BPI"}>TARGET BPI</MenuItem>
                 <MenuItem value={"PERCENTAGE"}>TARGET PERCENTAGE</MenuItem>
                 <MenuItem value={"WR"}>WORLD RECORD</MenuItem>

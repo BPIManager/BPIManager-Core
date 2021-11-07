@@ -438,17 +438,17 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
                       <FolloweeCounter ids={counts.followers} text="逆ライバル" userName={res.displayName}/>
                     </React.Fragment>
                   )}
-                  <Divider style={{margin:"1px 0"}}/>
-                  <div style={{margin:"10px 0 15px 0"}}>
-                    <Typography variant="caption" gutterBottom>
-                      {res.profile}
-                    </Typography>
-                    <Typography variant="caption" component="p" gutterBottom style={{color:themeColor === "light" ? "#888" : "#aaa"}}>
-                      最終更新:{res.timeStamp}
-                    </Typography>
-                  </div>
                 </Grid>
               </Grid>
+              <Divider style={{margin:"1px 0"}}/>
+              <div style={{margin:"10px 8px 15px"}}>
+                <Typography variant="caption" gutterBottom>
+                  {res.profile}
+                </Typography>
+                <Typography variant="caption" component="p" gutterBottom style={{color:themeColor === "light" ? "#888" : "#aaa"}}>
+                  最終更新:{res.timeStamp}
+                </Typography>
+              </div>
               <Grid container style={{fontWeight:"bold",textAlign:"center"}}>
                 <Grid item xs={6} style={{borderBottom:"2px solid " + this.color(res.arenaRank),color:themeColor === "light" ? "#000 ": "#fff",padding:"4px 0"}}>
                   <span style={{fontSize:"6px"}}>アリーナランク</span><br/>

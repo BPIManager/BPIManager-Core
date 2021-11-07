@@ -185,7 +185,8 @@ export default class fbActions{
   async load(){
     try{
       if(!this.name){return {error:true,data:null}}
-      const res = await firestore.collection(this.name).doc(this.docName).get();
+      const dName = this.docName;
+      const res = await firestore.collection(this.name).doc(dName).get();
       if(res.exists){
         return res.data();
       }else{

@@ -11,10 +11,11 @@ import { scoresDB } from "@/components/indexedDB";
 import Grid from "@mui/material/Grid";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import { Box, Divider, FormControl, InputLabel, LinearProgress, LinearProgressProps, MenuItem, Pagination, Paper, Select, SelectChangeEvent } from "@mui/material";
+import { Box, Divider, LinearProgress, LinearProgressProps, Pagination, Paper, SelectChangeEvent } from "@mui/material";
 import timeFormatter, { updatedTime } from "@/components/common/timeFormatter";
 import { loader } from "@/components/rivals/letters";
 import Loader from "@/view/components/common/loader";
+import ViewRowsSelector from "@/view/components/common/viewSelector";
 
 interface P{
   data:scoreData[],
@@ -106,18 +107,7 @@ export default class SongsRichTable extends React.Component<Readonly<P>,S>{
           }
         </div>
         <Pagination count={Math.ceil(data.length / rowsPerPage)} page={page+1} color="secondary" onChange={this.change}/>
-        <div style={{display:"flex",justifyContent:"flex-end"}}>
-          <FormControl variant="standard">
-            <InputLabel>表示</InputLabel>
-            <Select value={rowsPerPage} onChange={this.handleChangeRowsPerPage}>
-            {
-              [10,20,30].map((item:number)=>{
-                return (<MenuItem key={item} value={item}>{item}</MenuItem>);
-              })
-            }
-            </Select>
-          </FormControl>
-        </div>
+        <ViewRowsSelector rowsPerPage={rowsPerPage} handleChangeRowsPerPage={this.handleChangeRowsPerPage}/>
       </React.Fragment>
     );
   }
@@ -190,7 +180,9 @@ class Item extends React.Component<IP,{}>{
             </Grid>
             <Grid item xs={5} sm={5}>
               <ScoreCompares row={row}/>
-              <div className="spaceBetween"><Typography color="text.secondary">BPI{nextBPI}</Typography><span>{this.nextBPI(nextBPI)}点</span></div>
+              {nextBPI !== Infinity && (
+                <div className="spaceBetween"><Typography color="text.secondary">BPI{nextBPI}</Typography><span>{this.nextBPI(nextBPI)}点</span></div>
+              )}
             </Grid>
           </Grid>
           <Typography style={{textAlign:"right",fontSize:fontSize}} color="text.secondary">最終更新日&nbsp;{timeFormatter(0,row.updatedAt)}&nbsp;({updatedTime(row.updatedAt)})</Typography>

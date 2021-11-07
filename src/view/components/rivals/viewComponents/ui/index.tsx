@@ -5,7 +5,7 @@ import FormControl from '@mui/material/FormControl';
 import BackspaceIcon from '@mui/icons-material/Backspace';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
-import Table from "../table";
+import Table from "../table/table";
 import Input from '@mui/material/Input';
 import InputLabel from '@mui/material/InputLabel';
 import { genTitle } from '@/components/songs/filter';
@@ -42,7 +42,7 @@ interface stateInt {
   versions:number[],
   clearType:number[],
   bpm:B,
-  todayOnly:string
+  todayOnly:string,
 }
 
 interface P{
@@ -82,7 +82,7 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
       },
       versions:verArr(),
       clearType:clearArr(),
-      todayOnly:initialView ? initialView : ""
+      todayOnly:initialView ? initialView : "",
     }
   }
 
@@ -329,7 +329,6 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
           orderTitles={orders}
           orderMode={orderMode} orderTitle={orderTitle} handleOrderModeChange={this.handleOrderModeChange} handleOrderTitleChange={this.handleOrderTitleChange}/>
         <FilterByLevelAndDiff options={options} handleChange={this.handleChange} includePMButtons={true}/>
-
         <Table
           page={page} handleChangePage={this.handleChangePage}
           data={this.sortedData()} mode={mode}/>

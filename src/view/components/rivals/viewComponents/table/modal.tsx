@@ -11,6 +11,7 @@ import Loader from "@/view/components/common/loader";
 interface P {
   showDetails:(key:withRivalData|null)=>void,
   currentScoreData:withRivalData|null,
+  song?:songData|null
 }
 export default class Details extends React.Component<P,{
   songData: songData|null
@@ -24,13 +25,16 @@ export default class Details extends React.Component<P,{
   }
 
   async componentDidMount(){
-    const {currentScoreData} = this.props;
+    const {currentScoreData,song} = this.props;
     if(!currentScoreData){
       return;
     }
-    const song = await new songsDB().getOneItemIsSingle(currentScoreData.title,currentScoreData.difficulty);
-    if(song && song.length === 1){
-      return this.setState({songData:song[0]});
+    if(song){
+      return this.setState({songData:song});
+    }
+    const res = await new songsDB().getOneItemIsSingle(currentScoreData.title,currentScoreData.difficulty);
+    if(res && res.length === 1){
+      return this.setState({songData:res[0]});
     }
   }
 
