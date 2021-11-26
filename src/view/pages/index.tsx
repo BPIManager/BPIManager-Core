@@ -450,9 +450,6 @@ class RankList extends React.Component<{history:any},{loading:boolean,list:any[]
 
   render(){
     const {loading,list,open,id} = this.state;
-    if(!loading && list.length === 0){
-      return (null);
-    }
     return (
       <React.Fragment>
         <Container>
@@ -465,13 +462,20 @@ class RankList extends React.Component<{history:any},{loading:boolean,list:any[]
               </Typography>
               {loading && <Loader/>}
               {(!loading && list.length > 0) && (
-                <List>
-                  {list.map((item,i)=><RankListItem key={i} item={item} handleOpenRanking={this.handleOpenRanking}/>)}
-                </List>
+                <React.Fragment>
+                  <List>
+                    {list.map((item,i)=><RankListItem key={i} item={item} handleOpenRanking={this.handleOpenRanking}/>)}
+                  </List>
+                  <Button startIcon={<ArrowRightIcon/>} fullWidth size="small" onClick={()=>this.props.history.push("/ranking/")}>
+                    <FormattedMessage id="ShowMore"/>
+                  </Button>
+                </React.Fragment>
               )}
+              {(!loading && list.length === 0) && (
               <Button startIcon={<ArrowRightIcon/>} fullWidth size="small" onClick={()=>this.props.history.push("/ranking/")}>
-                <FormattedMessage id="ShowMore"/>
+                ランキングを作成
               </Button>
+              )}
             </CardContent>
           </Card>
         </Container>

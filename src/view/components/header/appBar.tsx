@@ -214,22 +214,14 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
   }
 
   userData = async ()=>{
-    if(localStorage.getItem("social")){
-      try{
-        return this.setState({user:JSON.parse(localStorage.getItem("social") || "[]")});
-      }catch(e:any){
-        return this.setState({user:null});
+    return new fbActions().auth().onAuthStateChanged(async(user: any)=> {
+      if(!user){return this.setState({user:null})}
+      const u = await new fbActions().setDocName(user.uid).getSelfUserData();
+      if(u.exists){
+        localStorage.setItem("social",JSON.stringify(u.data()));
       }
-    }else{
-        return new fbActions().auth().onAuthStateChanged(async(user: any)=> {
-          if(!user){return this.setState({user:null})}
-          const u = await new fbActions().setDocName(user.uid).getSelfUserData();
-          if(u.exists){
-            localStorage.setItem("social",JSON.stringify(u.data()))
-          }
-          return this.setState({user:u.data()});
-        });
-    }
+      return this.setState({user:u.data()});
+    });
   }
 
   toggleNav = ()=> this.setState({isOpen:!this.state.isOpen});
