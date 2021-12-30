@@ -113,35 +113,22 @@ export default class Initialize extends React.Component<{global:any},{show:boole
 
   sinusIridum = async()=>{
     const another:songData = {
-       "title":"Sinus Iridum",
-       "wr":3430,
-       "avg":2353,
-       "notes":1803,
-       "difficulty":"4",
-       "bpm":"128-256",
-       "textage":"28/sinusiri.html?1AC00",
-       "difficultyLevel":"12",
-       "dpLevel":"0",
-       "coef":0.94442,
-       "updatedAt":timeFormatter(0)
-    };
-    const hyper:songData = {
-       "title":"Sinus Iridum",
-       "difficulty":"3",
-       "wr":2172,
-       "avg":1817,
-       "notes":1101,
-       "bpm":"128-256",
-       "textage":"28/sinusiri.html?1HB00",
-       "difficultyLevel":"11",
-       "dpLevel":"0",
-       "coef":-1,
-       "updatedAt":timeFormatter(0)
+    	"title": "Ergosphere",
+    	"wr": -1,
+    	"avg": -1,
+    	"difficulty": "4",
+    	"notes": 1391,
+    	"bpm": "170",
+    	"textage": "29/ergosphr.html?1AB00",
+    	"difficultyLevel": "11",
+    	"dpLevel": "0",
+    	"coef": -1,
+      "updatedAt":timeFormatter(0)
     };
     const bpi = new bpiCalcuator();
     const modify = async(type:0|1)=>{
       try{
-        const array = type === 0 ? await this.scoresDB.getSpecificSong("Sinus Iridum") : await this.scoreHistoryDB.getSpecificSong("Sinus Iridum");
+        const array = type === 0 ? await this.scoresDB.getSpecificSong(another.title) : await this.scoreHistoryDB.getSpecificSong(another.title);
         for(let i =0; i < array.length; ++i){
           const t = array[i];
           const newBPI = await bpi.setIsSingle(t.isSingle).calc(t.title,difficultyParser(t.difficulty,t.isSingle),t.exScore);
@@ -151,8 +138,8 @@ export default class Initialize extends React.Component<{global:any},{show:boole
         console.log(e);
       }
     }
-    await this.songsDB.removeItem("Sinus Iridum");
-    await this.songsDB.bulkAdd([another,hyper]);
+    await this.songsDB.removeItem("Ergosphere");
+    await this.songsDB.bulkAdd([another]);
     modify(0);
     modify(1);
     return;
