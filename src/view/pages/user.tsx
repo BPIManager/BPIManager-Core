@@ -49,6 +49,7 @@ import { ShareList } from '../components/common/shareButtons';
 import bpiCalcuator from '@/components/bpi';
 import { httpsCfGet } from '@/components/firebase';
 import ThumbsUpDownIcon from '@mui/icons-material/ThumbsUpDown';
+import StarHalfIcon from '@mui/icons-material/StarHalf';
 
 interface S {
   userName:string,
@@ -329,6 +330,14 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     return "swipeableContentTab";
   }
 
+  showBPIMRanks = ()=>{
+    if(this.state.uid){
+      window.open("https://rank.poyashi.me/user/" + this.state.uid + "/" + _currentStore());
+    }else{
+      return alert("UserID cannot be determined");
+    }
+  }
+
   render(){
     const {processing,add,myId,userName,res,uid,message,showSnackBar,currentView,rivalData,alternativeId,totalBPI,loadingRecommended,recommendUsers,counts,limited,rivalStat,heatmap,currentTab} = this.state;
     const isAdded = this.state.rivalUids.indexOf(uid) > -1;
@@ -376,6 +385,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
     const buttons = [
       {icon:<ViewListIcon />,primary:"スコア比較",secondary:(res.displayName) + "さんと自分のスコアを比較します",onClick:()=>this.view(1)},
       {icon:<WbIncandescentIcon />,primary:"AAA達成表",secondary:"BPIに基づいたAAA達成難易度表を表示します",onClick:()=>this.view(2)},
+      {icon:<StarHalfIcon />,primary:"BPIMRanks (外部サイト)",secondary:"BPIManager ユーザー内での順位を表示します",onClick:()=>this.showBPIMRanks()},
       {icon:<EventNoteIcon />,primary:"ランキング",secondary:"ランキング参加履歴を表示します",onClick:()=>this.view(5)},
     ]
 
@@ -408,7 +418,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
                   </Avatar>
                 </Grid>
                 <Grid item xs={8} lg={8} style={{paddingLeft:"15px"}}>
-                  <Typography variant="h4">
+                  <Typography variant="h4" style={{overflow:"hidden"}}>
                     {res.displayName}
                   </Typography>
                   <div style={{display:"flex"}}>

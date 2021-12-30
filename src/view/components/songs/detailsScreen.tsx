@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import TwitterIcon from '@mui/icons-material/Twitter';
-import { _prefixFromNum, getSongSuffixForIIDXInfo } from "@/components/songs/filter";
+import { _prefixFromNum, difficultyDiscriminator } from "@/components/songs/filter";
 import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
@@ -17,7 +17,7 @@ import bpiCalcuator, { B } from "@/components/bpi";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import YouTubeIcon from '@mui/icons-material/YouTube';
-import ThumbsUpDownIcon from '@mui/icons-material/ThumbsUpDown';
+import StarHalfIcon from '@mui/icons-material/StarHalf';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import ShowSnackBar from "../snackBar";
 import {Button, Tooltip, List, ListItem, SwipeableDrawer, ListItemIcon, ListItemText, ListSubheader, Backdrop, SelectChangeEvent} from '@mui/material';
@@ -274,7 +274,7 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
           });
         }else{
           window.open(
-            `https://iidx.info/songinfo/?title=${this.props.song.title}${getSongSuffixForIIDXInfo(this.props.song.title,this.props.song.difficulty)}`
+            `https://rank.poyashi.me/songDetail/${this.props.song.title}/${difficultyDiscriminator(this.props.song.difficulty)}/${_currentStore()}`
           );
         }
       break;
@@ -533,8 +533,8 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
                       <ListItemText primary="YouTube" secondary="YouTubeでこの楽曲の動画を検索します"/>
                     </ListItem>
                     <ListItem button onClick={()=>this.jumpWeb(2)}>
-                      <ListItemIcon><ThumbsUpDownIcon/></ListItemIcon>
-                      <ListItemText primary="IIDX.info" secondary="この楽曲のランキングをIIDX.infoで確認します"/>
+                      <ListItemIcon><StarHalfIcon/></ListItemIcon>
+                      <ListItemText primary="BPIMRanks" secondary="この楽曲のランキングをBPIMRanksで確認します"/>
                     </ListItem>
                     <form method="post" name="rivalSearch" action={"https://p.eagate.573.jp/game/2dx/" + _currentStore() +"/ranking/topranker.html#musiclist"}>
                       <input type="hidden" name="pref_id" value={_area()}/>

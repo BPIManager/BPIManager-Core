@@ -76,7 +76,7 @@ export default class UserCard extends React.Component<{
                 <Tooltip title={"アリーナランク"}>
                   <Chip component="span" size="small" style={{backgroundColor:arenaRankColor(item.arenaRank),color:"#fff",margin:"5px 0"}} label={item.arenaRank || "-"} />
                 </Tooltip>
-                {item.totalBPI && (
+                {(!isNaN(item.totalBPI)) && (
                   <Tooltip title={"総合BPI"}>
                     <Chip component="span" size="small" style={{backgroundColor:bgColorByBPI(item.totalBPI),color:"#fff",margin:"0 0 0 5px"}} label={item.totalBPIs ? item.totalBPIs[_currentStore()] : item.totalBPI} />
                   </Tooltip>

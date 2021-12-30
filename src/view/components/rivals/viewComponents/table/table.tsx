@@ -108,7 +108,7 @@ export default class ScoreTable extends React.Component<Readonly<P>,S>{
             const song = currentDisplaySongs[row.title + row.difficulty];
             if(!song) return (null);
             return (
-            <Grid item xs={12} sm={12} md={12} lg={6} className="gridWithPad" key={row.title + row.difficulty}>
+            <Grid item xs={12} sm={6} md={6} lg={6} className="gridWithPad" key={row.title + row.difficulty}>
               <CardContent style={{padding:0,cursor:"pointer"}} onClick={()=>this.showDetails(row,song)}>
                 <Typography component="div" className="spaceBetween" sx={{ fontSize: 14, alignItems:"center"}} color="text.secondary" gutterBottom>
                   <p className="withClearLamp" style={{padding:"4px 0 4px 0",margin:0,borderLeft:"0px",wordBreak:"break-all"}}>
@@ -116,7 +116,7 @@ export default class ScoreTable extends React.Component<Readonly<P>,S>{
                     <span className="listHighlighted">{row.title}{prefix}</span>
                   </p>
                 </Typography>
-                <Grid container justifyContent="space-between" style={{margin:"5px 0"}}>
+                <Grid container justifyContent="space-between" style={{margin:"5px 0",paddingRight:"10px"}}>
                 {([0,1]).map(((item:number)=>{
                   const name = ["You","Rival"];
                   const clear = [row.myClearState,row.rivalClearState];
@@ -124,15 +124,15 @@ export default class ScoreTable extends React.Component<Readonly<P>,S>{
                   const ex2 = [row.rivalEx,row.myEx];
                   const bpi = [this.bpiCalc(song,row.myEx),this.bpiCalc(song,row.rivalEx)];
                   return (
-                  <Grid item xs={6} key={item} style={{display:"flex",justifyContent:"space-between"}}>
-                    <p className="withClearLamp" style={{padding:"4px 0 4px 5px",margin:0,borderLeft:`4px solid ${diffColor(2,clear[item],2)}`,wordBreak:"break-all"}}>
+                  <Grid item xs={12} key={item} style={{display:"flex",justifyContent:"space-between"}}>
+                    <p className="withClearLamp" style={{padding:"1px 0 1px 5px",margin:0,borderLeft:`4px solid ${diffColor(2,clear[item],2)}`,wordBreak:"break-all"}}>
                       <span style={{fontSize:"12px"}}>{name[item]}</span><br/>
                       <span className="listHighlighted">
                         {ex[item]}
                         {ex[item] > ex2[item] && <span className="winnerPoint">&nbsp;(+{ex[item] - ex2[item]})</span>}
                       </span>
                     </p>
-                    <p style={{padding:"4px 5px 4px 0",margin:0,wordBreak:"break-all",textAlign:"right"}}>
+                    <p style={{padding:"1px 1px 4px 0",margin:0,wordBreak:"break-all",textAlign:"right"}}>
                       <span style={{fontSize:"12px"}}>BPI</span><br/>
                       <span>{bpi[item]}</span>
                     </p>
