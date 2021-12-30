@@ -2,7 +2,7 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import {Link as RefLink, Divider, Avatar, Grid, Typography, CardActions, Card, CardContent, Container, CircularProgress, ListItem, ListItemAvatar, ListItemText, List} from '@mui/material/';
-import { _currentVersion, _currentTheme, _currentQuickAccessComponents } from '@/components/settings';
+import { _currentVersion, _currentTheme, _currentQuickAccessComponents, _currentStore } from '@/components/settings';
 import UpdateIcon from '@mui/icons-material/Update';
 import Loader from '@/view/components/common/loader';
 import { updateDefFile } from '@/components/settings/updateDef';
@@ -136,9 +136,10 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
                 <Typography variant="body1">
                   {user.displayName}
                 </Typography>
-                  <Typography variant="body1">
-                    <Link to={"/sync/settings"}><RefLink color="secondary" component="span"><FormattedMessage id="Index.EditProfile"/></RefLink></Link>
-                  </Typography>
+                <Typography variant="body1">
+                  <Link to={"/sync/settings"}><RefLink color="secondary" component="span"><FormattedMessage id="Index.EditProfile"/></RefLink></Link><br/>
+                  <RefLink color="secondary" href={`https://ranks.poyashi.me/user/${user.uid}/${_currentStore()}`} component="span">BPIMRanks</RefLink>
+                </Typography>
               </Grid>
             </Grid>
             )}
