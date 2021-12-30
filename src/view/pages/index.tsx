@@ -138,7 +138,7 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
                 </Typography>
                 <Typography variant="body1">
                   <Link to={"/sync/settings"}><RefLink color="secondary" component="span"><FormattedMessage id="Index.EditProfile"/></RefLink></Link><br/>
-                  <RefLink color="secondary" href={`https://ranks.poyashi.me/user/${user.uid}/${_currentStore()}`} component="a">BPIMRanks</RefLink>
+                  <RefLink color="secondary" href={`https://rank.poyashi.me/user/${user.uid}/${_currentStore()}`} component="a">BPIMRanks</RefLink>
                 </Typography>
               </Grid>
             </Grid>
