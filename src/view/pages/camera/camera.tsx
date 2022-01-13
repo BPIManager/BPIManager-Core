@@ -211,7 +211,7 @@ export default class Camera extends React.Component<{},{
     const {songs,result,display,openSettings,settings,isLoading,rawCamData,token,text,ocrId} = this.state;
     return (
       <React.Fragment>
-        <Backdrop open={isLoading}>
+        <Backdrop open={isLoading} style={{zIndex:999}}>
           <Loader text="しばらくお待ち下さい"/>
         </Backdrop>
         {display === 2 && <CameraLoader rawCamData={rawCamData}/>} { /* Loader */ }

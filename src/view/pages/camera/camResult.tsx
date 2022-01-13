@@ -412,8 +412,8 @@ class VoteButton extends React.Component<{id:number,token:string},{
             {
               this.state.progress === 0 && (
                 <ButtonGroup fullWidth>
-                  <Button onClick={()=>this.vote(1)} startIcon={<ThumbUpIcon/>}>正確</Button>
-                  <Button onClick={()=>this.vote(0)} startIcon={<ThumbDownIcon/>}>不正確</Button>
+                  <Button color="secondary" onClick={()=>this.vote(1)} startIcon={<ThumbUpIcon/>}>正確</Button>
+                  <Button color="secondary" onClick={()=>this.vote(0)} startIcon={<ThumbDownIcon/>}>不正確</Button>
                 </ButtonGroup>
               )
             }

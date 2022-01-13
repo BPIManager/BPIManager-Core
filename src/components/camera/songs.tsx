@@ -232,6 +232,11 @@ export class CameraClass{
         if(exists(songArr[i])){ //suggest
           const title = songArr[0];
 
+          if(title === "kors k's How to make OTOGE CORE" && !exists("OTOGE")){
+            //kors k's How to make OTOGE CORE完全一致でない場合
+            continue;
+          }
+
           if(title === "Holic" && (!exists("880") || !exists("taq") )){
             //Holic完全一致でない場合（サンホリ曲対策）
             continue;
