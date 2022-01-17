@@ -43,7 +43,7 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import { _currentVersion, _traditionalMode } from "@/components/settings";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import HistoryIcon from '@mui/icons-material/History';
-import RateReviewIcon from '@mui/icons-material/RateReview';
+import StarHalfIcon from '@mui/icons-material/StarHalf';
 
 interface navBars {
   to:string,
@@ -143,7 +143,7 @@ const social:navBars[] = [
   {
     to:"https://rank.poyashi.me",
     id:"GlobalNav.BPIMRanks",
-    icon:<RateReviewIcon />
+    icon:<StarHalfIcon />
   },
   {
     to:"/ranking/",
@@ -446,7 +446,17 @@ class InnerList extends React.Component<{
         <Collapse in={isOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {child.map(item=>(
-              <ListItem onClick={()=>{history.push(item.to);if(!isPerment){toggleNav()}}} key={item.id} button className={classes.nested}>
+              <ListItem onClick={()=>{
+
+
+                if(item.to.indexOf("https") > -1){
+                  window.open(item.to);
+                  return;
+                }
+
+                history.push(item.to);
+                if(!isPerment){toggleNav()}
+              }} key={item.id} button className={classes.nested}>
                 <ListItemIcon>
                   {item.icon}
                 </ListItemIcon>
