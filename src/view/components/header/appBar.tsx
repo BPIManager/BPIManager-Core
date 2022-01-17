@@ -43,6 +43,7 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import { _currentVersion, _traditionalMode } from "@/components/settings";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import HistoryIcon from '@mui/icons-material/History';
+import RateReviewIcon from '@mui/icons-material/RateReview';
 
 interface navBars {
   to:string,
@@ -138,6 +139,11 @@ const social:navBars[] = [
     to:"/notes",
     id:"GlobalNav.Notes",
     icon:<SpeakerNotesIcon />
+  },
+  {
+    to:"https://rank.poyashi.me",
+    id:"GlobalNav.BPIMRanks",
+    icon:<RateReviewIcon />
   },
   {
     to:"/ranking/",

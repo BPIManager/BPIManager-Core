@@ -267,16 +267,9 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
         window.open("https://www.youtube.com/results?search_query=" + this.props.song.title.replace(/-/g,"") + "+IIDX");
       break;
       case 2:
-        if(this.props.song.difficultyLevel !== "12"){
-          this.setState({
-            errorSnack:true,
-            errorSnackMessage:<FormattedMessage id="Details.ErrorIIDXInfo"/>
-          });
-        }else{
-          window.open(
-            `https://rank.poyashi.me/songDetail/${this.props.song.title}/${difficultyDiscriminator(this.props.song.difficulty)}/${_currentStore()}`
-          );
-        }
+        window.open(
+          `https://rank.poyashi.me/songDetail/${this.props.song.title}/${difficultyDiscriminator(this.props.song.difficulty)}/${_currentStore()}`
+        );
       break;
       case 3:
         if(!this.props.score) return;

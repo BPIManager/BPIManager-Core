@@ -20,6 +20,7 @@ const ja = {
   "GlobalNav.Tools":"Tools",
   "GlobalNav.Settings": "Settings",
   "GlobalNav.Help": "Help",
+  "GlobalNav.BPIMRanks":"BPIMRanks",
   "GlobalNav.AddRivals": "Find new rivals",
   "GlobalNav.WriteNote": "Write/View Notes",
   "GlobalNav.RivalCompare":"Rival Win/Lose",

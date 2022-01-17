@@ -20,6 +20,7 @@ const ja = {
   "GlobalNav.Settings": "設定",
   "GlobalNav.Help": "ヘルプ",
   "GlobalNav.Notes": "Notes",
+  "GlobalNav.BPIMRanks":"BPIMRanks",
   "GlobalNav.AddRivals": "ライバルを探す",
   "GlobalNav.WriteNote": "ノートを閲覧/投稿",
   "Top.Survey":"アンケートにご協力ください！",
