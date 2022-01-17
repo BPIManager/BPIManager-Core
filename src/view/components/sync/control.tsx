@@ -94,7 +94,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
 
   isOlderVersion = ()=>{
     const current = _currentStore();
-    return ["26","27"].indexOf(current) > -1;
+    return ["26","27","28"].indexOf(current) > -1;
   }
 
   handleShowNotes = (e:React.ChangeEvent<HTMLInputElement>)=>{
