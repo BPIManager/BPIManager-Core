@@ -342,7 +342,7 @@ export class EachMemo extends React.Component<{
     }
     return (
       <React.Fragment>
-        <p>{memo}</p>
+        <p style={{whiteSpace:"pre-line"}}>{memo}</p>
         <Grid container justifyContent="space-around" alignItems="center">
           <Grid item>
             <IconButton aria-label="likeButton" onClick={this.favButton} size="large">
