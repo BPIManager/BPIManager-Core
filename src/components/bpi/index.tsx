@@ -19,7 +19,7 @@ export default class bpiCalcuator{
   private z:number = 0;
   private traditionalMode = _traditionalMode();
   private powCoef:number = this.traditionalMode === 1 ? 1.5 : this.newcoef;
-  private pgf = (j:number):number=> j === this.m ? this.m * 0.8 : 1 + ( j / this.m - 0.5 ) / ( 1 - j / this.m );
+  private pgf = (j:number):number=> j === this.m ? this.m : 1 + ( j / this.m - 0.5 ) / ( 1 - j / this.m );
 
   private _allTwelvesLength:number = 0;
   private _allTwelvesBPI:number[] = [];
