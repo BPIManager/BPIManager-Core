@@ -174,6 +174,7 @@ class Compare extends React.Component<{intl:any},S> {
         const songData = sdb.get(sdb.genTitle(fData[i]["title"],fData[i]["difficulty"]));
 
         if(fCurrent["currentBPI"] === Infinity){continue;}
+        if(!tCurrent || !tCurrent.average){continue;}
         if(!songData){continue;}
 
         calc.setData(songData["notes"] * 2,songData["avg"],songData["wr"]);
