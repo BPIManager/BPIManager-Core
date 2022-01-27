@@ -18,6 +18,7 @@ import OrderControl from "@/view/components/songs/common/orders";
 import { timeCompare } from '@/components/common/timeFormatter';
 import songsAPI from '@/components/songs/api';
 import { versionTitles } from '@/components/common/versions';
+import { config } from '@/config';
 
 interface S {
   [key: string]: any,
@@ -63,7 +64,7 @@ class Compare extends React.Component<{intl:any},S> {
       displayMode:"exScore",
       total12BPI:0,
       total11BPI:0,
-      orderTitle:2,
+      orderTitle:0,
       orderMode:1,
     }
   }
@@ -159,6 +160,50 @@ class Compare extends React.Component<{intl:any},S> {
     const fData = await scores.getSpecificVersionAll();
     const goalBPI = _goalBPI(), goalPerc = _goalPercentage();
     const {displayMode} = this.state;
+    const percentager = (exScore:number,max:number):number =>{
+      return Math.ceil(exScore / max * 10000) / 100;
+    }
+
+    if(t.indexOf("ARENA") > -1){ // COMPARE TO ARENARANK AVERAGE
+      const arenaRank = t.replace("ARENA ","");
+      const tData = await this.getArenaAvgs(arenaRank);
+      for(let i = 0;i < fData.length; ++i){
+        let tScore = 0;
+        const fCurrent = fData[i];
+        const tCurrent = tData.find((item:any)=>item.title === fCurrent.title && item.difficulty === fCurrent.difficulty);
+        const songData = sdb.get(sdb.genTitle(fData[i]["title"],fData[i]["difficulty"]));
+
+        if(fCurrent["currentBPI"] === Infinity){continue;}
+        if(!songData){continue;}
+
+        calc.setData(songData["notes"] * 2,songData["avg"],songData["wr"]);
+        calc.setCoef(songData["coef"] || -1);
+        const avg = Number(tCurrent.average);
+        tScore = displayMode === "exScore" ? avg :
+        displayMode === "bpi" ? calc.setPropData(songData,avg,isSingle) :
+        displayMode === "percentage" ? percentager(avg,songData.notes * 2) : 0;
+
+        const percentage = percentager(fData[i]["exScore"],songData.notes * 2);
+        const gap = (Math.ceil(
+          displayMode === "exScore" ? (fData[i]["exScore"] - tScore) :
+          displayMode === "bpi" ? (fData[i]["currentBPI"] - tScore) :
+          displayMode === "percentage" ? percentager(tData[0]["exScore"],songData.notes * 2) : 0
+        ) / 10000)
+        result.push({
+          title:fData[i]["title"],
+          songData: songData,
+          scoreData: fData[i],
+          difficulty:fData[i]["difficulty"],
+          difficultyLevel:fData[i]["difficultyLevel"],
+          exScore:displayMode === "exScore" ? fData[i]["exScore"] : displayMode === "bpi" ? fData[i]["currentBPI"] : percentage,
+          compareData:tScore,
+          gap: gap
+        });
+
+      }
+      if(!this._mounted){return;}
+      return this.setState({full:result,isLoading:false});
+    }
     for(let i =0; i < fData.length; ++i){
       let tScore = 0;
       if(fData[i]["currentBPI"] === Infinity){continue;}
@@ -168,38 +213,35 @@ class Compare extends React.Component<{intl:any},S> {
       const max = songData["notes"] * 2;
       calc.setData(songData["notes"] * 2,songData["avg"],songData["wr"]);
       calc.setCoef(songData["coef"] || -1);
-      const percentager = (exScore:number):number =>{
-        return Math.ceil(exScore / max * 10000) / 100;
-      }
       if(!tData || tData.length === 0){
         if (t !== "BPI" && t !== "PERCENTAGE" && t !== "WR" && t !== "AVERAGE") continue;
         tScore = 0;
       }else{
         tScore = displayMode === "exScore" ? tData[0]["exScore"] :
         displayMode === "bpi" ? calc.setPropData(songData,tData[0]["exScore"],isSingle) :
-        displayMode === "percentage" ? percentager(tData[0]["exScore"]) : 0;
+        displayMode === "percentage" ? percentager(tData[0]["exScore"],max) : 0;
       }
       if(t === "WR"){
         tScore = displayMode === "exScore" ? songData["wr"] :
         displayMode === "bpi" ? 100 :
-        displayMode === "percentage" ? percentager(songData["wr"]) : 0;
+        displayMode === "percentage" ? percentager(songData["wr"],max) : 0;
       }
       if(t === "AVERAGE"){
         tScore = displayMode === "exScore" ? songData["avg"] :
         displayMode === "bpi" ? 0 :
-        displayMode === "percentage" ? percentager(songData["avg"]) : 0;
+        displayMode === "percentage" ? percentager(songData["avg"],max) : 0;
       }
       if(t === "BPI"){
         tScore = displayMode === "exScore" ? calc.calcFromBPI(goalBPI,true) :
         displayMode === "bpi" ? goalBPI :
-        displayMode === "percentage" ? percentager(calc.calcFromBPI(goalBPI,true)) : 0;
+        displayMode === "percentage" ? percentager(calc.calcFromBPI(goalBPI,true),max) : 0;
       }
       if(t === "PERCENTAGE"){
         tScore = displayMode === "exScore" ? Math.ceil(songData["notes"] * 2 * goalPerc / 100) :
-        displayMode === "bpi" ? calc.setPropData(songData,Math.ceil(songData["notes"] * 2 * goalPerc / 100),isSingle) :
+        displayMode === "bpi" ? calc.setPropData(songData,Math.ceil(max * goalPerc / 100),isSingle) :
         displayMode === "percentage" ? goalPerc : 0;
       }
-      const percentage = percentager(fData[i]["exScore"]);
+      const percentage = percentager(fData[i]["exScore"],max);
       const gap = (Math.ceil(
         displayMode === "exScore" ? (fData[i]["exScore"] - tScore) * 10000 :
         displayMode === "bpi" ? (fData[i]["currentBPI"] - tScore) * 10000 :
@@ -218,6 +260,21 @@ class Compare extends React.Component<{intl:any},S> {
     }
     if(!this._mounted){return;}
     return this.setState({full:result,isLoading:false});
+  }
+
+  getArenaAvgs = async(arenaRank:string = "A1")=>{
+    const params = new URLSearchParams();
+    const param:{[key:string]:any} = {
+      arenaRank:arenaRank,
+      storedAt:config.latestStore,
+    };
+    Object.keys(param).map((item:string)=>{
+      params.append(item,param[item]);
+      return 0;
+    })
+    const t = await fetch("https://proxy.poyashi.me/bpim/api/v1/stats/getAllAvgs?" + params);
+    const p = await t.json();
+    return p.body;
   }
 
   sortedData = ():compareData[]=>{
@@ -303,6 +360,11 @@ class Compare extends React.Component<{intl:any},S> {
                 <MenuItem value={"PERCENTAGE"}>TARGET PERCENTAGE</MenuItem>
                 <MenuItem value={"WR"}>WORLD RECORD</MenuItem>
                 <MenuItem value={"AVERAGE"}>KAIDEN AVERAGE</MenuItem>
+                <MenuItem value={"ARENA A1"}>ARENA AVERAGE A1</MenuItem>
+                <MenuItem value={"ARENA A2"}>ARENA AVERAGE A2</MenuItem>
+                <MenuItem value={"ARENA A3"}>ARENA AVERAGE A3</MenuItem>
+                <MenuItem value={"ARENA A4"}>ARENA AVERAGE A4</MenuItem>
+                <MenuItem value={"ARENA A5"}>ARENA AVERAGE A5</MenuItem>
               </Select>
             </FormControl>
           </Grid>

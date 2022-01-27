@@ -6,7 +6,7 @@ export interface B{
   error:boolean,bpi:number,reason?:string,difficultyLevel?:string
 }
 
-export default class bpiCalcuator{
+export default class bpiCalculator{
   private songsDB = new songsDB();
   private isSingle: number;
   private totalKaidens: number;
