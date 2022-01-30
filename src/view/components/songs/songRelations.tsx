@@ -94,6 +94,18 @@ class SongRelations extends React.Component<P,S> {
           {
             !isLoading && <React.Fragment>{dataset.map((item)=><DiffsTable scoreTable={item} bpi={totalBPI}/>)}</React.Fragment>
           }
+          {
+            (!isLoading && dataset.length === 0) && (
+            <Alert severity="error" style={{marginTop:10}}>
+              <AlertTitle>データなし</AlertTitle>
+              <p>
+              表示できるデータが見つかりませんでした。<br/>
+              プレイ人数が少なすぎるか、データが登録されていません。<br/>
+              また今度試して下さい。
+              </p>
+            </Alert>
+            )
+          }
         </Container>
         <Alert severity="info" style={{marginTop:10}}>
           <AlertTitle>このタブについて</AlertTitle>
