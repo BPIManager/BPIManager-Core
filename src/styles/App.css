@@ -54,8 +54,8 @@ a {
   color:#777;
 }
 
-th.MuiTableCell-root.MuiTableCell-head:first-child:not(.dense),
-td.MuiTableCell-root.MuiTableCell-body:first-child:not(.dense),
+th.MuiTableCell-root.MuiTableCell-head:first-child:not(.dense, .titleForceLeft),
+td.MuiTableCell-root.MuiTableCell-body:first-child:not(.dense, .titleForceLeft),
 .forceWith th.MuiTableCell-root.MuiTableCell-head {
     padding: 20px 5px !important;
     text-align: center;
@@ -786,3 +786,4 @@ text.react-calendar-heatmap-weekday-label {
 }
 
 .winnerPoint{ color:#ff0000; font-size:10px;}
+.titleForceLeft{text-align:left !important;padding:4px 0 !important;}

@@ -48,6 +48,8 @@ import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import HistoryIcon from '@mui/icons-material/History';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import RateReviewIcon from '@mui/icons-material/RateReview';
+import LightbulbIcon from '@mui/icons-material/Lightbulb';
+import SongRelations from "./songRelations";
 
 interface P{
   isOpen:boolean,
@@ -570,6 +572,9 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
           <Tooltip title="ライバルスコア">
             <Tab icon={<SupervisorAccountIcon/>} />
           </Tooltip>
+          <Tooltip title="リコメンド">
+            <Tab icon={<LightbulbIcon/>} />
+          </Tooltip>
           <Tooltip title="攻略コメント">
             <Tab icon={<RateReviewIcon/>} />
           </Tooltip>
@@ -590,6 +595,9 @@ class DetailedSongInformation extends React.Component<P & {intl?:any},S> {
           <SongRivals song={song} score={score}/>
         </TabPanel>
         <TabPanel value={currentTab} index={4}>
+          <SongRelations song={song} score={score}/>
+        </TabPanel>
+        <TabPanel value={currentTab} index={5}>
           <SongNotes song={song} score={score}/>
         </TabPanel>
         <ShowSnackBar message={errorSnackMessage} variant="warning"
