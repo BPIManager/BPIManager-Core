@@ -88,6 +88,7 @@ class AAATable extends React.Component<P,S> {
     this.state = {
       result:{},
       targetLevel:12,
+      target:0,
       checks:this.default,
       pm:this.defaultPM,
       isLoading:true,
@@ -100,6 +101,15 @@ class AAATable extends React.Component<P,S> {
   async componentDidMount(){
     const _named = await named(12,this.props.data);
     this.setState({result:await getTable(12,_named),isLoading:false});
+  }
+
+  changeTarget = async (e:React.ChangeEvent<HTMLInputElement>)=>{
+    if(typeof e.target.value === "string"){
+      const target = Number(e.target.value);
+      const _named = await named(this.state.targetLevel,this.props.data);
+      this.setState({target:target,isLoading:true});
+      return this.setState({result:await getTable(this.state.targetLevel,_named,target),isLoading:false});
+    }
   }
 
   changeLevel = async (e:React.ChangeEvent<HTMLInputElement>,)=>{
@@ -138,7 +148,7 @@ class AAATable extends React.Component<P,S> {
   handleExampleModal = ()=>this.setState({isOpenExampleModal:!this.state.isOpenExampleModal})
 
   render(){
-    const {result,checks,pm,targetLevel,isLoading,dialOpen,isOpenFilterModal,isOpenExampleModal} = this.state;
+    const {result,checks,pm,targetLevel,isLoading,dialOpen,isOpenFilterModal,isOpenExampleModal,target} = this.state;
     const actions = [
       { icon:  <FilterListIcon/>, name: 'フィルタ', onClick: ()=>this.handleFilterModal()},
       { icon: <HelpIcon />, name: 'AAA達成表とは?', onClick: ()=>this.handleExampleModal()},
@@ -186,6 +196,7 @@ class AAATable extends React.Component<P,S> {
         </SpeedDial>
         {isOpenExampleModal && <AAATableExampleModal closeModal={this.handleExampleModal}/>}
         {isOpenFilterModal && <AAATableFilterModal
+          target={target} changeTarget={this.changeTarget}
           closeModal={this.handleFilterModal} isChecked={this.isChecked} targetLevel={targetLevel} changeLevel={this.changeLevel} toggle={this.toggle}
           defaultPM={this.defaultPM} _default={this.default} result={result} handleChange={this.handleChange}
         />}

@@ -16,23 +16,42 @@ interface Props{
   closeModal:()=>void,
   targetLevel:number,
   result:any,
+  changeTarget:(e:React.ChangeEvent<HTMLInputElement>)=>Promise<void>,
   changeLevel:(e:React.ChangeEvent<HTMLInputElement>)=>Promise<void>,
   isChecked:(input:number,target:number)=>boolean,
   handleChange:(input:number,target:number)=>void,
   toggle:()=>void,
   defaultPM:number[],
-  _default:number[]
+  _default:number[],
+  target:0,
 }
 
 export class AAATableFilterModal extends React.Component<Props,{
 }> {
 
   render(){
-    const {closeModal,targetLevel,changeLevel,toggle,_default,result,isChecked,handleChange,defaultPM} = this.props;
+    const {closeModal,targetLevel,changeLevel,toggle,_default,result,isChecked,handleChange,defaultPM,target,changeTarget} = this.props;
     return (
       <Dialog open={true} onClose={closeModal}>
         <DialogTitle>表示項目を設定</DialogTitle>
         <DialogContent>
+          <FormControl component="fieldset" fullWidth>
+            <FormLabel component="legend" color="primary">ターゲット</FormLabel>
+            <RadioGroup aria-label="position" name="position" value={target} onChange={changeTarget} row>
+              <FormControlLabel
+                value={0}
+                control={<Radio color="secondary" />}
+                label="AAA"
+                labelPlacement="end"
+              />
+              <FormControlLabel
+                value={1}
+                control={<Radio color="secondary" />}
+                label="MAX-"
+                labelPlacement="end"
+              />
+            </RadioGroup>
+          </FormControl>
           <FormControl component="fieldset" fullWidth>
             <FormLabel component="legend" color="primary">表示対象</FormLabel>
             <RadioGroup aria-label="position" name="position" value={targetLevel} onChange={changeLevel} row>

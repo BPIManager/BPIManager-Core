@@ -402,12 +402,6 @@ class GlobalHeader extends React.Component<{global:any,classes:any,theme:any,chi
         <main className={classes.content} style={{width:"100%",marginBottom:"15px"}}>
           {this.props.children}
         </main>
-        <div style={{position:"fixed",bottom:"0",zIndex:1000,textAlign:"center",padding:"5px 0",background:"rgba(0,0,0,.8)",backdropFilter:"blur(4px)",color:"#fff",width:"100%",fontSize:"9px"}}>
-          {user && user.displayName}&nbsp;
-          {(user && user.twitter) && <span>(@{user.twitter})</span>}&nbsp;
-          def:v{_currentVersion()}&nbsp;
-          {_traditionalMode() === 1 && <span>LEGACY</span>}&nbsp;
-        </div>
         <ShowSnackBar message={"実行中の処理があるため続行できません"} variant="warning"
             handleClose={this.toggleErrorSnack} open={this.state.errorSnack} autoHideDuration={3000}/>
       </div>

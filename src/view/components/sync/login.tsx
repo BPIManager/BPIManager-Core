@@ -68,7 +68,7 @@ class SyncLoginScreen extends React.Component<{
               <li><FormattedMessage id={"Signin.list2"}/></li>
               <li><FormattedMessage id={"Signin.list3"}/></li>
               <li><FormattedMessage id={"Signin.list4"}/></li>
-              <li>スコアを同期すると<Link href="https://rank.poyashi.me">BPIMRanks</Link>にてランキングに掲載されます</li>
+              <li>スコアを同期すると<Link href="https://rank.poyashi.me" color="secondary">BPIMRanks</Link>にてランキングに掲載されます</li>
             </ul>
           <Alert severity="info">
           <Typography component="p" variant="caption" gutterBottom>

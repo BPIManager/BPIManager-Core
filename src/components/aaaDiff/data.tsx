@@ -8,10 +8,10 @@ export interface CLBody extends CLOrigin{"currentBPI":number,"exScore":number};
 export interface CLInt {[key:string]:CLBody[]};
 export interface CLOrigInt {[key:string]:CLOrigin[]};
 
-export const AAADifficulty = async(diff = 12)=> await new aaaDiffCalc().exec(diff);
+export const AAADifficulty = async(diff = 12,target = 0)=> await new aaaDiffCalc().exec(diff,target);
 
-export const getTable = async(targetLevel:number = 12,named:any)=>{
-  const table = await AAADifficulty(targetLevel);
+export const getTable = async(targetLevel:number = 12,named:any,target:number = 0)=>{
+  const table = await AAADifficulty(targetLevel,target);
   let result:CLInt = {};
   Object.keys(table).map((diffs:string)=>{
     result[diffs] = [];

@@ -9,7 +9,7 @@ export default class aaaDiffCalc{
   private songsDB = new songsDB();
   private calc = new bpiCalcuator();
 
-  async exec(diff:number):Promise<CLOrigInt>{
+  async exec(diff:number,target:number = 0):Promise<CLOrigInt>{
     const songs:songData[] = (await this.songsDB.getAll()).filter((item:songData)=>item.difficultyLevel === String(diff));
     let results:CLOrigInt = {
       "50":[],
@@ -21,12 +21,12 @@ export default class aaaDiffCalc{
       "-10":[],
       "-20":[]
     }
+    const t = target === 0 ? 8 / 9 : 17 / 18;
 
     for(let i = 0; i < songs.length; ++i){
-
       const s = songs[i];
       const coef = _traditionalMode() ? this.calc.defaultCoef() : s.coef;
-      const res  = this.calc.setManual(s.wr,s.avg,s.notes,Math.ceil((s.notes * 2) * 0.889),coef);
+      const res  = this.calc.setManual(s.wr,s.avg,s.notes,Math.ceil((s.notes * 2) * t),coef);
       if(res === Infinity || s.wr === 0 || s.avg === 0){
         continue;
       }
@@ -56,5 +56,5 @@ export default class aaaDiffCalc{
     });
     return results;
   }
-  
+
 }

@@ -219,7 +219,11 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
                 control={<Switch size="small" checked={isPublic} onChange={this.handlePublic} name="showNotes" />}
                 label="プロフィールを一般公開"
               />
-              <small>プロフィールを非公開にすると、他の人はあなたのスコアデータを閲覧できなくなります。<br/>あなたをライバル登録している人も、非公開の間はあなたのスコアを追跡できなくなります。</small>
+              <small>
+                プロフィールを非公開にすると、他の人はあなたのスコアデータを閲覧できなくなります。<br/>
+                あなたをライバル登録している人も、非公開の間はあなたのスコアを追跡できなくなります。<br/>
+                非公開の間、BPIMRanks では「非公開プレイヤー」としてスコアが掲示されます。
+              </small>
             </FormControl>
           </CardContent>
           <CardActions>
@@ -285,21 +289,6 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
             <ListItemText primary={"ノートを投稿"} secondary={"楽曲の攻略情報をシェアしよう"} />
           </ListItem>
         </List>
-        {/*
-        <Divider style={{margin:"8px 0"}}/>
-        <li style={{listStyleType:"none"}}>
-          <Typography
-            style={{padding:"4px 8px"}}
-            color="textSecondary"
-            display="block"
-            variant="caption"
-          >
-            高度な設定
-          </Typography>
-          <Button fullWidth color="secondary" variant="outlined" size="large" style={{margin:"10px 0"}}>再認証して表示</Button>
-          <small>アカウント削除などを実行するには、ソーシャルアカウントで再連携し、本人であることを確認する必要があります。</small>
-        </li>
-        */}
       </React.Fragment>
     );
   }

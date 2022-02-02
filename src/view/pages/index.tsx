@@ -106,6 +106,7 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
         <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover"}}>
           <div style={{background:themeColor === "light" ? "transparent" : "rgba(0,0,0,0)",display:"flex",padding:"1vh 0",width:"100%",height:"100%",paddingBottom:"90px"}}>
             {userLoading && (
+            <Container className="topMenuContainer">
             <Grid container alignContent="space-between" alignItems="center" style={{padding:"20px"}}>
               <Grid item xs={3} lg={3} style={{display:"flex",justifyContent:"center",flexDirection:"column"}}>
                 <Container fixed  className={"loaderCenteredOnly"} style={{maxWidth:"100%"}}>
@@ -121,8 +122,10 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
                 </Typography>
               </Grid>
             </Grid>
+            </Container>
             )}
             {(!userLoading && (auth && user)) && (
+            <Container className="topMenuContainer">
             <Grid container alignContent="space-between" alignItems="center" style={{padding:"20px"}}>
               <Grid item xs={3} lg={3} style={{display:"flex",justifyContent:"center",flexDirection:"column"}}>
                 <Avatar style={{border:"1px solid #222",margin:"15px auto"}} className="toppageIcon">
@@ -137,13 +140,14 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
                   {user.displayName}
                 </Typography>
                 <Typography variant="body1">
-                  <Link to={"/sync/settings"}><RefLink color="secondary" component="span"><FormattedMessage id="Index.EditProfile"/></RefLink></Link><br/>
-                  <RefLink color="secondary" href={`https://rank.poyashi.me/user/${user.uid}/${_currentStore()}`} component="a">BPIMRanks を表示</RefLink>
+                  <Link to={"/sync/settings"}><RefLink color="secondary" component="span"><FormattedMessage id="Index.EditProfile"/></RefLink></Link>
                 </Typography>
               </Grid>
             </Grid>
+            </Container>
             )}
             {(!userLoading && (!auth || !user)) && (
+            <Container className="topMenuContainer">
             <Grid container alignContent="space-between" alignItems="center" style={{padding:"20px"}}>
               <Grid item xs={3} lg={3} style={{display:"flex",justifyContent:"center",flexDirection:"column"}}>
                 <Avatar style={{border:"1px solid #222",margin:"15px auto"}} className="toppageIcon">
@@ -158,6 +162,7 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
                 </Typography>
               </Grid>
             </Grid>
+            </Container>
             )}
           </div>
         </div>
