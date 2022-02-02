@@ -179,9 +179,9 @@ export default class bpiCalculator{
     return sum > 0 ? res : -res;
   }
 
-  setSongs(s:any,sum:number = NaN):number{
-    this.allTwelvesBPI = s;
-    this.allTwelvesLength = !Number.isNaN(sum) ? sum : s.length;
+  setSongs(songs:number[],sum:number = songs.length):number{
+    this.allTwelvesBPI = songs;
+    this.allTwelvesLength = !Number.isNaN(sum) ? sum : songs.length;
     return this.totalBPI();
   }
 }

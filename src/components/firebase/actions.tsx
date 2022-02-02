@@ -10,6 +10,7 @@ import { messanger } from "./message";
 import { difficultyDiscriminator } from "../songs/filter";
 import totalBPI from "../bpi/totalBPI";
 import { getRadar, radarData } from "../stats/radar";
+import statMain from "../stats/main";
 
 export default class fbActions{
 
@@ -168,18 +169,10 @@ export default class fbActions{
 
   async totalBPI():Promise<number>{
     const bpi = new bpiCalcuator();
-    const s = await new scoresDB().getAll();
     bpi.setTraditionalMode(0);
-    const _s = s.filter(item=>item.difficultyLevel === "12");
-    const m = _s.reduce((group:number[],item:any)=>{
-      if(item.currentBPI !== Infinity){
-        group.push(item.currentBPI);
-      }
-      return group;
-    },[]);
-    bpi.allTwelvesBPI = m;
-    bpi.allTwelvesLength = m.length;
-    return bpi.totalBPI();
+    const statsAPI = await new statMain(12).load();
+    const totalBPI = bpi.setSongs(statsAPI.at(),statsAPI.at().length);
+    return totalBPI;
   }
 
   async load(){
