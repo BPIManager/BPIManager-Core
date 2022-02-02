@@ -100,7 +100,7 @@ export default class ScoreTable extends React.Component<Readonly<P>,S>{
       return <Loader/>
     }
     return (
-      <Paper style={{width:"100%"}} className={_traditionalMode() === 1 ? "traditionalMode" : ""}>
+      <div style={{width:"100%"}} className={_traditionalMode() === 1 ? "traditionalMode" : ""}>
         <Pagination count={Math.ceil(data.length / rowsPerPage)} page={page+1} color="secondary" onChange={this.change}/>
         <Grid container spacing={2} style={{margin:"15px 0"}}>
           {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row:withRivalData) => {
@@ -149,7 +149,7 @@ export default class ScoreTable extends React.Component<Readonly<P>,S>{
         {isOpen && <Details song={currentSong} showDetails={this.showDetails} currentScoreData={currentScoreData} />}
         <Pagination count={Math.ceil(data.length / rowsPerPage)} page={page+1} color="secondary" onChange={this.change}/>
         <ViewRowsSelector rowsPerPage={rowsPerPage} handleChangeRowsPerPage={this.handleChangeRowsPerPage}/>
-      </Paper>
+      </div>
     );
   }
 }
