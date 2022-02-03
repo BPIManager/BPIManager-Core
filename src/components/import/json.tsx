@@ -31,7 +31,7 @@ export default class importJSON {
     return new Promise(function(resolve, reject) {
       try{
         const lengthSum = self.rawData.length;
-        for(let i = 1; i < lengthSum; ++i){
+        for(let i = 0; i < lengthSum; ++i){
           const p = self.rawData[i];
           const name = self.common.nameEscape(p["title"],true);
           if(Number(p.score === 0)) continue;

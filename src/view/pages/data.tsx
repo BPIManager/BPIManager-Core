@@ -175,7 +175,8 @@ class Index extends React.Component<P&RouteComponentProps,{
           item && (
             (
               item["exScore"] === 0 ||
-              Number.isNaN(item["exScore"])) ||
+              Number.isNaN(item["exScore"])
+            ) ||
               (item["exScore"] >= result[i]["exScore"] && item["clearState"] === result[i]["clearState"]) ||
               timeCompare(result[i]["updatedAt"],item["updatedAt"]) <= 0
             )

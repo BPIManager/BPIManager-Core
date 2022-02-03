@@ -67,7 +67,7 @@ export default class Initialize extends React.Component<{global:any},{show:boole
       if(!localStorage.getItem("showLatestSongs")){
         localStorage.setItem("showLatestSongs","true");
       }
-      this.sinusIridum();
+      //this.sinusIridum();
       this.removeDeletedSongs();
       const songsAvailable:string[] = await this.songsDB.getAll();
       this.scoresDB.removeNaNItems();
@@ -110,7 +110,7 @@ export default class Initialize extends React.Component<{global:any},{show:boole
       }
     }
   }
-
+/*
   sinusIridum = async()=>{
     const another:songData = {
     	"title": "Ergosphere",
@@ -144,7 +144,7 @@ export default class Initialize extends React.Component<{global:any},{show:boole
     modify(1);
     return;
   }
-
+*/
   render(){
     if(this.state.error){
       return (<Backdrop open>
