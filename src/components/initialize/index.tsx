@@ -6,9 +6,6 @@ import Backdrop from "@mui/material/Backdrop";
 import { _currentDefinitionURL } from '../settings';
 import fbActions from '../firebase/actions';
 import Loader from '@/view/components/common/loader';
-import { songData } from '@/types/data';
-import bpiCalcuator from '../bpi';
-import { difficultyParser } from '../songs/filter';
 
 export default class Initialize extends React.Component<{global:any},{show:boolean,error:boolean,errorMessage:string,consoleMes:string,p:number}>{
   private songsDB = new songsDB();

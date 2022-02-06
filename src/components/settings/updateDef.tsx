@@ -2,6 +2,14 @@ import { songsDB, scoreHistoryDB, scoresDB } from "../indexedDB";
 import { songData } from "@/types/data";
 import { _currentDefinitionURL, _currentVersion } from ".";
 import { config } from "@/config";
+import { _prefixFromNum } from "../songs/filter";
+
+export const _pText = (newText:string)=>{
+  const m = document.getElementById("_progressText");
+  if(m){
+    m.innerText = newText;
+  }
+}
 
 export const updateDefFile = async()=>{
   let res = {version:"unknown",requireVersion:"unknown",body:[]};
@@ -23,6 +31,7 @@ export const updateDefFile = async()=>{
   const allSongs = await sdb.getAllWithAllPlayModes().then(t=>reducer(t));
 
   try{
+    _pText("定義ファイルをダウンロード中");
     res = await fetch(url).then(t=>t.json());
   }catch(e:any){
     return response("定義データの取得に失敗しました");
@@ -36,14 +45,18 @@ export const updateDefFile = async()=>{
   if(Number(res.requireVersion) > Number(config.versionNumber) ){
     return response("最新の定義データを導入するために本体を更新する必要があります:要求バージョン>="+ res.requireVersion);
   }
+  /*
   if(Number(res.version) === Number(currentVersion)){
     return response("定義データはすでに最新です");
   }
+  */
+  _pText("定義ファイルをチェック中");
 
   const promiseProducer = (body:any[])=>{
     return body.map((t:songData) => {
       return new Promise<void>(async(resolve)=>{
         const pfx = t["title"] + t["difficulty"] + (t["dpLevel"] === "0" ? "1" : "0");
+        _pText("チェック中 : " + t["title"] + _prefixFromNum(t["difficulty"]));
         if(allSongs[pfx] && allSongs[pfx]["dpLevel"] === t["dpLevel"]){
           //既存曲
 
@@ -73,7 +86,7 @@ export const updateDefFile = async()=>{
       });
     });
   }
-
+  console.log(updatedSongs);
   await Promise.all(promiseProducer(res.body));
   scDB.setNewSongsDBRawData(reducer(res.body));
   await scDB.recalculateBPI(updatedSongs);

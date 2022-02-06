@@ -40,7 +40,6 @@ import fbActions from "@/components/firebase/actions";
 import {ReactComponent as Logo} from "@/assets/aix2f-q5h7x.svg";
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import EventNoteIcon from '@mui/icons-material/EventNote';
-import { _currentVersion, _traditionalMode } from "@/components/settings";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import HistoryIcon from '@mui/icons-material/History';
 import StarHalfIcon from '@mui/icons-material/StarHalf';

@@ -50,7 +50,7 @@ export default class App extends React.Component<{},{}> {
   }
 
   render(){
-    document.title = "BPI Manager";
+    document.title = "BPIManager";
     return (
       <Provider>
         <Subscribe to={[GlobalContainer]}>

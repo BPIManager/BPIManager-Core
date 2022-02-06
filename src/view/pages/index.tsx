@@ -2,7 +2,7 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import {Link as RefLink, Divider, Avatar, Grid, Typography, CardActions, Card, CardContent, Container, CircularProgress, ListItem, ListItemAvatar, ListItemText, List} from '@mui/material/';
-import { _currentVersion, _currentTheme, _currentQuickAccessComponents, _currentStore } from '@/components/settings';
+import { _currentVersion, _currentTheme, _currentQuickAccessComponents } from '@/components/settings';
 import UpdateIcon from '@mui/icons-material/Update';
 import Loader from '@/view/components/common/loader';
 import { updateDefFile } from '@/components/settings/updateDef';
@@ -304,7 +304,6 @@ class UpdateDef extends React.Component<{},{
   updateButton = async()=>{
     this.setState({progress:1});
     const p = await updateDefFile();
-    console.log(p);
     this.setState({progress:2,res:p.message});
   }
 
@@ -316,7 +315,7 @@ class UpdateDef extends React.Component<{},{
       return (null);
     }
     return (
-      <Alert variant="outlined" className="MuiPaper-root updateDefAlert" severity="info" style={{marginBottom:"25px"}}>
+      <Alert variant="outlined" className="MuiPaper-root updateDefAlert" icon={false} severity="info" style={{marginBottom:"25px"}}>
         <AlertTitle>定義データを更新</AlertTitle>
         <div>
           {progress === 0 && <div>
@@ -335,7 +334,8 @@ class UpdateDef extends React.Component<{},{
             </Button>
           </div>}
           {progress === 1 && <div>
-            <Loader text={"更新しています"}/>
+            <Loader/>
+            <p style={{textAlign:"center"}}>更新しています<br/><span id="_progressText"/></p>
           </div>}
           {progress === 2 && <div>
             <div style={{display:"flex",alignItems:"center",margin:"20px 0",flexDirection:"column"}}>

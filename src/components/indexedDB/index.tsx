@@ -2,10 +2,11 @@ import Dexie from "dexie";
 import {scoreData,songData, rivalScoreData, DBRivalStoreData, historyData} from "../../types/data";
 import timeFormatter, { timeCompare } from "../common/timeFormatter";
 import {_currentStore,_isSingle} from "../settings";
-import {difficultyDiscriminator, difficultyParser, diffsUpperCase} from "../songs/filter";
+import {difficultyDiscriminator, difficultyParser, diffsUpperCase, _prefixFromNum} from "../songs/filter";
 import bpiCalcuator, { B } from "../bpi";
 import {noimg, alternativeImg} from "../common/"
 import { DBLists } from "../../types/lists";
+import { _pText } from "../settings/updateDef";
 
 const storageWrapper = class extends Dexie{
   target: string = "scores";
@@ -562,10 +563,14 @@ export const scoresDB = class extends storageWrapper{
       for(let i =0; i < array.length; ++i){
         const t = array[i];
         if(!self.calculator){return;}
+        if(updatedSongs.length === 0){
+          continue;
+        }
         if(updatedSongs.length > 0 && updatedSongs.indexOf(t["title"] + difficultyParser(t["difficulty"],Number(t["isSingle"])) + t["isSingle"]) === -1){
           continue;
         }
         const bpi = await self.calculator.setIsSingle(t.isSingle).calc(t.title,difficultyParser(t.difficulty,t.isSingle),t.exScore);
+        _pText("ScoreData : " + t["title"] + _prefixFromNum(t["difficulty"]));
         this.modifyBPI(t,bpi);
       }
     }catch(e:any){
@@ -783,10 +788,14 @@ export const scoreHistoryDB = class extends storageWrapper{
       for(let i =0; i < array.length; ++i){
         const t = array[i];
         if(!self.calculator){return;}
+        if(updatedSongs.length === 0){
+          continue;
+        }
         if(updatedSongs.length > 0 && updatedSongs.indexOf(t["title"] + difficultyParser(t["difficulty"],Number(t["isSingle"])) + t["isSingle"]) === -1){
           continue;
         }
         const bpi = await self.calculator.setIsSingle(t.isSingle).calc(t.title,difficultyParser(t.difficulty,t.isSingle),t.exScore);
+        _pText("ScoreHistory : " + t["title"] + _prefixFromNum(t["difficulty"]));
         this.modifyBPI(t,bpi);
       }
     }catch(e:any){

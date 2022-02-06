@@ -1,5 +1,4 @@
 import React from "react";
-import Paper from "@mui/material/Paper";
 import { diffColor } from "@/view/components/songs/common";
 import { _currentViewComponents, _isSingle, _traditionalMode } from "@/components/settings";
 import Details from "./modal";
