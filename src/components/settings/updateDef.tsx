@@ -16,7 +16,6 @@ export const updateDefFile = async()=>{
   const response = (mes:string)=>{
     return {"message":mes,"newVersion":res.version};
   }
-  const currentVersion = _currentVersion();
   const url = _currentDefinitionURL();
 
   const sdb = new songsDB();

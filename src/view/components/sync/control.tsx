@@ -12,6 +12,7 @@ import {Link as RefLink} from "react-router-dom";
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import ShowSnackBar from '../snackBar';
+import { _pText } from '@/components/settings/updateDef';
 
 class SyncControlScreen extends React.Component<{userData:any},{
   isLoading:boolean,
@@ -80,6 +81,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
 
   download = async()=>{
     this.setState({isLoading:true});
+    _pText("通信中");
     const res = await this.fbLoader.load();
     if(res === null || res === undefined){
       this.toggleErrorSnack("エラーが発生しました");
@@ -87,8 +89,8 @@ class SyncControlScreen extends React.Component<{userData:any},{
     }
     await new scoresDB().setDataWithTransaction(res.scores);
     await new scoreHistoryDB().setDataWithTransaction(res.scoresHistory);
-    await new scoresDB().recalculateBPI();
-    await new scoreHistoryDB().recalculateBPI();
+    await new scoresDB().recalculateBPI([],true);
+    await new scoreHistoryDB().recalculateBPI([],true);
     this.setState({isLoading:false});
   }
 
@@ -122,7 +124,8 @@ class SyncControlScreen extends React.Component<{userData:any},{
         <div style={{margin:"15px 0"}}>
           {isLoading && (
             <Alert severity="warning" icon={<CircularProgress color="secondary" />}>
-              <FormattedMessage id="Sync.Control.processing"/>
+              <FormattedMessage id="Sync.Control.processing"/><br/>
+              <span id="_progressText"/>
             </Alert>
           )}
           {(!isLoading && scoreData === null) && (
@@ -133,6 +136,7 @@ class SyncControlScreen extends React.Component<{userData:any},{
           {(!isLoading && scoreData !== null) && (
             <Alert severity="info" icon={false}>
               <FormattedMessage id="Sync.Control.lastupdate"/><br/>
+              <span id="_progressText" style={{display:"none"}}/>
               Date: {scoreData.timeStamp}<br/>
               From: {scoreData.type ? scoreData.type : "undefined"}
             </Alert>

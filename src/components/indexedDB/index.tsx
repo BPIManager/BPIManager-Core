@@ -570,19 +570,23 @@ export const scoresDB = class extends storageWrapper{
           continue;
         }
         const bpi = await self.calculator.setIsSingle(t.isSingle).calc(t.title,difficultyParser(t.difficulty,t.isSingle),t.exScore);
-        _pText("ScoreData : " + t["title"] + _prefixFromNum(t["difficulty"]));
+        _pText("Scores:BPI更新中 " + t["title"] + _prefixFromNum(t["difficulty"]));
         this.modifyBPI(t,bpi);
       }
     }catch(e:any){
       console.log(e);
     }
+    _pText("");
   }
 
   //置き換え予定
   async setDataWithTransaction(scores:scoreData[]){
     await this.transaction("rw",this.scores,async()=>{
       await this.scores.where({storedAt:_currentStore(),isSingle:_isSingle()}).delete();
-      return Promise.all(scores.map(item=>this.putItem(item)));
+      return Promise.all(scores.map(item=>{
+        _pText("Saving : " + item["title"]);
+        this.putItem(item);
+      }));
     }).catch(e=>{
       console.log(e)
     });
@@ -795,7 +799,7 @@ export const scoreHistoryDB = class extends storageWrapper{
           continue;
         }
         const bpi = await self.calculator.setIsSingle(t.isSingle).calc(t.title,difficultyParser(t.difficulty,t.isSingle),t.exScore);
-        _pText("ScoreHistory : " + t["title"] + _prefixFromNum(t["difficulty"]));
+        _pText("ScoreHistory:BPI更新中 " + t["title"] + _prefixFromNum(t["difficulty"]));
         this.modifyBPI(t,bpi);
       }
     }catch(e:any){
@@ -803,6 +807,7 @@ export const scoreHistoryDB = class extends storageWrapper{
       console.log("failed recalculate [scoreHistoryDB] - ");
       return;
     }
+    _pText("");
   }
 
   async setDataWithTransaction(history:any[]){
