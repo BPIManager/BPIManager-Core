@@ -555,7 +555,7 @@ export const scoresDB = class extends storageWrapper{
     {currentBPI:!currentBPI.error ? currentBPI.bpi : -15}
   );
 
-  async recalculateBPI(updatedSongs:string[] = []){
+  async recalculateBPI(updatedSongs:string[] = [],force:boolean = false){
     try{
       const self = this;
       this.setCalcClass();
@@ -563,7 +563,7 @@ export const scoresDB = class extends storageWrapper{
       for(let i =0; i < array.length; ++i){
         const t = array[i];
         if(!self.calculator){return;}
-        if(updatedSongs.length === 0){
+        if(updatedSongs.length === 0 && force === false){
           continue;
         }
         if(updatedSongs.length > 0 && updatedSongs.indexOf(t["title"] + difficultyParser(t["difficulty"],Number(t["isSingle"])) + t["isSingle"]) === -1){
@@ -779,7 +779,7 @@ export const scoreHistoryDB = class extends storageWrapper{
     {currentBPI:!currentBPI.error ? currentBPI.bpi : -15}
   );
 
-  async recalculateBPI(updatedSongs:string[] = []){
+  async recalculateBPI(updatedSongs:string[] = [],force:boolean = false){
     try{
       const self = this;
       this.setCalcClass();
@@ -788,7 +788,7 @@ export const scoreHistoryDB = class extends storageWrapper{
       for(let i =0; i < array.length; ++i){
         const t = array[i];
         if(!self.calculator){return;}
-        if(updatedSongs.length === 0){
+        if(updatedSongs.length === 0 && force === false){
           continue;
         }
         if(updatedSongs.length > 0 && updatedSongs.indexOf(t["title"] + difficultyParser(t["difficulty"],Number(t["isSingle"])) + t["isSingle"]) === -1){

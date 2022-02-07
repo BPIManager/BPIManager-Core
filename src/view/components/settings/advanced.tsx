@@ -115,8 +115,8 @@ class Settings extends React.Component<P,S> {
       const scDB = new scoresDB(), schDB = new scoreHistoryDB();
       _setTraditionalMode(this.state.traditionalMode);
       this.setState({recalculating:true});
-      await scDB.recalculateBPI();
-      await schDB.recalculateBPI();
+      await scDB.recalculateBPI([],true);
+      await schDB.recalculateBPI([],true);
       this.setState({recalculating:false,initialT:this.state.traditionalMode});
     }catch(e:any){
       console.log(e);
@@ -253,7 +253,8 @@ class Settings extends React.Component<P,S> {
               <Loader/>
             </div>
             <div>
-              <p style={{textAlign:"center"}}>再計算中です<br/>画面を閉じないでください</p>
+              <p style={{textAlign:"center"}}>再計算中です<br/>画面を閉じないでください<br/>
+              <span id="_progressText"/></p>
             </div>
           </Backdrop>
         }

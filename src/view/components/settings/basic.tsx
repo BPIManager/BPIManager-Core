@@ -254,6 +254,7 @@ class Settings extends React.Component<P,S> {
               </FormControl>
               <Typography variant="caption" display="block">
                 {message}
+                <span id="_progressText"/>
               </Typography>
               <Typography variant="caption" display="block">
                 <FormattedMessage id="Settings.currentVersion"/>{this.state.currentVersion}

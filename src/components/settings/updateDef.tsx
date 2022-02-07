@@ -86,12 +86,12 @@ export const updateDefFile = async()=>{
       });
     });
   }
-  console.log(updatedSongs);
   await Promise.all(promiseProducer(res.body));
   scDB.setNewSongsDBRawData(reducer(res.body));
   await scDB.recalculateBPI(updatedSongs);
   await schDB.recalculateBPI(updatedSongs);
   localStorage.setItem("lastDefFileVer",res.version);
+  _pText("");
   return response("更新完了");
 
 }
