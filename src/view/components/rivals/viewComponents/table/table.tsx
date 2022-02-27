@@ -49,12 +49,13 @@ export default class ScoreTable extends React.Component<Readonly<P>,S>{
   async componentDidMount(){
     const s = this.props.data;
     const result:any = {};
+    const songs = await new songsDB().getAll();
     for(let i = 0; i < s.length; ++i){
       const m = s[i];
       if(!m) continue;
-      const song = await new songsDB().getOneItemIsSingle(m.title,m.difficulty);
-      if(song && song.length > 0){
-        result[song[0]["title"] + difficultyDiscriminator(song[0]["difficulty"])] = song[0];
+      const song = songs.find((item:songData)=>item.title === m.title && difficultyDiscriminator(item.difficulty) === m.difficulty)
+      if(song){
+        result[song["title"] + difficultyDiscriminator(song["difficulty"])] = song;
       }
     }
     return this.setState({currentDisplaySongs:result,isLoading:false});

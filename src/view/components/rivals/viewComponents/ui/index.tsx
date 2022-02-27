@@ -90,6 +90,7 @@ class SongsUI extends React.Component<P&RouteComponentProps,stateInt> {
 
   async componentDidMount(){
     let allSongs = (await new songsAPI().load()).all();
+    console.log(allSongs);
     let newState = this.clone();
     newState.allSongsData = allSongs;
     this.setState({
