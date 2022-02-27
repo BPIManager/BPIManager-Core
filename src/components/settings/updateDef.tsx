@@ -1,6 +1,6 @@
 import { songsDB, scoreHistoryDB, scoresDB } from "../indexedDB";
 import { songData } from "@/types/data";
-import { _currentDefinitionURL, _currentVersion } from ".";
+import { _currentDefinitionURL } from ".";
 import { config } from "@/config";
 import { _prefixFromNum } from "../songs/filter";
 

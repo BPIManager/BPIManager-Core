@@ -8,38 +8,17 @@ import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
-import {
-  Link,
-  Switch,
-  FormControlLabel,
-  Avatar,
-  CardHeader,
-  Card,
-  CardActions,
-  CardContent,
-  Theme,
-  Divider,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Typography,
-} from '@mui/material/';
+import {Switch,FormControlLabel,Avatar,Card,CardContent,Theme,Grid,Link,Typography, ButtonGroup} from '@mui/material/';
 import withStyles from '@mui/styles/withStyles';
-import {Link as RefLink, withRouter, RouteComponentProps} from "react-router-dom";
+import {withRouter, RouteComponentProps} from "react-router-dom";
 import Alert from '@mui/material/Alert';
-import { config } from '@/config';
 import Loader from '../common/loader';
-import { alternativeImg, avatarBgColor, avatarFontColor } from '@/components/common';
-import { getAltTwitterIcon } from '@/components/rivals';
+import { alternativeImg } from '@/components/common';
+import { getAltTwitterIcon, getTwitterName } from '@/components/rivals';
 import SaveIcon from '@mui/icons-material/Save';
 import { red } from '@mui/material/colors';
 import AlertTitle from '@mui/material/AlertTitle';
 import CheckIcon from '@mui/icons-material/Check';
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
-import SpeakerNotesIcon from '@mui/icons-material/SpeakerNotes';
-import TouchAppIcon from '@mui/icons-material/TouchApp';
-import bpiCalcuator from '@/components/bpi';
 
 class SyncControlScreen extends React.Component<{userData:any}&RouteComponentProps,{
   isLoading:boolean,
@@ -54,6 +33,9 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
   rawUserData:any,
   hideAlert:boolean,
   isPublic:boolean,
+  iidxId:string,
+  twitterId:string,
+  isSending:boolean,
 }> {
 
   private fbA:fbActions = new fbActions();
@@ -65,6 +47,7 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
     this.fbA.v2SetUserCollection().setDocName(props.userData.uid);
     this.state = {
       isLoading:true,
+      isSending:false,
       scoreData:null,
       rivalData:null,
       myName:"",
@@ -76,12 +59,18 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
       rawUserData:null,
       hideAlert:false,
       isPublic:false,
+      iidxId:"",
+      twitterId:"",
     }
   }
 
   async componentDidMount(){
     return this.fbA.auth().onAuthStateChanged(async(user: any)=> {
       const t = await this.fbA.load();
+      let tw = t && t.twitter ? t.twitter : "";
+      if(!tw && t){
+        tw = getTwitterName(t.profile) || "";
+      }
       this.fbLoader.updateProfileIcon();
       this.setState({
         isLoading:false,
@@ -94,24 +83,26 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
         arenaRank: t && t.arenaRank ? t.arenaRank : "-",
         showNotes: t && t.showNotes ? t.showNotes : false,
         isPublic: t && t.isPublic ? t.isPublic : false,
+        iidxId: t && t.iidxId ? t.iidxId : "",
+        twitterId: tw,
       });
     });
   }
 
   sendName = async()=>{
-    this.setState({isLoading:true,nameErrorMessage:[]});
+    this.setState({isSending:true,nameErrorMessage:[]});
     try{
       if(this.state.myName && this.state.scoreData === null){
-        return this.setState({nameErrorMessage:["エラーが発生しました。次のような理由が挙げられます:"],isLoading:false});
+        return this.setState({nameErrorMessage:["エラーが発生しました。次のような理由が挙げられます:"],isSending:false});
       }
-      const res = await this.fbA.saveName(this.state.myName,this.state.myProfile,this.props.userData.photoURL,this.state.arenaRank,this.state.showNotes,this.state.isPublic);
+      const res = await this.fbA.saveName(this.state.myName,this.state.myProfile,this.props.userData.photoURL,this.state.arenaRank,this.state.showNotes,this.state.isPublic,this.state.iidxId,this.state.twitterId || "");
       if(res.error){
-        return this.setState({nameErrorMessage:["エラーが発生しました。次のような理由が挙げられます:","名前に使用できない文字列が含まれている、すでに使用されている名前である、アクセス権限がない"],isLoading:false});
+        return this.setState({nameErrorMessage:["エラーが発生しました。次のような理由が挙げられます:","名前に使用できない文字列が含まれている、すでに使用されている名前である、アクセス権限がない"],isSending:false});
       }
     }catch(e:any){
       alert("エラーが発生しました。:" + e);
     }
-    this.setState({nameErrorMessage:["設定を反映しました"],isLoading:false,sentName:this.state.myName,rivalData:await this.fbA.load()});
+    this.setState({nameErrorMessage:["設定を反映しました"],isSending:false,sentName:this.state.myName,rivalData:await this.fbA.load()});
   }
 
   handleShowNotes = (e:React.ChangeEvent<HTMLInputElement>)=>{
@@ -123,24 +114,10 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
   }
 
   render(){
-    const {isLoading,rivalData,scoreData,rawUserData,nameErrorMessage,myName,myProfile,arenaRank,sentName,showNotes,hideAlert,isPublic} = this.state;
+    const {isLoading,isSending,rivalData,scoreData,rawUserData,nameErrorMessage,myName,myProfile,arenaRank,iidxId,twitterId,hideAlert,isPublic} = this.state;
     const nameError:boolean = myName.length !== 0 && (!/^[a-zA-Z0-9]+$/g.test(myName) || myName.length > 16);
     const profError:boolean = myProfile.length > 140;
-    const totalRank = new bpiCalcuator().rank(rivalData ? rivalData.totalBPI : -15,false);
-    const rankPer = Math.round(totalRank / new bpiCalcuator().getTotalKaidens() * 1000000) / 10000;
     if(isLoading) return <Loader text="プロファイルを取得中"/>
-    const profileAvailable = ()=>{
-      if(!isLoading && sentName){
-        return (
-          <span>
-            <RefLink to={"/u/" + sentName} style={{textDecoration:"none"}}><Link color="secondary" component="span">プロフィールを表示</Link></RefLink>
-            <br/>
-            <Link color="secondary" href={`http://twitter.com/share?url=${config.baseUrl}${"/u/" + sentName}&text=${encodeURIComponent(rivalData.displayName + " 総合BPI:" + String(Number.isNaN(rivalData.totalBPI) ? "-" : rivalData.totalBPI) + `(推定順位:${totalRank}位,皆伝上位${rankPer}%)`)}`}>Twitterでプロフィールを共有</Link>
-          </span>);
-      }else{
-        return ("プロフィールは非公開です");
-      }
-    }
     return (
       <React.Fragment>
         {(!_autoSync() && !hideAlert) && (
@@ -167,19 +144,43 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
             <p>設定→Auto-syncより、いつでもこの機能を無効にできます。</p>
           </Alert>
         )}
-        <Card>
-          <CardHeader
-            avatar={
-            <Avatar style={{width:"64px",height:"64px"}}>
-              <img src={rawUserData.photoURL ? rawUserData.photoURL.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
-                alt={rivalData ? rivalData.displayName : rawUserData.displayName || "Unpublished User"}
-                onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(rivalData) || alternativeImg(rawUserData.displayName)}/>
-            </Avatar>
-            }
-            title={rawUserData.displayName + `(${rawUserData.providerData[0].providerId || "Unknown Provider"})`}
-            subheader={profileAvailable()}
-          />
-          <CardContent>
+        <div style={{textAlign:"center"}}>
+          <Avatar style={{width:"50%",maxWidth:"128px",height:"auto",margin:"25px auto 8px auto"}}>
+            <img src={rawUserData.photoURL ? rawUserData.photoURL.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
+              alt={rivalData ? rivalData.displayName : rawUserData.displayName || "Unpublished User"}
+              onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(rivalData) || alternativeImg(rawUserData.displayName)}/>
+          </Avatar>
+          <p>
+            Welcome back, {rawUserData.displayName || ""}<br/>
+            Signed in via {rawUserData.providerData[0].providerId || "Unknown Provider"}
+          </p>
+        </div>
+        <Grid container>
+          <Grid item xs={10}>
+            <Typography variant="body1">一般公開</Typography>
+          </Grid>
+          <Grid item xs={2} style={{justifyContent:"flex-end",display:"flex"}}>
+            <FormControl component="fieldset" variant="standard">
+              <FormControlLabel
+                control={<Switch size="small" checked={isPublic} onChange={this.handlePublic} name="isPublic" />}
+                label=""
+                style={{margin:"0 4px"}}
+              />
+            </FormControl>
+          </Grid>
+        </Grid>
+        {!isPublic && (
+          <Alert severity="warning" style={{margin:"16px 0"}}>
+            <AlertTitle>アカウントが非公開です</AlertTitle>
+            <p>
+            スコアデータを公開してライバルを増やしましょう。<br/>
+            アカウントの公開およびライバル機能に関する詳細は<Link href="https://docs2.poyashi.me/docs/social/rivals/" color="secondary" target="_blank">こちら</Link>をご確認ください。
+            </p>
+          </Alert>
+        )}
+        {isPublic && (
+        <Card style={{marginTop:"16px"}}>
+          <CardContent style={{padding:"16px"}}>
             <TextField label="表示名を入力(最大16文字)"
               InputLabelProps={{
               shrink: true,
@@ -190,7 +191,7 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
               onChange={(e)=>this.setState({myName:e.target.value})}
               style={{width:"100%",margin:"0px 0px 8px 0"}}/>
             <FormControl fullWidth style={{margin:"8px 0"}}>
-              <InputLabel>最高アリーナランク</InputLabel>
+              <InputLabel>アリーナランク</InputLabel>
               <Select fullWidth value={arenaRank} onChange={(e:SelectChangeEvent<string>,)=>{
                 if(typeof e.target.value !== "string") return;
                 this.setState({arenaRank:e.target.value});
@@ -207,88 +208,53 @@ class SyncControlScreen extends React.Component<{userData:any}&RouteComponentPro
               helperText={profError && "自己紹介が長すぎます"}
               onChange={(e)=>this.setState({myProfile:e.target.value})}
               style={{width:"100%",margin:"8px 0px 8px 0"}}/>
-              <small>*Twitter ID(@~)またはIIDX ID(8ケタの数字)を記入することでプロフィールページにリンクが表示されます</small>
-            <FormControl fullWidth style={{margin:"8px"}}>
-              <FormControlLabel
-                control={<Switch size="small" checked={showNotes} onChange={this.handleShowNotes} name="showNotes" />}
-                label="投稿ノート一覧を公開"
-              />
-            </FormControl>
-            <FormControl fullWidth style={{margin:"8px"}}>
-              <FormControlLabel
-                control={<Switch size="small" checked={isPublic} onChange={this.handlePublic} name="showNotes" />}
-                label="プロフィールを一般公開"
-              />
-              <small>
-                プロフィールを非公開にすると、他の人はあなたのスコアデータを閲覧できなくなります。<br/>
-                あなたをライバル登録している人も、非公開の間はあなたのスコアを追跡できなくなります。<br/>
-                非公開の間、BPIMRanks では「非公開プレイヤー」としてスコアが掲示されます。
-              </small>
-            </FormControl>
+            <TextField label="IIDX ID"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              type="number"
+              inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+              value={iidxId}
+              onChange={(e)=>this.setState({iidxId:e.target.value})}
+              style={{width:"100%",margin:"0px 0px 8px 0"}}/>
+            <TextField label="Twitter"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              value={twitterId}
+              onChange={(e)=>{
+                if(!e.target.value.match(/^[a-zA-Z_0-9]+$/g)) return;
+                this.setState({twitterId:e.target.value})
+              }}
+              style={{width:"100%",margin:"0px 0px 8px 0"}}/>
           </CardContent>
-          <CardActions>
-            <Button
-              fullWidth
-              variant="outlined"
-              color="secondary"
-              onClick={this.sendName}
-              startIcon={<SaveIcon/>}
-              disabled={isLoading}>
-              変更を保存
-            </Button>
-            <ColorButton
-              color="secondary"
-              disabled={isLoading}
-              fullWidth
-              onClick={()=>this.fbA.logout()}
-              startIcon={<MeetingRoomIcon />}>
-              サインアウト
-            </ColorButton>
-          </CardActions>
         </Card>
+        )}
         {(nameErrorMessage.length > 0 || (scoreData === null && myName)) &&
           <Alert severity="error" style={{margin:"8px 0"}}>
             {nameErrorMessage.map((item:string)=><span key={item}>{item}<br/></span>)}
             {(scoreData === null && myName) && <span style={{color:"#ff0000"}}>スコアデータが送信されていません。「データ」→「アップロード」よりスコアデータを送信してください。</span>}
           </Alert>
         }
-        <Divider style={{margin:"8px 0"}}/>
-        <li style={{listStyleType:"none"}}>
-          <Typography
-            style={{padding:"4px 8px"}}
-            color="textSecondary"
-            display="block"
-            variant="caption"
-          >
-            プロフィールを公開したら...
-          </Typography>
-        </li>
-        <List>
-          <ListItem button onClick={()=>this.props.history.push("/rivals?tab=3")}>
-            <ListItemAvatar>
-              <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
-                <GroupAddIcon/>
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={"ライバルを探す"} secondary={"実力が近いユーザーをライバル登録して、スコアを競えます"} />
-          </ListItem>
-          <ListItem button onClick={()=>this.props.history.push("/ranking/")}>
-            <ListItemAvatar>
-              <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
-                <TouchAppIcon/>
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={"WRに参加"} secondary={"自由にランキングを開催したり、他の人のランキングに参加することができます!"} />
-          </ListItem>
-          <ListItem button onClick={()=>this.props.history.push("/notes")}>
-            <ListItemAvatar>
-              <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
-                <SpeakerNotesIcon/>
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={"ノートを投稿"} secondary={"楽曲の攻略情報をシェアしよう"} />
-          </ListItem>
-        </List>
+        <ButtonGroup variant="contained" fullWidth style={{marginTop:"8px"}}>
+          <Button
+            fullWidth
+            variant="outlined"
+            color="secondary"
+            onClick={this.sendName}
+            startIcon={<SaveIcon/>}
+            disabled={isSending}>
+            変更を保存
+          </Button>
+          <ColorButton
+            color="secondary"
+            disabled={isSending}
+            fullWidth
+            onClick={()=>this.fbA.logout()}
+            startIcon={<MeetingRoomIcon />}>
+            サインアウト
+          </ColorButton>
+        </ButtonGroup>
       </React.Fragment>
     );
   }

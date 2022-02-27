@@ -586,6 +586,7 @@ export const scoresDB = class extends storageWrapper{
       return Promise.all(scores.map(item=>{
         _pText("Saving : " + item["title"]);
         this.putItem(item);
+        return 0;
       }));
     }).catch(e=>{
       console.log(e)

@@ -35,7 +35,7 @@ class SyncControlTab extends React.Component<P&RouteComponentProps,{currentTab:n
           onChange={this.handleChange}
           indicatorColor="secondary"
           variant="scrollable"
-          scrollButtons centered
+          scrollButtons
           textColor="secondary"
           allowScrollButtonsMobile>
             <Tab label="プロフィール" />

@@ -388,10 +388,7 @@ class User extends React.Component<{intl:any,currentUserName?:string,limited?:bo
       {icon:<StarHalfIcon />,primary:"BPIMRanks (外部サイト)",secondary:"BPIManager ユーザー内での順位を表示します",onClick:()=>this.showBPIMRanks()},
       {icon:<EventNoteIcon />,primary:"ランキング",secondary:"ランキング参加履歴を表示します",onClick:()=>this.view(5)},
     ]
-
-    if(res.showNotes){
-      buttons.push({icon:<CommentIcon />,primary:"投稿ノート一覧",secondary:(res.displayName) + "さんが投稿した攻略情報一覧",onClick:()=>this.view(3)});
-    }
+    buttons.push({icon:<CommentIcon />,primary:"投稿ノート一覧",secondary:(res.displayName) + "さんが投稿した攻略情報一覧",onClick:()=>this.view(3)});
 
     const themeColor = _currentTheme();
     const url = config.baseUrl + "/u/" + encodeURI(userName);

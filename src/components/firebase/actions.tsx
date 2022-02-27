@@ -191,7 +191,7 @@ export default class fbActions{
     }
   }
 
-  async saveName(displayName:string,profile:string,photoURL:string,arenaRank:string,showNotes?:boolean,isPublic?:boolean){
+  async saveName(displayName:string,profile:string,photoURL:string,arenaRank:string,showNotes?:boolean,isPublic?:boolean,_iidxId?:string,_twitterId?:string){
     try{
       if(!this.name || !this.docName){return {error:true,date:null};}
       if(displayName.length > 16 || profile.length > 140){
@@ -214,7 +214,8 @@ export default class fbActions{
         });
       }else{
         const idMatcher = profile.match(/(\d{4}-\d{4}|\d{8})/);
-        const iidxId = idMatcher ? idMatcher[0].replace(/\D/g,"") : "";
+        let iidxId = idMatcher ? idMatcher[0].replace(/\D/g,"") : "";
+        if(_iidxId) iidxId = _iidxId;
         const v = "totalBPIs." + _currentStore();
         await this.setUserCollection().doc(this.docName).update({
           timeStamp: timeFormatter(3),
@@ -222,6 +223,7 @@ export default class fbActions{
           serverTime:this.time(),
           uid:this.docName,
           iidxId:iidxId,
+          twitter:_twitterId,
           displayName:displayName,
           displayNameSearch:displayName.toLowerCase(),
           profile:profile,
