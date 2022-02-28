@@ -6,12 +6,12 @@ import ClearLampTable from '@/view/components/table/table';
 interface S {
 }
 
-class Stats extends React.Component<{intl:any},S> {
+class Stats extends React.Component<{ intl: any }, S> {
 
-  render(){
+  render() {
     return (
-      <Container fixed  className="commonLayout">
-        <ClearLampTable/>
+      <Container fixed className="commonLayout">
+        <ClearLampTable />
       </Container>
     );
   }

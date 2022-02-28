@@ -13,33 +13,33 @@ import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import { CameraClass } from "@/components/camera/songs";
 
-interface UP{
-  isDialogOpen:boolean,
-  close:()=>void,
-  decide:(input:songData)=>void,
-  text?:string,
-  diff?:string
+interface UP {
+  isDialogOpen: boolean,
+  close: () => void,
+  decide: (input: songData) => void,
+  text?: string,
+  diff?: string
 }
 
-export default class SongSearchDialog extends React.Component<UP,{value:string,isLoading:boolean,fullset:any[],display:any[]}> {
+export default class SongSearchDialog extends React.Component<UP, { value: string, isLoading: boolean, fullset: any[], display: any[] }> {
 
-  constructor(props:UP){
+  constructor(props: UP) {
     super(props);
     this.state = {
-      value:"",
-      isLoading:true,
-      fullset:[],
-      display:[]
+      value: "",
+      isLoading: true,
+      fullset: [],
+      display: []
     }
   }
 
-  async componentDidMount(){
-    if(this.props.text && this.props.diff){
+  async componentDidMount() {
+    if (this.props.text && this.props.diff) {
       //リコメンド
       const cam = new CameraClass();
       (await cam.setSplitLetters(/.{6}/g).loadSongs()).init();
       const p = cam.setText(this.props.text).levenshtein(this.props.diff);
-      return this.setState({fullset:p,display:p,isLoading:false});
+      return this.setState({ fullset: p, display: p, isLoading: false });
     }
   }
 
@@ -47,9 +47,9 @@ export default class SongSearchDialog extends React.Component<UP,{value:string,i
     this.props.close();
   };
 
-  render(){
-    const {isDialogOpen,decide} = this.props;
-    const {isLoading,display,fullset} = this.state;
+  render() {
+    const { isDialogOpen, decide } = this.props;
+    const { isLoading, display, fullset } = this.state;
     return (
       <div>
         <Dialog
@@ -57,39 +57,39 @@ export default class SongSearchDialog extends React.Component<UP,{value:string,i
           onClose={this.handleClose}>
           <DialogTitle>楽曲検索</DialogTitle>
           <DialogContent>
-          {isLoading && <Loader/>}
-          {!isLoading &&
-            <div>
-              <TextField
-                margin="dense"
-                id="name"
-                label="楽曲名で絞り込み"
-                type="text"
-                value={this.state.value}
-                onChange={(e:React.ChangeEvent<HTMLInputElement>)=>this.setState({value:e.target.value,display:fullset.filter(item=>item.title.toLowerCase().indexOf(e.target.value.toLowerCase()) > -1)})}
-                fullWidth
-              />
-              <List subheader={<li />}>
-                {display.map(item=>
-                  <ListItem alignItems="flex-start" key={item.title} button onClick={()=>decide(item)}>
-                  <ListItemText
-                    primary={item.title}
-                    secondary={
-                    <React.Fragment>
-                      <Typography
-                        component="span"
-                        variant="body2"
-                        color="textPrimary"
-                      >
-                        類似度: {item.distance.toFixed(5)}
-                      </Typography>
-                    </React.Fragment>
-                    }
-                  />
-                </ListItem>)}
-              </List>
-            </div>
-          }
+            {isLoading && <Loader />}
+            {!isLoading &&
+              <div>
+                <TextField
+                  margin="dense"
+                  id="name"
+                  label="楽曲名で絞り込み"
+                  type="text"
+                  value={this.state.value}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.setState({ value: e.target.value, display: fullset.filter(item => item.title.toLowerCase().indexOf(e.target.value.toLowerCase()) > -1) })}
+                  fullWidth
+                />
+                <List subheader={<li />}>
+                  {display.map(item =>
+                    <ListItem alignItems="flex-start" key={item.title} button onClick={() => decide(item)}>
+                      <ListItemText
+                        primary={item.title}
+                        secondary={
+                          <React.Fragment>
+                            <Typography
+                              component="span"
+                              variant="body2"
+                              color="textPrimary"
+                            >
+                              類似度: {item.distance.toFixed(5)}
+                            </Typography>
+                          </React.Fragment>
+                        }
+                      />
+                    </ListItem>)}
+                </List>
+              </div>
+            }
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="secondary">

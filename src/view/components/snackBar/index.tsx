@@ -1,4 +1,3 @@
-import React from 'react';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import InfoIcon from '@mui/icons-material/Info';
@@ -47,27 +46,27 @@ export interface Props {
   message?: any;
   onClose?: () => void;
   variant: keyof typeof variantIcon;
-  autoHideDuration?:number
-  open?:boolean,
-  handleClose?:()=>void
+  autoHideDuration?: number
+  open?: boolean,
+  handleClose?: () => void
 }
 
-export default function ShowSnackBar(props:Props) {
+export default function ShowSnackBar(props: Props) {
   const classes = styles();
-  if(!props.open){
+  if (!props.open) {
     return (null);
   }
   return (
-      <Snackbar
-        className={classes.message}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-        open={props.open}
-        autoHideDuration={props.autoHideDuration ? props.autoHideDuration : 2000}
-        onClose={props.handleClose}
-        message={props.message}
-      />
+    <Snackbar
+      className={classes.message}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'center',
+      }}
+      open={props.open}
+      autoHideDuration={props.autoHideDuration ? props.autoHideDuration : 2000}
+      onClose={props.handleClose}
+      message={props.message}
+    />
   );
 }

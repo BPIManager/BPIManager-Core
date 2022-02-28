@@ -9,46 +9,46 @@ import CloseIcon from "@mui/icons-material/Close";
 import WeeklyOnGoing from "./ongoing";
 
 export default class WeeklyModal extends React.Component<{
-  isOpen:boolean,
-  handleOpen:(flag:string)=>void,
-  rankingId:string,
-},{
-  rankingName:string
-}>{
+  isOpen: boolean,
+  handleOpen: (flag: string) => void,
+  rankingId: string,
+}, {
+    rankingName: string
+  }>{
 
-  constructor(props:any){
+  constructor(props: any) {
     super(props);
     this.state = {
-      rankingName:""
+      rankingName: ""
     }
   }
 
-  render(){
+  render() {
     const c = _currentTheme();
-    const {isOpen,handleOpen,rankingId} = this.props;
-    const {rankingName} = this.state;
+    const { isOpen, handleOpen, rankingId } = this.props;
+    const { rankingName } = this.state;
     return (
       <Dialog
         id="detailedScreen"
         className={c === "dark" ? "darkDetailedScreen" : c === "light" ? "lightDetailedScreen" : "deepSeaDetailedScreen"}
-        fullScreen open={isOpen} onClose={handleOpen} style={{overflowX:"hidden",width:"100%"}}>
+        fullScreen open={isOpen} onClose={handleOpen} style={{ overflowX: "hidden", width: "100%" }}>
         <AppBar>
           <Toolbar>
             <IconButton
               edge="start"
               color="inherit"
-              onClick={()=>handleOpen("")}
+              onClick={() => handleOpen("")}
               aria-label="close"
               size="large">
               <CloseIcon />
             </IconButton>
-            <Typography variant="h6" className="be-ellipsis" style={{flexGrow:1}}>
+            <Typography variant="h6" className="be-ellipsis" style={{ flexGrow: 1 }}>
               {rankingName}
             </Typography>
           </Toolbar>
         </AppBar>
-        <Toolbar/>
-        <WeeklyOnGoing rankingId={rankingId}/>
+        <Toolbar />
+        <WeeklyOnGoing rankingId={rankingId} />
       </Dialog>
     );
   }

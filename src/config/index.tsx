@@ -1,15 +1,15 @@
-export const config ={
-  versionNumber:"86",
-  client:"ca-pub-1494631468121976",
-  slot:"6952909012",
-  versionString:"beta ver0.0.8.7a",
-  lastUpdate:"2022/01/31 JST",
-  latestStore:"29",
-  baseUrl:"https://bpi.poyashi.me",
-  cfVersion:"v2"
+export const config = {
+  versionNumber: "86",
+  client: "ca-pub-1494631468121976",
+  slot: "6952909012",
+  versionString: "beta ver0.0.8.7a",
+  lastUpdate: "2022/01/31 JST",
+  latestStore: "29",
+  baseUrl: "https://bpi.poyashi.me",
+  cfVersion: "v2"
 }
 
-export const area =[
+export const area = [
   "全国",
   "北海道",
   "青森県",

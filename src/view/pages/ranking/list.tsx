@@ -18,57 +18,57 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Alert from '@mui/material/Alert/Alert';
 
 interface S {
-  isLoading:boolean,
-  list:any,
+  isLoading: boolean,
+  list: any,
 }
 
-class WeeklyList extends React.Component<{intl:any,viewInUser?:boolean,backToMainPage?:()=>void,uid?:string,name?:string}&RouteComponentProps,S> {
+class WeeklyList extends React.Component<{ intl: any, viewInUser?: boolean, backToMainPage?: () => void, uid?: string, name?: string } & RouteComponentProps, S> {
 
-  constructor(props:{intl:any,viewInUser?:boolean,backToMainPage?:()=>void,uid?:string,name?:string}&RouteComponentProps){
+  constructor(props: { intl: any, viewInUser?: boolean, backToMainPage?: () => void, uid?: string, name?: string } & RouteComponentProps) {
     super(props);
-    this.state ={
-      isLoading:true,
-      list:null
+    this.state = {
+      isLoading: true,
+      list: null
     }
   }
 
-  async componentDidMount(){
+  async componentDidMount() {
     let data = {
-      includeRank:true,
-      currentUser:true,
-      version:_currentStore(),
-      uId:"",
-      onlyJoined:false,
+      includeRank: true,
+      currentUser: true,
+      version: _currentStore(),
+      uId: "",
+      onlyJoined: false,
     };
-    if(this.props.viewInUser && this.props.uid){
+    if (this.props.viewInUser && this.props.uid) {
       data["currentUser"] = false;
       data["uId"] = this.props.uid || "";
       data["onlyJoined"] = true;
     }
-    const res = await httpsCallable(`ranking`,`rankList`,data);
-    this.setState({isLoading:false,list:res.data});
+    const res = await httpsCallable(`ranking`, `rankList`, data);
+    this.setState({ isLoading: false, list: res.data });
   }
 
-  render(){
-    const {isLoading,list} = this.state;
-    const {viewInUser,backToMainPage,name} = this.props;
+  render() {
+    const { isLoading, list } = this.state;
+    const { viewInUser, backToMainPage, name } = this.props;
     return (
       <div>
         <Container fixed className="commonLayout">
-          {!viewInUser && <DefaultHead/>}
+          {!viewInUser && <DefaultHead />}
           {(viewInUser && backToMainPage) && (
             <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
-              <Button onClick={backToMainPage} style={{minWidth:"auto",padding:"6px 0px"}}><ArrowBackIcon/></Button>
+              <Button onClick={backToMainPage} style={{ minWidth: "auto", padding: "6px 0px" }}><ArrowBackIcon /></Button>
               &nbsp;{name}さんのランキング参加履歴
             </Typography>
           )}
-          {isLoading && <Loader text="ランキング一覧を取得中"/>}
+          {isLoading && <Loader text="ランキング一覧を取得中" />}
           {!isLoading && (
             <div>
               {list.error && (
                 <p>
-                  エラーが発生しました。再読込してください。<br/>
-                  ErrorMessage:{list.errorMessage || "Undefined error"}<br/>
+                  エラーが発生しました。再読込してください。<br />
+                  ErrorMessage:{list.errorMessage || "Undefined error"}<br />
                   Current Storage:{versionString(_currentStore())}
                 </p>
               )}
@@ -80,17 +80,17 @@ class WeeklyList extends React.Component<{intl:any,viewInUser?:boolean,backToMai
               )}
               {!list.error && (
                 <div>
-                  {list.info.map((item:any)=>{
-                    const isBetween = _isBetween(new Date().toString(),timeFormatter(4,item.since._seconds * 1000),timeFormatter(4,item.until._seconds * 1000));
+                  {list.info.map((item: any) => {
+                    const isBetween = _isBetween(new Date().toString(), timeFormatter(4, item.since._seconds * 1000), timeFormatter(4, item.until._seconds * 1000));
                     return (
-                      <List key={item.cid} subheader={<ListSubheader>{isBetween ? "(開催中)" : "(期間外)"} {timeFormatter(4,item.since._seconds * 1000)}~{timeFormatter(4,item.until._seconds * 1000)}</ListSubheader>}>
-                        <ListItem button onClick={()=>this.props.history.push("/ranking/id/" + item.cid)}>
+                      <List key={item.cid} subheader={<ListSubheader>{isBetween ? "(開催中)" : "(期間外)"} {timeFormatter(4, item.since._seconds * 1000)}~{timeFormatter(4, item.until._seconds * 1000)}</ListSubheader>}>
+                        <ListItem button onClick={() => this.props.history.push("/ranking/id/" + item.cid)}>
                           <ListItemText primary={`${item.title}(${_prefixFullNum(item.difficulty)})`} secondary={
                             <span>
-                                {(!item.rank || item.rank === -1) ? "未参加" : "参加済(" + item.rank + "位) "} 参加人数:{item.sum}人&nbsp;
+                              {(!item.rank || item.rank === -1) ? "未参加" : "参加済(" + item.rank + "位) "} 参加人数:{item.sum}人&nbsp;
                                 {item.detail && (
-                                  <span>EXSCORE:{item.detail.exScore}</span>
-                                )}
+                                <span>EXSCORE:{item.detail.exScore}</span>
+                              )}
                             </span>
                           } />
                         </ListItem>
@@ -107,12 +107,12 @@ class WeeklyList extends React.Component<{intl:any,viewInUser?:boolean,backToMai
   }
 }
 
-class DefaultHead extends React.Component<{},{}>{
-  render(){
+class DefaultHead extends React.Component<{}, {}>{
+  render() {
     const themeColor = _currentTheme();
     return (
-      <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover"}}>
-        <div style={{background:themeColor === "light" ? "rgba(255,255,255,.1)" : "rgba(0,0,0,.4)",display:"flex",padding:"5vh 0",alignItems:"center",justifyContent:"center",flexDirection:"column",textAlign:"center"}}>
+      <div style={{ background: `url("/images/background/${themeColor}.svg")`, backgroundSize: "cover" }}>
+        <div style={{ background: themeColor === "light" ? "rgba(255,255,255,.1)" : "rgba(0,0,0,.4)", display: "flex", padding: "5vh 0", alignItems: "center", justifyContent: "center", flexDirection: "column", textAlign: "center" }}>
           <Typography component="h4" variant="h4" color="textPrimary" gutterBottom>
             過去のランキング一覧
           </Typography>

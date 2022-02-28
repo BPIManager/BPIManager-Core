@@ -24,149 +24,149 @@ import fbActions from '@/components/firebase/actions';
 import ExportButton from '@/components/settings/exportButton';
 
 interface S {
-  isLoading:boolean,
-  disableUpdateBtn:boolean,
-  disableDeleteBtn:boolean,
-  currentVersion:string,
-  message:string,
-  message2:string,
-  currentResetStore:string,
-  isDialogOpen:boolean,
-  isURLDialogOpen:boolean,
-  traditionalMode:number,
-  initialT:number,
-  recalculating:boolean,
-  quota:number,
-  usage:number,
+  isLoading: boolean,
+  disableUpdateBtn: boolean,
+  disableDeleteBtn: boolean,
+  currentVersion: string,
+  message: string,
+  message2: string,
+  currentResetStore: string,
+  isDialogOpen: boolean,
+  isURLDialogOpen: boolean,
+  traditionalMode: number,
+  initialT: number,
+  recalculating: boolean,
+  quota: number,
+  usage: number,
 }
 
-interface P{
-  intl:any,
-  global:any
+interface P {
+  intl: any,
+  global: any
 }
 
-class Settings extends React.Component<P,S> {
+class Settings extends React.Component<P, S> {
 
-  constructor(props:P){
+  constructor(props: P) {
     super(props);
-    this.state ={
-      isLoading:false,
-      disableUpdateBtn:false,
-      currentVersion:_currentVersion(),
-      message:"",
-      message2:"",
-      currentResetStore:"29",
-      disableDeleteBtn:false,
-      isDialogOpen:false,
-      isURLDialogOpen:false,
-      traditionalMode:_traditionalMode(),
-      initialT:_traditionalMode(),
-      recalculating:false,
-      quota:0,
-      usage:0,
+    this.state = {
+      isLoading: false,
+      disableUpdateBtn: false,
+      currentVersion: _currentVersion(),
+      message: "",
+      message2: "",
+      currentResetStore: "29",
+      disableDeleteBtn: false,
+      isDialogOpen: false,
+      isURLDialogOpen: false,
+      traditionalMode: _traditionalMode(),
+      initialT: _traditionalMode(),
+      recalculating: false,
+      quota: 0,
+      usage: 0,
     }
   }
 
-  componentDidMount(){
+  componentDidMount() {
     const self = this;
-    if(navigator.storage && navigator.storage.estimate){
+    if (navigator.storage && navigator.storage.estimate) {
       navigator.storage.estimate().then(function(estimate) {
-        if(estimate.quota && estimate.usage){
+        if (estimate.quota && estimate.usage) {
           self.setState({
-            quota:estimate.quota,
-            usage:estimate.usage,
+            quota: estimate.quota,
+            usage: estimate.usage,
           })
         }
       });
     }
   }
 
-  deleteDef = async()=>{
-    try{
+  deleteDef = async () => {
+    try {
       this.props.global.setMove(true);
-      this.setState({disableDeleteBtn:true,message2:""});
-      const sdb = new scoresDB(), shdb = new scoreHistoryDB(),sodb = new songsDB(),ridb = new rivalListsDB();
+      this.setState({ disableDeleteBtn: true, message2: "" });
+      const sdb = new scoresDB(), shdb = new scoreHistoryDB(), sodb = new songsDB(), ridb = new rivalListsDB();
       const target = this.state.currentResetStore;
-      if(target === "Songs Database"){
+      if (target === "Songs Database") {
         await sodb.deleteAll();
-      }else if(target === "Rivals"){
-        new fbActions().auth().onAuthStateChanged(async(user: any)=> {
-          if(user){
-            new fbActions().setDocName(user.uid).syncUploadRival([],false);
+      } else if (target === "Rivals") {
+        new fbActions().auth().onAuthStateChanged(async (user: any) => {
+          if (user) {
+            new fbActions().setDocName(user.uid).syncUploadRival([], false);
           }
           await ridb.deleteAll();
         });
-      }else{
+      } else {
         await sdb.resetItems(target);
         await shdb.reset(target);
       }
-      this.setState({disableDeleteBtn:false,message2:"正常に削除しました"});
-    }catch(e:any){
+      this.setState({ disableDeleteBtn: false, message2: "正常に削除しました" });
+    } catch (e: any) {
       console.log(e);
-      this.setState({disableDeleteBtn:false,message2:"更新に失敗しました"});
+      this.setState({ disableDeleteBtn: false, message2: "更新に失敗しました" });
     }
     this.props.global.setMove(false);
   }
 
-  toggleDialog = ()=> this.setState({isDialogOpen:!this.state.isDialogOpen})
+  toggleDialog = () => this.setState({ isDialogOpen: !this.state.isDialogOpen })
 
-  recalc = async ()=>{
-    try{
+  recalc = async () => {
+    try {
       const scDB = new scoresDB(), schDB = new scoreHistoryDB();
       _setTraditionalMode(this.state.traditionalMode);
-      this.setState({recalculating:true});
-      await scDB.recalculateBPI([],true);
-      await schDB.recalculateBPI([],true);
-      this.setState({recalculating:false,initialT:this.state.traditionalMode});
-    }catch(e:any){
+      this.setState({ recalculating: true });
+      await scDB.recalculateBPI([], true);
+      await schDB.recalculateBPI([], true);
+      this.setState({ recalculating: false, initialT: this.state.traditionalMode });
+    } catch (e: any) {
       console.log(e);
-      this.setState({recalculating:false});
+      this.setState({ recalculating: false });
     }
   }
 
-  persistency = ()=>{
-    if(navigator.storage && navigator.storage.persist){
-      navigator.storage.persisted().then(persistent=>{
-        if(!persistent){
-          navigator.storage.persist().then(granted=>{
-            if(granted){
+  persistency = () => {
+    if (navigator.storage && navigator.storage.persist) {
+      navigator.storage.persisted().then(persistent => {
+        if (!persistent) {
+          navigator.storage.persist().then(granted => {
+            if (granted) {
               alert("ストレージ永続化が許可されました");
-            }else{
+            } else {
               alert("ストレージ永続化は許可されません。");
             }
           })
-        }else{
+        } else {
           alert("すでに永続化が許可されています");
         }
       })
-    }else{
+    } else {
       alert("お使いの端末では本機能をご利用いただけません。");
     }
   }
 
-  render(){
-    const {isLoading,isDialogOpen,message2,currentResetStore,disableDeleteBtn,traditionalMode,recalculating,initialT} = this.state;
-    if(isLoading){
-      return (<Loader/>);
+  render() {
+    const { isLoading, isDialogOpen, message2, currentResetStore, disableDeleteBtn, traditionalMode, recalculating, initialT } = this.state;
+    if (isLoading) {
+      return (<Loader />);
     }
     return (
-      <Container fixed  style={{padding:0}}>
-        <Paper style={{padding:"15px"}}>
+      <Container fixed style={{ padding: 0 }}>
+        <Paper style={{ padding: "15px" }}>
           <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
-            <FormattedMessage id="Settings.UseTraditional"/>
+            <FormattedMessage id="Settings.UseTraditional" />
           </Typography>
           <Switch
             checked={traditionalMode === 1 ? true : false}
-            onChange={(e:React.ChangeEvent<HTMLInputElement>,)=>{
-              if(typeof e.target.checked !== "boolean"){
+            onChange={(e: React.ChangeEvent<HTMLInputElement>, ) => {
+              if (typeof e.target.checked !== "boolean") {
                 return;
               }
-              this.setState({traditionalMode:e.target.checked === true ? 1 : 0});
+              this.setState({ traditionalMode: e.target.checked === true ? 1 : 0 });
             }}
           />
           <Typography variant="caption" display="block">
-            <FormattedMessage id="Settings.UseTraditional1"/><br/>
-            <FormattedMessage id="Settings.UseTraditional2"/>
+            <FormattedMessage id="Settings.UseTraditional1" /><br />
+            <FormattedMessage id="Settings.UseTraditional2" />
           </Typography>
           <Button
             variant="contained"
@@ -174,9 +174,9 @@ class Settings extends React.Component<P,S> {
             onClick={this.recalc}
             disabled={traditionalMode === initialT}
             startIcon={<CachedIcon />}>
-            <FormattedMessage id="Common.Apply"/>
+            <FormattedMessage id="Common.Apply" />
           </Button>
-          <Divider style={{margin:"10px 0"}}/>
+          <Divider style={{ margin: "10px 0" }} />
           {/*
           <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
             ストレージ占有率
@@ -204,10 +204,10 @@ class Settings extends React.Component<P,S> {
           <Divider style={{margin:"10px 0"}}/>
           */}
           <FormControl>
-            <InputLabel><FormattedMessage id="Settings.dataClear"/></InputLabel>
-            <Select value={currentResetStore} onChange={(e:SelectChangeEvent<string>,)=>{
-              if(typeof e.target.value !== "string") return;
-              this.setState({currentResetStore:e.target.value});
+            <InputLabel><FormattedMessage id="Settings.dataClear" /></InputLabel>
+            <Select value={currentResetStore} onChange={(e: SelectChangeEvent<string>, ) => {
+              if (typeof e.target.value !== "string") return;
+              this.setState({ currentResetStore: e.target.value });
             }}>
               <MenuItem value="26">26 Rootage</MenuItem>
               <MenuItem value="27">27 HEROIC VERSE</MenuItem>
@@ -219,42 +219,42 @@ class Settings extends React.Component<P,S> {
             </Select>
           </FormControl>
           <Typography variant="caption" display="block">
-            <FormattedMessage id="Settings.resetWarning"/>
+            <FormattedMessage id="Settings.resetWarning" />
           </Typography>
-          <div style={{position:"relative"}}>
+          <div style={{ position: "relative" }}>
             <Button
               variant="contained"
               color="secondary"
-              style={{background:"#dc004e"}}
+              style={{ background: "#dc004e" }}
               onClick={this.toggleDialog}
               disabled={disableDeleteBtn}
               startIcon={<DeleteForeverIcon />}>
-              <FormattedMessage id="Settings.DeleteExec"/>
+              <FormattedMessage id="Settings.DeleteExec" />
             </Button>
             <Typography variant="caption" display="block">
               {message2}
             </Typography>
-            <Divider style={{margin:"10px 0"}}/>
+            <Divider style={{ margin: "10px 0" }} />
             <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
-              <FormattedMessage id="Settings.Export"/>
+              <FormattedMessage id="Settings.Export" />
             </Typography>
-            <ExportButton/>
+            <ExportButton />
             <Typography variant="caption" display="block">
-              <FormattedMessage id="Common.CurrentVer"/>:({_currentStore()}/{_isSingle() ? "SP" : "DP"})<br/>
-              <FormattedMessage id="Settings.ExportCaption"/>
+              <FormattedMessage id="Common.CurrentVer" />:({_currentStore()}/{_isSingle() ? "SP" : "DP"})<br />
+              <FormattedMessage id="Settings.ExportCaption" />
             </Typography>
-            <AlertDialog isDialogOpen={isDialogOpen} exec={this.deleteDef} close={this.toggleDialog} currentResetStore={currentResetStore}/>
-            {disableDeleteBtn && <Loader/>}
+            <AlertDialog isDialogOpen={isDialogOpen} exec={this.deleteDef} close={this.toggleDialog} currentResetStore={currentResetStore} />
+            {disableDeleteBtn && <Loader />}
           </div>
         </Paper>
         {recalculating &&
-          <Backdrop open style={{flexDirection:"column"}}>
+          <Backdrop open style={{ flexDirection: "column" }}>
             <div>
-              <Loader/>
+              <Loader />
             </div>
             <div>
-              <p style={{textAlign:"center"}}>再計算中です<br/>画面を閉じないでください<br/>
-              <span id="_progressText"/></p>
+              <p style={{ textAlign: "center" }}>再計算中です<br />画面を閉じないでください<br />
+                <span id="_progressText" /></p>
             </div>
           </Backdrop>
         }
@@ -265,7 +265,7 @@ class Settings extends React.Component<P,S> {
 
 export default injectIntl(Settings);
 
-class AlertDialog extends React.Component<{isDialogOpen:boolean,exec:()=>void,close:()=>void,currentResetStore:string},{}> {
+class AlertDialog extends React.Component<{ isDialogOpen: boolean, exec: () => void, close: () => void, currentResetStore: string }, {}> {
 
   handleOk = () => {
     this.props.exec();
@@ -276,8 +276,8 @@ class AlertDialog extends React.Component<{isDialogOpen:boolean,exec:()=>void,cl
     this.props.close();
   };
 
-  render(){
-    const {isDialogOpen,currentResetStore} = this.props;
+  render() {
+    const { isDialogOpen, currentResetStore } = this.props;
     return (
       <div>
         <Dialog
@@ -286,15 +286,15 @@ class AlertDialog extends React.Component<{isDialogOpen:boolean,exec:()=>void,cl
           <DialogTitle>Confirm</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              <FormattedMessage id="Settings.DeleteDialogBody"/><br/>
-              <FormattedMessage id="Settings.DeleteDialogBody2"/><br/>
+              <FormattedMessage id="Settings.DeleteDialogBody" /><br />
+              <FormattedMessage id="Settings.DeleteDialogBody2" /><br />
               {
                 currentResetStore === "26" ? "26 Rootage" :
-                currentResetStore === "27" ? "27 HEROIC VERSE" :
-                currentResetStore === "28" ? "28 BISTROVER" :
-                currentResetStore === "29" ? "29 CastHour" :
-                currentResetStore === "INF" ? "INFINITAS" :
-                currentResetStore === "Songs Database" ? "Songs Database" : "Rivals"}
+                  currentResetStore === "27" ? "27 HEROIC VERSE" :
+                    currentResetStore === "28" ? "28 BISTROVER" :
+                      currentResetStore === "29" ? "29 CastHour" :
+                        currentResetStore === "INF" ? "INFINITAS" :
+                          currentResetStore === "Songs Database" ? "Songs Database" : "Rivals"}
             </DialogContentText>
           </DialogContent>
           <DialogActions>

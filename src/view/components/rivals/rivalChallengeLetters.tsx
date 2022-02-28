@@ -2,7 +2,7 @@ import * as React from 'react';
 import { loader } from '@/components/rivals/letters';
 import FilterByLevelAndDiff from '../common/selector';
 import LettersTable from './viewComponents/letters/table';
-import SongsFilter, {  B } from '../songs/common/filter';
+import SongsFilter, { B } from '../songs/common/filter';
 import { verArr, bpmFilter, clearArr } from '../songs/common';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import BackspaceIcon from "@mui/icons-material/Backspace";
@@ -39,146 +39,148 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import List from '@mui/material/List';
 import { SelectChangeEvent } from '@mui/material';
 
-interface P{
+interface P {
 
 }
 
 interface stateInt {
-  isLoading:boolean,
-  filterByName:string,
-  allSongsData:any,
-  scoreData:any,
-  full:any,
-  options:{[key:string]:string[]},
-  page:number,
-  filterOpen:boolean,
-  bpm:B,
-  orderTitle:number,
-  orderMode:number,
-  versions:number[],
-  userData:any,
-  clearType:number[]
+  isLoading: boolean,
+  filterByName: string,
+  allSongsData: any,
+  scoreData: any,
+  full: any,
+  options: { [key: string]: string[] },
+  page: number,
+  filterOpen: boolean,
+  bpm: B,
+  orderTitle: number,
+  orderMode: number,
+  versions: number[],
+  userData: any,
+  clearType: number[]
 }
 
-class RivalChallengeLetters extends React.Component<P&RouteComponentProps,stateInt> {
+class RivalChallengeLetters extends React.Component<P & RouteComponentProps, stateInt> {
 
-  constructor(props:P&RouteComponentProps){
+  constructor(props: P & RouteComponentProps) {
     super(props);
     this.state = {
-      isLoading:true,
-      filterByName:"",
-      scoreData:[],
-      allSongsData:[],
-      full:[],
-      orderTitle:5,
-      orderMode:1,
-      options:{
-        level:["11","12"],
-        difficulty:["0","1","2"],
+      isLoading: true,
+      filterByName: "",
+      scoreData: [],
+      allSongsData: [],
+      full: [],
+      orderTitle: 5,
+      orderMode: 1,
+      options: {
+        level: ["11", "12"],
+        difficulty: ["0", "1", "2"],
       },
-      bpm:{
-        noSoflan:true,
-        min:"",
-        max:"",
-        soflan:true,
+      bpm: {
+        noSoflan: true,
+        min: "",
+        max: "",
+        soflan: true,
       },
-      page:0,
-      filterOpen:false,
-      versions:verArr(),
-      userData:null,
-      clearType:clearArr(),
+      page: 0,
+      filterOpen: false,
+      versions: verArr(),
+      userData: null,
+      clearType: clearArr(),
     }
   }
 
-  async componentDidMount(){
-    let allSongs:{[key:string]:songData} = {};
+  async componentDidMount() {
+    let allSongs: { [key: string]: songData } = {};
     const l = await loader();
     const allSongsRawData = await new songsDB().getAll(_isSingle());
-    for(let i =0; i < allSongsRawData.length; ++i){
-      const prefix:string = difficultyDiscriminator(allSongsRawData[i]["difficulty"]);
+    for (let i = 0; i < allSongsRawData.length; ++i) {
+      const prefix: string = difficultyDiscriminator(allSongsRawData[i]["difficulty"]);
       allSongs[allSongsRawData[i]["title"] + prefix] = allSongsRawData[i];
     }
     this.setState({
-      allSongsData:l,
-      scoreData:l,
-      full:allSongs,
-      isLoading:false,
+      allSongsData: l,
+      scoreData: l,
+      full: allSongs,
+      isLoading: false,
     });
   }
 
-  handleChange = (name:string,target:string) => (e:React.ChangeEvent<HTMLInputElement>) =>{
-    this.handleExec(name,e.target.checked,target);
+  handleChange = (name: string, target: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.handleExec(name, e.target.checked, target);
   }
 
-  handleExec = (name:string,checked:boolean,target:string)=>{
+  handleExec = (name: string, checked: boolean, target: string) => {
     let newState = this.state;
-    if(checked){
+    if (checked) {
       newState["options"][target].push(name);
-    }else{
-      newState["options"][target] = newState["options"][target].filter((t:string)=> t !== name);
+    } else {
+      newState["options"][target] = newState["options"][target].filter((t: string) => t !== name);
     }
-    return this.setState({scoreData:this.songFilter(newState),options:newState["options"],page:0});
+    return this.setState({ scoreData: this.songFilter(newState), options: newState["options"], page: 0 });
   }
 
-  songFilter = (newState:stateInt = this.state) =>{
-    const diffs:string[] = ["hyper","another","leggendaria"];
+  songFilter = (newState: stateInt = this.state) => {
+    const diffs: string[] = ["hyper", "another", "leggendaria"];
     const b = newState.bpm;
     const v = newState.versions;
     const f = this.state.full;
 
-    const evaluateVersion = (song:string):boolean=>{
+    const evaluateVersion = (song: string): boolean => {
       const songVer = song.split("/")[0];
-      if(songVer === "s"){
+      if (songVer === "s") {
         return v.indexOf(1.5) > -1;
       }
       return v.indexOf(Number(songVer)) > -1;
     }
 
-    if(Object.keys(this.state.allSongsData).length === 0) return [];
-    return this.state.allSongsData.filter((data:any)=>{
+    if (Object.keys(this.state.allSongsData).length === 0) return [];
+    return this.state.allSongsData.filter((data: any) => {
       const _f = f[data.title + data.difficulty];
-      if(!_f){return false;}
+      if (!_f) { return false; }
       return (
-        bpmFilter(_f.bpm,b) &&
+        bpmFilter(_f.bpm, b) &&
         evaluateVersion(_f.textage) &&
-        newState["options"]["level"].some((item:string)=>{
-          return item === data.difficultyLevel }) &&
-        newState["options"]["difficulty"].some((item:string)=>{
-          return diffs[Number(item)] === data.difficulty} ) &&
+        newState["options"]["level"].some((item: string) => {
+          return item === data.difficultyLevel
+        }) &&
+        newState["options"]["difficulty"].some((item: string) => {
+          return diffs[Number(item)] === data.difficulty
+        }) &&
         data.title.toLowerCase().indexOf(newState["filterByName"].toLowerCase()) > -1
       )
     })
   }
 
-  handleToggleFilterScreen = ()=> this.setState({filterOpen:!this.state.filterOpen});
+  handleToggleFilterScreen = () => this.setState({ filterOpen: !this.state.filterOpen });
 
-  handleChangePage = (newPage:number):void => this.setState({page:newPage});
+  handleChangePage = (newPage: number): void => this.setState({ page: newPage });
 
-  applyFilter = (state:{bpm:B,versions:number[]}):void=>{
+  applyFilter = (state: { bpm: B, versions: number[] }): void => {
     let newState = this.clone();
     newState.bpm = state.bpm;
     newState.versions = state.versions;
-    return this.setState({scoreData:this.songFilter(newState),bpm:state.bpm,versions:state.versions,page:0});
+    return this.setState({ scoreData: this.songFilter(newState), bpm: state.bpm, versions: state.versions, page: 0 });
   }
 
-  clone = ()=>{
+  clone = () => {
     return new commonFunc().set(this.state).clone();
   }
 
-  handleInputChange = (e:React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>|null)=>{
+  handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | null) => {
     let newState = this.clone();
     newState.filterByName = e ? e.target.value : "";
-    return this.setState({scoreData:this.songFilter(newState),filterByName:newState.filterByName,page:0});
+    return this.setState({ scoreData: this.songFilter(newState), filterByName: newState.filterByName, page: 0 });
   }
 
-  sortedData = ():any[]=>{
-    const {orderMode,orderTitle,scoreData} = this.state;
-    let sortedData:any[] = scoreData.sort((a:any,b:any)=>{
-      switch(orderTitle){
+  sortedData = (): any[] => {
+    const { orderMode, orderTitle, scoreData } = this.state;
+    let sortedData: any[] = scoreData.sort((a: any, b: any) => {
+      switch (orderTitle) {
         case 4:
-        return Number(a.difficultyLevel) - Number(b.difficultyLevel);
+          return Number(a.difficultyLevel) - Number(b.difficultyLevel);
         case 3:
-        return a.title.localeCompare(b.title, "ja", {numeric:true});
+          return a.title.localeCompare(b.title, "ja", { numeric: true });
         case 1:
           return a.win - b.win;
         case 2:
@@ -187,31 +189,31 @@ class RivalChallengeLetters extends React.Component<P&RouteComponentProps,stateI
         default:
           return a.win - b.win;
         case 5:
-          return timeCompare(a.updatedAt,b.updatedAt);
+          return timeCompare(a.updatedAt, b.updatedAt);
       }
     });
-    if(orderTitle === 0){
-      sortedData = scoreData.sort((a:any,b:any)=>{
+    if (orderTitle === 0) {
+      sortedData = scoreData.sort((a: any, b: any) => {
         return Number(a.rate) - Number(b.rate);
       })
     }
     return orderMode === 0 ? sortedData : sortedData.reverse();
   }
 
-  handleOrderTitleChange = (event:SelectChangeEvent<number>):void =>{
+  handleOrderTitleChange = (event: SelectChangeEvent<number>): void => {
     const val = event.target.value;
     if (typeof val !== "number") { return; }
-    return this.setState({orderTitle:val,page:0});
+    return this.setState({ orderTitle: val, page: 0 });
   }
 
-  handleOrderModeChange = (event:SelectChangeEvent<number>):void =>{
+  handleOrderModeChange = (event: SelectChangeEvent<number>): void => {
     const val = event.target.value;
     if (typeof val !== "number") { return; }
-    return this.setState({orderMode:val,page:0});
+    return this.setState({ orderMode: val, page: 0 });
   }
 
-  render(){
-    const {isLoading,scoreData,options,page,full,filterOpen,versions,filterByName,orderMode,orderTitle,clearType} = this.state;
+  render() {
+    const { isLoading, scoreData, options, page, full, filterOpen, versions, filterByName, orderMode, orderTitle, clearType } = this.state;
     const orders = [
       "勝率",
       "勝利数",
@@ -220,65 +222,65 @@ class RivalChallengeLetters extends React.Component<P&RouteComponentProps,stateI
       "レベル",
       "最終更新日時",
     ];
-    if(isLoading){
-      return (<Loader/>)
+    if (isLoading) {
+      return (<Loader />)
     }
-    if(!isLoading && (!scoreData || scoreData.length === 0)){
+    if (!isLoading && (!scoreData || scoreData.length === 0)) {
       return (
         <Container fixed className="commonLayout">
-          <div style={{display:"flex",alignItems:"center",flexDirection:"column"}}>
-            <PersonAddIcon style={{fontSize:80,marginBottom:"8px"}}/>
+          <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
+            <PersonAddIcon style={{ fontSize: 80, marginBottom: "8px" }} />
             <Typography variant="h4">
               ライバルを追加
             </Typography>
           </div>
-          <Divider style={{margin:"10px 0"}}/>
+          <Divider style={{ margin: "10px 0" }} />
           <p>
-            このページでは、各楽曲ごとにライバルとの勝敗比較を行うことができます。<br/>
-            まずは実力の近いユーザーを探して、ライバルとして追加しましょう！<br/>
+            このページでは、各楽曲ごとにライバルとの勝敗比較を行うことができます。<br />
+            まずは実力の近いユーザーを探して、ライバルとして追加しましょう！<br />
           </p>
           <List>
             {[
-              {name:"おすすめユーザー",func:()=>this.props.history.push("/rivals?tab=1"),desc:"総合BPIが近いユーザーを表示します",icon:<ThumbUpIcon/>},
-              {name:"探す",func:()=>this.props.history.push("/rivals?tab=3"),desc:"様々な条件からユーザーを検索します",icon:<SearchIcon/>}
-            ].map((item,i)=>{
+              { name: "おすすめユーザー", func: () => this.props.history.push("/rivals?tab=1"), desc: "総合BPIが近いユーザーを表示します", icon: <ThumbUpIcon /> },
+              { name: "探す", func: () => this.props.history.push("/rivals?tab=3"), desc: "様々な条件からユーザーを検索します", icon: <SearchIcon /> }
+            ].map((item, i) => {
               return (
-              <ListItem key={i} button onClick={item.func}>
-                <ListItemAvatar>
-                  <Avatar style={{background:avatarBgColor,color:avatarFontColor}}>
-                    {item.icon}
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary={item.name} secondary={item.desc} />
-                <ListItemSecondaryAction onClick={item.func}>
-                  <IconButton edge="end">
-                    <ArrowForwardIosIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
+                <ListItem key={i} button onClick={item.func}>
+                  <ListItemAvatar>
+                    <Avatar style={{ background: avatarBgColor, color: avatarFontColor }}>
+                      {item.icon}
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary={item.name} secondary={item.desc} />
+                  <ListItemSecondaryAction onClick={item.func}>
+                    <IconButton edge="end">
+                      <ArrowForwardIosIcon />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
               )
             })
-          }
+            }
           </List>
         </Container>
       );
     }
     return (
       <Container fixed className="commonLayout">
-        <Grid container style={{margin:"5px 0"}}>
+        <Grid container style={{ margin: "5px 0" }}>
           <Grid item xs={10}>
-            <FormControl component="fieldset" style={{width:"100%"}} variant="standard">
-            <InputLabel><FormattedMessage id="Songs.filterByName"/></InputLabel>
+            <FormControl component="fieldset" style={{ width: "100%" }} variant="standard">
+              <InputLabel><FormattedMessage id="Songs.filterByName" /></InputLabel>
               <Input
-                style={{width:"100%"}}
+                style={{ width: "100%" }}
                 placeholder={"(ex.)255"}
                 value={filterByName}
                 onChange={this.handleInputChange}
                 endAdornment={
                   filterByName &&
                   <InputAdornment position="end">
-                    <IconButton onClick={()=>this.handleInputChange(null)}>
-                      <BackspaceIcon/>
+                    <IconButton onClick={() => this.handleInputChange(null)}>
+                      <BackspaceIcon />
                     </IconButton>
                   </InputAdornment>
                 }
@@ -290,20 +292,20 @@ class RivalChallengeLetters extends React.Component<P&RouteComponentProps,stateI
               className="filterButton"
               fullWidth
               onClick={this.handleToggleFilterScreen} variant="outlined" color="primary"
-              style={{marginRight:"10px",padding:"5px 6px",height:"100%",minWidth:"auto"}}>
-              <FilterListIcon/>
+              style={{ marginRight: "10px", padding: "5px 6px", height: "100%", minWidth: "auto" }}>
+              <FilterListIcon />
             </Button>
           </Grid>
         </Grid>
         <OrderControl
           orderTitles={orders}
-          orderMode={orderMode} orderTitle={orderTitle} handleOrderModeChange={this.handleOrderModeChange} handleOrderTitleChange={this.handleOrderTitleChange}/>
-        <FilterByLevelAndDiff options={options} handleChange={this.handleChange}/>
+          orderMode={orderMode} orderTitle={orderTitle} handleOrderModeChange={this.handleOrderModeChange} handleOrderTitleChange={this.handleOrderTitleChange} />
+        <FilterByLevelAndDiff options={options} handleChange={this.handleChange} />
 
         <LettersTable full={full}
           page={page} handleChangePage={this.handleChangePage}
-          data={this.sortedData()} isLoading={isLoading}/>
-        {filterOpen && <SongsFilter versions={versions} clearType={clearType} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpm={this.state.bpm}/>}
+          data={this.sortedData()} isLoading={isLoading} />
+        {filterOpen && <SongsFilter versions={versions} clearType={clearType} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpm={this.state.bpm} />}
       </Container>
     );
   }

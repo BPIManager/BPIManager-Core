@@ -16,16 +16,16 @@ import { pubkey, messanger } from './components/firebase/message';
 
 declare module '@mui/styles/defaultTheme' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface DefaultTheme extends Theme {}
+  interface DefaultTheme extends Theme { }
 }
 
 
-export default class App extends React.Component<{},{}> {
+export default class App extends React.Component<{}, {}> {
 
-  componentDidMount(){
-    if(firebase.messaging.isSupported()){
+  componentDidMount() {
+    if (firebase.messaging.isSupported()) {
       const m = new messanger();
-      try{
+      try {
         const messaging = firebase.messaging();
         console.log("Public key successfully set.");
         messaging.usePublicVapidKey(pubkey);
@@ -40,35 +40,35 @@ export default class App extends React.Component<{},{}> {
         messaging.onMessage(payload => {
           console.log("[FOREGROUND]Message received. ", payload);
         });
-      }catch(e:any){
+      } catch (e: any) {
         console.log(e);
         alert("Your device is supporting FCM but an error occured while setting up functions.");
       }
-    }else{
+    } else {
       console.log("Firebase Cloud Messaging is not supported on this device.")
     }
   }
 
-  render(){
+  render() {
     document.title = "BPIManager";
     return (
       <Provider>
         <Subscribe to={[GlobalContainer]}>
-          {global =>{
+          {global => {
             const c = global.state.theme;
             return (
               <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={c === "dark" ? Dark : c === "light" ? Light : DarkNavy}>
                   <CssBaseline />
-                  <Initialize global={global}/>
+                  <Initialize global={global} />
                   <div id={c === "dark" ? "__dark" : c === "light" ? "__light" : "__deepsea"}>
-                    <Router global={global}/>
+                    <Router global={global} />
                   </div>
                 </ThemeProvider>
               </StyledEngineProvider>
             );
-            }}
-          </Subscribe>
+          }}
+        </Subscribe>
         <div className="SW-update-dialog"></div>
       </Provider>
     );

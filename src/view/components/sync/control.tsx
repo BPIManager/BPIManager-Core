@@ -7,58 +7,58 @@ import Typography from '@mui/material/Typography';
 import { _currentStore, _isSingle, _autoSync } from '@/components/settings';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { scoresDB, scoreHistoryDB } from '@/components/indexedDB';
-import {Link, CircularProgress, Paper} from '@mui/material/';
-import {Link as RefLink} from "react-router-dom";
+import { Link, CircularProgress, Paper } from '@mui/material/';
+import { Link as RefLink } from "react-router-dom";
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import ShowSnackBar from '../snackBar';
 import { _pText } from '@/components/settings/updateDef';
 
-class SyncControlScreen extends React.Component<{userData:any},{
-  isLoading:boolean,
-  scoreData:any,
-  sentName:string,
-  rivalData:any,
-  myName:string,
-  myProfile:string,
-  nameErrorMessage:string[],
-  showNotes:boolean,
-  arenaRank:string,
-  snack:{
-    open:boolean,
-    message:string|null
+class SyncControlScreen extends React.Component<{ userData: any }, {
+  isLoading: boolean,
+  scoreData: any,
+  sentName: string,
+  rivalData: any,
+  myName: string,
+  myProfile: string,
+  nameErrorMessage: string[],
+  showNotes: boolean,
+  arenaRank: string,
+  snack: {
+    open: boolean,
+    message: string | null
   }
 }> {
 
-  private fbA:fbActions = new fbActions();
-  private fbLoader:fbActions = new fbActions();
+  private fbA: fbActions = new fbActions();
+  private fbLoader: fbActions = new fbActions();
 
-  constructor(props:{userData:any}){
+  constructor(props: { userData: any }) {
     super(props);
     this.fbLoader.setColName(`${_currentStore()}_${_isSingle()}`).setDocName(props.userData.uid);
     this.fbA.v2SetUserCollection().setDocName(props.userData.uid);
     this.state = {
-      isLoading:true,
-      scoreData:null,
-      rivalData:null,
-      myName:"",
-      sentName:"",
-      myProfile:"",
-      arenaRank:"-",
-      showNotes:false,
-      nameErrorMessage:[],
-      snack:{
-        open:false,
-        message:""
+      isLoading: true,
+      scoreData: null,
+      rivalData: null,
+      myName: "",
+      sentName: "",
+      myProfile: "",
+      arenaRank: "-",
+      showNotes: false,
+      nameErrorMessage: [],
+      snack: {
+        open: false,
+        message: ""
       }
     }
   }
 
-  async componentDidMount(){
+  async componentDidMount() {
     const t = await this.fbA.load();
     this.fbLoader.updateProfileIcon();
     this.setState({
-      isLoading:false,
+      isLoading: false,
       scoreData: await this.fbLoader.load(),
       rivalData: t,
       sentName: t && t.displayName ? t.displayName : "",
@@ -69,75 +69,75 @@ class SyncControlScreen extends React.Component<{userData:any},{
     })
   }
 
-  upload = async()=>{
-    this.setState({isLoading:true});
+  upload = async () => {
+    this.setState({ isLoading: true });
     const res = await this.fbLoader.save(this.state.myName);
-    if(res.error){
+    if (res.error) {
       this.toggleErrorSnack(res.reason);
-      return this.setState({isLoading:false});
+      return this.setState({ isLoading: false });
     }
-    this.setState({isLoading:false,scoreData:await this.fbLoader.load()});
+    this.setState({ isLoading: false, scoreData: await this.fbLoader.load() });
   }
 
-  download = async()=>{
-    this.setState({isLoading:true});
+  download = async () => {
+    this.setState({ isLoading: true });
     _pText("通信中");
     const res = await this.fbLoader.load();
-    if(res === null || res === undefined){
+    if (res === null || res === undefined) {
       this.toggleErrorSnack("エラーが発生しました");
-      return this.setState({isLoading:false});
+      return this.setState({ isLoading: false });
     }
     await new scoresDB().setDataWithTransaction(res.scores);
     await new scoreHistoryDB().setDataWithTransaction(res.scoresHistory);
-    await new scoresDB().recalculateBPI([],true);
-    await new scoreHistoryDB().recalculateBPI([],true);
-    this.setState({isLoading:false});
+    await new scoresDB().recalculateBPI([], true);
+    await new scoreHistoryDB().recalculateBPI([], true);
+    this.setState({ isLoading: false });
   }
 
-  isOlderVersion = ()=>{
+  isOlderVersion = () => {
     const current = _currentStore();
-    return ["26","27","28"].indexOf(current) > -1;
+    return ["26", "27", "28"].indexOf(current) > -1;
   }
 
-  handleShowNotes = (e:React.ChangeEvent<HTMLInputElement>)=>{
-    this.setState({showNotes:e.target.checked});
+  handleShowNotes = (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({ showNotes: e.target.checked });
   }
 
-  toggleErrorSnack = (mes?:string|null)=>this.setState({snack:{open:!this.state.snack.open,message:mes || null}});
+  toggleErrorSnack = (mes?: string | null) => this.setState({ snack: { open: !this.state.snack.open, message: mes || null } });
 
-  render(){
-    const {isLoading,scoreData,snack} = this.state;
+  render() {
+    const { isLoading, scoreData, snack } = this.state;
     return (
-      <Paper style={{padding:"15px"}}>
+      <Paper style={{ padding: "15px" }}>
         <Typography component="h5" variant="h5">
           転送
         </Typography>
-        <FormattedMessage id="Sync.Control.message1"/><br/>
-        <FormattedMessage id="Sync.Autosync0"/>
-        <RefLink to={"/settings"} style={{textDecoration:"none"}}>
+        <FormattedMessage id="Sync.Control.message1" /><br />
+        <FormattedMessage id="Sync.Autosync0" />
+        <RefLink to={"/settings"} style={{ textDecoration: "none" }}>
           <Link color="secondary" component="span">
-            <FormattedMessage id="GlobalNav.Settings"/>
+            <FormattedMessage id="GlobalNav.Settings" />
           </Link>
         </RefLink>
-        <FormattedMessage id="Sync.Autosync"/><br/>
-        <Divider style={{margin:"10px 0"}}/>
-        <div style={{margin:"15px 0"}}>
+        <FormattedMessage id="Sync.Autosync" /><br />
+        <Divider style={{ margin: "10px 0" }} />
+        <div style={{ margin: "15px 0" }}>
           {isLoading && (
             <Alert severity="warning" icon={<CircularProgress color="secondary" />}>
-              <FormattedMessage id="Sync.Control.processing"/><br/>
-              <span id="_progressText"/>
+              <FormattedMessage id="Sync.Control.processing" /><br />
+              <span id="_progressText" />
             </Alert>
           )}
           {(!isLoading && scoreData === null) && (
             <Alert severity="error">
-              <FormattedMessage id="Sync.Control.nodata"/>
+              <FormattedMessage id="Sync.Control.nodata" />
             </Alert>
           )}
           {(!isLoading && scoreData !== null) && (
             <Alert severity="info" icon={false}>
-              <FormattedMessage id="Sync.Control.lastupdate"/><br/>
-              <span id="_progressText" style={{display:"none"}}/>
-              Date: {scoreData.timeStamp}<br/>
+              <FormattedMessage id="Sync.Control.lastupdate" /><br />
+              <span id="_progressText" style={{ display: "none" }} />
+              Date: {scoreData.timeStamp}<br />
               From: {scoreData.type ? scoreData.type : "undefined"}
             </Alert>
           )}
@@ -150,23 +150,23 @@ class SyncControlScreen extends React.Component<{userData:any},{
           <Button
             onClick={this.download}
             disabled={isLoading}
-            >Download</Button>
+          >Download</Button>
         </ButtonGroup>
         {this.isOlderVersion() && (
-          <Alert severity="warning" style={{margin:"15px 0"}}>
+          <Alert severity="warning" style={{ margin: "15px 0" }}>
             <AlertTitle>アップロードできません</AlertTitle>
-            <p>現在選択中のIIDXバージョン(IIDX{_currentStore()})は過去のバージョンです。<br/>
-            このバージョンのスコアデータはダウンロード専用になり、新たにアップロードすることはできません。</p>
+            <p>現在選択中のIIDXバージョン(IIDX{_currentStore()})は過去のバージョンです。<br />
+              このバージョンのスコアデータはダウンロード専用になり、新たにアップロードすることはできません。</p>
           </Alert>
         )}
-        <Divider style={{margin:"10px 0"}}/>
-        <Typography component="p" variant="caption" style={{textAlign:"right"}}>
-          current configures:[version:{_currentStore()}] [mode:{_isSingle() === 1 ? "Single Play" : "Double Play"}] [autoSync:{_autoSync() ? "enabled" : "disabled"}]<br/>
-          userId: {this.props.userData.uid}<br/>
+        <Divider style={{ margin: "10px 0" }} />
+        <Typography component="p" variant="caption" style={{ textAlign: "right" }}>
+          current configures:[version:{_currentStore()}] [mode:{_isSingle() === 1 ? "Single Play" : "Double Play"}] [autoSync:{_autoSync() ? "enabled" : "disabled"}]<br />
+          userId: {this.props.userData.uid}<br />
           <Link color="secondary" href="https://docs2.poyashi.me/tos/">免責事項・利用について</Link>
         </Typography>
         <ShowSnackBar message={snack.message} variant="warning"
-            handleClose={this.toggleErrorSnack} open={snack.open} autoHideDuration={3000}/>
+          handleClose={this.toggleErrorSnack} open={snack.open} autoHideDuration={3000} />
       </Paper>
     );
   }

@@ -15,78 +15,78 @@ import { updateRivalScore } from "@/components/rivals";
 import Loader from '@/view/components/common/loader';
 
 interface S {
-  isLoading1:boolean,
-  isLoading2:boolean,
-  updateErrorMessage:string,
-  deleteErrorMessage:string,
+  isLoading1: boolean,
+  isLoading2: boolean,
+  updateErrorMessage: string,
+  deleteErrorMessage: string,
 }
 
 interface P {
-  rivalMeta:DBRivalStoreData,
-  toggleSnack:()=>void,
-  backToMainPage:()=>void,
+  rivalMeta: DBRivalStoreData,
+  toggleSnack: () => void,
+  backToMainPage: () => void,
 }
 
-class RivalSettings extends React.Component<P,S> {
+class RivalSettings extends React.Component<P, S> {
 
-  private fbA:fbActions = new fbActions();
-  private fbStores:fbActions = new fbActions();
+  private fbA: fbActions = new fbActions();
+  private fbStores: fbActions = new fbActions();
   private rivalListsDB = new rivalListsDB();
 
-  constructor(props:P){
+  constructor(props: P) {
     super(props);
     this.fbA.v2SetUserCollection();
     this.fbStores.setColName(`${_currentStore()}_${_isSingle()}`);
     this.state = {
-      isLoading1:false,
-      isLoading2:false,
-      updateErrorMessage:"",
-      deleteErrorMessage:""
+      isLoading1: false,
+      isLoading2: false,
+      updateErrorMessage: "",
+      deleteErrorMessage: ""
     }
   }
 
-  update = async()=>{
-    try{
-      this.setState({isLoading1:true});
-      const {rivalMeta} = this.props;
+  update = async () => {
+    try {
+      this.setState({ isLoading1: true });
+      const { rivalMeta } = this.props;
       const t = await updateRivalScore(rivalMeta);
-      if(t !== ""){
+      if (t !== "") {
         throw new Error(t);
       }
-    }catch(e:any){
-      return this.setState({updateErrorMessage:e.message,isLoading1:false,});
+    } catch (e: any) {
+      return this.setState({ updateErrorMessage: e.message, isLoading1: false, });
     }
-    this.setState({updateErrorMessage:"更新が完了しました",isLoading1:false,});
+    this.setState({ updateErrorMessage: "更新が完了しました", isLoading1: false, });
   }
 
-  delete = async()=>{
-    try{
-      new fbActions().auth().onAuthStateChanged(async(user: any)=> {
-        if(user){
+  delete = async () => {
+    try {
+      new fbActions().auth().onAuthStateChanged(async (user: any) => {
+        if (user) {
           new fbActions().setDocName(user.uid).syncDeleteOne(this.props.rivalMeta.uid);
         }
       });
       const res = await this.rivalListsDB.removeUser(this.props.rivalMeta);
-      if(!res){
+      if (!res) {
         throw new Error("削除に失敗しました");
       }
       this.props.toggleSnack();
       this.props.backToMainPage();
-    }catch(e:any){
-      return this.setState({deleteErrorMessage:e.message,isLoading2:false,});
+    } catch (e: any) {
+      return this.setState({ deleteErrorMessage: e.message, isLoading2: false, });
     }
   }
 
-  render(){
-    const {isLoading1,isLoading2,updateErrorMessage} = this.state;
-    const {rivalMeta} = this.props;
+  render() {
+    const { isLoading1, isLoading2, updateErrorMessage } = this.state;
+    const { rivalMeta } = this.props;
     return (
-      <Paper style={{padding:"15px"}}>
+      <Paper style={{ padding: "15px" }}>
         <FormControl>
           <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
             ライバルデータの更新
           </Typography>
-          <div style={{position:"relative"}}>
+          <div style={{ position: "relative" }}>
             <Button
               variant="contained"
               color="secondary"
@@ -95,19 +95,19 @@ class RivalSettings extends React.Component<P,S> {
               startIcon={<UpdateIcon />}>
               更新
             </Button>
-            {isLoading1 && <Loader/>}
+            {isLoading1 && <Loader />}
           </div>
           <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
-            {updateErrorMessage && <span>{updateErrorMessage}<br/></span>}
+            {updateErrorMessage && <span>{updateErrorMessage}<br /></span>}
             最終更新: {rivalMeta.updatedAt}
           </Typography>
         </FormControl>
-        <Divider style={{margin:"10px 0"}}/>
+        <Divider style={{ margin: "10px 0" }} />
         <FormControl>
           <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
             ライバルデータの削除
           </Typography>
-          <div style={{position:"relative"}}>
+          <div style={{ position: "relative" }}>
             <Button
               variant="contained"
               color="secondary"
@@ -116,7 +116,7 @@ class RivalSettings extends React.Component<P,S> {
               startIcon={<DeleteForeverIcon />}>
               削除
             </Button>
-            {isLoading2 && <Loader/>}
+            {isLoading2 && <Loader />}
           </div>
         </FormControl>
       </Paper>

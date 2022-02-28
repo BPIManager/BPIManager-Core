@@ -23,158 +23,158 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import MobileDateTimePicker from '@mui/lab/MobileDateTimePicker';
 
 class EditModal extends React.Component<{
-  isOpen:boolean,
-  handleOpen:(isCreating:boolean,reload?:boolean)=>void,
-  onGoing:any,
-  onGoingId:string,
-}&RouteComponentProps,{
-  rankingName:string,
-  endDate:string,
-  firstEndDate:string,
-  info:string,
+  isOpen: boolean,
+  handleOpen: (isCreating: boolean, reload?: boolean) => void,
+  onGoing: any,
+  onGoingId: string,
+} & RouteComponentProps, {
+    rankingName: string,
+    endDate: string,
+    firstEndDate: string,
+    info: string,
 
-  display:number,
-  isCreating:boolean,
-  result:any,
-  rankingNameDelete:string
-}>{
+    display: number,
+    isCreating: boolean,
+    result: any,
+    rankingNameDelete: string
+  }>{
 
-  constructor(props:any){
+  constructor(props: any) {
     super(props);
     const f = toDate(props.onGoing.until.toDate());
     this.state = {
-      rankingName:props.onGoing.rankName,
-      endDate:f,
-      firstEndDate:f,
-      info:props.onGoing.info || "",
-      display:0,
-      isCreating:false,
-      result:null,
-      rankingNameDelete:""
+      rankingName: props.onGoing.rankName,
+      endDate: f,
+      firstEndDate: f,
+      info: props.onGoing.info || "",
+      display: 0,
+      isCreating: false,
+      result: null,
+      rankingNameDelete: ""
     }
   }
 
-  handleEndDateInput = (date:any) => {
-    this.setState({endDate:toDate(date || new Date())});
+  handleEndDateInput = (date: any) => {
+    this.setState({ endDate: toDate(date || new Date()) });
   };
 
-  changeView = (newState:number)=>{
+  changeView = (newState: number) => {
     window.scrollTo(0, 0);
     this.setState({
       display: newState
     })
   }
 
-  changeExec = async()=>{
-    const {endDate,rankingName,info} = this.state;
-    this.setState({isCreating:true,display:2});
+  changeExec = async () => {
+    const { endDate, rankingName, info } = this.state;
+    this.setState({ isCreating: true, display: 2 });
     let data = {
-      end:toDate(endDate),
-      title:rankingName,
-      info:info,
-      id:this.props.onGoingId,
+      end: toDate(endDate),
+      title: rankingName,
+      info: info,
+      id: this.props.onGoingId,
     };
-    const p = await httpsCallable(`ranking`,`editRanking`,data);
-    if(p.data.error){
+    const p = await httpsCallable(`ranking`, `editRanking`, data);
+    if (p.data.error) {
       alert(p.data.errorMessage);
     }
-    this.setState({isCreating:true,display:5,result:p})
+    this.setState({ isCreating: true, display: 5, result: p })
   }
 
-  deleteExec = async()=>{
-    this.setState({isCreating:true,display:2});
+  deleteExec = async () => {
+    this.setState({ isCreating: true, display: 2 });
     let data = {
-      id:this.props.onGoingId,
+      id: this.props.onGoingId,
     };
-    const p = await httpsCallable(`ranking`,`deleteRanking`,data);
-    if(p.data.error){
+    const p = await httpsCallable(`ranking`, `deleteRanking`, data);
+    if (p.data.error) {
       alert(p.data.errorMessage);
     }
-    this.setState({isCreating:false,display:7,result:p})
+    this.setState({ isCreating: false, display: 7, result: p })
   }
 
-  back = ()=>{
-    this.props.handleOpen(false,true);
+  back = () => {
+    this.props.handleOpen(false, true);
   }
 
-  render(){
+  render() {
     const c = _currentTheme();
-    const {isOpen,handleOpen,onGoing} = this.props;
-    const {endDate,firstEndDate,rankingName,info,display,isCreating} = this.state;
-    const isDisabled = ()=>{
-      if(!rankingName){
+    const { isOpen, handleOpen, onGoing } = this.props;
+    const { endDate, firstEndDate, rankingName, info, display, isCreating } = this.state;
+    const isDisabled = () => {
+      if (!rankingName) {
         return true;
       }
-      if(isBeforeSpecificDate(endDate,new Date())){
+      if (isBeforeSpecificDate(endDate, new Date())) {
         return true;
       }
-      if(isBeforeSpecificDate(endDate,firstEndDate)){
+      if (isBeforeSpecificDate(endDate, firstEndDate)) {
         return true;
       }
       return false;
     }
 
     const titleError = rankingName.length > 16;
-    const errors = ()=>{
+    const errors = () => {
       const res = [];
-      if(isBeforeSpecificDate(endDate,firstEndDate)){
+      if (isBeforeSpecificDate(endDate, firstEndDate)) {
         res.push("終了日は前回設定時刻と同一か、それより未来である必要があります");
       }
-      if(isBeforeSpecificDate(endDate,new Date())){
+      if (isBeforeSpecificDate(endDate, new Date())) {
         res.push("終了日は本日の日付より未来である必要があります");
       }
       return res;
     }
 
-    const form = (readOnly:boolean = false)=>{
+    const form = (readOnly: boolean = false) => {
       return (
-      <form noValidate autoComplete="off">
-      <TextField
-        required
-        error={titleError}
-        label="ランキングの名称"
-        fullWidth
-        value={rankingName}
-        onChange={(e)=>readOnly ? ()=>null : this.setState({rankingName:e.target.value})}
-        InputLabelProps={{
-          shrink: true,
-        }}
-        InputProps={{
-          readOnly: readOnly,
-        }}
-        disabled={readOnly}
-        helperText={titleError ? "タイトルが長すぎます" : ""}
-      />
-      <div style={{margin:"20px 0"}}/>
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <MobileDateTimePicker
-          label="終了日付"
-          value={endDate}
-          renderInput={(props) => (
-            <TextField {...props} fullWidth/>
-          )}
-          disabled={readOnly}
-          onChange={readOnly ? ()=>null : this.handleEndDateInput}
-        />
-      </LocalizationProvider>
-      <div style={{margin:"20px 0"}}/>
-      <TextField
-        fullWidth
-        multiline
-        rows={4}
-        label="ランキングの概要(オプション)"
-        placeholder=""
-        value={info}
-        disabled={readOnly}
-        onChange={(e)=>readOnly ? ()=>null : this.setState({info:e.target.value})}
-        InputLabelProps={{
-          shrink: true,
-        }}
-        InputProps={{
-          readOnly: readOnly,
-        }}
-      />
-      </form>
+        <form noValidate autoComplete="off">
+          <TextField
+            required
+            error={titleError}
+            label="ランキングの名称"
+            fullWidth
+            value={rankingName}
+            onChange={(e) => readOnly ? () => null : this.setState({ rankingName: e.target.value })}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            InputProps={{
+              readOnly: readOnly,
+            }}
+            disabled={readOnly}
+            helperText={titleError ? "タイトルが長すぎます" : ""}
+          />
+          <div style={{ margin: "20px 0" }} />
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <MobileDateTimePicker
+              label="終了日付"
+              value={endDate}
+              renderInput={(props) => (
+                <TextField {...props} fullWidth />
+              )}
+              disabled={readOnly}
+              onChange={readOnly ? () => null : this.handleEndDateInput}
+            />
+          </LocalizationProvider>
+          <div style={{ margin: "20px 0" }} />
+          <TextField
+            fullWidth
+            multiline
+            rows={4}
+            label="ランキングの概要(オプション)"
+            placeholder=""
+            value={info}
+            disabled={readOnly}
+            onChange={(e) => readOnly ? () => null : this.setState({ info: e.target.value })}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            InputProps={{
+              readOnly: readOnly,
+            }}
+          />
+        </form>
       )
     }
 
@@ -182,33 +182,33 @@ class EditModal extends React.Component<{
       <Dialog
         id="detailedScreen"
         className={c === "dark" ? "darkDetailedScreen" : c === "light" ? "lightDetailedScreen" : "deepSeaDetailedScreen"}
-        fullScreen open={isOpen} onClose={()=>handleOpen(isCreating)} style={{overflowX:"hidden",width:"100%"}}>
+        fullScreen open={isOpen} onClose={() => handleOpen(isCreating)} style={{ overflowX: "hidden", width: "100%" }}>
         <AppBar>
           <Toolbar>
             <IconButton
               edge="start"
               color="inherit"
-              onClick={()=>handleOpen(isCreating)}
+              onClick={() => handleOpen(isCreating)}
               aria-label="close"
               size="large">
               <CloseIcon />
             </IconButton>
-            <Typography variant="h6" className="be-ellipsis" style={{flexGrow:1}}>
+            <Typography variant="h6" className="be-ellipsis" style={{ flexGrow: 1 }}>
               ランキングを編集
             </Typography>
           </Toolbar>
         </AppBar>
-        <Toolbar/>
+        <Toolbar />
         <Container className="commonLayout">
 
           {display === 7 && (
             <div>
-              <Alert severity="success" icon={<AssignmentTurnedInIcon/>}>
+              <Alert severity="success" icon={<AssignmentTurnedInIcon />}>
                 <AlertTitle>ランキングを削除しました</AlertTitle>
                 <p>「完了」ボタンをクリックしてランキング一覧へ戻ります。</p>
               </Alert>
-              <Button color="secondary" fullWidth variant="outlined" size="large" onClick={()=>window.location.reload()}
-                style={{marginTop:"20px"}}>
+              <Button color="secondary" fullWidth variant="outlined" size="large" onClick={() => window.location.reload()}
+                style={{ marginTop: "20px" }}>
                 完了
               </Button>
             </div>
@@ -216,12 +216,12 @@ class EditModal extends React.Component<{
 
           {display === 5 && (
             <div>
-              <Alert severity="success" icon={<AssignmentTurnedInIcon/>}>
+              <Alert severity="success" icon={<AssignmentTurnedInIcon />}>
                 <AlertTitle>ランキングを編集しました</AlertTitle>
                 <p>「完了」ボタンをクリックしてランキングページへ戻ります。</p>
               </Alert>
-              <Button color="secondary" fullWidth variant="outlined" size="large" onClick={()=>this.back()}
-                style={{marginTop:"20px"}}>
+              <Button color="secondary" fullWidth variant="outlined" size="large" onClick={() => this.back()}
+                style={{ marginTop: "20px" }}>
                 完了
               </Button>
             </div>
@@ -229,59 +229,59 @@ class EditModal extends React.Component<{
 
           {display === 3 && (
             <div>
-            <Button style={{marginBottom:"15px"}}
-              startIcon={<UpdateIcon/>} color="secondary" fullWidth variant="outlined" size="large" onClick={()=>this.changeView(0)}>
-              戻る
+              <Button style={{ marginBottom: "15px" }}
+                startIcon={<UpdateIcon />} color="secondary" fullWidth variant="outlined" size="large" onClick={() => this.changeView(0)}>
+                戻る
             </Button>
-            <Alert severity="warning">
-              ランキング「<b>{onGoing.rankName}</b>」を削除しますか？<br/>
-              ランキングに紐付いたスコアデータは同時に削除されます。<br/>
-              この操作は取り消すことができません。
+              <Alert severity="warning">
+                ランキング「<b>{onGoing.rankName}</b>」を削除しますか？<br />
+                ランキングに紐付いたスコアデータは同時に削除されます。<br />
+                この操作は取り消すことができません。
             </Alert>
-            <TextField
-              style={{marginTop:"15px"}}
-              required
-              label="削除する場合、ランキング名を再入力"
-              variant="outlined"
-              fullWidth
-              value={this.state.rankingNameDelete}
-              onChange={(e)=>this.setState({rankingNameDelete:e.target.value})}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-            <Button color="secondary" fullWidth variant="outlined" size="large" disabled={onGoing.rankName !== this.state.rankingNameDelete} onClick={()=>this.deleteExec()}
-              style={{marginTop:"20px"}}>
-              削除を実行
+              <TextField
+                style={{ marginTop: "15px" }}
+                required
+                label="削除する場合、ランキング名を再入力"
+                variant="outlined"
+                fullWidth
+                value={this.state.rankingNameDelete}
+                onChange={(e) => this.setState({ rankingNameDelete: e.target.value })}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+              <Button color="secondary" fullWidth variant="outlined" size="large" disabled={onGoing.rankName !== this.state.rankingNameDelete} onClick={() => this.deleteExec()}
+                style={{ marginTop: "20px" }}>
+                削除を実行
             </Button>
             </div>
           )}
 
           {display === 2 && (
-            <Loader text="更新しています"/>
+            <Loader text="更新しています" />
           )}
 
           {display === 0 && (
-          <div>
-          <Alert icon={false} severity="success">
-            このランキングを編集します。<br/>
-            作成済みのランキングを削除する場合は一番下の「削除する」ボタンをクリックしてください。
+            <div>
+              <Alert icon={false} severity="success">
+                このランキングを編集します。<br />
+                作成済みのランキングを削除する場合は一番下の「削除する」ボタンをクリックしてください。
           </Alert>
-          <Divider style={{margin:"20px 0"}}/>
-          {form()}
-          <Divider style={{margin:"20px 0"}}/>
-          <Button color="secondary" fullWidth variant="outlined" size="large" disabled={isDisabled()} onClick={()=>this.changeExec()}>
-            ランキングを編集
+              <Divider style={{ margin: "20px 0" }} />
+              {form()}
+              <Divider style={{ margin: "20px 0" }} />
+              <Button color="secondary" fullWidth variant="outlined" size="large" disabled={isDisabled()} onClick={() => this.changeExec()}>
+                ランキングを編集
           </Button>
-          <Button fullWidth variant="outlined" size="large" onClick={()=>this.changeView(3)} style={{marginTop:"15px"}}>
-            ランキングを削除
+              <Button fullWidth variant="outlined" size="large" onClick={() => this.changeView(3)} style={{ marginTop: "15px" }}>
+                ランキングを削除
           </Button>
-          {errors().length > 0 && (
-            <Alert icon={false} severity="error" style={{margin:"15px 0"}}>
-              {errors().map((item)=><span>{item}<br/></span>)}
-            </Alert>
-          )}
-          </div>
+              {errors().length > 0 && (
+                <Alert icon={false} severity="error" style={{ margin: "15px 0" }}>
+                  {errors().map((item) => <span>{item}<br /></span>)}
+                </Alert>
+              )}
+            </div>
           )}
         </Container>
       </Dialog>

@@ -3,52 +3,52 @@ import 'firebase/messaging';
 import fbActions from './actions';
 export const pubkey = "BHwX2FHmMWpVIWwnELeC0Go_TDXQO4TlCr-gUsW38gqXME0LLUp3runutAAU5lxIUGQYEXgo090CVuCK-7kajms";
 
-export class messanger{
+export class messanger {
   private messaging = firebase.messaging();
 
-  checkPermission(){
+  checkPermission() {
     return Notification.permission === "granted";
   }
 
-  getToken(){
+  getToken() {
     return this.messaging.getToken();
   }
 
-  refreshToken(refreshedToken?:string){
-    try{
-      new fbActions().auth().onAuthStateChanged(async(user: any)=> {
+  refreshToken(refreshedToken?: string) {
+    try {
+      new fbActions().auth().onAuthStateChanged(async (user: any) => {
         console.info("Login Status:" + user);
-        if(user && user.uid){
+        if (user && user.uid) {
           const token = refreshedToken || (await this.getToken());
-          new fbActions().updateToken(user.uid,token);
-        }else{
+          new fbActions().updateToken(user.uid, token);
+        } else {
           console.error("NOT LOGGED IN, REFRESH TOKEN HAS BEEN ABORTED")
         }
       });
-    }catch(e:any){
+    } catch (e: any) {
       alert(e);
     }
 
   }
 
-  async requestPermission(){
-    try{
-      if("Notification" in window){
-        if(Notification.permission === "granted"){
+  async requestPermission() {
+    try {
+      if ("Notification" in window) {
+        if (Notification.permission === "granted") {
           return true;
         }
-        Notification.requestPermission((permission)=>{
+        Notification.requestPermission((permission) => {
           if (permission === "granted") {
             return true;
-          }else {
+          } else {
             return false;
           }
         });
-      }else{
+      } else {
         alert("非対応ブラウザです。");
         return false;
       }
-    }catch(e:any){
+    } catch (e: any) {
       console.log(e);
       return false;
     }

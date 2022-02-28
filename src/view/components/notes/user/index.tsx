@@ -16,60 +16,60 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
 interface S {
-  notes:any[],
-  isLoading:boolean,
-  isModalOpen:boolean,
-  data:any,
-  sort:number
+  notes: any[],
+  isLoading: boolean,
+  isModalOpen: boolean,
+  data: any,
+  sort: number
 }
 
-interface P{
-  backToMainPage:()=>void|null
-  name:string,
-  uid:string,
+interface P {
+  backToMainPage: () => void | null
+  name: string,
+  uid: string,
 }
 
-class NotesView extends React.Component<P,S> {
-  private fbA:fbActions = new fbActions();
+class NotesView extends React.Component<P, S> {
+  private fbA: fbActions = new fbActions();
 
-  constructor(props:P){
+  constructor(props: P) {
     super(props);
     this.state = {
-      isLoading:true,
-      isModalOpen:false,
-      notes:[],
-      data:null,
-      sort:0
+      isLoading: true,
+      isModalOpen: false,
+      notes: [],
+      data: null,
+      sort: 0
     }
   }
 
-  async componentDidMount(){
+  async componentDidMount() {
     this.changeSort();
   }
 
-  async changeSort(newSort = 0){
-    const {uid} = this.props;
-    this.setState({isLoading:true});
+  async changeSort(newSort = 0) {
+    const { uid } = this.props;
+    this.setState({ isLoading: true });
     const sort = newSort;
-    const loaded = sort === 0 ? await this.fbA.loadUserNotes(uid) : await this.fbA.loadUserNotes(uid,1);
+    const loaded = sort === 0 ? await this.fbA.loadUserNotes(uid) : await this.fbA.loadUserNotes(uid, 1);
     this.setState({
-      notes:loaded.docs,
-      isLoading:false,
+      notes: loaded.docs,
+      isLoading: false,
     })
   }
 
-  onClick = (data:any)=>{
+  onClick = (data: any) => {
     this.setState({
-      isModalOpen:true,
-      data:data
+      isModalOpen: true,
+      data: data
     })
   }
 
-  handleModalOpen = (flag:boolean)=> this.setState({isModalOpen:flag,data:null})
+  handleModalOpen = (flag: boolean) => this.setState({ isModalOpen: flag, data: null })
 
-  render(){
-    const {backToMainPage,name} = this.props;
-    const {isLoading,notes,data,isModalOpen,sort} = this.state;
+  render() {
+    const { backToMainPage, name } = this.props;
+    const { isLoading, notes, data, isModalOpen, sort } = this.state;
     const sortDisp = [
       "最近書き込まれた順",
       "いいねが多い順"
@@ -77,10 +77,10 @@ class NotesView extends React.Component<P,S> {
     return (
       <div>
         <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
-          <Button onClick={backToMainPage} style={{minWidth:"auto",padding:"6px 0px"}}><ArrowBackIcon/></Button>
+          <Button onClick={backToMainPage} style={{ minWidth: "auto", padding: "6px 0px" }}><ArrowBackIcon /></Button>
           &nbsp;{name}さんのノート
         </Typography>
-        {isLoading && <Loader/>}
+        {isLoading && <Loader />}
         {(!isLoading && notes.length === 0) && (
           <Alert severity="warning">
             <AlertTitle>まだノートがありません</AlertTitle>
@@ -89,27 +89,27 @@ class NotesView extends React.Component<P,S> {
         )}
         {!isLoading && (
           <div>
-            <FormControl fullWidth style={{marginTop:"8px"}}>
+            <FormControl fullWidth style={{ marginTop: "8px" }}>
               <InputLabel>並び替えを変更</InputLabel>
-              <Select fullWidth value={sort} onChange={(e:SelectChangeEvent<number>)=>{
-                if(typeof e.target.value !== "number") return;
-                this.setState({sort:e.target.value});
+              <Select fullWidth value={sort} onChange={(e: SelectChangeEvent<number>) => {
+                if (typeof e.target.value !== "number") return;
+                this.setState({ sort: e.target.value });
                 this.changeSort(e.target.value);
-                }}
+              }}
               >
-                {[0,1].map(item=><MenuItem value={item} key={item}>{sortDisp[item]}</MenuItem>)}
+                {[0, 1].map(item => <MenuItem value={item} key={item}>{sortDisp[item]}</MenuItem>)}
               </Select>
             </FormControl>
             <List component="nav">
-              {notes.map((item:any,i:number)=>{
+              {notes.map((item: any, i: number) => {
                 return (
-                  <EachMemo item={item} listType onClick={this.onClick} key={i}/>
+                  <EachMemo item={item} listType onClick={this.onClick} key={i} />
                 )
               })}
-          </List>
+            </List>
           </div>
         )}
-        {(isModalOpen && data) && <ModalNotes derived={data} isOpen={isModalOpen} handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
+        {(isModalOpen && data) && <ModalNotes derived={data} isOpen={isModalOpen} handleOpen={(flag: boolean) => this.handleModalOpen(flag)} />}
       </div>
     );
   }

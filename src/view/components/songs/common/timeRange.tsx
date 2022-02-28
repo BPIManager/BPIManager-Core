@@ -14,61 +14,61 @@ import Alert from '@mui/material/Alert';
 import { TextField } from '@mui/material';
 
 interface P {
-  handleToggle:()=>void,
-  applyTimeFilter:(state:S)=>void,
-  dateRange:S
+  handleToggle: () => void,
+  applyTimeFilter: (state: S) => void,
+  dateRange: S
 }
 
 interface S {
-  from:string,
-  to:string
+  from: string,
+  to: string
 }
 
 
-class TimeRangeDialog extends React.Component<P,S> {
+class TimeRangeDialog extends React.Component<P, S> {
 
-  constructor(props:P){
+  constructor(props: P) {
     super(props);
     this.state = {
-      from:toDate(props.dateRange.from),
-      to:toDate(props.dateRange.to),
+      from: toDate(props.dateRange.from),
+      to: toDate(props.dateRange.to),
     }
   }
 
-  componentDidMount(){
-    window.history.pushState(null,"Filter",null);
-    window.addEventListener("popstate",this.overridePopstate,false);
+  componentDidMount() {
+    window.history.pushState(null, "Filter", null);
+    window.addEventListener("popstate", this.overridePopstate, false);
   }
 
-  componentWillUnmount(){
-    window.removeEventListener("popstate",this.overridePopstate,false);
+  componentWillUnmount() {
+    window.removeEventListener("popstate", this.overridePopstate, false);
   }
 
-  overridePopstate = ()=>this.props.handleToggle();
+  overridePopstate = () => this.props.handleToggle();
 
-  applyAndClose = ()=>{
-    this.props.applyTimeFilter({from:this.state.from,to:this.state.to});
+  applyAndClose = () => {
+    this.props.applyTimeFilter({ from: this.state.from, to: this.state.to });
     return this.props.handleToggle();
   }
 
-  handleFromInput = (date:any) => {
-    this.setState({from:toDate(date || new Date())});
+  handleFromInput = (date: any) => {
+    this.setState({ from: toDate(date || new Date()) });
   };
 
-  handleToInput = (date:any) => {
-    this.setState({to:toDate(date || new Date())});
+  handleToInput = (date: any) => {
+    this.setState({ to: toDate(date || new Date()) });
   };
 
-  render(){
-    const {handleToggle} = this.props;
-    const {from,to} = this.state;
+  render() {
+    const { handleToggle } = this.props;
+    const { from, to } = this.state;
     return (
       <Dialog open={true} onClose={handleToggle}>
         <DialogTitle>期間指定</DialogTitle>
         <DialogContent>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <Grid container justifyContent="space-between">
-              <Grid item xs={12} sm={5} style={{marginTop:"15px"}}>
+              <Grid item xs={12} sm={5} style={{ marginTop: "15px" }}>
                 <MobileDatePicker
                   label="始点日付"
                   inputFormat="yyyy/MM/dd"
@@ -79,7 +79,7 @@ class TimeRangeDialog extends React.Component<P,S> {
                   onChange={this.handleFromInput}
                 />
               </Grid>
-              <Grid item xs={12} sm={5} style={{marginTop:"15px"}}>
+              <Grid item xs={12} sm={5} style={{ marginTop: "15px" }}>
                 <MobileDatePicker
                   label="終点日付"
                   inputFormat="yyyy/MM/dd"
@@ -92,8 +92,8 @@ class TimeRangeDialog extends React.Component<P,S> {
               </Grid>
             </Grid>
           </LocalizationProvider>
-          <Alert severity="info" style={{marginTop:"15px"}}>「始点日付」と「終点日付」の間の期間中にデータを更新した楽曲を表示します。<br/>
-          その期間以降にスコアやクリアランプを更新している場合はリストに表示されません。</Alert>
+          <Alert severity="info" style={{ marginTop: "15px" }}>「始点日付」と「終点日付」の間の期間中にデータを更新した楽曲を表示します。<br />
+            その期間以降にスコアやクリアランプを更新している場合はリストに表示されません。</Alert>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleToggle} color="primary">

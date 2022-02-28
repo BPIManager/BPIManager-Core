@@ -9,35 +9,35 @@ import RivalStats from './stats';
 import { withRivalData } from '@/components/stats/radar';
 
 interface S {
-  currentTab:number,
+  currentTab: number,
 }
 
 interface P {
-  backToMainPage:()=>void,
-  full:withRivalData[],
-  rivalRawData:rivalScoreData[],
-  name:string
+  backToMainPage: () => void,
+  full: withRivalData[],
+  rivalRawData: rivalScoreData[],
+  name: string
 }
 
-class RivalStatViewFromUserPage extends React.Component<P,S> {
+class RivalStatViewFromUserPage extends React.Component<P, S> {
 
-  constructor(props:P){
+  constructor(props: P) {
     super(props);
     this.state = {
-      currentTab:0,
+      currentTab: 0,
     }
   }
 
   handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
-    this.setState({currentTab:newValue});
+    this.setState({ currentTab: newValue });
   };
 
-  render(){
+  render() {
     //const {currentTab} = this.state;
-    const {full,rivalRawData} = this.props;
+    const { full, rivalRawData } = this.props;
     return (
       <Container className="commonLayout">
-        <RivalStats full={full} rivalRawData={rivalRawData}/>
+        <RivalStats full={full} rivalRawData={rivalRawData} />
         {/*
         <Tabs
           value={this.state.currentTab}

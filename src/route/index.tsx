@@ -13,12 +13,12 @@ import Rivals from "../view/pages/rivals";
 import User from "../view/pages/user";
 import AAATable from "../view/pages/AAATable";
 import Shared from "../view/pages/shared";
-import {BrowserRouter, Route} from "react-router-dom";
+import { BrowserRouter, Route } from "react-router-dom";
 
 
 //locale data
 
-import ja  from "../i18n/ja";
+import ja from "../i18n/ja";
 import en from "../i18n/en";
 import GlobalContainer from '../components/context/global';
 import { Subscribe, Provider } from 'unstated';
@@ -42,56 +42,57 @@ import RedirectUserProfile from '@/view/pages/extra/user';
 import Index from '@/view/pages/index';
 import History from '@/view/pages/history';
 
-class Router extends React.Component<{global:any},{}> {
+class Router extends React.Component<{ global: any }, {}> {
 
-  async globalUpdateScore(uName:string){
+  async globalUpdateScore(uName: string) {
     const f = new fbActions();
     const t = await f.v2SetUserCollection().setDocName(uName).load();
     await f.setColName(`${_currentStore()}_${_isSingle()}`).setDocName(uName).save((t && t.displayName) ? t.displayName : "");
   }
 
-  render(){
+  render() {
     return (
       <Provider>
         <Subscribe to={[GlobalContainer]}>
-          {global =>{
+          {global => {
             return (<IntlProvider
               locale={global.state.lang}
               messages={global.state.lang === "ja" ? ja : en}
             >
               <BrowserRouter>
                 <AppBar global={global}>
-                  <Route path="/" exact render={_props=><Index global={global}/>}/>
-                  <Route path="/data" exact render={_props=><Data global={global} updateGlobal={this.globalUpdateScore}/>}/>
-                  <Route path="/songs/:today?" exact component={Songs}/>
-                  <Route path="/lists" exact component={Lists}/>
-                  <Route path="/lists/:listTitle" exact component={ListsBody}/>
-                  <Route path="/notPlayed" exact component={NotPlayed}/>
-                  <Route path="/stats" exact component={Stats}/>
-                  <Route path="/compare" exact component={Compare}/>
-                  <Route path="/settings" exact render={_props=><Settings global={global}/>}/>
-                  <Route path="/help/notes" exact component={HelpNotes}/>
-                  <Route path="/help/ranking" exact component={HelpWR}/>
-                  <Route path="/sync/settings" exact component={SyncIndex}/>
-                  <Route path="/rivals" exact component={Rivals}/>
-                  <Route path="/rivalCompare" exact component={RivalChallengeLetters}/>
-                  <Route path="/AAATable" exact component={AAATable}/>
-                  <Route path="/share/:id" exact component={Shared}/>
-                  <Route path="/u/:uid/:exactId?" exact component={User}/>
-                  <Route path="/redirect/myprofile" exact component={RedirectMyProfile}/>
-                  <Route path="/r/u/:uid" exact component={RedirectUserProfile}/>
-                  <Route path="/notes" exact component={Note}/>
-                  <Route path="/history/:date?" exact component={History}/>
-                  <Route path="/notes/:title/:diff/:single" exact component={NoteIndv}/>
-                  <Route path="/ranking/" exact component={RankingSearch}/>
-                  <Route path="/ranking/id/:id" exact component={WeeklyOnGoing}/>
-                  <Route path="/ranking/ongoing" exact component={WeeklyOnGoing}/>
-                  <Route path="/ranking/list/:uid" exact component={WeeklyList}/>
-                  <Route path="/camera" exact component={Camera}/>
+                  <Route path="/" exact render={_props => <Index global={global} />} />
+                  <Route path="/data" exact render={_props => <Data global={global} updateGlobal={this.globalUpdateScore} />} />
+                  <Route path="/songs/:today?" exact component={Songs} />
+                  <Route path="/lists" exact component={Lists} />
+                  <Route path="/lists/:listTitle" exact component={ListsBody} />
+                  <Route path="/notPlayed" exact component={NotPlayed} />
+                  <Route path="/stats" exact component={Stats} />
+                  <Route path="/compare" exact component={Compare} />
+                  <Route path="/settings" exact render={_props => <Settings global={global} />} />
+                  <Route path="/help/notes" exact component={HelpNotes} />
+                  <Route path="/help/ranking" exact component={HelpWR} />
+                  <Route path="/sync/settings" exact component={SyncIndex} />
+                  <Route path="/rivals" exact component={Rivals} />
+                  <Route path="/rivalCompare" exact component={RivalChallengeLetters} />
+                  <Route path="/AAATable" exact component={AAATable} />
+                  <Route path="/share/:id" exact component={Shared} />
+                  <Route path="/u/:uid/:exactId?" exact component={User} />
+                  <Route path="/redirect/myprofile" exact component={RedirectMyProfile} />
+                  <Route path="/r/u/:uid" exact component={RedirectUserProfile} />
+                  <Route path="/notes" exact component={Note} />
+                  <Route path="/history/:date?" exact component={History} />
+                  <Route path="/notes/:title/:diff/:single" exact component={NoteIndv} />
+                  <Route path="/ranking/" exact component={RankingSearch} />
+                  <Route path="/ranking/id/:id" exact component={WeeklyOnGoing} />
+                  <Route path="/ranking/ongoing" exact component={WeeklyOnGoing} />
+                  <Route path="/ranking/list/:uid" exact component={WeeklyList} />
+                  <Route path="/camera" exact component={Camera} />
                 </AppBar>
               </BrowserRouter>
             </IntlProvider>
-          )}}
+            )
+          }}
         </Subscribe>
       </Provider>
     );

@@ -3,35 +3,35 @@ import Typography from '@mui/material/Typography';
 import FolloweeList from './list';
 import Link from '@mui/material/Link';
 
-interface P{
-  ids:string[],
-  text:string,
-  userName:string
+interface P {
+  ids: string[],
+  text: string,
+  userName: string
 }
 
-interface S{
-  showList:boolean
+interface S {
+  showList: boolean
 }
 
-class FolloweeCounter extends React.Component<P,S> {
+class FolloweeCounter extends React.Component<P, S> {
 
-  constructor(props:P){
+  constructor(props: P) {
     super(props);
     this.state = {
-      showList:false
+      showList: false
     }
   }
 
-  toggleShowList = ()=> this.setState({showList:!this.state.showList});
+  toggleShowList = () => this.setState({ showList: !this.state.showList });
 
-  render(){
-    const {ids,text,userName} = this.props;
+  render() {
+    const { ids, text, userName } = this.props;
     return (
       <React.Fragment>
-        <Typography component="span" variant="caption" color="textSecondary" onClick={this.toggleShowList} style={{fontWeight:"bold"}}>
+        <Typography component="span" variant="caption" color="textSecondary" onClick={this.toggleShowList} style={{ fontWeight: "bold" }}>
           {text}&nbsp;<Link color="secondary">{ids.length}</Link>
         </Typography>
-        {this.state.showList && <FolloweeList handleClose={this.toggleShowList} ids={ids} text={text} userName={userName}/>}
+        {this.state.showList && <FolloweeList handleClose={this.toggleShowList} ids={ids} text={text} userName={userName} />}
       </React.Fragment>
     );
   }

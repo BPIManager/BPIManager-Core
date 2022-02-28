@@ -21,86 +21,86 @@ import DialogActions from '@mui/material/DialogActions';
 import Switch from '@mui/material/Switch';
 import { area } from '@/config';
 import TextField from '@mui/material/TextField';
-import {Link as RefLink} from '@mui/material/';
+import { Link as RefLink } from '@mui/material/';
 import Loader from '@/view/components/common/loader';
 import { updateDefFile } from '@/components/settings/updateDef';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 interface S {
-  isLoading:boolean,
-  disableUpdateBtn:boolean,
-  disableDeleteBtn:boolean,
-  currentVersion:string,
-  message:string,
-  message2:string,
-  currentResetStore:string,
-  isDialogOpen:boolean,
-  isURLDialogOpen:boolean,
-  autoSync:boolean,
-  weeklyRanking:boolean
+  isLoading: boolean,
+  disableUpdateBtn: boolean,
+  disableDeleteBtn: boolean,
+  currentVersion: string,
+  message: string,
+  message2: string,
+  currentResetStore: string,
+  isDialogOpen: boolean,
+  isURLDialogOpen: boolean,
+  autoSync: boolean,
+  weeklyRanking: boolean
 }
 
-interface P{
-  intl:any,
-  global:any
+interface P {
+  intl: any,
+  global: any
 }
 
-class Settings extends React.Component<P,S> {
+class Settings extends React.Component<P, S> {
 
-  constructor(props:P){
+  constructor(props: P) {
     super(props);
-    this.state ={
-      isLoading:false,
-      disableUpdateBtn:false,
-      currentVersion:_currentVersion(),
-      message:"",
-      message2:"",
-      currentResetStore:"27",
-      disableDeleteBtn:false,
-      isDialogOpen:false,
-      isURLDialogOpen:false,
-      autoSync:_autoSync(),
-      weeklyRanking:_weeklyRanking(),
+    this.state = {
+      isLoading: false,
+      disableUpdateBtn: false,
+      currentVersion: _currentVersion(),
+      message: "",
+      message2: "",
+      currentResetStore: "27",
+      disableDeleteBtn: false,
+      isDialogOpen: false,
+      isURLDialogOpen: false,
+      autoSync: _autoSync(),
+      weeklyRanking: _weeklyRanking(),
     }
   }
 
-  toggleURLDialog = ()=> this.setState({isURLDialogOpen:!this.state.isURLDialogOpen})
+  toggleURLDialog = () => this.setState({ isURLDialogOpen: !this.state.isURLDialogOpen })
 
-  changeDefinitionURL = (url:string):void=> {
+  changeDefinitionURL = (url: string): void => {
     return _setCurrentDefinitionURL(url);
   }
 
-  updateDef = async()=>{
-    const end = ()=>{this.props.global.setMove(false);}
-    try{
+  updateDef = async () => {
+    const end = () => { this.props.global.setMove(false); }
+    try {
       this.props.global.setMove(true);
-      this.setState({disableUpdateBtn:true,message:""});
+      this.setState({ disableUpdateBtn: true, message: "" });
       const updater = await updateDefFile();
       end();
-      this.setState({currentVersion:updater.newVersion,disableUpdateBtn:false,message:updater.message});
-    }catch(e:any){
+      this.setState({ currentVersion: updater.newVersion, disableUpdateBtn: false, message: updater.message });
+    } catch (e: any) {
       console.log(e);
-      this.setState({disableUpdateBtn:false,message:"更新に失敗しました:" + e.message});
+      this.setState({ disableUpdateBtn: false, message: "更新に失敗しました:" + e.message });
     }
     end();
     return;
   }
 
-  render(){
-    const {isLoading,isURLDialogOpen,disableUpdateBtn,message,autoSync,weeklyRanking} = this.state;
-    if(isLoading){
-      return (<Loader/>);
+  render() {
+    const { isLoading, isURLDialogOpen, disableUpdateBtn, message, autoSync, weeklyRanking } = this.state;
+    if (isLoading) {
+      return (<Loader />);
     }
     return (
       <Subscribe to={[GlobalContainer]}>
-        {({state,setLang,setStore,setTheme,setIsSingle,setGoalBPI,setGoalPercentage,setArea}:GlobalContainer)=> (
-          <Container fixed  style={{padding:0}}>
-            <Paper style={{padding:"15px"}}>
+        {({ state, setLang, setStore, setTheme, setIsSingle, setGoalBPI, setGoalPercentage, setArea }: GlobalContainer) => (
+          <Container fixed style={{ padding: 0 }}>
+            <Paper style={{ padding: "15px" }}>
               <FormControl>
-                <InputLabel><FormattedMessage id="Settings.language"/></InputLabel>
-                <Select value={state.lang} onChange={(e:SelectChangeEvent<string>,)=>{
-                  if(typeof e.target.value === "string"){
+                <InputLabel><FormattedMessage id="Settings.language" /></InputLabel>
+                <Select value={state.lang} onChange={(e: SelectChangeEvent<string>, ) => {
+                  if (typeof e.target.value === "string") {
                     setLang(e.target.value)
                   }
                 }}>
@@ -109,13 +109,13 @@ class Settings extends React.Component<P,S> {
                 </Select>
               </FormControl>
               <Typography variant="caption" display="block">
-                <FormattedMessage id="Settings.noteLang"/>
+                <FormattedMessage id="Settings.noteLang" />
               </Typography>
-              <Divider style={{margin:"10px 0"}}/>
+              <Divider style={{ margin: "10px 0" }} />
               <FormControl>
-                <InputLabel><FormattedMessage id="Settings.theme"/></InputLabel>
-                <Select value={state.theme} onChange={(e:SelectChangeEvent<string>,)=>{
-                  if(typeof e.target.value === "string"){
+                <InputLabel><FormattedMessage id="Settings.theme" /></InputLabel>
+                <Select value={state.theme} onChange={(e: SelectChangeEvent<string>, ) => {
+                  if (typeof e.target.value === "string") {
                     setTheme(e.target.value)
                   }
                 }}>
@@ -125,13 +125,13 @@ class Settings extends React.Component<P,S> {
                 </Select>
               </FormControl>
               <Typography variant="caption" display="block">
-                <FormattedMessage id="Settings.Themes"/>
+                <FormattedMessage id="Settings.Themes" />
               </Typography>
-              <Divider style={{margin:"10px 0"}}/>
+              <Divider style={{ margin: "10px 0" }} />
               <FormControl>
-                <InputLabel><FormattedMessage id="Settings.dataStore"/></InputLabel>
-                <Select value={state.store} onChange={(e:SelectChangeEvent<string>)=>{
-                  if(typeof e.target.value === "string"){
+                <InputLabel><FormattedMessage id="Settings.dataStore" /></InputLabel>
+                <Select value={state.store} onChange={(e: SelectChangeEvent<string>) => {
+                  if (typeof e.target.value === "string") {
                     setStore(e.target.value)
                   }
                 }}>
@@ -143,28 +143,28 @@ class Settings extends React.Component<P,S> {
                 </Select>
               </FormControl>
               <Typography variant="caption" display="block">
-                <FormattedMessage id="Settings.noteMes1"/>
+                <FormattedMessage id="Settings.noteMes1" />
               </Typography>
               <Typography variant="caption" display="block">
-                <FormattedMessage id="Settings.inaccurateMes"/>
+                <FormattedMessage id="Settings.inaccurateMes" />
               </Typography>
-              <Divider style={{margin:"10px 0"}}/>
+              <Divider style={{ margin: "10px 0" }} />
               <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
                 Auto-sync
               </Typography>
               <Switch
                 checked={autoSync}
-                onChange={(e:React.ChangeEvent<HTMLInputElement>,)=>{
-                  if(typeof e.target.checked === "boolean"){
+                onChange={(e: React.ChangeEvent<HTMLInputElement>, ) => {
+                  if (typeof e.target.checked === "boolean") {
                     _setAutoSync(e.target.checked);
-                    return this.setState({autoSync:e.target.checked,weeklyRanking:e.target.checked ? weeklyRanking : false});
+                    return this.setState({ autoSync: e.target.checked, weeklyRanking: e.target.checked ? weeklyRanking : false });
                   }
                 }}
               />
               <Typography variant="caption" display="block">
-                <FormattedMessage id="Settings.AutoSync1"/><br/>
-                <FormattedMessage id="Settings.AutoSync2"/><br/>
-                <FormattedMessage id="Settings.AutoSync3"/>
+                <FormattedMessage id="Settings.AutoSync1" /><br />
+                <FormattedMessage id="Settings.AutoSync2" /><br />
+                <FormattedMessage id="Settings.AutoSync3" />
               </Typography>
               {/*
               <Divider style={{margin:"10px 0"}}/>
@@ -187,59 +187,59 @@ class Settings extends React.Component<P,S> {
                 WRへの参加は、スコアデータの一般公開が有効かつAutoSyncが有効である場合に限定されます。
               </Typography>
               */}
-              <Divider style={{margin:"10px 0"}}/>
+              <Divider style={{ margin: "10px 0" }} />
               <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
-                <FormattedMessage id="Settings.DPMode"/>(beta)
+                <FormattedMessage id="Settings.DPMode" />(beta)
               </Typography>
               <Switch
                 checked={state.isSingle === 0 ? true : false}
-                onChange={(e:React.ChangeEvent<HTMLInputElement>,)=>{
-                  if(typeof e.target.checked === "boolean"){
+                onChange={(e: React.ChangeEvent<HTMLInputElement>, ) => {
+                  if (typeof e.target.checked === "boolean") {
                     setIsSingle(e.target.checked === true ? 0 : 1);
                   }
                 }}
               />
               <Typography variant="caption" display="block">
-                <FormattedMessage id="Settings.dpDescription"/>
+                <FormattedMessage id="Settings.dpDescription" />
               </Typography>
-              <Divider style={{margin:"10px 0"}}/>
+              <Divider style={{ margin: "10px 0" }} />
               <TextField
                 value={state.goalBPI}
-                label={<FormattedMessage id="Settings.MyGoalBPI"/>}
+                label={<FormattedMessage id="Settings.MyGoalBPI" />}
                 type="number"
                 InputLabelProps={{
                   shrink: true,
                 }}
-                onChange={(e:React.ChangeEvent<HTMLInputElement>,)=>{
-                  if(typeof e.target.value === "string"){
+                onChange={(e: React.ChangeEvent<HTMLInputElement>, ) => {
+                  if (typeof e.target.value === "string") {
                     setGoalBPI(Number(e.target.value) > 100 ? 100 : Number(e.target.value));
                   }
                 }}
-                style={{margin:"0 0 5px 0",width:"100%"}}
+                style={{ margin: "0 0 5px 0", width: "100%" }}
               />
               <TextField
                 value={state.goalPercentage}
-                label={<FormattedMessage id="Settings.MyGoalPercentage"/>}
+                label={<FormattedMessage id="Settings.MyGoalPercentage" />}
                 type="number"
                 InputLabelProps={{
                   shrink: true,
                 }}
-                onChange={(e:React.ChangeEvent<HTMLInputElement>,)=>{
-                  if(typeof e.target.value === "string"){
+                onChange={(e: React.ChangeEvent<HTMLInputElement>, ) => {
+                  if (typeof e.target.value === "string") {
                     setGoalPercentage(Number(e.target.value) > 100 ? 100 : Number(e.target.value));
                   }
                 }}
-                style={{margin:"0 0 5px 0",width:"100%"}}
+                style={{ margin: "0 0 5px 0", width: "100%" }}
               />
               <Typography variant="caption" display="block">
-                <FormattedMessage id="Settings.MyGoalDescription"/>
+                <FormattedMessage id="Settings.MyGoalDescription" />
               </Typography>
-              <Divider style={{margin:"10px 0"}}/>
+              <Divider style={{ margin: "10px 0" }} />
               <FormControl>
                 <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
-                  <FormattedMessage id="Settings.Update"/>
+                  <FormattedMessage id="Settings.Update" />
                 </Typography>
-                <div style={{position:"relative"}}>
+                <div style={{ position: "relative" }}>
                   <LoadingButton
                     variant="contained"
                     color="secondary"
@@ -248,40 +248,40 @@ class Settings extends React.Component<P,S> {
                     loadingPosition="start"
                     disabled={disableUpdateBtn}
                     startIcon={<UpdateIcon />}>
-                    <FormattedMessage id="Settings.UpdateResourcePacks"/>
+                    <FormattedMessage id="Settings.UpdateResourcePacks" />
                   </LoadingButton>
                 </div>
               </FormControl>
               <Typography variant="caption" display="block">
                 {message}
-                <span id="_progressText"/>
+                <span id="_progressText" />
               </Typography>
               <Typography variant="caption" display="block">
-                <FormattedMessage id="Settings.currentVersion"/>{this.state.currentVersion}
+                <FormattedMessage id="Settings.currentVersion" />{this.state.currentVersion}
               </Typography>
               <Typography variant="caption" display="block">
-                <FormattedMessage id="Settings.updateWarning"/><br/>
-                <RefLink component="a" onClick={this.toggleURLDialog} color="secondary" ><FormattedMessage id="Settings.defFileURLButton"/></RefLink>
+                <FormattedMessage id="Settings.updateWarning" /><br />
+                <RefLink component="a" onClick={this.toggleURLDialog} color="secondary" ><FormattedMessage id="Settings.defFileURLButton" /></RefLink>
               </Typography>
               <Typography variant="caption" display="block">
                 <RefLink color="secondary" href="https://github.com/BPIManager/BPIM-Scores/issues/">定義ファイルに誤りを発見した場合、こちらからお知らせください。</RefLink>
               </Typography>
-              {isURLDialogOpen && <URLDialog isDialogOpen={isURLDialogOpen} exec={this.changeDefinitionURL} close={this.toggleURLDialog}/>}
-              <Divider style={{margin:"10px 0"}}/>
+              {isURLDialogOpen && <URLDialog isDialogOpen={isURLDialogOpen} exec={this.changeDefinitionURL} close={this.toggleURLDialog} />}
+              <Divider style={{ margin: "10px 0" }} />
               <FormControl>
-                <InputLabel><FormattedMessage id="Settings.AreaTitle"/></InputLabel>
-                <Select value={state.area} onChange={(e:SelectChangeEvent<number>)=>{
-                  if(typeof e.target.value === "number"){
+                <InputLabel><FormattedMessage id="Settings.AreaTitle" /></InputLabel>
+                <Select value={state.area} onChange={(e: SelectChangeEvent<number>) => {
+                  if (typeof e.target.value === "number") {
                     setArea(e.target.value)
                   }
                 }}>
-                {area.map((item,i)=><MenuItem key={item} value={i}>{item}</MenuItem>)}
+                  {area.map((item, i) => <MenuItem key={item} value={i}>{item}</MenuItem>)}
                 </Select>
               </FormControl>
               <Typography variant="caption" display="block">
-                <FormattedMessage id="Settings.Area"/>
+                <FormattedMessage id="Settings.Area" />
               </Typography>
-              <Divider style={{margin:"10px 0"}}/>
+              <Divider style={{ margin: "10px 0" }} />
               <FormControl>
                 <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
                   キャッシュクリア
@@ -289,17 +289,17 @@ class Settings extends React.Component<P,S> {
                 <Button
                   variant="contained"
                   color="secondary"
-                  onClick={()=>{
-                    if(navigator){
+                  onClick={() => {
+                    if (navigator) {
                       navigator.serviceWorker.getRegistration()
-                      .then(registration => {
-                        if(registration){
-                          registration.unregister();
-                          alert("キャッシュを削除しました。一度アプリを終了し、再度起動してください。");
-                        }else{
-                          alert("削除するデータが見つかりませんでした");
-                        }
-                      })
+                        .then(registration => {
+                          if (registration) {
+                            registration.unregister();
+                            alert("キャッシュを削除しました。一度アプリを終了し、再度起動してください。");
+                          } else {
+                            alert("削除するデータが見つかりませんでした");
+                          }
+                        })
                     }
                   }}
                   disabled={disableUpdateBtn}
@@ -320,14 +320,14 @@ class Settings extends React.Component<P,S> {
 
 export default injectIntl(Settings);
 
-interface UP {isDialogOpen:boolean,exec:(url:string)=>void,close:()=>void};
+interface UP { isDialogOpen: boolean, exec: (url: string) => void, close: () => void };
 
-class URLDialog extends React.Component<UP,{url:string}> {
+class URLDialog extends React.Component<UP, { url: string }> {
 
-  constructor(props:UP){
+  constructor(props: UP) {
     super(props);
     this.state = {
-      url:_currentDefinitionURL()
+      url: _currentDefinitionURL()
     }
   }
 
@@ -340,8 +340,8 @@ class URLDialog extends React.Component<UP,{url:string}> {
     this.props.close();
   };
 
-  render(){
-    const {isDialogOpen} = this.props;
+  render() {
+    const { isDialogOpen } = this.props;
     return (
       <div>
         <Dialog
@@ -350,12 +350,12 @@ class URLDialog extends React.Component<UP,{url:string}> {
           <DialogTitle>定義URLの変更</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              <FormattedMessage id="Settings.ChangeDefinitionURL"/>
+              <FormattedMessage id="Settings.ChangeDefinitionURL" />
               <RefLink color="secondary" href="https://docs2.poyashi.me/other/def/" target="_blank" rel="noopener noreferrer">
-                <FormattedMessage id="Settings.ChangeDefinitionURL2"/>
+                <FormattedMessage id="Settings.ChangeDefinitionURL2" />
               </RefLink>
-              <FormattedMessage id="Settings.ChangeDefinitionURL3"/><br/>
-              <FormattedMessage id="Settings.ChangeDefinitionURL4"/>
+              <FormattedMessage id="Settings.ChangeDefinitionURL3" /><br />
+              <FormattedMessage id="Settings.ChangeDefinitionURL4" />
             </DialogContentText>
             <TextField
               autoFocus
@@ -364,7 +364,7 @@ class URLDialog extends React.Component<UP,{url:string}> {
               label="定義データURL"
               type="text"
               value={this.state.url}
-              onChange={(e:React.ChangeEvent<HTMLInputElement>)=>this.setState({url:e.target.value})}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.setState({ url: e.target.value })}
               fullWidth
             />
           </DialogContent>

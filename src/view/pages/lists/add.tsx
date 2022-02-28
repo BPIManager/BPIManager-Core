@@ -16,64 +16,64 @@ import FormLabel from '@mui/material/FormLabel';
 import { alternativeImg } from '@/components/common';
 
 interface P {
-  handleToggle:(reload:boolean)=>void,
-  toggleSnack:()=>void,
-  isCreating:boolean,
-  target?:number,
+  handleToggle: (reload: boolean) => void,
+  toggleSnack: () => void,
+  isCreating: boolean,
+  target?: number,
 }
 
 interface S {
-  name:string,
-  description:string,
-  icon:string,
-  processing:boolean,
-  willDelete:boolean,
-  errorMessage:string,
+  name: string,
+  description: string,
+  icon: string,
+  processing: boolean,
+  willDelete: boolean,
+  errorMessage: string,
 }
 
-class ListAdd extends React.Component<P,S> {
+class ListAdd extends React.Component<P, S> {
 
-  constructor(props:P){
+  constructor(props: P) {
     super(props);
     this.state = {
-      name:"",
-      description:"",
-      icon:"",
-      processing:false,
-      willDelete:false,
-      errorMessage:""
+      name: "",
+      description: "",
+      icon: "",
+      processing: false,
+      willDelete: false,
+      errorMessage: ""
     }
   }
 
-  async componentDidMount(){
+  async componentDidMount() {
     const target = this.props.target;
-    if(target && target !== -1){
+    if (target && target !== -1) {
       const p = await new favsDB().getListFromNum(target);
-      if(p){
+      if (p) {
         this.setState({
-          name:p.title,
-          description:p.description,
-          icon:p.icon || alternativeImg(p.title)
+          name: p.title,
+          description: p.description,
+          icon: p.icon || alternativeImg(p.title)
         });
-      }else{
+      } else {
         this.props.handleToggle(false);
       }
     }
   }
 
-  saveList = async():Promise<void>=>{
-    const {name,description,willDelete,icon} = this.state;
-    this.setState({processing:true});
-    if(this.props.target && willDelete){
+  saveList = async (): Promise<void> => {
+    const { name, description, willDelete, icon } = this.state;
+    this.setState({ processing: true });
+    if (this.props.target && willDelete) {
       await new favsDB().removeList(this.props.target);
-    }else{
-      if(!name){
-        return this.setState({processing:false,errorMessage:"リスト名が入力されていません"});
+    } else {
+      if (!name) {
+        return this.setState({ processing: false, errorMessage: "リスト名が入力されていません" });
       }
-      if(this.props.target && !this.props.isCreating){
-        await new favsDB().editList(this.props.target,name,description,icon);
-      }else{
-        await new favsDB().addList(name,description,icon);
+      if (this.props.target && !this.props.isCreating) {
+        await new favsDB().editList(this.props.target, name, description, icon);
+      } else {
+        await new favsDB().addList(name, description, icon);
       }
     }
     this.props.toggleSnack();
@@ -81,13 +81,13 @@ class ListAdd extends React.Component<P,S> {
     return;
   }
 
-  changeDelete = ()=>(_e:React.ChangeEvent<HTMLInputElement>):void =>{
-    return this.setState({willDelete:!this.state.willDelete});
+  changeDelete = () => (_e: React.ChangeEvent<HTMLInputElement>): void => {
+    return this.setState({ willDelete: !this.state.willDelete });
   }
 
-  render(){
-    const {handleToggle,isCreating} = this.props;
-    const {name,description,icon,processing,errorMessage,willDelete} = this.state;
+  render() {
+    const { handleToggle, isCreating } = this.props;
+    const { name, description, icon, processing, errorMessage, willDelete } = this.state;
     return (
       <Dialog open={true}>
         <DialogTitle>リストの{isCreating ? "作成" : "編集"}</DialogTitle>
@@ -98,7 +98,7 @@ class ListAdd extends React.Component<P,S> {
             label="リスト名"
             fullWidth
             value={name}
-            onChange={(e)=>this.setState({name:e.target.value})}
+            onChange={(e) => this.setState({ name: e.target.value })}
           />
           <TextField
             margin="dense"
@@ -106,7 +106,7 @@ class ListAdd extends React.Component<P,S> {
             label="リストの説明文(オプション)"
             fullWidth
             value={description}
-            onChange={(e)=>this.setState({description:e.target.value})}
+            onChange={(e) => this.setState({ description: e.target.value })}
           />
           <TextField
             margin="dense"
@@ -114,21 +114,21 @@ class ListAdd extends React.Component<P,S> {
             label="リストのアイコンURL(オプション)"
             fullWidth
             value={icon}
-            onChange={(e)=>this.setState({icon:e.target.value})}
+            onChange={(e) => this.setState({ icon: e.target.value })}
           />
           {!isCreating &&
-            <FormControl fullWidth style={{margin:"10px 0"}}>
+            <FormControl fullWidth style={{ margin: "10px 0" }}>
               <FormLabel component="legend">リストを削除する場合はチェック</FormLabel>
               <FormGroup>
-                <FormControlLabel control={<Checkbox checked={willDelete} onChange={this.changeDelete()} />} label="リストを削除"/>
+                <FormControlLabel control={<Checkbox checked={willDelete} onChange={this.changeDelete()} />} label="リストを削除" />
               </FormGroup>
             </FormControl>
           }
-          {processing && <LinearProgress style={{margin:"10px 0"}}/>}
-          <p style={{color:"#ff0000",textAlign:"center"}}>{errorMessage}</p>
+          {processing && <LinearProgress style={{ margin: "10px 0" }} />}
+          <p style={{ color: "#ff0000", textAlign: "center" }}>{errorMessage}</p>
         </DialogContent>
         <DialogActions>
-          <Button onClick={()=>handleToggle(false)} disabled={processing} color="primary">
+          <Button onClick={() => handleToggle(false)} disabled={processing} color="primary">
             閉じる
           </Button>
           <Button onClick={this.saveList} disabled={processing} color="primary">

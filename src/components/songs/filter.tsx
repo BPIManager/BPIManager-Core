@@ -1,100 +1,100 @@
-export const lampArray:string[] = [
-  "FAILED","ASSIST","EASY","CLEAR","HARD","EX-HARD","FULLCOMBO","UNKNOWN"
+export const lampArray: string[] = [
+  "FAILED", "ASSIST", "EASY", "CLEAR", "HARD", "EX-HARD", "FULLCOMBO", "UNKNOWN"
 ];
-export const lampCSVArray:string[] = [
-  "FAILED","ASSIST CLEAR","EASY CLEAR","CLEAR","HARD CLEAR","EX HARD CLEAR","FULLCOMBO CLEAR","NOPLAY"
+export const lampCSVArray: string[] = [
+  "FAILED", "ASSIST CLEAR", "EASY CLEAR", "CLEAR", "HARD CLEAR", "EX HARD CLEAR", "FULLCOMBO CLEAR", "NOPLAY"
 ];
-export const simpleLampArray:string[] = [
-  "F","AC","EC","CL","HC","EXH","FC","NONE"
+export const simpleLampArray: string[] = [
+  "F", "AC", "EC", "CL", "HC", "EXH", "FC", "NONE"
 ];
 
-export const djRankArray:string[] = [
-  "F","E","D","C","B","A","AA","AAA"
+export const djRankArray: string[] = [
+  "F", "E", "D", "C", "B", "A", "AA", "AAA"
 ]
 
-export const convertClearState = (original:string|number,direction:number,simple:boolean = false):string|number=>{
-  if(direction === 0){
+export const convertClearState = (original: string | number, direction: number, simple: boolean = false): string | number => {
+  if (direction === 0) {
     // csv to num
-    if(typeof original !== "string"){return 0;}
+    if (typeof original !== "string") { return 0; }
     return lampCSVArray.indexOf(original);
-  }else{
-    if(typeof original !== "number"){return 1;}
+  } else {
+    if (typeof original !== "number") { return 1; }
     return simple ? simpleLampArray[original] : lampCSVArray[original];
   }
 }
 
-export const _prefixWithPS = (diff:string,isSingle:boolean)=>{
+export const _prefixWithPS = (diff: string, isSingle: boolean) => {
   const suffix = _prefixFull(diff);
   return isSingle ? `(SP${suffix})` : `(DP${suffix})`;
 }
 
 // title + diff型のキーを生成する際に、_prefix, _prefixFromNum のラッパーとして使用
-export const genTitle = (title:string,diff:string)=> {
-  if(isNaN(Number(diff))){
+export const genTitle = (title: string, diff: string) => {
+  if (isNaN(Number(diff))) {
     return title + _prefix(diff);
   }
   return title + _prefixFromNum(diff);
 }
 
 //Deprecated
-export const _prefix = (diff:string,showAnother:boolean = false):string=> diff === "hyper" ? "[H]" : diff === "leggendaria" ? "[L]" : (showAnother ? "[A]" : "");
-export const _prefixFull = (diff:string):string=> diff === "hyper" ? "H" : diff === "leggendaria" ? "L" : "A";
-export const _prefixFullNum = (diff:string):string=> diff === "3" ? "H" : diff === "10" ? "L" : "A";
+export const _prefix = (diff: string, showAnother: boolean = false): string => diff === "hyper" ? "[H]" : diff === "leggendaria" ? "[L]" : (showAnother ? "[A]" : "");
+export const _prefixFull = (diff: string): string => diff === "hyper" ? "H" : diff === "leggendaria" ? "L" : "A";
+export const _prefixFullNum = (diff: string): string => diff === "3" ? "H" : diff === "10" ? "L" : "A";
 
-export const _prefixFromNum = (difficulty:string,showAnother:boolean = false):string=>{
-  let prefix:string = showAnother ? "[A]" : "";
-  if(difficulty === "3" || difficulty === "8"){
+export const _prefixFromNum = (difficulty: string, showAnother: boolean = false): string => {
+  let prefix: string = showAnother ? "[A]" : "";
+  if (difficulty === "3" || difficulty === "8") {
     prefix = "[H]";
   }
-  if(difficulty === "10" || difficulty === "11"){
+  if (difficulty === "10" || difficulty === "11") {
     prefix = "[L]";
   }
   return prefix;
 }
 
-export const _prefixFromLetters = (difficulty:string,showAnother:boolean = false):string=>{
-  let prefix:string = showAnother ? "[A]" : "";
-  if(difficulty === "HYPER"){
+export const _prefixFromLetters = (difficulty: string, showAnother: boolean = false): string => {
+  let prefix: string = showAnother ? "[A]" : "";
+  if (difficulty === "HYPER") {
     prefix = "[H]";
   }
-  if(difficulty === "LEGGENDARIA"){
+  if (difficulty === "LEGGENDARIA") {
     prefix = "[L]";
   }
   return prefix;
 }
 
 export type diffsUpperCase = "ANOTHER" | "HYPER" | "LEGGENDARIA";
-type diffs  = "another"|"hyper"|"leggendaria"|diffsUpperCase;
+type diffs = "another" | "hyper" | "leggendaria" | diffsUpperCase;
 //difficulty number to string
-export const difficultyDiscriminator = (difficulty:string,isUpper:boolean = false):diffs=>{
-  let diff:"another"|"hyper"|"leggendaria"|"ANOTHER"|"HYPER"|"LEGGENDARIA" = isUpper ? "ANOTHER" : "another";
-  if(difficulty === "3" || difficulty === "8"){
+export const difficultyDiscriminator = (difficulty: string, isUpper: boolean = false): diffs => {
+  let diff: "another" | "hyper" | "leggendaria" | "ANOTHER" | "HYPER" | "LEGGENDARIA" = isUpper ? "ANOTHER" : "another";
+  if (difficulty === "3" || difficulty === "8") {
     diff = isUpper ? "HYPER" : "hyper";
   }
-  if(difficulty === "10" || difficulty === "11"){
+  if (difficulty === "10" || difficulty === "11") {
     diff = isUpper ? "LEGGENDARIA" : "leggendaria";
   }
   return diff;
 }
 
 //difficulty String to number
-export const difficultyParser = (difficulty: string,isSingle: number):string=>{
-  if(difficulty === "another"){
-    if(isSingle === 1){
+export const difficultyParser = (difficulty: string, isSingle: number): string => {
+  if (difficulty === "another") {
+    if (isSingle === 1) {
       return "4";
-    }else{
+    } else {
       return "9";
     }
-  }else if(difficulty === "hyper"){
-    if(isSingle === 1){
+  } else if (difficulty === "hyper") {
+    if (isSingle === 1) {
       return "3";
-    }else{
+    } else {
       return "8";
     }
-  }else if(difficulty === "leggendaria"){
-    if(isSingle === 1){
+  } else if (difficulty === "leggendaria") {
+    if (isSingle === 1) {
       return "10";
-    }else{
+    } else {
       return "11";
     }
   }
@@ -102,15 +102,15 @@ export const difficultyParser = (difficulty: string,isSingle: number):string=>{
 }
 
 //IIDXinfoリンク用
-export const getSongSuffixForIIDXInfo = (name:string,difficulty:string):string=>{
-  if(difficulty === "3" || difficulty === "8"){
+export const getSongSuffixForIIDXInfo = (name: string, difficulty: string): string => {
+  if (difficulty === "3" || difficulty === "8") {
     return "[H]";
   }
-  if(difficulty === "4" || difficulty === "9"){
+  if (difficulty === "4" || difficulty === "9") {
     return "[A]";
   }
-  if(difficulty === "10" || difficulty === "11"){
-    switch(name){
+  if (difficulty === "10" || difficulty === "11") {
+    switch (name) {
       default:
         return "†[A]";
       case "Ancient Scapes":
@@ -127,8 +127,8 @@ export const getSongSuffixForIIDXInfo = (name:string,difficulty:string):string=>
 }
 
 // Rootage規格→HV規格への変換
-export const convertLeggendariaStates = (name:string,difficulty:string):{name:string,difficulty:string}=>{
-  const leggendariaSongs:string[] = [
+export const convertLeggendariaStates = (name: string, difficulty: string): { name: string, difficulty: string } => {
+  const leggendariaSongs: string[] = [
     "ABSOLUTE†",
     "Clione†",
     "RED ZONE†",
@@ -183,13 +183,13 @@ export const convertLeggendariaStates = (name:string,difficulty:string):{name:st
     "EBONY & IVORY†",
     "KAISER PHOENIX†",
   ]
-  let newName = name,newDifficulty = difficulty;
-  if(difficulty === "another" && leggendariaSongs.indexOf(name) > -1){
-    newName = name.replace("†LEGGENDARIA","").replace("†","");
+  let newName = name, newDifficulty = difficulty;
+  if (difficulty === "another" && leggendariaSongs.indexOf(name) > -1) {
+    newName = name.replace("†LEGGENDARIA", "").replace("†", "");
     newDifficulty = "leggendaria";
   }
   return {
-    name:newName,
-    difficulty:newDifficulty
+    name: newName,
+    difficulty: newDifficulty
   }
 }

@@ -8,82 +8,82 @@ import Alert from '@mui/material/Alert/Alert';
 import AlertTitle from '@mui/material/AlertTitle/AlertTitle';
 import { EachMemo } from '../songs/songNotes';
 
-interface S{
-  isLoading:boolean,
-  likedNotes:any[],
-  isModalOpen:boolean,
-  data:any
+interface S {
+  isLoading: boolean,
+  likedNotes: any[],
+  isModalOpen: boolean,
+  data: any
 }
 
-class NotesLiked extends React.Component<{},S> {
-  private fbA:fbActions = new fbActions();
+class NotesLiked extends React.Component<{}, S> {
+  private fbA: fbActions = new fbActions();
 
-  constructor(props:{}){
+  constructor(props: {}) {
     super(props);
-    this.state ={
-      isLoading:true,
-      isModalOpen:false,
-      likedNotes:[],
-      data:null,
+    this.state = {
+      isLoading: true,
+      isModalOpen: false,
+      likedNotes: [],
+      data: null,
     }
   }
 
-  async componentDidMount(){
+  async componentDidMount() {
     const likedNotes = await this.fbA.loadLikedNotes();
-    if(!likedNotes){
+    if (!likedNotes) {
       return this.setState({
-        likedNotes:[],
-        isLoading:false,
+        likedNotes: [],
+        isLoading: false,
       })
     }
     const docs = likedNotes.docs;
     const res = [];
-    for(let i = 0;i < docs.length; ++i){
+    for (let i = 0; i < docs.length; ++i) {
       const data = docs[i].data();
       const ref = data.target ? await data.target.get() : null;
-      if(ref){
+      if (ref) {
         res.push(ref);
       }
     }
     return this.setState({
-      likedNotes:res,
-      isLoading:false,
+      likedNotes: res,
+      isLoading: false,
     })
   }
 
-  handleModalOpen = (flag:boolean)=> this.setState({isModalOpen:flag,data:null})
+  handleModalOpen = (flag: boolean) => this.setState({ isModalOpen: flag, data: null })
 
-  onClick = (data:any)=>{
+  onClick = (data: any) => {
     this.setState({
-      isModalOpen:true,
-      data:data
+      isModalOpen: true,
+      data: data
     })
   }
 
-  render(){
-    const {isLoading,likedNotes,isModalOpen,data} = this.state;
-    if(isLoading){
-      return (<Loader/>);
+  render() {
+    const { isLoading, likedNotes, isModalOpen, data } = this.state;
+    if (isLoading) {
+      return (<Loader />);
     }
     return (
       <Container fixed>
         {likedNotes.length === 0 && (
           <Alert severity="error">
             <AlertTitle>いいねをした投稿がありません</AlertTitle>
-            <p>投稿に「いいね」をつけると、この画面で一括確認することができます。<br/>
-            役に立ちそうな投稿にはどんどん「いいね」を付けていきましょう！</p>
+            <p>投稿に「いいね」をつけると、この画面で一括確認することができます。<br />
+              役に立ちそうな投稿にはどんどん「いいね」を付けていきましょう！</p>
           </Alert>
         )}
         <List
           component="nav"
         >
-          {likedNotes.map((item:any,i:number)=>{
+          {likedNotes.map((item: any, i: number) => {
             return (
-              <EachMemo item={item} listType noEllipsis onClick={this.onClick} key={i}/>
+              <EachMemo item={item} listType noEllipsis onClick={this.onClick} key={i} />
             )
           })}
         </List>
-        {(isModalOpen && data) && <ModalNotes derived={data} isOpen={isModalOpen} handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
+        {(isModalOpen && data) && <ModalNotes derived={data} isOpen={isModalOpen} handleOpen={(flag: boolean) => this.handleModalOpen(flag)} />}
       </Container>
     );
   }

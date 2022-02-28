@@ -6,38 +6,38 @@ import Loader from '../common/loader';
 import ControlTab from './control';
 
 interface S {
-  isLoading:boolean,
-  isError:boolean,
-  userData:any
+  isLoading: boolean,
+  isError: boolean,
+  userData: any
 }
 
-class SyncSettings extends React.Component<{},S> {
+class SyncSettings extends React.Component<{}, S> {
 
-  constructor(props:{}){
+  constructor(props: {}) {
     super(props);
-    this.state ={
-      isLoading:true,
-      isError:false,
-      userData:null,
+    this.state = {
+      isLoading: true,
+      isError: false,
+      userData: null,
     }
   }
 
-  componentDidMount(){
-    new fbActions().auth().onAuthStateChanged((user: any)=> {
-      this.setState({userData:user,isLoading:false})
+  componentDidMount() {
+    new fbActions().auth().onAuthStateChanged((user: any) => {
+      this.setState({ userData: user, isLoading: false })
     });
   }
 
-  render(){
-    const {isLoading,userData} = this.state;
+  render() {
+    const { isLoading, userData } = this.state;
 
-    if(isLoading){
-      return (<Loader hasMargin/>);
+    if (isLoading) {
+      return (<Loader hasMargin />);
     }
     return (
-      <Container fixed  className="commonLayout">
-        {!userData && <SyncLoginScreen mode={0}/>}
-        {userData && <ControlTab userData={userData}/>}
+      <Container fixed className="commonLayout">
+        {!userData && <SyncLoginScreen mode={0} />}
+        {userData && <ControlTab userData={userData} />}
       </Container>
     );
   }

@@ -42,13 +42,13 @@ export const theme = createTheme(({
   },
 
   components: {
-    MuiTextField:{
-      defaultProps:{
-        variant:"standard"
+    MuiTextField: {
+      defaultProps: {
+        variant: "standard"
       }
     },
     MuiButton: {
-      defaultProps:{
+      defaultProps: {
         color: "secondary"
       },
       styleOverrides: {
@@ -58,22 +58,22 @@ export const theme = createTheme(({
       }
     },
     MuiSelect: {
-      defaultProps:{
+      defaultProps: {
         variant: 'standard',
       }
     },
     MuiInputLabel: {
-      defaultProps:{
+      defaultProps: {
         variant: 'standard',
       }
     },
     MuiSwitch: {
-      defaultProps:{
+      defaultProps: {
         color: "secondary"
       }
     },
     MuiCheckbox: {
-      defaultProps:{
+      defaultProps: {
         color: "secondary"
       }
     },

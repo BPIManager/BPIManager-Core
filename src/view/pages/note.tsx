@@ -10,23 +10,23 @@ import WriteNotes from '../components/notes/writeNotes';
 import { AppBar } from '@mui/material';
 
 interface S {
-  currentTab:number
+  currentTab: number
 }
 
-class Tools extends React.Component<{intl:any},S> {
+class Tools extends React.Component<{ intl: any }, S> {
 
-  constructor(props:{intl:any}){
+  constructor(props: { intl: any }) {
     super(props);
-    this.state ={
-      currentTab:0,
+    this.state = {
+      currentTab: 0,
     }
   }
 
   handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
-    this.setState({currentTab:newValue});
+    this.setState({ currentTab: newValue });
   };
 
-  render(){
+  render() {
     return (
       <React.Fragment>
         <AppBar position="static" className="subAppBar">
@@ -44,12 +44,12 @@ class Tools extends React.Component<{intl:any},S> {
             <Tab label="Myノート" />
           </Tabs>
         </AppBar>
-        <Container fixed  className="commonLayout" id="stat">
-          {this.state.currentTab === 0 && <NotesRecent/>}
-          {this.state.currentTab === 1 && <WriteNotes/>}
-          {this.state.currentTab === 2 && <NotesLiked/>}
-          {this.state.currentTab === 3 && <MyNotes/>}
-          </Container>
+        <Container fixed className="commonLayout" id="stat">
+          {this.state.currentTab === 0 && <NotesRecent />}
+          {this.state.currentTab === 1 && <WriteNotes />}
+          {this.state.currentTab === 2 && <NotesLiked />}
+          {this.state.currentTab === 3 && <MyNotes />}
+        </Container>
       </React.Fragment>
     );
   }

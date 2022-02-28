@@ -18,35 +18,35 @@ import Link from '@mui/material/Link';
 import { FormattedMessage } from 'react-intl';
 
 class SyncLoginScreen extends React.Component<{
-  mode:number
-},{}> {
+  mode: number
+}, {}> {
 
-  private fbA:fbActions = new fbActions();
+  private fbA: fbActions = new fbActions();
 
-  render(){
+  render() {
     return (
       <React.Fragment>
-        <Paper style={{padding:"15px"}}>
-          <Avatar style={{background:avatarBgColor,color:avatarFontColor,margin:"10px auto",padding:"35px",fontSize:"25px"}}>
-            <LockIcon fontSize="large"/>
+        <Paper style={{ padding: "15px" }}>
+          <Avatar style={{ background: avatarBgColor, color: avatarFontColor, margin: "10px auto", padding: "35px", fontSize: "25px" }}>
+            <LockIcon fontSize="large" />
           </Avatar>
-          <Typography component="h5" variant="h5" style={{textAlign:"center",marginTop:"10px"}}>
-            <FormattedMessage id={"SignIn"}/>
+          <Typography component="h5" variant="h5" style={{ textAlign: "center", marginTop: "10px" }}>
+            <FormattedMessage id={"SignIn"} />
           </Typography>
-          <Divider style={{margin:"10px 0"}}/>
+          <Divider style={{ margin: "10px 0" }} />
           <List
             subheader={
               <ListSubheader component="div" disableSticky>
-                <FormattedMessage id={"SignInWith"}/>
+                <FormattedMessage id={"SignInWith"} />
               </ListSubheader>
             }>
             {[
-              {name:"Twitter",func:()=>this.fbA.authWithTwitter(),desc:""},
-              {name:"Google",func:()=>this.fbA.authWithGoogle(),desc:""}
-            ].map((item,i)=>{
+              { name: "Twitter", func: () => this.fbA.authWithTwitter(), desc: "" },
+              { name: "Google", func: () => this.fbA.authWithGoogle(), desc: "" }
+            ].map((item, i) => {
               return (
                 <ListItem key={i} button onClick={item.func}>
-                  <ListItemText primary={<span><FormattedMessage id={"SignInWithPre"}/>{item.name}<FormattedMessage id={"SignInWithAfter"}/></span>} secondary={item.desc} />
+                  <ListItemText primary={<span><FormattedMessage id={"SignInWithPre"} />{item.name}<FormattedMessage id={"SignInWithAfter"} /></span>} secondary={item.desc} />
                   <ListItemSecondaryAction onClick={item.func}>
                     <IconButton edge="end" size="large">
                       <ArrowForwardIosIcon />
@@ -55,30 +55,30 @@ class SyncLoginScreen extends React.Component<{
                 </ListItem>
               );
             })
-          }
+            }
           </List>
-          <Divider style={{margin:"10px 0"}}/>
+          <Divider style={{ margin: "10px 0" }} />
           <Typography component="p" variant="caption" gutterBottom>
             <b>
-              <FormattedMessage id={"Signin.title"}/>
+              <FormattedMessage id={"Signin.title"} />
             </b>
           </Typography>
-            <ul className="MuiTypography-caption">
-              <li><FormattedMessage id={"Signin.list1"}/></li>
-              <li><FormattedMessage id={"Signin.list2"}/></li>
-              <li><FormattedMessage id={"Signin.list3"}/></li>
-              <li><FormattedMessage id={"Signin.list4"}/></li>
-              <li>スコアを同期すると<Link href="https://rank.poyashi.me" color="secondary">BPIMRanks</Link>にてランキングに掲載されます</li>
-            </ul>
+          <ul className="MuiTypography-caption">
+            <li><FormattedMessage id={"Signin.list1"} /></li>
+            <li><FormattedMessage id={"Signin.list2"} /></li>
+            <li><FormattedMessage id={"Signin.list3"} /></li>
+            <li><FormattedMessage id={"Signin.list4"} /></li>
+            <li>スコアを同期すると<Link href="https://rank.poyashi.me" color="secondary">BPIMRanks</Link>にてランキングに掲載されます</li>
+          </ul>
           <Alert severity="info">
-          <Typography component="p" variant="caption" gutterBottom>
-            <FormattedMessage id={"Signin.warn1"}/><br/>
-            <FormattedMessage id={"Signin.warn2"}/><br/>
-            <Link color="secondary" href="https://docs2.poyashi.me/tos/"><FormattedMessage id={"Signin.warn3"}/></Link>
-          </Typography>
+            <Typography component="p" variant="caption" gutterBottom>
+              <FormattedMessage id={"Signin.warn1"} /><br />
+              <FormattedMessage id={"Signin.warn2"} /><br />
+              <Link color="secondary" href="https://docs2.poyashi.me/tos/"><FormattedMessage id={"Signin.warn3"} /></Link>
+            </Typography>
           </Alert>
         </Paper>
-        </React.Fragment>
+      </React.Fragment>
     );
   }
 }

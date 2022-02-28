@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import {Link as RefLink, Divider, Avatar, Grid, Typography, CardActions, Card, CardContent, Container, CircularProgress, ListItem, ListItemAvatar, ListItemText, List} from '@mui/material/';
+import { Link as RefLink, Divider, Avatar, Grid, Typography, CardActions, Card, CardContent, Container, CircularProgress, ListItem, ListItemAvatar, ListItemText, List } from '@mui/material/';
 import { _currentVersion, _currentTheme, _currentQuickAccessComponents } from '@/components/settings';
 import UpdateIcon from '@mui/icons-material/Update';
 import Loader from '@/view/components/common/loader';
@@ -38,64 +38,64 @@ import { RankListItem } from './ranking/search';
 import WeeklyModal from './ranking/modal';
 
 
-class Index extends React.Component<{global:any}&RouteComponentProps,{
-  user:any,
-  totalBPI:number,
-  lastWeekUpdates:number,
-  remains:number,
-  auth:any,
-  isLoading:boolean,
-  userLoading:boolean,
+class Index extends React.Component<{ global: any } & RouteComponentProps, {
+  user: any,
+  totalBPI: number,
+  lastWeekUpdates: number,
+  remains: number,
+  auth: any,
+  isLoading: boolean,
+  userLoading: boolean,
 }>{
 
-  constructor(props:{global:any}&RouteComponentProps){
+  constructor(props: { global: any } & RouteComponentProps) {
     super(props);
     this.state = {
-      auth:null,
-      user:localStorage.getItem("social") ? JSON.parse(localStorage.getItem("social") || "[]") : null,
-      totalBPI:-15,
-      lastWeekUpdates:0,
-      remains:0,
-      isLoading:true,
-      userLoading:true,
+      auth: null,
+      user: localStorage.getItem("social") ? JSON.parse(localStorage.getItem("social") || "[]") : null,
+      totalBPI: -15,
+      lastWeekUpdates: 0,
+      remains: 0,
+      isLoading: true,
+      userLoading: true,
     }
   }
 
-  async componentDidMount(){
+  async componentDidMount() {
     const bpi = new bpiCalcuator();
     let exec = await new statMain(12).load();
-    const totalBPI = bpi.setSongs(exec.at(),exec.at().length) || -15;
+    const totalBPI = bpi.setSongs(exec.at(), exec.at().length) || -15;
     let shift = await new scoresDB().getAll();
-    shift = shift.filter((data:scoreData)=>isSameWeek(data.updatedAt,new Date()));
+    shift = shift.filter((data: scoreData) => isSameWeek(data.updatedAt, new Date()));
     const _named = await named(12);
-    const remains = await getTable(12,_named);
-    const concatted = Object.keys(remains).reduce((group:any,item:string)=>{
-      if(!group) group = [];
+    const remains = await getTable(12, _named);
+    const concatted = Object.keys(remains).reduce((group: any, item: string) => {
+      if (!group) group = [];
       group = group.concat(remains[item]);
       return group;
-    },[]);
-    new fbActions().auth().onAuthStateChanged((user: any)=> {
-      this.setState({auth:user,userLoading:false});
+    }, []);
+    new fbActions().auth().onAuthStateChanged((user: any) => {
+      this.setState({ auth: user, userLoading: false });
     });
     this.setState({
-      totalBPI:totalBPI,
-      lastWeekUpdates:shift.length || 0,
-      remains:concatted.filter((item:CLBody)=>item.bpi > (Number.isNaN(item.currentBPI) ? -999 : item.currentBPI)).length,
-      isLoading:false
+      totalBPI: totalBPI,
+      lastWeekUpdates: shift.length || 0,
+      remains: concatted.filter((item: CLBody) => item.bpi > (Number.isNaN(item.currentBPI) ? -999 : item.currentBPI)).length,
+      isLoading: false
     });
     return;
   }
 
-  QAindexOf = (needle:string)=>{
+  QAindexOf = (needle: string) => {
     const str = _currentQuickAccessComponents();
     return str.indexOf(needle) > -1;
   }
 
-  render(){
+  render() {
     const themeColor = _currentTheme();
     const bg = blurredBackGround();
-    const {user,auth,isLoading,userLoading} = this.state;
-    const xs = 12,sm = 6, md = 4,lg = 4;
+    const { user, auth, isLoading, userLoading } = this.state;
+    const xs = 12, sm = 6, md = 4, lg = 4;
     return (
       <div>
         <Helmet>
@@ -103,160 +103,160 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
             content="beatmania IIDXのスコアをBPIという指標を用いて管理したり、ライバルとスコアを競ったりできるツールです。"
           />
         </Helmet>
-        <div style={{background:`url("/images/background/${themeColor}.svg")`,backgroundSize:"cover"}}>
-          <div style={{background:themeColor === "light" ? "transparent" : "rgba(0,0,0,0)",display:"flex",padding:"1vh 0",width:"100%",height:"100%",paddingBottom:"90px"}}>
+        <div style={{ background: `url("/images/background/${themeColor}.svg")`, backgroundSize: "cover" }}>
+          <div style={{ background: themeColor === "light" ? "transparent" : "rgba(0,0,0,0)", display: "flex", padding: "1vh 0", width: "100%", height: "100%", paddingBottom: "90px" }}>
             {userLoading && (
-            <Container className="topMenuContainer">
-            <Grid container alignContent="space-between" alignItems="center" style={{padding:"20px"}}>
-              <Grid item xs={3} lg={3} style={{display:"flex",justifyContent:"center",flexDirection:"column"}}>
-                <Container fixed  className={"loaderCenteredOnly"} style={{maxWidth:"100%"}}>
-                  <CircularProgress color="secondary" size={64} />
-                </Container>
-              </Grid>
-              <Grid item xs={9} lg={9} style={{paddingLeft:"15px"}}>
-                <Typography variant="body1">
-                  &nbsp;
+              <Container className="topMenuContainer">
+                <Grid container alignContent="space-between" alignItems="center" style={{ padding: "20px" }}>
+                  <Grid item xs={3} lg={3} style={{ display: "flex", justifyContent: "center", flexDirection: "column" }}>
+                    <Container fixed className={"loaderCenteredOnly"} style={{ maxWidth: "100%" }}>
+                      <CircularProgress color="secondary" size={64} />
+                    </Container>
+                  </Grid>
+                  <Grid item xs={9} lg={9} style={{ paddingLeft: "15px" }}>
+                    <Typography variant="body1">
+                      &nbsp;
                 </Typography>
-                <Typography variant="body1">
-                  &nbsp;
+                    <Typography variant="body1">
+                      &nbsp;
                 </Typography>
-              </Grid>
-            </Grid>
-            </Container>
+                  </Grid>
+                </Grid>
+              </Container>
             )}
             {(!userLoading && (auth && user)) && (
-            <Container className="topMenuContainer">
-            <Grid container alignContent="space-between" alignItems="center" style={{padding:"20px"}}>
-              <Grid item xs={3} lg={3} style={{display:"flex",justifyContent:"center",flexDirection:"column"}}>
-                <Avatar style={{border:"1px solid #222",margin:"15px auto"}} className="toppageIcon">
-                  <img src={user.photoURL ? user.photoURL.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
-                    alt={user.displayName}
-                    onClick={()=>this.props.history.push("/u/" + user.displayName)}
-                    onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(user) || alternativeImg(user.displayName)}/>
-                </Avatar>
-              </Grid>
-              <Grid item xs={9} lg={9} style={{paddingLeft:"15px"}}>
-                <Typography variant="body1">
-                  {user.displayName}
-                </Typography>
-                <Typography variant="body1">
-                  <Link to={"/sync/settings"}><RefLink color="secondary" component="span"><FormattedMessage id="Index.EditProfile"/></RefLink></Link>
-                </Typography>
-              </Grid>
-            </Grid>
-            </Container>
+              <Container className="topMenuContainer">
+                <Grid container alignContent="space-between" alignItems="center" style={{ padding: "20px" }}>
+                  <Grid item xs={3} lg={3} style={{ display: "flex", justifyContent: "center", flexDirection: "column" }}>
+                    <Avatar style={{ border: "1px solid #222", margin: "15px auto" }} className="toppageIcon">
+                      <img src={user.photoURL ? user.photoURL.replace("_normal", "") : "noimage"} style={{ width: "100%", height: "100%" }}
+                        alt={user.displayName}
+                        onClick={() => this.props.history.push("/u/" + user.displayName)}
+                        onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(user) || alternativeImg(user.displayName)} />
+                    </Avatar>
+                  </Grid>
+                  <Grid item xs={9} lg={9} style={{ paddingLeft: "15px" }}>
+                    <Typography variant="body1">
+                      {user.displayName}
+                    </Typography>
+                    <Typography variant="body1">
+                      <Link to={"/sync/settings"}><RefLink color="secondary" component="span"><FormattedMessage id="Index.EditProfile" /></RefLink></Link>
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Container>
             )}
             {(!userLoading && (!auth || !user)) && (
-            <Container className="topMenuContainer">
-            <Grid container alignContent="space-between" alignItems="center" style={{padding:"20px"}}>
-              <Grid item xs={3} lg={3} style={{display:"flex",justifyContent:"center",flexDirection:"column"}}>
-                <Avatar style={{border:"1px solid #222",margin:"15px auto"}} className="toppageIcon">
-                </Avatar>
-              </Grid>
-              <Grid item xs={9} lg={9} style={{paddingLeft:"15px"}}>
-                <Typography variant="body1">
-                  <FormattedMessage id="Index.NotLoggedIn"/>
-                </Typography>
-                <Typography variant="body1">
-                  <Link to="/sync/settings"><RefLink color="secondary" component="span"><FormattedMessage id="Index.SignIn"/></RefLink></Link>
-                </Typography>
-              </Grid>
-            </Grid>
-            </Container>
+              <Container className="topMenuContainer">
+                <Grid container alignContent="space-between" alignItems="center" style={{ padding: "20px" }}>
+                  <Grid item xs={3} lg={3} style={{ display: "flex", justifyContent: "center", flexDirection: "column" }}>
+                    <Avatar style={{ border: "1px solid #222", margin: "15px auto" }} className="toppageIcon">
+                    </Avatar>
+                  </Grid>
+                  <Grid item xs={9} lg={9} style={{ paddingLeft: "15px" }}>
+                    <Typography variant="body1">
+                      <FormattedMessage id="Index.NotLoggedIn" />
+                    </Typography>
+                    <Typography variant="body1">
+                      <Link to="/sync/settings"><RefLink color="secondary" component="span"><FormattedMessage id="Index.SignIn" /></RefLink></Link>
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Container>
             )}
           </div>
         </div>
-        <Container style={{marginTop:"-90px"}} className="topMenuContainer">
-          {(!userLoading && (!auth || !user)) && <BeginnerAlert/>}
-          <InstallAlert global={this.props.global}/>
-          <UpdateDef/>
+        <Container style={{ marginTop: "-90px" }} className="topMenuContainer">
+          {(!userLoading && (!auth || !user)) && <BeginnerAlert />}
+          <InstallAlert global={this.props.global} />
+          <UpdateDef />
           <Card style={bg}>
             <CardContent>
               <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
-                <MenuOpenIcon/>&nbsp;<FormattedMessage id="Index.QuickAccess"/>
+                <MenuOpenIcon />&nbsp;<FormattedMessage id="Index.QuickAccess" />
               </Typography>
-              <div style={{overflowX:"scroll"}} className="topMenuScrollableWrapper">
-              <Grid container direction="row" wrap="nowrap" alignItems="center" style={{width:"100%",margin:"20px 0 0 0"}} className="topMenuContaienrGridWrapper">
-                {quickAccessTable.map((item:any)=>{
-                  if(!this.QAindexOf(item.com)) return (null);
-                  return (
-                    <Grid container direction="column" alignItems="center" onClick={()=>this.props.history.push(item.href)} key={item.name}>
-                      {item.icon}
-                      <Typography color="textSecondary" variant="caption">{item.name}</Typography>
-                    </Grid>
-                  )
-                })
-                }
-                <Grid container direction="column" alignItems="center" onClick={()=>this.props.history.push("/settings?tab=1")}>
-                  <AppsIcon/>
-                  <Typography color="textSecondary" variant="caption">
-                    <FormattedMessage id="Index.EditQA"/>
-                  </Typography>
+              <div style={{ overflowX: "scroll" }} className="topMenuScrollableWrapper">
+                <Grid container direction="row" wrap="nowrap" alignItems="center" style={{ width: "100%", margin: "20px 0 0 0" }} className="topMenuContaienrGridWrapper">
+                  {quickAccessTable.map((item: any) => {
+                    if (!this.QAindexOf(item.com)) return (null);
+                    return (
+                      <Grid container direction="column" alignItems="center" onClick={() => this.props.history.push(item.href)} key={item.name}>
+                        {item.icon}
+                        <Typography color="textSecondary" variant="caption">{item.name}</Typography>
+                      </Grid>
+                    )
+                  })
+                  }
+                  <Grid container direction="column" alignItems="center" onClick={() => this.props.history.push("/settings?tab=1")}>
+                    <AppsIcon />
+                    <Typography color="textSecondary" variant="caption">
+                      <FormattedMessage id="Index.EditQA" />
+                    </Typography>
+                  </Grid>
                 </Grid>
-              </Grid>
               </div>
             </CardContent>
           </Card>
-          <Divider style={{margin:"25px 0"}}/>
+          <Divider style={{ margin: "25px 0" }} />
         </Container>
-        {isLoading && <Loader/>}
+        {isLoading && <Loader />}
         {!isLoading && (
-        <Container>
-          <Grid container direction="row" justifyContent="space-between" spacing={3} className="narrowCards">
-            <Grid item xs={xs} sm={sm} md={md} lg={lg}>
-              <Card>
-                <CardContent>
-                  <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
-                    <TimelineIcon/>&nbsp;<FormattedMessage id="Stats.TotalBPI"/>(☆12)
+          <Container>
+            <Grid container direction="row" justifyContent="space-between" spacing={3} className="narrowCards">
+              <Grid item xs={xs} sm={sm} md={md} lg={lg}>
+                <Card>
+                  <CardContent>
+                    <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
+                      <TimelineIcon />&nbsp;<FormattedMessage id="Stats.TotalBPI" />(☆12)
                   </Typography>
-                  <Typography color="textSecondary" variant="h2">
-                    {this.state.totalBPI}
+                    <Typography color="textSecondary" variant="h2">
+                      {this.state.totalBPI}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button size="small" onClick={() => this.props.history.push("/stats")}><FormattedMessage id="Index.ShowTotalBPI" /></Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+              <Grid item xs={xs} sm={sm} md={md} lg={lg}>
+                <Card>
+                  <CardContent>
+                    <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
+                      <LibraryMusicIcon />&nbsp;<FormattedMessage id="Index.UpdatedInWeek" />
+                    </Typography>
+                    <Typography color="textSecondary" variant="h2">
+                      {this.state.lastWeekUpdates}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button size="small" onClick={() => this.props.history.push("/songs")}><FormattedMessage id="Index.ShowSongs" /></Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+              <Grid item xs={xs} sm={sm} md={md} lg={lg}>
+                <Card>
+                  <CardContent>
+                    <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
+                      <WbIncandescentIcon />&nbsp;<FormattedMessage id="Index.AAARemain" />(☆12)
                   </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button size="small" onClick={()=>this.props.history.push("/stats")}><FormattedMessage id="Index.ShowTotalBPI"/></Button>
-                </CardActions>
-              </Card>
+                    <Typography color="textSecondary" variant="h2">
+                      {this.state.remains}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button size="small" onClick={() => this.props.history.push("/AAATable")}><FormattedMessage id="Index.ShowAAA" /></Button>
+                  </CardActions>
+                </Card>
+              </Grid>
             </Grid>
-            <Grid item xs={xs} sm={sm} md={md} lg={lg}>
-              <Card>
-                <CardContent>
-                  <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
-                    <LibraryMusicIcon/>&nbsp;<FormattedMessage id="Index.UpdatedInWeek"/>
-                  </Typography>
-                  <Typography color="textSecondary" variant="h2">
-                    {this.state.lastWeekUpdates}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button size="small" onClick={()=>this.props.history.push("/songs")}><FormattedMessage id="Index.ShowSongs"/></Button>
-                </CardActions>
-              </Card>
-            </Grid>
-            <Grid item xs={xs} sm={sm} md={md} lg={lg}>
-              <Card>
-                <CardContent>
-                  <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
-                    <WbIncandescentIcon/>&nbsp;<FormattedMessage id="Index.AAARemain"/>(☆12)
-                  </Typography>
-                  <Typography color="textSecondary" variant="h2">
-                    {this.state.remains}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button size="small" onClick={()=>this.props.history.push("/AAATable")}><FormattedMessage id="Index.ShowAAA"/></Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          </Grid>
-        </Container>
+          </Container>
         )}
-        <RankList history={this.props.history}/>
-        <RecentUsers history={this.props.history}/>
-        <small style={{marginTop:"25px",fontSize:"8px",textAlign:"center",display:"block",padding:"15px"}}>
-          <FormattedMessage id="Index.notes1"/><br/>
-          <FormattedMessage id="Index.notes2"/><br/>
-          <FormattedMessage id="Index.notes3"/>
+        <RankList history={this.props.history} />
+        <RecentUsers history={this.props.history} />
+        <small style={{ marginTop: "25px", fontSize: "8px", textAlign: "center", display: "block", padding: "15px" }}>
+          <FormattedMessage id="Index.notes1" /><br />
+          <FormattedMessage id="Index.notes2" /><br />
+          <FormattedMessage id="Index.notes3" />
         </small>
       </div>
     )
@@ -265,86 +265,86 @@ class Index extends React.Component<{global:any}&RouteComponentProps,{
 
 export default withRouter(Index);
 
-class UpdateDef extends React.Component<{},{
-  showUpdate:boolean,
-  latestVersion:string,
-  updateInfo:string,
-  progress:number,
-  res:string,
+class UpdateDef extends React.Component<{}, {
+  showUpdate: boolean,
+  latestVersion: string,
+  updateInfo: string,
+  progress: number,
+  res: string,
 }>{
 
-  constructor(props:{}){
+  constructor(props: {}) {
     super(props);
     this.state = {
-      showUpdate:false,
-      latestVersion:"",
-      updateInfo:"",
-      progress:0,
-      res:""
+      showUpdate: false,
+      latestVersion: "",
+      updateInfo: "",
+      progress: 0,
+      res: ""
     }
   }
 
-  async componentDidMount(){
-    try{
+  async componentDidMount() {
+    try {
       const versions = await fetch("https://proxy.poyashi.me/?type=bpiVersion");
       const data = await versions.json();
       const currentVersion = _currentVersion();
-      if(data.version !== currentVersion){
+      if (data.version !== currentVersion) {
         this.setState({
-          showUpdate:true,
-          latestVersion:data.version,
-          updateInfo:data.updateInfo,
+          showUpdate: true,
+          latestVersion: data.version,
+          updateInfo: data.updateInfo,
         });
       }
-    }catch(e:any){
+    } catch (e: any) {
       console.log(e);
     }
   }
 
-  updateButton = async()=>{
-    this.setState({progress:1});
+  updateButton = async () => {
+    this.setState({ progress: 1 });
     const p = await updateDefFile();
-    this.setState({progress:2,res:p.message});
+    this.setState({ progress: 2, res: p.message });
   }
 
-  handleToggle = ()=> this.setState({showUpdate:false});
+  handleToggle = () => this.setState({ showUpdate: false });
 
-  render(){
-    const {showUpdate,latestVersion,updateInfo,progress,res} = this.state;
-    if(!showUpdate){
+  render() {
+    const { showUpdate, latestVersion, updateInfo, progress, res } = this.state;
+    if (!showUpdate) {
       return (null);
     }
     return (
-      <Alert variant="outlined" className="MuiPaper-root updateDefAlert" icon={false} severity="info" style={{marginBottom:"25px"}}>
+      <Alert variant="outlined" className="MuiPaper-root updateDefAlert" icon={false} severity="info" style={{ marginBottom: "25px" }}>
         <AlertTitle>定義データを更新</AlertTitle>
         <div>
           {progress === 0 && <div>
-            最新の楽曲データ(ver{latestVersion})が利用可能です。<br/>
-            「更新」ボタンをクリックして今すぐ更新できます。<br/>
+            最新の楽曲データ(ver{latestVersion})が利用可能です。<br />
+            「更新」ボタンをクリックして今すぐ更新できます。<br />
             <RefLink href={updateInfo} target="_blank" color="secondary">ここをクリック</RefLink>して、最新の楽曲データにおける変更点を確認できます。
-            <Divider style={{margin:"8px 0"}}/>
+            <Divider style={{ margin: "8px 0" }} />
             <Button
               fullWidth
               variant="outlined"
               color="secondary"
               size="large"
               onClick={this.updateButton}
-              startIcon={<UpdateIcon/>}>
+              startIcon={<UpdateIcon />}>
               今すぐ更新
             </Button>
           </div>}
           {progress === 1 && <div>
-            <Loader/>
-            <p style={{textAlign:"center"}}>更新しています<br/><span id="_progressText"/></p>
+            <Loader />
+            <p style={{ textAlign: "center" }}>更新しています<br /><span id="_progressText" /></p>
           </div>}
           {progress === 2 && <div>
-            <div style={{display:"flex",alignItems:"center",margin:"20px 0",flexDirection:"column"}}>
-              {(res === "定義データはすでに最新です" || res === "更新完了") && <CheckIcon style={{ fontSize: 60 }}/>}
-              {(res !== "定義データはすでに最新です" && res !== "更新完了") && <WarningIcon style={{ fontSize: 60 }}/>}
+            <div style={{ display: "flex", alignItems: "center", margin: "20px 0", flexDirection: "column" }}>
+              {(res === "定義データはすでに最新です" || res === "更新完了") && <CheckIcon style={{ fontSize: 60 }} />}
+              {(res !== "定義データはすでに最新です" && res !== "更新完了") && <WarningIcon style={{ fontSize: 60 }} />}
               <span>{res}</span>
               {(res !== "定義データはすでに最新です" && res !== "更新完了") && <span><RefLink href="https://gist.github.com/potakusan/11b5322c732bfca4d41fc378dab9b992" color="secondary" target="_blank">トラブルシューティングを表示</RefLink></span>}
             </div>
-            <Button onClick={this.handleToggle} color="secondary" fullWidth style={{marginTop:"8px"}}>
+            <Button onClick={this.handleToggle} color="secondary" fullWidth style={{ marginTop: "8px" }}>
               閉じる
             </Button>
           </div>}
@@ -354,14 +354,14 @@ class UpdateDef extends React.Component<{},{
   }
 }
 
-class BeginnerAlert extends React.Component<{},{}>{
+class BeginnerAlert extends React.Component<{}, {}>{
 
-  render(){
+  render() {
     return (
-      <Alert variant="outlined" className="MuiPaper-root updateDefAlert" severity="info" style={{marginBottom:"25px"}}>
+      <Alert variant="outlined" className="MuiPaper-root updateDefAlert" severity="info" style={{ marginBottom: "25px" }}>
         <AlertTitle>はじめての方へ</AlertTitle>
         <p>
-          「BPIとはなにか？何を表す数字なのか？」などのよくあるご質問にお答えするページがございます。<br/>
+          「BPIとはなにか？何を表す数字なのか？」などのよくあるご質問にお答えするページがございます。<br />
           <RefLink href="https://docs2.poyashi.me" target="_blank" color="secondary">こちらのページを御覧ください。</RefLink>
         </p>
       </Alert>
@@ -369,55 +369,55 @@ class BeginnerAlert extends React.Component<{},{}>{
   }
 }
 
-class InstallAlert extends React.Component<{global:any},{hide:boolean}>{
+class InstallAlert extends React.Component<{ global: any }, { hide: boolean }>{
 
-  constructor(props:{global:any}){
+  constructor(props: { global: any }) {
     super(props);
     this.state = {
-      hide:false
+      hide: false
     }
   }
   private available = (('standalone' in window.navigator) && ((window.navigator as any)['standalone']));
 
-  installApp = ()=>{
+  installApp = () => {
     const { global } = this.props;
-    if(global && global.prompt){
+    if (global && global.prompt) {
       const p = global.prompt as BeforeInstallPromptEvent;
       p.prompt();
-    }else{
+    } else {
       alert("インストールダイアログの呼び出しに失敗しました。\nChromeのメニューより「ホーム画面に追加」をタップし、手動で追加してください。");
     }
   }
 
-  hideMessage = ()=>{ localStorage.setItem("hideAddToHomeScreen","true"); this.setState({hide:true}); }
+  hideMessage = () => { localStorage.setItem("hideAddToHomeScreen", "true"); this.setState({ hide: true }); }
 
-  render(){
+  render() {
     const ua = getUA();
     const bg = blurredBackGround();
-    if(localStorage.getItem("hideAddToHomeScreen") || this.state.hide) return (null);
-    if(ua === "ios" &&  this.available) return (null); // iOS PWA動作時
-    if(ua === "chrome" && window.matchMedia('(display-mode: standalone)').matches) return (null); // Chronium PWA動作時
-    if(ua === "chrome"){
+    if (localStorage.getItem("hideAddToHomeScreen") || this.state.hide) return (null);
+    if (ua === "ios" && this.available) return (null); // iOS PWA動作時
+    if (ua === "chrome" && window.matchMedia('(display-mode: standalone)').matches) return (null); // Chronium PWA動作時
+    if (ua === "chrome") {
       return (
         <Alert className="MuiPaper-root" severity="info" style={bg}>
           <AlertTitle>ご存知ですか？</AlertTitle>
           <p>
             「インストール」ボタンをタップして、ホーム画面から通常のアプリのようにBPIManagerをお使いいただけます。
           </p>
-          <Button startIcon={<GetAppIcon/>} fullWidth color="secondary" variant="outlined" onClick={this.installApp}>インストール</Button>
+          <Button startIcon={<GetAppIcon />} fullWidth color="secondary" variant="outlined" onClick={this.installApp}>インストール</Button>
         </Alert>
       );
     }
-    if(ua === "ios"){
+    if (ua === "ios") {
       return (
         <Alert className="MuiPaper-root" severity="info" style={bg}>
           <AlertTitle>お試しください</AlertTitle>
           <p>
             ホーム画面に追加して、通常のアプリのようにBPIManagerをお使いいただけます。
           </p>
-          <img src="/images/how_to_add_ios.webp" style={{width:"100%",maxWidth:"460px",display:"block",margin:"3px auto"}} alt="ホーム画面への追加手順"/>
-          <Button fullWidth style={{marginTop:"8px",display:"block",textAlign:"right"}} onClick={this.hideMessage}>次から表示しない</Button>
-      </Alert>
+          <img src="/images/how_to_add_ios.webp" style={{ width: "100%", maxWidth: "460px", display: "block", margin: "3px auto" }} alt="ホーム画面への追加手順" />
+          <Button fullWidth style={{ marginTop: "8px", display: "block", textAlign: "right" }} onClick={this.hideMessage}>次から表示しない</Button>
+        </Alert>
       )
     }
     return (null);
@@ -425,133 +425,133 @@ class InstallAlert extends React.Component<{global:any},{hide:boolean}>{
 
 }
 
-class RankList extends React.Component<{history:any},{loading:boolean,list:any[],open:boolean,id:string}>{
+class RankList extends React.Component<{ history: any }, { loading: boolean, list: any[], open: boolean, id: string }>{
 
   state = {
-    loading:true,
-    list:[],
-    open:false,
-    id:""
+    loading: true,
+    list: [],
+    open: false,
+    id: ""
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.getRanking();
   }
 
-  handleOpenRanking = (rankId:string = "")=> this.setState(
+  handleOpenRanking = (rankId: string = "") => this.setState(
     {
-      open:!this.state.open,
-      id:rankId
+      open: !this.state.open,
+      id: rankId
     }
   )
 
-  getRanking = async()=>{
-    const res = await getRanking(false,0);
-    if(res.data.error || res.data.info.length === 0){
-      return this.setState({loading:false,list:[]});
+  getRanking = async () => {
+    const res = await getRanking(false, 0);
+    if (res.data.error || res.data.info.length === 0) {
+      return this.setState({ loading: false, list: [] });
     }
     const list = await expandUserData(res.data.info);
-    return this.setState({list:list,loading:false});
+    return this.setState({ list: list, loading: false });
   }
 
-  render(){
-    const {loading,list,open,id} = this.state;
+  render() {
+    const { loading, list, open, id } = this.state;
     return (
       <React.Fragment>
         <Container>
-          <Divider style={{margin:"25px 0"}}/>
+          <Divider style={{ margin: "25px 0" }} />
           <Card>
             <CardContent>
               <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
-                <EventNoteIcon/>&nbsp;
-                <FormattedMessage id="Index.OngoingWR"/>
+                <EventNoteIcon />&nbsp;
+                <FormattedMessage id="Index.OngoingWR" />
               </Typography>
-              {loading && <Loader/>}
+              {loading && <Loader />}
               {(!loading && list.length > 0) && (
                 <React.Fragment>
                   <List>
-                    {list.map((item,i)=><RankListItem key={i} item={item} handleOpenRanking={this.handleOpenRanking}/>)}
+                    {list.map((item, i) => <RankListItem key={i} item={item} handleOpenRanking={this.handleOpenRanking} />)}
                   </List>
-                  <Button startIcon={<ArrowRightIcon/>} fullWidth size="small" onClick={()=>this.props.history.push("/ranking/")}>
-                    <FormattedMessage id="ShowMore"/>
+                  <Button startIcon={<ArrowRightIcon />} fullWidth size="small" onClick={() => this.props.history.push("/ranking/")}>
+                    <FormattedMessage id="ShowMore" />
                   </Button>
                 </React.Fragment>
               )}
               {(!loading && list.length === 0) && (
-              <Button startIcon={<ArrowRightIcon/>} fullWidth size="small" onClick={()=>this.props.history.push("/ranking/")}>
-                ランキングを作成
+                <Button startIcon={<ArrowRightIcon />} fullWidth size="small" onClick={() => this.props.history.push("/ranking/")}>
+                  ランキングを作成
               </Button>
               )}
             </CardContent>
           </Card>
         </Container>
         {open &&
-          <WeeklyModal isOpen={open} rankingId={id} handleOpen={this.handleOpenRanking}/>
+          <WeeklyModal isOpen={open} rankingId={id} handleOpen={this.handleOpenRanking} />
         }
       </React.Fragment>
     )
   }
 }
 
-class RecentUsers extends React.Component<{history:any},{loading:boolean,list:any[],open:boolean,username:string}>{
+class RecentUsers extends React.Component<{ history: any }, { loading: boolean, list: any[], open: boolean, username: string }>{
 
   state = {
-    loading:true,
-    list:[],
-    open:false,
-    username:""
+    loading: true,
+    list: [],
+    open: false,
+    username: ""
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.getRecentUsers();
   }
 
-  handleModalOpen = (flag:boolean)=> this.setState({open:flag});
-  open = (uid:string)=> this.setState({open:true,username:uid});
+  handleModalOpen = (flag: boolean) => this.setState({ open: flag });
+  open = (uid: string) => this.setState({ open: true, username: uid });
 
-  getRecentUsers = async()=>{
-    const res = await new fbActions().recentUpdated(null,null,"すべて");
-    return this.setState({loading:false,list:res.slice(0,5)});
+  getRecentUsers = async () => {
+    const res = await new fbActions().recentUpdated(null, null, "すべて");
+    return this.setState({ loading: false, list: res.slice(0, 5) });
   }
 
-  render(){
-    const {loading,list,open,username} = this.state;
-    const {history} = this.props;
+  render() {
+    const { loading, list, open, username } = this.state;
+    const { history } = this.props;
     return (
-    <React.Fragment>
-      <Container>
-        <Divider style={{margin:"25px 0"}}/>
-        <Card>
-          <CardContent>
-            <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
-              <PeopleIcon/>&nbsp;
-              <FormattedMessage id="Index.RecentlyUpdated"/>
-            </Typography>
-            {loading && <Loader/>}
-            {!loading && (
-              <List>
-                {list.map((item:rivalStoreData)=>(
-                  <ListItem key={item.uid} button onClick={()=>this.open(item.displayName)}>
-                    <ListItemAvatar>
-                      <Avatar>
-                        <img src={item.photoURL ? item.photoURL.replace("_normal","") : "noimage"} style={{width:"100%",height:"100%"}}
-                        alt={item.displayName}
-                        onError={(e)=>(e.target as HTMLImageElement).src = getAltTwitterIcon(item) || alternativeImg(item.displayName)}/>
-                      </Avatar>
-                    </ListItemAvatar>
-                  <ListItemText primary={item.displayName} secondary={"総合BPI:"+ item.totalBPI +" / " + updatedTime((item.serverTime as any).toDate())}/>
-                </ListItem>
-                ))}
-              </List>
-            )}
-            <Button startIcon={<ArrowRightIcon/>} fullWidth size="small" onClick={()=>history.push("/rivals?tab=3")}>
-              <FormattedMessage id="ShowMore"/>
-            </Button>
-          </CardContent>
-        </Card>
-      </Container>
-      {open && <ModalUser isOpen={open} currentUserName={username} handleOpen={(flag:boolean)=>this.handleModalOpen(flag)}/>}
-    </React.Fragment>
+      <React.Fragment>
+        <Container>
+          <Divider style={{ margin: "25px 0" }} />
+          <Card>
+            <CardContent>
+              <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
+                <PeopleIcon />&nbsp;
+              <FormattedMessage id="Index.RecentlyUpdated" />
+              </Typography>
+              {loading && <Loader />}
+              {!loading && (
+                <List>
+                  {list.map((item: rivalStoreData) => (
+                    <ListItem key={item.uid} button onClick={() => this.open(item.displayName)}>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <img src={item.photoURL ? item.photoURL.replace("_normal", "") : "noimage"} style={{ width: "100%", height: "100%" }}
+                            alt={item.displayName}
+                            onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(item) || alternativeImg(item.displayName)} />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText primary={item.displayName} secondary={"総合BPI:" + item.totalBPI + " / " + updatedTime((item.serverTime as any).toDate())} />
+                    </ListItem>
+                  ))}
+                </List>
+              )}
+              <Button startIcon={<ArrowRightIcon />} fullWidth size="small" onClick={() => history.push("/rivals?tab=3")}>
+                <FormattedMessage id="ShowMore" />
+              </Button>
+            </CardContent>
+          </Card>
+        </Container>
+        {open && <ModalUser isOpen={open} currentUserName={username} handleOpen={(flag: boolean) => this.handleModalOpen(flag)} />}
+      </React.Fragment>
     );
   }
 }

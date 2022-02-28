@@ -9,45 +9,45 @@ import Loader from '../../common/loader';
 import Alert from '@mui/lab/Alert/Alert';
 
 interface P {
-  handleToggle:()=>void,
-  exec:()=>Promise<{"error":boolean,"errorMessage":string}>,
+  handleToggle: () => void,
+  exec: () => Promise<{ "error": boolean, "errorMessage": string }>,
 }
 
 interface S {
-  isLoading:boolean,
-  errorMessage:string,
+  isLoading: boolean,
+  errorMessage: string,
 }
 
 
-class DeleteModal extends React.Component<P,S> {
+class DeleteModal extends React.Component<P, S> {
 
-  constructor(props:P){
+  constructor(props: P) {
     super(props);
     this.state = {
-      isLoading:false,
-      errorMessage:""
+      isLoading: false,
+      errorMessage: ""
     }
   }
 
-  deleteExec = async()=>{
-    this.setState({isLoading:true});
+  deleteExec = async () => {
+    this.setState({ isLoading: true });
     const p = await this.props.exec();
-    if(p.error){
-      this.setState({isLoading:false,errorMessage:p.errorMessage})
-    }else{
+    if (p.error) {
+      this.setState({ isLoading: false, errorMessage: p.errorMessage })
+    } else {
       this.props.handleToggle();
     }
   }
 
-  render(){
-    const {handleToggle} = this.props;
-    const {isLoading,errorMessage} = this.state;
-    if(isLoading){
+  render() {
+    const { handleToggle } = this.props;
+    const { isLoading, errorMessage } = this.state;
+    if (isLoading) {
       return (
         <Dialog open={true}>
           <DialogTitle>スコアの削除</DialogTitle>
           <DialogContent>
-            <Loader text="通信中です"/>
+            <Loader text="通信中です" />
           </DialogContent>
         </Dialog>
       );
@@ -60,7 +60,7 @@ class DeleteModal extends React.Component<P,S> {
             ランキングに登録済みのスコアを削除しますか？
           </p>
           {errorMessage && (
-            <Alert severity="warning" style={{margin:"5px 0"}}>
+            <Alert severity="warning" style={{ margin: "5px 0" }}>
               {errorMessage}
             </Alert>
           )}
