@@ -256,7 +256,9 @@ class Index extends React.Component<{ global: any } & RouteComponentProps, {
         <small style={{ marginTop: "25px", fontSize: "8px", textAlign: "center", display: "block", padding: "15px" }}>
           <FormattedMessage id="Index.notes1" /><br />
           <FormattedMessage id="Index.notes2" /><br />
-          <FormattedMessage id="Index.notes3" />
+          <FormattedMessage id="Index.notes3" /><br /><br />
+          Made with &hearts; by poyashi.me<br/>
+          Author : <RefLink href="https://twitter.com/210120090722O19" target="_blank" color="secondary">@210120090722O19</RefLink>
         </small>
       </div>
     )
