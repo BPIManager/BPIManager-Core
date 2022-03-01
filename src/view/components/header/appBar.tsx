@@ -43,6 +43,7 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import HistoryIcon from '@mui/icons-material/History';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
+import ArenaRankCheck from "../arenaRankCheck";
 
 interface navBars {
   to: string,
@@ -332,6 +333,7 @@ class GlobalHeader extends React.Component<{ global: any, classes: any, theme: a
 
     return (
       <div className={classes.root}>
+        <ArenaRankCheck />
         <AppBar className={window.location.href.split('/').pop() === "" ? "appBarIndex " + classes.appBar + " apbar" : classes.appBar + " apbar"}>
           <Toolbar>
             <IconButton

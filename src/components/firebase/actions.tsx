@@ -425,6 +425,14 @@ export default class fbActions {
     }
   }
 
+  async updateArenaRank(uid:string,newRank:string){
+    return await this.setUserCollection().doc(uid).update({
+      timeStamp: timeFormatter(3),
+      serverTime: this.time(),
+      arenaRank: newRank,
+    });
+  }
+
   async createShare(score: scoreData, uid: string) {
     return await firestore.collection("shared").add(Object.assign(score, {
       uid: uid,
