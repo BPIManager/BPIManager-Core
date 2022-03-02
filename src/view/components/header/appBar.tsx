@@ -46,6 +46,7 @@ import StarHalfIcon from '@mui/icons-material/StarHalf';
 import ArenaRankCheck from "../arenaRankCheck";
 import GitHubIcon from '@mui/icons-material/GitHub';
 import Button from '@mui/material/Button';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 
 interface navBars {
   to: string,
@@ -386,13 +387,15 @@ class GlobalHeader extends React.Component<{ global: any, classes: any, theme: a
         </AppBar>
         <nav className={classes.drawer}>
           <Hidden smUp implementation="css">
-            <Drawer open={isOpen} onClose={this.toggleNav}
+            <SwipeableDrawer open={isOpen}
+              onClose={this.toggleNav}
+              onOpen={this.toggleNav}
               anchor="right"
               classes={{
                 paper: classes.drawerPaper,
               }}>
               {drawer(false)}
-            </Drawer>
+            </SwipeableDrawer>
           </Hidden>
           <Hidden smDown implementation="css">
             <Drawer

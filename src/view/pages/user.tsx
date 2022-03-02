@@ -419,7 +419,7 @@ class User extends React.Component<{ intl: any, currentUserName?: string, limite
                       {res.displayName}
                     </Typography>
                     <div style={{ display: "flex" }}>
-                      {this.getIIDXId(res.profile) !== "" &&
+                      {(res.iidxId || this.getIIDXId(res.profile) !== "") &&
                         <form method="post" name="rivalSearch" action={`https://p.eagate.573.jp/game/2dx/${_currentStore()}/rival/rival_search.html#rivalsearch`}>
                           <input type="hidden" name="iidxid" value={this.getIIDXId(res.profile)} />
                           <input type="hidden" name="mode" value="1" />
@@ -428,7 +428,7 @@ class User extends React.Component<{ intl: any, currentUserName?: string, limite
                         </Button>
                         </form>
                       }
-                      {getTwitterName(res.profile) !== "" &&
+                      {(res.twitter || getTwitterName(res.profile) !== "") &&
                         <Button color="secondary" size="small" onClick={() => window.open(`https://twitter.com/${getTwitterName(res.profile)}`)} startIcon={<TwitterIcon />}>
                           Twitter
                       </Button>
