@@ -113,7 +113,7 @@ class Index extends React.Component<{ global: any } & RouteComponentProps, {
                       <CircularProgress color="secondary" size={64} />
                     </Container>
                   </Grid>
-                  <Grid item xs={9} lg={9} style={{ paddingLeft: "15px" }}>
+                  <Grid item xs={9} lg={9}>
                     <Typography variant="body1">
                       &nbsp;
                 </Typography>
@@ -126,7 +126,7 @@ class Index extends React.Component<{ global: any } & RouteComponentProps, {
             )}
             {(!userLoading && (auth && user)) && (
               <Container className="topMenuContainer">
-                <Grid container alignContent="space-between" alignItems="center" style={{ padding: "20px" }}>
+                <Grid container justifyContent="space-between" alignItems="center" style={{ padding: "20px" }}>
                   <Grid item xs={3} lg={3} style={{ display: "flex", justifyContent: "center", flexDirection: "column" }}>
                     <Avatar style={{ border: "1px solid #222", margin: "15px auto" }} className="toppageIcon">
                       <img src={user.photoURL ? user.photoURL.replace("_normal", "") : "noimage"} style={{ width: "100%", height: "100%" }}
@@ -135,7 +135,7 @@ class Index extends React.Component<{ global: any } & RouteComponentProps, {
                         onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(user) || alternativeImg(user.displayName)} />
                     </Avatar>
                   </Grid>
-                  <Grid item xs={9} lg={9} style={{ paddingLeft: "15px" }}>
+                  <Grid item xs={8} lg={8} style={{ paddingLeft: "30px" }}>
                     <Typography variant="body1">
                       {user.displayName}
                     </Typography>
@@ -148,12 +148,12 @@ class Index extends React.Component<{ global: any } & RouteComponentProps, {
             )}
             {(!userLoading && (!auth || !user)) && (
               <Container className="topMenuContainer">
-                <Grid container alignContent="space-between" alignItems="center" style={{ padding: "20px" }}>
+                <Grid container justifyContent="space-between" alignItems="center" style={{ padding: "20px" }}>
                   <Grid item xs={3} lg={3} style={{ display: "flex", justifyContent: "center", flexDirection: "column" }}>
                     <Avatar style={{ border: "1px solid #222", margin: "15px auto" }} className="toppageIcon">
                     </Avatar>
                   </Grid>
-                  <Grid item xs={9} lg={9} style={{ paddingLeft: "15px" }}>
+                  <Grid item xs={8} lg={8} style={{ paddingLeft: "15px" }}>
                     <Typography variant="body1">
                       <FormattedMessage id="Index.NotLoggedIn" />
                     </Typography>
@@ -541,7 +541,7 @@ class RecentUsers extends React.Component<{ history: any }, { loading: boolean, 
                             onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(item) || alternativeImg(item.displayName)} />
                         </Avatar>
                       </ListItemAvatar>
-                      <ListItemText primary={item.displayName} secondary={"総合BPI:" + item.totalBPI + " / " + updatedTime((item.serverTime as any).toDate())} />
+                      <ListItemText primary={item.displayName} secondary={item.arenaRank + " / 総合BPI:" + item.totalBPI + " / " + updatedTime((item.serverTime as any).toDate())} />
                     </ListItem>
                   ))}
                 </List>

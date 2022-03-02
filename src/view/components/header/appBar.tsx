@@ -44,6 +44,8 @@ import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import HistoryIcon from '@mui/icons-material/History';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
 import ArenaRankCheck from "../arenaRankCheck";
+import GitHubIcon from '@mui/icons-material/GitHub';
+import Button from '@mui/material/Button';
 
 interface navBars {
   to: string,
@@ -51,13 +53,12 @@ interface navBars {
   icon: JSX.Element
 }
 
-const drawerWidth = 231;
+const drawerWidth = 260;
 const styles = (theme: any) => ({
   root: {
     display: 'flex',
   },
   menuButton: {
-    marginRight: 20,
     [theme.breakpoints.up('sm')]: {
       display: 'none',
     },
@@ -324,9 +325,12 @@ class GlobalHeader extends React.Component<{ global: any, classes: any, theme: a
         <Typography align="center" variant="caption" style={{ margin: "8px 0", width: "100%", display: "block", paddingBottom: "15px" }}>
           {config.versionString}&nbsp;
           {config.lastUpdate}<br />
-          <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManager</RefLink><br />
-          <RefLink color="secondary" href="https://docs.google.com/forms/d/e/1FAIpQLScoOOBWeytFTF-g3Pfa6TVGYgcvLOQ-pVT8YbOYm6lGww16Mw/viewform">ご要望・お問合せフォーム </RefLink><br />
-          <RefLink color="secondary" href="https://github.com/BPIManager">Available on GitHub</RefLink>
+          <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManagerから最新情報を受け取る</RefLink>
+          <div style={{ marginTop: 10 }} />
+          <Button color="secondary" size="small" target="_blank" href="https://github.com/BPIManager" variant="outlined" startIcon={<GitHubIcon />}>
+            Available on GitHub
+          </Button>
+
         </Typography>
       </React.Fragment>
     );
@@ -336,21 +340,6 @@ class GlobalHeader extends React.Component<{ global: any, classes: any, theme: a
         <ArenaRankCheck />
         <AppBar className={window.location.href.split('/').pop() === "" ? "appBarIndex " + classes.appBar + " apbar" : classes.appBar + " apbar"}>
           <Toolbar>
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              className={classes.menuButton}
-              onClick={() => {
-                if (!this.props.global.state.cannotMove) {
-                  return this.toggleNav();
-                } else {
-                  return this.toggleErrorSnack();
-                }
-              }}
-              size="large">
-              <MenuIcon />
-            </IconButton>
             <Typography variant="h6" style={{ flexGrow: 1 }}>
               {(page.length === 2 || page[1] === "lists" || page[1] === "notes" || page[1] === "songs" || page[1] === "sync" || page[1] === "ranking" || page[1] === "history") && <FormattedMessage id={currentPage()} />}
               {(page.length > 2 && page[1] !== "lists" && page[1] !== "notes" && page[1] !== "songs" && page[1] !== "sync" && page[1] !== "ranking" && page[1] !== "history") && currentPage()}
@@ -378,11 +367,27 @@ class GlobalHeader extends React.Component<{ global: any, classes: any, theme: a
                 color="primary"
               />
             )}
+            <IconButton
+              edge="end"
+              color="inherit"
+              aria-label="menu"
+              className={classes.menuButton}
+              onClick={() => {
+                if (!this.props.global.state.cannotMove) {
+                  return this.toggleNav();
+                } else {
+                  return this.toggleErrorSnack();
+                }
+              }}
+              size="large">
+              <MenuIcon />
+            </IconButton>
           </Toolbar>
         </AppBar>
         <nav className={classes.drawer}>
           <Hidden smUp implementation="css">
             <Drawer open={isOpen} onClose={this.toggleNav}
+              anchor="right"
               classes={{
                 paper: classes.drawerPaper,
               }}>
@@ -431,7 +436,7 @@ class InnerList extends React.Component<{
   render() {
     const { child, handleClick, isOpen, history, classes, parent, toggleNav, isPerment } = this.props;
     return (
-      <List style={{ width: "230px" }} disablePadding key={parent.id}>
+      <List style={{ width: Number(drawerWidth - 1) + "px" }} disablePadding key={parent.id}>
         <ListItem button onClick={handleClick}>
           <ListItemIcon>
             {parent.icon}

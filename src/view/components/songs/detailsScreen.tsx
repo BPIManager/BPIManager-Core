@@ -557,8 +557,8 @@ class DetailedSongInformation extends React.Component<P & { intl?: any }, S> {
         </Paper>
         <Tabs
           value={currentTab}
-          indicatorColor="primary"
-          textColor="primary"
+          textColor="secondary"
+          indicatorColor="secondary"
           onChange={this.handleTabChange}
           className={"scrollableSpacebetween sc3Items"}>
           <Tooltip title="BPI分布グラフ">

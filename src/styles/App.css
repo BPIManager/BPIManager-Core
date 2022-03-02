@@ -673,7 +673,6 @@ text.react-calendar-heatmap-weekday-label {
   display: flex;
   min-width: 90px;
   margin-bottom: 10px;
-  cursor: pointer;
 }
 
 .topMenuContainer .MuiGrid-container svg {
