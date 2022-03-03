@@ -1,9 +1,10 @@
-import firebase from 'firebase/app';
+import { initializeApp } from "firebase/app"
 import 'firebase/firestore';
-import 'firebase/auth'
+import { getFunctions, httpsCallable as H } from "firebase/functions";
+import { GoogleAuthProvider,TwitterAuthProvider } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import "firebase/functions";
-import { config } from '@/config';
-const fb = firebase.initializeApp({
+export const fb = initializeApp({
   apiKey: "AIzaSyAIlzzxI0kZtIe4vvjSIiRwfqSQVZtbluM",
   authDomain: "bpimv2.firebaseapp.com",
   projectId: "bpimv2",
@@ -13,30 +14,17 @@ const fb = firebase.initializeApp({
   measurementId: "G-4V5QE3YXF9"
 });
 
-export const firestore = fb.firestore();
-export const auth = fb.auth();
-export const twitter = new firebase.auth.TwitterAuthProvider();
-export const google = new firebase.auth.GoogleAuthProvider();
+export const auth = getAuth();
+export const twitter = new TwitterAuthProvider();
+export const google = new GoogleAuthProvider();
 export default fb;
 
-const f = fb.functions("asia-northeast1");
-const isLocal = () => false; //window.location.hostname === "localhost";
-
-if (isLocal()) {
-  const uid = "";
-  f.useFunctionsEmulator('http://localhost:5001');
-  auth.useEmulator('http://localhost:9099');
-  fb.auth().signInWithEmailAndPassword("", "");
-  firestore.collection("users").doc(uid).update({});
-}
+const f = getFunctions(fb,"asia-northeast1");
 
 export const functions = f;
 
 export const httpsCallable = (_cat: string, endpoint: string, data: any) => {
-  if (isLocal()) {
-    return functions.httpsCallable(`${_cat}/${config.cfVersion}/${endpoint}`)(data);
-  }
-  return functions.httpsCallable(endpoint)(data);
+  return H(f,endpoint)(data);
 }
 
 export const httpsCfGet = async (endpoint: string, query?: string) => {

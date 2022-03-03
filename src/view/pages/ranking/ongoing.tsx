@@ -103,7 +103,7 @@ class WeeklyOnGoing extends React.Component<{ intl: any, rankingId?: string } & 
       if (!d) { return this.setState({ isLoading: false }); }
       const score = await scdb.getItem(d.title, difficultyDiscriminator(d.difficulty), d.version, 1);
       const songData = d.song;
-      const res = await httpsCallable(`ranking`, `viewRanking`, {
+      const res:any = await httpsCallable(`ranking`, `viewRanking`, {
         cId: current.id,
         includeRank: true,
         currentUser: true,
@@ -151,7 +151,7 @@ class WeeklyOnGoing extends React.Component<{ intl: any, rankingId?: string } & 
         score: score,
         version: onGoing.version,
       };
-      const p = await httpsCallable(`ranking`, `joinRanking`, data);
+      const p:any = await httpsCallable(`ranking`, `joinRanking`, data);
       if (p.data.error) {
         throw new Error(p.data.errorMessage);
       }
@@ -171,7 +171,7 @@ class WeeklyOnGoing extends React.Component<{ intl: any, rankingId?: string } & 
         cId: onGoingId,
         version: onGoing.version,
       };
-      const p = await httpsCallable(`ranking`, `deleteFromRanking`, data);
+      const p:any = await httpsCallable(`ranking`, `deleteFromRanking`, data);
       if (p.data.error) {
         throw new Error(p.data.errorMessage);
       }
@@ -186,7 +186,7 @@ class WeeklyOnGoing extends React.Component<{ intl: any, rankingId?: string } & 
 
   pageLoad = async (page: number = 0) => {
     this.setState({ contentLoading: true });
-    const res = await httpsCallable(`ranking`, `viewRanking`, {
+    const res:any = await httpsCallable(`ranking`, `viewRanking`, {
       cId: this.state.onGoingId,
       includeRank: true,
       currentUser: true,

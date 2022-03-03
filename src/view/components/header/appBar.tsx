@@ -37,7 +37,7 @@ import SpeakerNotesIcon from '@mui/icons-material/SpeakerNotes';
 import { getAltTwitterIcon } from "@/components/rivals";
 import { alternativeImg } from "@/components/common";
 import fbActions from "@/components/firebase/actions";
-import { ReactComponent as Logo } from "@/assets/aix2f-q5h7x.svg";
+import { Logo } from "@/assets/aix2f-q5h7x";
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
@@ -225,7 +225,7 @@ class GlobalHeader extends React.Component<{ global: any, classes: any, theme: a
     return new fbActions().auth().onAuthStateChanged(async (user: any) => {
       if (!user) { return this.setState({ user: null }) }
       const u = await new fbActions().setDocName(user.uid).getSelfUserData();
-      if (u.exists) {
+      if (u && u.exists()) {
         localStorage.setItem("social", JSON.stringify(u.data()));
       }
       return this.setState({ user: u.data() });
@@ -288,7 +288,7 @@ class GlobalHeader extends React.Component<{ global: any, classes: any, theme: a
       <React.Fragment>
         <div style={{ margin: "8px 0", padding: "0 8px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Logo onClick={() => { history.push("/"); if (!isPerment) { this.toggleNav() } }} style={{ width: "44px", height: "44px" }} />
+            <div onClick={() => { history.push("/"); if (!isPerment) { this.toggleNav() } }} style={{ width: "44px", height: "44px" }}><Logo /></div>
           </div>
         </div>
         <Divider />

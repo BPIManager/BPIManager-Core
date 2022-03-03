@@ -9,8 +9,12 @@
 
 // To learn more about the benefits of this model and instructions on how to
 // opt-in, read https://bit.ly/CRA-PWA
-import firebase from 'firebase/app';
-import 'firebase/messaging';
+import {
+  initializeApp
+} from "firebase/app";
+import {
+  getMessaging
+} from "firebase/messaging/sw";
 
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
@@ -21,6 +25,16 @@ const isLocalhost = Boolean(
     /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
   )
 );
+
+const firebaseApp = initializeApp({
+  apiKey: "AIzaSyAIlzzxI0kZtIe4vvjSIiRwfqSQVZtbluM",
+  authDomain: "bpimv2.firebaseapp.com",
+  projectId: "bpimv2",
+  storageBucket: "bpimv2.appspot.com",
+  messagingSenderId: "199747072203",
+  appId: "1:199747072203:web:79b7545a4e426763b5ab4e",
+  measurementId: "G-4V5QE3YXF9"
+});
 
 export function register(config) {
   if ('serviceWorker' in navigator) {
@@ -58,7 +72,10 @@ export function register(config) {
 
 function registerValidSW(swUrl, config) {
   navigator.serviceWorker.register(swUrl).then((registration) => {
-      firebase.messaging().useServiceWorker(registration);
+
+      // Retrieve an instance of Firebase Messaging so that it can handle background
+      // messages.
+      getMessaging(firebaseApp);
       registration.onupdatefound = () => {
         const installingWorker = registration.installing;
         registration.update();

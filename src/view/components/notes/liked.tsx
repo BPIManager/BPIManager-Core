@@ -7,6 +7,7 @@ import ModalNotes from './modal';
 import Alert from '@mui/material/Alert/Alert';
 import AlertTitle from '@mui/material/AlertTitle/AlertTitle';
 import { EachMemo } from '../songs/songNotes';
+import { getDoc } from "firebase/firestore";
 
 interface S {
   isLoading: boolean,
@@ -40,7 +41,7 @@ class NotesLiked extends React.Component<{}, S> {
     const res = [];
     for (let i = 0; i < docs.length; ++i) {
       const data = docs[i].data();
-      const ref = data.target ? await data.target.get() : null;
+      const ref = data.target ? await getDoc(data.target) : null;
       if (ref) {
         res.push(ref);
       }

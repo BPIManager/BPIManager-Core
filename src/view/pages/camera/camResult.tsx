@@ -20,7 +20,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import { scoresDB, scoreHistoryDB } from '@/components/indexedDB';
 import Alert from '@mui/material/Alert/Alert';
 import { Link, ButtonGroup } from '@mui/material';
-import { ReactComponent as TwitterIcon } from "@/assets/twitter.svg";
+import { Twitter as TwitterIcon } from "@/assets/twitter";
 import SongSearchDialog from './songSearch';
 import { CameraClass } from '@/components/camera/songs';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
@@ -343,7 +343,7 @@ export default class CameraResult extends React.Component<Props, {
             />
           </FormControl>
           <Divider style={{ margin: "10px 0" }} />
-          <Button startIcon={<TwitterIcon style={{ width: "20px", height: "20px", display: "inline-block" }} />} fullWidth onClick={() => this.props.upload(exScore, bpi.error ? "-" : bpi.bpi, this.song(), score ? score.exScore : 0)} style={{ marginBottom: "10px" }}>Twitterでシェア</Button>
+          <Button startIcon={<TwitterIcon />} fullWidth onClick={() => this.props.upload(exScore, bpi.error ? "-" : bpi.bpi, this.song(), score ? score.exScore : 0)} style={{ marginBottom: "10px" }}>Twitterでシェア</Button>
           {!saved && <Button startIcon={<CheckIcon />} fullWidth onClick={this.save} color="secondary" variant="contained">スコアを保存</Button>}
           {saved && <Button startIcon={<ThumbUpIcon />} fullWidth disabled color="secondary" variant="contained">スコアを保存しました</Button>}
           <Button startIcon={<ReplayIcon />} fullWidth onClick={this.props.retry} style={{ margin: "10px 0 20px 0" }}>もう一度撮影</Button>

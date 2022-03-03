@@ -116,7 +116,7 @@ export default class CreateModal extends React.Component<{
       info: info,
       version: _currentStore(),
     };
-    const p = await httpsCallable(`ranking`, `createRanking`, data);
+    const p:any = await httpsCallable(`ranking`, `createRanking`, data);
     if (p.data.error) {
       alert(p.data.errorMessage);
     }

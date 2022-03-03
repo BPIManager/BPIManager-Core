@@ -256,7 +256,7 @@ class User extends React.Component<{ intl: any, currentUserName?: string, limite
   recommended = async (): Promise<void> => {
     try {
       const { totalBPI, res } = this.state;
-      const recommend: rivalStoreData[] = (await this.fbA.recommendedByBPI(totalBPI)).filter(item => item.displayName !== res.displayName);
+      const recommend: rivalStoreData[] = (await this.fbA.recommendedByBPI(totalBPI)).filter((item:rivalStoreData) => item.displayName !== res.displayName);
       return this.setState({ loadingRecommended: false, recommendUsers: recommend, processing: false });
     } catch (e: any) {
       console.log(e);

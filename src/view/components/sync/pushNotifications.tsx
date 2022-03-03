@@ -17,8 +17,7 @@ import Paper from '@mui/material/Paper';
 import Switch from '@mui/material/Switch';
 import { messanger } from '@/components/firebase/message';
 import Typography from '@mui/material/Typography';
-import firebase from 'firebase/app';
-import 'firebase/messaging';
+import { isSupported } from 'firebase/messaging';
 import Loader from '@/view/components/common/loader';
 import { getAltTwitterIcon } from '@/components/rivals';
 
@@ -26,6 +25,7 @@ interface P {
 }
 
 interface S {
+  available:boolean,
   uid: string,
   processing: boolean,
   errorMessage: string,
@@ -56,13 +56,17 @@ class PushSettings extends React.Component<P, S> {
       userData: null,
       permission: false,
       rivalAdded: false,
+      available: false,
     }
     this.fbStores.setColName(`${_currentStore()}_${_isSingle()}`);
   }
 
   async componentDidMount() {
     this.refreshData();
-    this.setState({ permission: this.messanger.checkPermission() });
+    this.setState({
+      permission: this.messanger.checkPermission(),
+      available: await isSupported()
+    });
   }
 
   handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,7 +100,7 @@ class PushSettings extends React.Component<P, S> {
   }
 
   requestNotify = async () => {
-    if (firebase.messaging.isSupported()) {
+    if (await isSupported()) {
       await this.messanger.requestPermission();
       return this.setState({ permission: true });
     }
@@ -108,7 +112,7 @@ class PushSettings extends React.Component<P, S> {
   }
 
   render() {
-    const { syncData, permission, processing } = this.state;
+    const { syncData, permission, processing, available } = this.state;
     if (!permission) {
       return (
         <React.Fragment>
@@ -209,7 +213,7 @@ class PushSettings extends React.Component<P, S> {
             ・iOSには対応していません
           </p>
           <p>
-            使用中のデバイス:通知を{firebase.messaging.isSupported() ? "利用可能" : "利用不可"}
+            使用中のデバイス:通知を{available ? "利用可能" : "利用不可"}
           </p>
         </Alert>
       </React.Fragment>

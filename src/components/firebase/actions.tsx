@@ -1,8 +1,13 @@
-import fb, { twitter, firestore, google } from ".";
+import fb, { auth, twitter, google } from ".";
+import { Auth, User, UserCredential, getAdditionalUserInfo, signOut, updateProfile, getRedirectResult, signInWithRedirect } from "firebase/auth";
+import {
+  getFirestore, FieldValue, DocumentReference, Query, QueryDocumentSnapshot,addDoc,
+  arrayUnion, runTransaction, setDoc, serverTimestamp, updateDoc, getDoc, doc, increment,
+  collection, writeBatch, getDocs, deleteDoc, query, where, orderBy, startAfter, startAt, endAt, limit
+} from "firebase/firestore";
 import timeFormatter from "../common/timeFormatter";
 import { scoresDB, scoreHistoryDB } from "../indexedDB";
 import platform from "platform";
-import firebase from 'firebase/app';
 import { rivalStoreData, scoreData, DBRivalStoreData, songData } from "../../types/data";
 import bpiCalcuator from '../bpi';
 import { _currentStore } from "../settings";
@@ -12,22 +17,24 @@ import totalBPI from "../bpi/totalBPI";
 import { getRadar, radarData } from "../stats/radar";
 import statMain from "../stats/main";
 
+const db = getFirestore(fb);
+
 export default class fbActions {
 
   async authWithTwitter(): Promise<void> {
-    fb.auth().signInWithRedirect(twitter);
+    signInWithRedirect(auth, twitter);
   }
 
   async authWithGoogle(): Promise<void> {
-    return fb.auth().signInWithRedirect(google);
+    return signInWithRedirect(auth, google);
   }
 
-  authInfo(): firebase.User | null {
-    return fb.auth().currentUser || JSON.parse(localStorage.getItem("social") || "{}");
+  authInfo(): User | null {
+    return auth.currentUser || JSON.parse(localStorage.getItem("social") || "{}");
   }
 
   currentIcon(): string {
-    const t = fb.auth().currentUser;
+    const t = auth.currentUser;
     if (t) {
       return t.photoURL || "";
     } else {
@@ -35,25 +42,31 @@ export default class fbActions {
     }
   }
 
-  async updateProfileIcon(): Promise<firebase.auth.UserCredential | null> {
-    const self = this;
-    return fb.auth().getRedirectResult().then(async function(_result) {
-      if (_result && _result.user && _result.additionalUserInfo && _result.additionalUserInfo.profile) {
-        const pid = _result.additionalUserInfo.providerId;
-        const t = fb.auth().currentUser;
-        let p = "";
-        if (pid === "google.com") {
-          p = (_result.additionalUserInfo.profile as { picture: string }).picture;
-        } else if (pid === "twitter.com") {
-          p = (_result.additionalUserInfo.profile as { profile_image_url_https: string }).profile_image_url_https;
-        }
-        await self.setUserCollection().doc(_result.user.uid).set({
-          photoURL: p
-        }, { merge: true });
-        if (t) {
-          await t.updateProfile({
-            photoURL: p
-          });
+  async updateProfileIcon(): Promise<UserCredential | null> {
+    return getRedirectResult(auth).then(async function(_result) {
+      if (auth.currentUser) {
+        if (_result && _result.user) {
+          const d = getAdditionalUserInfo(_result);
+          if (d && d.profile) {
+            const pid = d.providerId;
+            let p = "";
+            if (pid === "google.com") {
+              p = (d.profile as { picture: string }).picture;
+            } else if (pid === "twitter.com") {
+              p = (d.profile as { profile_image_url_https: string }).profile_image_url_https;
+            }
+            await setDoc(
+              doc(db, "users", _result.user.uid),
+              {
+                photoURL: p
+              }, {
+                merge: true
+              }
+            );
+            await updateProfile(auth.currentUser, {
+              photoURL: p
+            });
+          }
         }
       }
       return _result;
@@ -64,22 +77,22 @@ export default class fbActions {
     });
   }
 
-  auth(): firebase.auth.Auth {
-    return fb.auth();
+  auth(): Auth {
+    return auth;
   }
 
   logout(): Promise<void> {
     localStorage.removeItem("social");
-    return fb.auth().signOut();
+    return signOut(auth);
   }
 
   getSelfUserData() {
-    return this.setUserCollection().doc(this.docName).get();
+    return getDoc(doc(collection(db, this.setUserCollection()), this.docName));
   }
 
-  setUserCollection(): firebase.firestore.CollectionReference {
+  setUserCollection(): string {
     this.v2SetUserCollection();
-    return firestore.collection(this.name);
+    return this.name;
   }
 
   v2SetUserCollection(): this {
@@ -104,13 +117,13 @@ export default class fbActions {
     return `${platform.os} / ${platform.name}`
   }
 
-  time() {
-    return firebase.firestore.FieldValue.serverTimestamp();
+  time(): FieldValue {
+    return serverTimestamp();
   }
 
   setTwitterId(id: string) {
-    const docRef = firestore.collection(this.name).doc(this.docName);
-    return docRef.set({
+    const docRef = doc(collection(db, this.setUserCollection(), this.docName));
+    return setDoc(docRef, {
       twitter: id,
       uid: this.docName,
     }, { merge: true });
@@ -124,9 +137,9 @@ export default class fbActions {
     if (s.length === 0) {
       return { error: true, date: null, reason: "送信できる楽曲データが存在しません" };
     }
-    const docRef = firestore.collection(self.name).doc(self.docName);
-    const userRef = firestore.collection("users").doc(self.docName);
-    return firestore.runTransaction(async function(transaction) {
+    const docRef = doc(collection(db, self.name), self.docName);
+    const userRef = doc(collection(db, "users"), self.docName);
+    return await runTransaction(db, async function(transaction) {
       await transaction.get(docRef).then(async function(doc) {
         const newDoc = {
           timeStamp: timeFormatter(3),
@@ -135,7 +148,7 @@ export default class fbActions {
           scores: s,
           scoresHistory: await new scoreHistoryDB().getAllInSpecificVersion(),
         };
-        if (doc.exists) {
+        if (doc.exists()) {
           transaction.update(docRef, newDoc);
         } else {
           transaction.set(docRef, newDoc);
@@ -155,7 +168,7 @@ export default class fbActions {
             totalBPI: totalBPI,
             [v]: totalBPI,
             radar: _radar,
-            versions: firebase.firestore.FieldValue.arrayUnion(_currentStore()),
+            versions: arrayUnion(_currentStore()),
           });
         }
       });
@@ -179,8 +192,8 @@ export default class fbActions {
     try {
       if (!this.name) { return { error: true, data: null } }
       const dName = this.docName;
-      const res = await firestore.collection(this.name).doc(dName).get();
-      if (res.exists) {
+      const res = await getDoc(doc(db, this.name, dName));
+      if (res.exists()) {
         return res.data();
       } else {
         return null;
@@ -204,11 +217,12 @@ export default class fbActions {
       if (duplication !== null && displayName !== "" && duplication.uid !== this.docName) {
         throw new Error("already used error");
       }
-      const batch = firestore.batch();
-      const from = this.setUserCollection().doc(this.docName);
+      const batch = writeBatch(db);
+      const from = doc(db, this.setUserCollection(), this.docName);
       if (displayName === "" || !isPublic) {
-        await this.setUserCollection().doc(this.docName).update({ isPublic: false });
-        firestore.collection("followings").where("from", "==", from).get().then(async (querySnapshot) => {
+        await updateDoc(doc(db, this.setUserCollection(), this.docName), { isPublic: false });
+        const _query = query(collection(db, "followings"), where("from", "==", from));
+        getDocs(_query).then(async (querySnapshot) => {
           querySnapshot.forEach(doc => batch.update(doc.ref, { isPublic: false }));
           batch.commit();
         });
@@ -217,7 +231,7 @@ export default class fbActions {
         let iidxId = idMatcher ? idMatcher[0].replace(/\D/g, "") : "";
         if (_iidxId) iidxId = _iidxId;
         const v = "totalBPIs." + _currentStore();
-        await this.setUserCollection().doc(this.docName).update({
+        await updateDoc(doc(db, this.setUserCollection(), this.docName), {
           timeStamp: timeFormatter(3),
           isPublic: isPublic || false,
           serverTime: this.time(),
@@ -232,9 +246,10 @@ export default class fbActions {
           showNotes: showNotes || false,
           totalBPI: await this.totalBPI(),
           [v]: await this.totalBPI(),
-          versions: firebase.firestore.FieldValue.arrayUnion(_currentStore()),
+          versions: arrayUnion(_currentStore()),
         });
-        firestore.collection("followings").where("from", "==", from).get().then(async (querySnapshot) => {
+        const _query = query(collection(db, "followings"), where("from", "==", from));
+        getDocs(_query).then(async (querySnapshot) => {
           querySnapshot.forEach(doc => batch.update(doc.ref, { isPublic: true, }));
           batch.commit();
         });
@@ -249,8 +264,8 @@ export default class fbActions {
   async searchByExactId(input: string) {
     try {
       if (!input) { return [0]; }
-      const res = await this.setUserCollection().doc(input).get();
-      if (res.exists) {
+      const res = await getDoc(doc(db, this.setUserCollection(), input));
+      if (res.exists()) {
         return res.data();
       } else {
         return null;
@@ -264,7 +279,8 @@ export default class fbActions {
   async searchRival(input: string, saving: boolean = false) {
     try {
       if (!input || (input === "" && saving !== true)) { return [0]; }
-      const res = await this.setUserCollection().where("displayName", "==", input).get();
+      const _query = query(collection(db, this.setUserCollection()), where("displayName", "==", input));
+      const res = await getDocs(_query);
       if (!res.empty && res.size === 1) {
         return res.docs[0].data();
       } else {
@@ -286,13 +302,11 @@ export default class fbActions {
       if (!input || (input === "")) { return []; }
       const inputID = zenToHan(input).replace(/\D/g, "") || ""; // 数字のみ絞り出し、数字が無い場合（=空欄）は検索しない
       const inputHN = zenToHan(input).toLowerCase();
-      let q1 = this.setUserCollection().orderBy("displayNameSearch").startAt(inputHN).endAt(inputHN + "\uf8ff");
-      q1 = this.versionQuery(q1);
-      const res = await q1.get();
+      let q1 = [orderBy("displayNameSearch"), startAt(inputHN), endAt(inputHN + "\uf8ff"), ...this.versionQuery()];
+      const res = await getDocs(query(collection(db, this.setUserCollection()), ...q1));
       if (inputID) {
-        let q2 = this.setUserCollection().orderBy("iidxId").startAt(inputID).endAt(inputID + "\uf8ff");
-        q2 = this.versionQuery(q2);
-        const res2 = await q2.get();
+        let q2 = [orderBy("iidxId"), startAt(inputID), endAt(inputID + "\uf8ff"), ...this.versionQuery()];
+        const res2 = await getDocs(query(collection(db, this.setUserCollection()), ...q2));
         if (!res.empty || !res2.empty) {
           return res.docs.concat(res2.docs);
         }
@@ -304,35 +318,36 @@ export default class fbActions {
     }
   }
 
-  async recentUpdated(last: rivalStoreData | null, endAt: rivalStoreData | null, arenaRank: string, sortStyle: number = 0): Promise<rivalStoreData[]> {
-    let query: firebase.firestore.Query = this.setUserCollection();
+  async recentUpdated(last: rivalStoreData | null, _endData: rivalStoreData | null, arenaRank: string, sortStyle: number = 0): Promise<rivalStoreData[]> {
+    const qus: any[] = [];
     if (sortStyle === 1) {
-      query = query.orderBy("totalBPIs." + _currentStore(), "desc");
+      qus.push(orderBy("totalBPIs." + _currentStore(), "desc"));
     } else {
-      query = query.orderBy("serverTime", "desc");
+      qus.push(orderBy("serverTime", "desc"));
     }
     if (arenaRank !== "すべて") {
-      query = query.where("arenaRank", "==", arenaRank);
+      qus.push(where("arenaRank", "==", arenaRank));
     }
-    query = this.versionQuery(query);
+    qus.push(...this.versionQuery());
     if (last) {
       if (sortStyle === 0) {
-        query = query.startAfter(last.serverTime);
+        qus.push(startAfter(last.serverTime));
       } else if (sortStyle === 1) {
-        query = query.startAfter(last["totalBPIs"] ? last["totalBPIs"][_currentStore()] : -15);
+        qus.push(startAfter(last["totalBPIs"] ? last["totalBPIs"][_currentStore()] : -15));
       }
     }
-    if (endAt) {
-      query = query.endAt(endAt.serverTime);
+    if (_endData) {
+      qus.push(endAt(_endData.serverTime));
     }
-    if (!endAt) {
-      query = query.limit(10);
+    if (!_endData) {
+      qus.push(limit(10));
     }
-    return await this.getUsers(query);
+    let _query: Query = query(collection(db, this.setUserCollection()), ...qus);
+    return await this.getUsers(_query);
   }
 
-  versionQuery = (query: firebase.firestore.Query) => {
-    return query.where("isPublic", "==", true).where("versions", "array-contains", _currentStore());
+  versionQuery = () => {
+    return [where("isPublic", "==", true), where("versions", "array-contains", _currentStore())];
   }
 
   async recommendedByBPI(exactBPI?: number | null, searchBy: string = "総合BPI") {
@@ -344,19 +359,21 @@ export default class fbActions {
           return "radar." + searchBy;
       }
     }
+    const qus: any[] = [];
     const q = searchQuery();
-    let query: firebase.firestore.Query = this.setUserCollection().orderBy(q, "desc");
+    qus.push(orderBy(q, "desc"));
     const total = exactBPI || (await new totalBPI().load()).currentVersion();
     const downLimit = total > 60 ? 50 : total - 5;
     const upLimit = total > 50 ? 100 : total + 5;
-    query = query.where(q, ">=", downLimit);
-    query = query.where(q, "<=", upLimit);
-    query = this.versionQuery(query);
-    query = query.limit(30);
+    qus.push(where(q, ">=", downLimit));
+    qus.push(where(q, "<=", upLimit));
+    qus.push(...this.versionQuery());
+    qus.push(limit(30));
+    let _query: Query = query(collection(db, this.setUserCollection()), ...qus);
     if (searchBy !== "総合BPI") {
-      return await this.getUsers(query);
+      return await this.getUsers(_query);
     }
-    return (await this.getUsers(query)).sort((a, b) => {
+    return (await this.getUsers(_query)).sort((a: any, b: any) => {
       return Math.abs(total - (Number(a.totalBPI) || -15)) - Math.abs(total - (Number(b.totalBPI) || -15))
     })
   }
@@ -367,11 +384,9 @@ export default class fbActions {
       if (!user || !user.uid) {
         throw new Error("No UserData Has Been Retrieved");
       }
-      const to: firebase.firestore.DocumentReference = this.setUserCollection().doc(user.uid);
-      let query: firebase.firestore.Query = firestore.collection("followings").orderBy("updatedAt", "desc");
-      query = query.where("to", "==", to).where("isPublic", "==", true).where("version", "==", _currentStore());
-      query = query.limit(20);
-      const res = await query.get();
+      const to: DocumentReference = doc(db, this.setUserCollection(), user.uid);
+      const qus = [orderBy("updatedAt", "desc"), where("to", "==", to), where("isPublic", "==", true), where("version", "==", _currentStore()), limit(20)];
+      const res = await getDocs(query(collection(db, "followings"), ...qus));
       if (!res.empty) {
         let result: any[] = [];
         for (let i = 0; i < res.docs.length; ++i) {
@@ -389,11 +404,11 @@ export default class fbActions {
     }
   }
 
-  private async getUsers(query: firebase.firestore.Query) {
+  private async getUsers(query: Query) {
     try {
-      const res = await query.get();
+      const res = await getDocs(query);
       if (!res.empty && res.size >= 1) {
-        const d = res.docs.reduce((groups: rivalStoreData[], item: firebase.firestore.QueryDocumentSnapshot) => {
+        const d = res.docs.reduce((groups: rivalStoreData[], item: QueryDocumentSnapshot) => {
           const body = item.data();
           if (body.displayName && body.displayName !== "" && body.serverTime) {
             groups.push(body as rivalStoreData);
@@ -413,9 +428,9 @@ export default class fbActions {
   async searchRivalByUid(input: string) {
     try {
       if (!input || input === "") { return [0]; }
-      const res = await this.setUserCollection().where("uid", "==", input).get();
-      if (!res.empty && res.size === 1) {
-        return res.docs[0].data();
+      const res = await getDoc(doc(db, this.setUserCollection(), input));
+      if (res.exists()) {
+        return res.data();
       } else {
         return null;
       }
@@ -425,8 +440,8 @@ export default class fbActions {
     }
   }
 
-  async updateArenaRank(uid:string,newRank:string){
-    return await this.setUserCollection().doc(uid).update({
+  async updateArenaRank(uid: string, newRank: string) {
+    return await updateDoc(doc(db, this.setUserCollection(), uid), {
       timeStamp: timeFormatter(3),
       serverTime: this.time(),
       arenaRank: newRank,
@@ -434,10 +449,12 @@ export default class fbActions {
   }
 
   async createShare(score: scoreData, uid: string) {
-    return await firestore.collection("shared").add(Object.assign(score, {
+    const d = doc(collection(db, "shared"));
+    await setDoc(d, Object.assign(score, {
       uid: uid,
       updatedAt: timeFormatter(3)
     }));
+    return d.id;
   }
 
   async syncLoadRival(isDescribed = false) {
@@ -446,14 +463,14 @@ export default class fbActions {
       if (!uid) {
         throw new Error("Not logged in");
       }
-      let from: firebase.firestore.DocumentReference = this.setUserCollection().doc(uid);
-      const res = await firestore.collection("followings").where("from", "==", from).where("version", "==", _currentStore()).get();
+      let from: DocumentReference = doc(db, this.setUserCollection(), uid);
+      const res = await getDocs(query(collection(db, "followings"), where("from", "==", from), where("version", "==", _currentStore())));
       if (!res.empty) {
         let result: any[] = [];
         for (let i = 0; i < res.docs.length; ++i) {
           const d = res.docs[i].data();
           if (isDescribed) {
-            d.to = (await d.to.get()).data();
+            d.to = (await getDoc(d.to)).data();
           }
           result.push(d);
         }
@@ -469,16 +486,17 @@ export default class fbActions {
 
   async syncUploadRival(rivals: DBRivalStoreData[], willAdd = true, isPublic: string = "") {
     const uid = this.docName;
-    let from: firebase.firestore.DocumentReference = this.setUserCollection().doc(uid);
-    const batch = firestore.batch();
-    return firestore.collection("followings").where("from", "==", from).get().then(async (querySnapshot) => {
+    let from: DocumentReference = doc(db, this.setUserCollection(), uid);
+    const batch = writeBatch(db);
+    const _query = query(collection(db, "followings"), where("from", "==", from));
+    return getDocs(_query).then(async (querySnapshot) => {
       querySnapshot.forEach(doc => {
         batch.delete(doc.ref);
       })
       if (willAdd) {
         for (let i = 0; i < rivals.length; ++i) {
-          let to: firebase.firestore.DocumentReference = this.setUserCollection().doc(rivals[i]["uid"]);
-          const target = firestore.collection("followings").doc();
+          let to: DocumentReference = doc(db, this.setUserCollection(), rivals[i]["uid"]);
+          const target = doc(db, "followings");
           batch.set(target, {
             from: from,
             isPublic: !!isPublic,
@@ -501,13 +519,16 @@ export default class fbActions {
   async syncUploadOne(rivalId: string, isPublic: string = ""): Promise<boolean> {
     try {
       const uid = this.docName;
-      let from: firebase.firestore.DocumentReference = this.setUserCollection().doc(uid);
-      let to: firebase.firestore.DocumentReference = this.setUserCollection().doc(rivalId);
-      const data = await firestore.collection("followings").where("from", "==", from).where("to", "==", to).get();
+      let from: DocumentReference = doc(db, this.setUserCollection(), uid);
+      let to: DocumentReference = doc(db, this.setUserCollection(), rivalId);
+      const data = await getDocs(query(
+        collection(db, "followings"),
+        ...[where("from", "==", from), where("to", "==", to)]
+      ))
       if (!data.empty) {
         return false;
       }
-      firestore.collection("followings").add({
+      addDoc(collection(db, "followings"), {
         from: from,
         isPublic: !!isPublic,
         to: to,
@@ -522,29 +543,30 @@ export default class fbActions {
   }
 
   async syncNotificationItem(syncData: any): Promise<void> {
-    let from: firebase.firestore.DocumentReference = this.setUserCollection().doc(syncData.from.id);
-    let to: firebase.firestore.DocumentReference = this.setUserCollection().doc(syncData.to.uid);
+    let from: DocumentReference = doc(db, this.setUserCollection(), syncData.from.id);
+    let to: DocumentReference = doc(db, this.setUserCollection(), syncData.to.uid);
     const token = await new messanger().getToken();
     this.updateToken(syncData.from.id, token);
-    return await firestore.collection("followings").where("from", "==", from).where("to", "==", to).get().then(async (query) => {
+    const _query = query(collection(db, "followings"), where("from", "==", from), where("to", "==", to));
+    return await getDocs(_query).then(async (query) => {
       if (!query.empty) {
         const data = query.docs[0];
-        data.ref.update({
+        updateDoc(data.ref, {
           notify: syncData.notify
         });
       }
     });
   }
 
-  updateToken = async (id: string, token: string) => firestore.collection("notifyTokens").doc(id).set({ uid: id, token: token });
+  updateToken = async (id: string, token: string) => await setDoc(doc(db, "notifyTokens", id), { uid: id, token: token })
 
   async syncDeleteOne(rivalId: string): Promise<boolean> {
     try {
       const uid = this.docName;
-      let from: firebase.firestore.DocumentReference = this.setUserCollection().doc(uid);
-      let to: firebase.firestore.DocumentReference = this.setUserCollection().doc(rivalId);
-      await firestore.collection("followings").where("from", "==", from).where("to", "==", to).get().then((querySnapshot) => {
-        querySnapshot.forEach((doc) => doc.ref.delete());
+      let from: DocumentReference = doc(db, this.setUserCollection(), uid);
+      let to: DocumentReference = doc(db, this.setUserCollection(), rivalId);
+      await getDocs(query(collection(db, "followings"), where("from", "==", from), where("to", "==", to))).then((querySnapshot) => {
+        querySnapshot.forEach((doc) => deleteDoc(doc.ref));
       });
       return true;
     } catch (e: any) {
@@ -555,65 +577,61 @@ export default class fbActions {
 
   toggleAddedNotify = async (uid: string, newState: boolean) => {
     try {
-      return await firestore.collection("notifyWhenAddedAsRivals").doc(uid).set({
+      return await setDoc(doc(db, "notifyWhenAddedAsRivals", uid), {
         addedNotify: newState,
         uid: uid,
-        reference: this.setUserCollection().doc(uid)
-      });
+        reference: doc(db, this.setUserCollection(), uid)
+      }, { merge: true });
     } catch (e: any) {
       console.log(e);
     }
   }
-  /*
-  async dBatch(){
-    try{
-      let batch = firestore.batch();
-      const snapshots = await this.setUserCollection().get();
-      snapshots.docs.map((doc,index)=>{
-        if((index + 1) % 500 === 0){
-          batch.commit();
-          batch = firestore.batch();
-        }
-        const data = doc.data();
-        if(data.displayName && data.totalBPI){
-          console.log(data.totalBPI);
-          const v = "totalBPIs.27";
-          batch.update(doc.ref,{
-            [v]:data.totalBPI,
-            versions:firebase.firestore.FieldValue.arrayUnion("27"),
-          })
-        }
-      });
-      batch.commit();
-    }catch(e:any){
-      console.log(e);
-    }
-  }
-  */
 
   // user notes function
 
   loadNotes(songInfo: songData, lastLoaded: any = null, mode: number = 0) {
-    const orderBy = mode === 1 ? "userBPI" : mode === 0 ? "wroteAt" : "likeCount";
-    if (lastLoaded) {
-      return firestore.collection("notes").where("isSingle", "==", songInfo.dpLevel === "0").where("songName", "==", songInfo.title).where("songDiff", "==", difficultyDiscriminator(songInfo.difficulty)).orderBy(orderBy, "desc").startAfter(lastLoaded).get();
-    } else {
-      return firestore.collection("notes").where("isSingle", "==", songInfo.dpLevel === "0").where("songName", "==", songInfo.title).where("songDiff", "==", difficultyDiscriminator(songInfo.difficulty)).orderBy(orderBy, "desc").get();
-    }
+    const _orderBy = mode === 1 ? "userBPI" : mode === 0 ? "wroteAt" : "likeCount";
+    const qus = [
+      where("isSingle", "==", songInfo.dpLevel === "0"),
+      where("songName", "==", songInfo.title),
+      where("songDiff", "==", difficultyDiscriminator(songInfo.difficulty)),
+      orderBy(_orderBy, "desc")
+    ];
+    if (lastLoaded) qus.push(startAfter(lastLoaded));
+    return getDocs(
+      query(
+        collection(db, "notes"),
+        ...qus
+      )
+    )
   }
 
   loadFavedNotes(last = null) {
-    if (last) {
-      return firestore.collection("notes").orderBy("likeCount", "desc").limit(20).startAfter(last).get();
-    }
-    return firestore.collection("notes").orderBy("likeCount", "desc").limit(20).get();
+    const qus = [
+      orderBy("likeCount", "desc"),
+      limit(20)
+    ];
+    if (last) qus.push(startAfter(last));
+    return getDocs(
+      query(
+        collection(db, "notes"),
+        ...qus
+      )
+    )
   }
 
   loadRecentNotes(last = null) {
-    if (last) {
-      return firestore.collection("notes").orderBy("wroteAt", "desc").limit(20).startAfter(last).get();
-    }
-    return firestore.collection("notes").orderBy("wroteAt", "desc").limit(20).get();
+    const qus = [
+      orderBy("wroteAt", "desc"),
+      limit(20)
+    ];
+    if (last) qus.push(startAfter(last));
+    return getDocs(
+      query(
+        collection(db, "notes"),
+        ...qus
+      )
+    )
   }
 
   loadMyNotes() {
@@ -621,14 +639,20 @@ export default class fbActions {
     if (!auth) return null;
     const uid = auth.uid;
     if (!uid) return null;
-    const doc = this.setUserCollection().doc(uid);
-    return firestore.collection("notes").where("uid", "==", doc).orderBy("wroteAt", "desc").get();
+    const _d = doc(db, this.setUserCollection(), uid);
+    return getDocs(query(
+      collection(db, "notes"),
+      ...[where("uid", "==", _d), orderBy("wroteAt", "desc")]
+    ));
   }
 
   loadUserNotes(uid: string, sort = 0) {
     const s = sort === 0 ? "wroteAt" : "likeCount";
-    const doc = this.setUserCollection().doc(uid);
-    return firestore.collection("notes").where("uid", "==", doc).orderBy(s, "desc").get();
+    const _d = doc(db, this.setUserCollection(), uid);
+    return getDocs(query(
+      collection(db, "notes"),
+      ...[where("uid", "==", _d), orderBy(s, "desc")]
+    ));
   }
 
   loadLikedNotes() {
@@ -636,30 +660,33 @@ export default class fbActions {
     if (!auth) return null;
     const uid = auth.uid;
     if (!uid) return null;
-    return firestore.collection("notesLiked").where("uid", "==", uid).orderBy("likedAt", "desc").limit(20).get();
+    return getDocs(query(
+      collection(db, "notesLiked"),
+      ...[where("uid", "==", uid), orderBy("likedAt", "desc"), limit(20)]
+    ))
   }
 
   getUserReference(id: string) {
-    return this.setUserCollection().doc(id);
+    return doc(db, this.setUserCollection(), id);
   }
 
   async likeNotes(targetId: string): Promise<number> {
     const auth = this.authInfo();
     if (!auth) return 0;
     try {
-      const target = firestore.collection("notes").doc(targetId);
+      const target = doc(db, "notes", targetId);
       const uid = auth.uid;
-      const alreadyExists = await firestore.collection("notesLiked").where("uid", "==", uid).where("target", "==", target).get();
-      const targetData = (await target.get()).data();
-      let batch = firestore.batch();
+      const alreadyExists = await getDocs(query(collection(db, "notesLiked"), ...[where("uid", "==", uid), where("target", "==", target)]));
+      const targetData = (await getDoc(target)).data();
+      let batch = writeBatch(db);
       if (!targetData) {
         alert("対象データが存在しません。");
         return 0;
       }
       if (alreadyExists.size === 0) {
         //add
-        const newLike = firestore.collection("notesLiked").doc();
-        batch.update(target, { likeCount: firebase.firestore.FieldValue.increment(1) });
+        const newLike = doc(collection(db, "notesLiked"));
+        batch.update(target, { likeCount: increment(1) });
         batch.set(newLike, {
           likedAt: this.time(),
           isSingle: targetData.isSingle,
@@ -673,7 +700,7 @@ export default class fbActions {
         return 1;
       } else {
         //remove
-        batch.update(target, { likeCount: firebase.firestore.FieldValue.increment(-1) });
+        batch.update(target, { likeCount: increment(-1) });
         alreadyExists.forEach(function(doc) {
           batch.delete(doc.ref);
         });
@@ -689,7 +716,7 @@ export default class fbActions {
   // for sitemap generator
 
   async loadUserList() {
-    const t = await this.setUserCollection().get();
+    const t = await getDocs(collection(db, this.setUserCollection()));
     if (t.size > 0) {
       return t.docs;
     } else {
@@ -698,7 +725,7 @@ export default class fbActions {
   }
 
   async loadNoteList() {
-    const t = await firestore.collection("notes").get();
+    const t = await getDocs(collection(db, "notes"));
     if (t.size > 0) {
       return t.docs;
     } else {

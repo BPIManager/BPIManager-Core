@@ -48,7 +48,7 @@ class InstantWRView extends React.Component<{ intl: any } & RouteComponentProps,
   }
 
   async componentDidMount() {
-    const res = await httpsCallable(`ranking`, `rankSearch`, {
+    const res:any = await httpsCallable(`ranking`, `rankSearch`, {
       currentUser: true,
       includeRank: false,
       showFinished: false,

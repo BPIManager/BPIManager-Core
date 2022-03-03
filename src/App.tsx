@@ -9,8 +9,8 @@ import Light from './themes/light';
 import DarkNavy from './themes/deepsea';
 import { Provider, Subscribe } from 'unstated';
 import GlobalContainer from './components/context/global';
-import firebase from 'firebase/app';
-import 'firebase/messaging';
+import fb from "@/components/firebase";
+import { isSupported, getToken, getMessaging, onMessage } from 'firebase/messaging';
 import { pubkey, messanger } from './components/firebase/message';
 
 
@@ -22,22 +22,24 @@ declare module '@mui/styles/defaultTheme' {
 
 export default class App extends React.Component<{}, {}> {
 
-  componentDidMount() {
-    if (firebase.messaging.isSupported()) {
+  async componentDidMount() {
+    if (await isSupported()) {
       const m = new messanger();
       try {
-        const messaging = firebase.messaging();
+        const messaging = getMessaging(fb);
+
         console.log("Public key successfully set.");
-        messaging.usePublicVapidKey(pubkey);
-        messaging.onTokenRefresh(function() {
-          messaging.getToken().then(function(refreshedToken) {
+        getToken(messaging, { vapidKey: pubkey }).then((currentToken) => {
+          if (currentToken) {
             console.log("FCM token has been expired. Pulled up to the server.");
-            m.refreshToken(refreshedToken);
-          });
+            m.refreshToken(currentToken);
+          }
+        }).catch((err) => {
+          console.log('An error occurred while retrieving token. ', err);
         });
         console.log("Initialized FCM");
 
-        messaging.onMessage(payload => {
+        onMessage(messaging,payload => {
           console.log("[FOREGROUND]Message received. ", payload);
         });
       } catch (e: any) {

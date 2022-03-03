@@ -74,7 +74,7 @@ class EditModal extends React.Component<{
       info: info,
       id: this.props.onGoingId,
     };
-    const p = await httpsCallable(`ranking`, `editRanking`, data);
+    const p:any = await httpsCallable(`ranking`, `editRanking`, data);
     if (p.data.error) {
       alert(p.data.errorMessage);
     }
@@ -86,7 +86,7 @@ class EditModal extends React.Component<{
     let data = {
       id: this.props.onGoingId,
     };
-    const p = await httpsCallable(`ranking`, `deleteRanking`, data);
+    const p:any = await httpsCallable(`ranking`, `deleteRanking`, data);
     if (p.data.error) {
       alert(p.data.errorMessage);
     }

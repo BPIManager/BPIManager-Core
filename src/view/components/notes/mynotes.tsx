@@ -25,7 +25,7 @@ import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import IconButton from '@mui/material/IconButton';
 import { StyledBadge } from '../songs/songNotes';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { functions } from '@/components/firebase';
+import { httpsCallable } from '@/components/firebase';
 
 interface S {
   isLoading: boolean,
@@ -219,8 +219,7 @@ class WriteDialog extends React.Component<WP, {
       const { score } = this.props;
       if (!score) { return; }
       this.setState({ isLoading: true });
-      const func = functions.httpsCallable("updateComment");
-      await func({ userBPI: score.currentBPI, memo: this.state.text, id: this.props.currentId });
+      await httpsCallable("","updateComment",{ userBPI: score.currentBPI, memo: this.state.text, id: this.props.currentId });
       this.props.closeModal(true);
     } catch (e: any) {
       console.log(e);

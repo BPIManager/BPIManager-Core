@@ -1,5 +1,5 @@
 //importScripts('/service-worker.js');
-importScripts('/fcm-sw.js');
+importScripts('/firebase-messaging-sw.js');
 
 self.addEventListener('fetch', function(event) {
 

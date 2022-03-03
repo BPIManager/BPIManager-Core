@@ -77,7 +77,7 @@ class RankingSearch extends React.Component<{ intl: any } & RouteComponentProps,
   next = async (showFinished: boolean = this.state.showFinished, oldList: any = [], force: boolean = false) => {
     if (this.state.isLast && !force) return;
     this.setState({ isLoading: true });
-    const res = await getRanking(showFinished, oldList.length);
+    const res:any = await getRanking(showFinished, oldList.length);
     if (res.data.error || res.data.info.length === 0) {
       return this.setState({ isLast: true, isLoading: false, auth: res.data.auth });
     }

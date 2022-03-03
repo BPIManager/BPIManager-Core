@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { functions } from '@/components/firebase';
 import { _currentStore } from '@/components/settings';
 import ModalUser from '../rivals/modal';
 import Slide from '@mui/material/Slide';
@@ -22,6 +21,7 @@ import Alert from '@mui/material/Alert/Alert';
 import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import Button from '@mui/material/Button';
+import { httpsCallable } from "@/components/firebase";
 
 interface P {
   ids: string[],
@@ -87,7 +87,7 @@ class FolloweeList extends React.Component<P, S> {
     if (targetArray.length === 0) {
       return this.setState({ loading: false });
     }
-    const res = await functions.httpsCallable("getFolloweeDetails")({
+    const res: any = await httpsCallable("", "getFolloweeDetails",{
       userIds: targetArray.slice(0, 10),
       version: _currentStore()
     });

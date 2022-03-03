@@ -448,7 +448,7 @@ class RankList extends React.Component<{ history: any }, { loading: boolean, lis
   )
 
   getRanking = async () => {
-    const res = await getRanking(false, 0);
+    const res:any = await getRanking(false, 0);
     if (res.data.error || res.data.info.length === 0) {
       return this.setState({ loading: false, list: [] });
     }

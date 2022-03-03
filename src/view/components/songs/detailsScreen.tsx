@@ -282,11 +282,11 @@ class DetailedSongInformation extends React.Component<P & { intl?: any }, S> {
         const text = encodeURIComponent(`[${diff > 0 ? "+" + diff : diff}] ${this.props.song.title}${_prefixFromNum(this.props.song.difficulty, true)} [EX:${score}(${this.showRank(false)}${this.showRank(true)})][BPI:${bpi}]`);
         new fbActions().auth().onAuthStateChanged(async (user: any) => {
           if (user) {
-            const res = await new fbActions().createShare(Object.assign(this.props.score, {
+            const res:any = await new fbActions().createShare(Object.assign(this.props.score, {
               exScore: score,
               currentBPI: bpi
             }), user.uid);
-            window.open(`https://twitter.com/intent/tweet?&url=${config.baseUrl}/share/${res.id}&text=${text}`);
+            window.open(`https://twitter.com/intent/tweet?&url=${config.baseUrl}/share/${res}&text=${text}`);
           } else {
             window.open(`https://twitter.com/intent/tweet?&text=${text}`);
           }

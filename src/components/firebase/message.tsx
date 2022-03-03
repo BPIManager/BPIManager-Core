@@ -1,23 +1,22 @@
-import firebase from 'firebase/app';
-import 'firebase/messaging';
 import fbActions from './actions';
+import { getToken, getMessaging } from 'firebase/messaging';
+import fb from "@/components/firebase";
 export const pubkey = "BHwX2FHmMWpVIWwnELeC0Go_TDXQO4TlCr-gUsW38gqXME0LLUp3runutAAU5lxIUGQYEXgo090CVuCK-7kajms";
 
 export class messanger {
-  private messaging = firebase.messaging();
 
   checkPermission() {
     return Notification.permission === "granted";
   }
 
   getToken() {
-    return this.messaging.getToken();
+    return getToken(getMessaging(fb));
   }
 
   refreshToken(refreshedToken?: string) {
     try {
       new fbActions().auth().onAuthStateChanged(async (user: any) => {
-        console.info("Login Status:" + user);
+        console.info("Login Status:",user);
         if (user && user.uid) {
           const token = refreshedToken || (await this.getToken());
           new fbActions().updateToken(user.uid, token);

@@ -1,3 +1,5 @@
+import {FieldValue} from "firebase/firestore";
+
 export interface scoreDataOrigin {
   [key: string]: any,
   difficulty: string,
@@ -57,7 +59,7 @@ export interface historyData {
 
 export interface rivalStoreData {
   timeStamp: string,
-  serverTime: firebase.firestore.FieldValue,
+  serverTime: FieldValue,
   uid: string,
   displayName: string,
   profile: string,
