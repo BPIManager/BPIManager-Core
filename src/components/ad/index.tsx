@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 declare global {

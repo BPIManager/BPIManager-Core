@@ -429,7 +429,7 @@ class User extends React.Component<{ intl: any, currentUserName?: string, limite
                         </form>
                       }
                       {(res.twitter || getTwitterName(res.profile) !== "") &&
-                        <Button color="secondary" size="small" onClick={() => window.open(`https://twitter.com/${getTwitterName(res.profile)}`)} startIcon={<TwitterIcon />}>
+                        <Button color="secondary" size="small" onClick={() => window.open(`https://twitter.com/${res.twitter || getTwitterName(res.profile)}`)} startIcon={<TwitterIcon />}>
                           Twitter
                       </Button>
                       }
