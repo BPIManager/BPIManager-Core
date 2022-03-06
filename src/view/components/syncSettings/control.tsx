@@ -3,6 +3,9 @@ import Button from '@mui/material/Button';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import fbActions from '@/components/firebase/actions';
 import { _currentStore, _isSingle, _autoSync, _setAutoSync } from '@/components/settings';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -19,6 +22,9 @@ import SaveIcon from '@mui/icons-material/Save';
 import { red } from '@mui/material/colors';
 import AlertTitle from '@mui/material/AlertTitle';
 import CheckIcon from '@mui/icons-material/Check';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
 
 class SyncControlScreen extends React.Component<{ userData: any } & RouteComponentProps, {
   isLoading: boolean,
@@ -36,6 +42,7 @@ class SyncControlScreen extends React.Component<{ userData: any } & RouteCompone
   iidxId: string,
   twitterId: string,
   isSending: boolean,
+  showUserInfo: boolean
 }> {
 
   private fbA: fbActions = new fbActions();
@@ -61,6 +68,7 @@ class SyncControlScreen extends React.Component<{ userData: any } & RouteCompone
       isPublic: false,
       iidxId: "",
       twitterId: "",
+      showUserInfo: false,
     }
   }
 
@@ -89,6 +97,8 @@ class SyncControlScreen extends React.Component<{ userData: any } & RouteCompone
     });
   }
 
+  toggleUserDetail = () => this.setState({ showUserInfo: !this.state.showUserInfo })
+
   sendName = async () => {
     this.setState({ isSending: true, nameErrorMessage: [] });
     try {
@@ -114,7 +124,7 @@ class SyncControlScreen extends React.Component<{ userData: any } & RouteCompone
   }
 
   render() {
-    const { isLoading, isSending, rivalData, scoreData, rawUserData, nameErrorMessage, myName, myProfile, arenaRank, iidxId, twitterId, hideAlert, isPublic } = this.state;
+    const { isLoading, isSending, rivalData, scoreData, rawUserData, nameErrorMessage, myName, myProfile, arenaRank, iidxId, twitterId, hideAlert, isPublic, showUserInfo } = this.state;
     const nameError: boolean = myName.length !== 0 && (!/^[a-zA-Z0-9]+$/g.test(myName) || myName.length > 16);
     const profError: boolean = myProfile.length > 140;
     if (isLoading) return <Loader text="プロファイルを取得中" />
@@ -155,6 +165,16 @@ class SyncControlScreen extends React.Component<{ userData: any } & RouteCompone
             Signed in via {rawUserData.providerData[0].providerId || "Unknown Provider"}
           </p>
         </div>
+        <Grid container>
+          <Grid item xs={10}>
+            <Typography variant="body1">ユーザー情報</Typography>
+          </Grid>
+          <Grid item xs={2} style={{ justifyContent: "flex-end", display: "flex" }}>
+            <FormControl component="fieldset" variant="standard">
+              <Button onClick={this.toggleUserDetail}>確認</Button>
+            </FormControl>
+          </Grid>
+        </Grid>
         <Grid container>
           <Grid item xs={10}>
             <Typography variant="body1">一般公開</Typography>
@@ -255,6 +275,7 @@ class SyncControlScreen extends React.Component<{ userData: any } & RouteCompone
             サインアウト
           </ColorButton>
         </ButtonGroup>
+        {showUserInfo && <UserDetail rawUserData={rawUserData} userInfo={rivalData} handleClose={this.toggleUserDetail} />}
       </React.Fragment>
     );
   }
@@ -271,3 +292,60 @@ const ColorButton = withStyles((theme: Theme) => ({
     },
   },
 }))(Button);
+
+class UserDetail extends React.Component<{
+  handleClose: () => void,
+  userInfo: any,
+  rawUserData: any
+}, {}>{
+  render() {
+    const { userInfo, rawUserData } = this.props;
+    console.log(userInfo, rawUserData);
+    return (
+
+      <Dialog
+        open={true}
+        onClose={this.props.handleClose}
+        style={{margin:"0 8px"}}
+      >
+        <DialogContent>
+          <List>
+            {
+              [
+                {
+                  primary: rawUserData.uid,
+                  secondary: "ユニークユーザー ID"
+                },
+                {
+                  primary: rawUserData.metadata.creationTime,
+                  secondary: "アカウント作成日"
+                },
+                {
+                  primary: rawUserData.metadata.lastSignInTime,
+                  secondary: "最終サインイン"
+                },
+                {
+                  primary: userInfo.verified ? "認証済み" : "認証されていません",
+                  secondary: "アカウントの認証状態"
+                },
+                {
+                  primary: rawUserData.providerData.length > 0 ? rawUserData.providerData[0].providerId : "unknown",
+                  secondary: "アカウント プロバイダ"
+                }
+              ].map((item) => (
+                <ListItem style={{padding:"0 16px"}}>
+                  <ListItemText primary={item.primary} secondary={item.secondary} />
+                </ListItem>
+              ))
+            }
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={this.props.handleClose} autoFocus>
+            完了
+          </Button>
+        </DialogActions>
+      </Dialog>
+    )
+  }
+}

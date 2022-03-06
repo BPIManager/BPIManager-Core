@@ -109,9 +109,6 @@ class SyncControlScreen extends React.Component<{ userData: any }, {
     const { isLoading, scoreData, snack } = this.state;
     return (
       <Paper style={{ padding: "15px" }}>
-        <Typography component="h5" variant="h5">
-          転送
-        </Typography>
         <FormattedMessage id="Sync.Control.message1" /><br />
         <FormattedMessage id="Sync.Autosync0" />
         <RefLink to={"/settings"} style={{ textDecoration: "none" }}>
