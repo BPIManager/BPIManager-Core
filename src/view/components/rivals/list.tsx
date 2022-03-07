@@ -130,7 +130,7 @@ class RivalLists extends React.Component<P & RouteComponentProps, S> {
                   <ListItemIcon><SyncIcon /></ListItemIcon>
                   <ListItemText primary={"ライバルスコアの一括更新"} secondary={"現在登録済みのライバルの登録スコアを一括で最新状態にアップデートします。"} />
                 </ListItem>
-                <ListItem button onClick={() => this.props.history.push("/sync/settings?init=3")}>
+                <ListItem button onClick={() => this.props.history.push("/sync/settings?init=2")}>
                   <ListItemIcon><NotificationsActiveIcon /></ListItemIcon>
                   <ListItemText primary={"プッシュ通知管理"} secondary={"指定したライバルのスコア更新を自動でお知らせします"} />
                 </ListItem>
