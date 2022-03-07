@@ -76,7 +76,7 @@ class SyncControlScreen extends React.Component<{ userData: any } & RouteCompone
     return this.fbA.auth().onAuthStateChanged(async (user: any) => {
       const t = await this.fbA.load();
       let tw = t && t.twitter ? t.twitter : "";
-      if (!tw && t) {
+      if (!tw && t && t.profile) {
         tw = getTwitterName(t.profile) || "";
       }
       this.fbLoader.updateProfileIcon();
