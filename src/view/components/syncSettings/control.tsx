@@ -2,7 +2,7 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import fbActions from '@/components/firebase/actions';
-import { _currentStore, _isSingle, _autoSync, _setAutoSync } from '@/components/settings';
+import { _currentStore, _isSingle } from '@/components/settings';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -21,12 +21,13 @@ import { getAltTwitterIcon, getTwitterName } from '@/components/rivals';
 import SaveIcon from '@mui/icons-material/Save';
 import { red } from '@mui/material/colors';
 import AlertTitle from '@mui/material/AlertTitle';
-import CheckIcon from '@mui/icons-material/Check';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
+import SyncControlScreen from '../sync/control';
+import Divider from "@mui/material/Divider";
 
-class SyncControlScreen extends React.Component<{ userData: any } & RouteComponentProps, {
+class SyncMainScreen extends React.Component<{ userData: any } & RouteComponentProps, {
   isLoading: boolean,
   scoreData: any,
   sentName: string,
@@ -37,7 +38,6 @@ class SyncControlScreen extends React.Component<{ userData: any } & RouteCompone
   showNotes: boolean,
   arenaRank: string,
   rawUserData: any,
-  hideAlert: boolean,
   isPublic: boolean,
   iidxId: string,
   twitterId: string,
@@ -64,7 +64,6 @@ class SyncControlScreen extends React.Component<{ userData: any } & RouteCompone
       showNotes: false,
       nameErrorMessage: [],
       rawUserData: null,
-      hideAlert: false,
       isPublic: false,
       iidxId: "",
       twitterId: "",
@@ -124,47 +123,28 @@ class SyncControlScreen extends React.Component<{ userData: any } & RouteCompone
   }
 
   render() {
-    const { isLoading, isSending, rivalData, scoreData, rawUserData, nameErrorMessage, myName, myProfile, arenaRank, iidxId, twitterId, hideAlert, isPublic, showUserInfo } = this.state;
+    const { isLoading, isSending, rivalData, scoreData, rawUserData, nameErrorMessage, myName, myProfile, arenaRank, iidxId, twitterId, isPublic, showUserInfo } = this.state;
     const nameError: boolean = myName.length !== 0 && (!/^[a-zA-Z0-9]+$/g.test(myName) || myName.length > 16);
     const profError: boolean = myProfile.length > 140;
     if (isLoading) return <Loader text="プロファイルを取得中" />
     return (
       <React.Fragment>
-        {(!_autoSync() && !hideAlert) && (
-          <Alert severity="warning" style={{ margin: "10px 0" }}>
-            <AlertTitle>Auto-syncが無効です</AlertTitle>
-            <p>サーバー上のスコアデータを最新のまま維持するために、Auto-syncを有効にしてください。</p>
-            <Button
-              fullWidth
-              variant="outlined"
-              color="secondary"
-              onClick={() => {
-                _setAutoSync(true);
-                this.setState({ hideAlert: true });
-              }}
-              startIcon={<CheckIcon />}
-              disabled={isLoading}>
-              オンにする
-            </Button>
-          </Alert>
-        )}
-        {(hideAlert) && (
-          <Alert severity="success" style={{ margin: "10px 0" }}>
-            <AlertTitle>Auto-syncを有効にしました</AlertTitle>
-            <p>設定→Auto-syncより、いつでもこの機能を無効にできます。</p>
-          </Alert>
-        )}
-        <div style={{ textAlign: "center" }}>
-          <Avatar style={{ width: "50%", maxWidth: "128px", height: "auto", margin: "25px auto 8px auto" }}>
-            <img src={rawUserData.photoURL ? rawUserData.photoURL.replace("_normal", "") : "noimage"} style={{ width: "100%", height: "100%" }}
-              alt={rivalData ? rivalData.displayName : rawUserData.displayName || "Unpublished User"}
-              onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(rivalData) || alternativeImg(rawUserData.displayName)} />
-          </Avatar>
-          <p>
-            Welcome back, {rawUserData.displayName || ""}<br />
-            Signed in via {rawUserData.providerData[0].providerId || "Unknown Provider"}
-          </p>
-        </div>
+        <Grid container alignItems="center">
+          <Grid item xs={3}>
+            <Avatar style={{ width: "50%", maxWidth: "128px", height: "auto", margin: "8px 0" }}>
+              <img src={rawUserData.photoURL ? rawUserData.photoURL.replace("_normal", "") : "noimage"} style={{ width: "100%", height: "100%" }}
+                alt={rivalData ? rivalData.displayName : rawUserData.displayName || "Unpublished User"}
+                onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(rivalData) || alternativeImg(rawUserData.displayName)} />
+            </Avatar>
+          </Grid>
+          <Grid item xs={9} style={{ justifyContent: "start", display: "flex" }}>
+            <p>
+              Welcome back, {rawUserData.displayName || ""}<br />
+              Signed in via {rawUserData.providerData[0].providerId || "Unknown Provider"}
+            </p>
+          </Grid>
+        </Grid>
+        <Divider style={{ margin: "15px 0" }} />
         <Grid container>
           <Grid item xs={10}>
             <Typography variant="body1">ユーザー情報</Typography>
@@ -184,13 +164,13 @@ class SyncControlScreen extends React.Component<{ userData: any } & RouteCompone
               <FormControlLabel
                 control={<Switch size="small" checked={isPublic} onChange={this.handlePublic} name="isPublic" />}
                 label=""
-                style={{ margin: "0 4px" }}
+                className="syncPublicSwitch"
               />
             </FormControl>
           </Grid>
         </Grid>
         {!isPublic && (
-          <Alert severity="warning" style={{ margin: "16px 0" }}>
+          <Alert variant="outlined" severity="warning" style={{ borderColor: "#663c0045", margin: "8px 0" }}>
             <AlertTitle>アカウントが非公開です</AlertTitle>
             <p>
               スコアデータを公開してライバルを増やしましょう。<br />
@@ -199,7 +179,7 @@ class SyncControlScreen extends React.Component<{ userData: any } & RouteCompone
           </Alert>
         )}
         {isPublic && (
-          <Card style={{ marginTop: "16px" }}>
+          <Card style={{ border: "1px solid #663c0045", background: "transparent", margin: "8px 0" }}>
             <CardContent style={{ padding: "16px" }}>
               <TextField label="表示名を入力(最大16文字)"
                 InputLabelProps={{
@@ -250,10 +230,11 @@ class SyncControlScreen extends React.Component<{ userData: any } & RouteCompone
             </CardContent>
           </Card>
         )}
+        <SyncControlScreen toggleSending={() => this.setState({ isSending: !isSending })} userData={this.props.userData} />
         {(nameErrorMessage.length > 0 || (scoreData === null && myName)) &&
-          <Alert severity="error" style={{ margin: "8px 0" }}>
+          <Alert style={{ borderColor: "#4fc3f745", margin: "8px 0" }}>
             {nameErrorMessage.map((item: string) => <span key={item}>{item}<br /></span>)}
-            {(scoreData === null && myName) && <span style={{ color: "#ff0000" }}>スコアデータが送信されていません。「データ」→「アップロード」よりスコアデータを送信してください。</span>}
+            {(scoreData === null && myName) && <span style={{ color: "#ff0000" }}>スコアデータが送信されていません。スコアデータを送信してください。</span>}
           </Alert>
         }
         <ButtonGroup variant="contained" fullWidth style={{ marginTop: "8px" }}>
@@ -281,7 +262,7 @@ class SyncControlScreen extends React.Component<{ userData: any } & RouteCompone
   }
 }
 
-export default withRouter(SyncControlScreen);
+export default withRouter(SyncMainScreen);
 
 const ColorButton = withStyles((theme: Theme) => ({
   root: {
@@ -306,7 +287,7 @@ class UserDetail extends React.Component<{
       <Dialog
         open={true}
         onClose={this.props.handleClose}
-        style={{margin:"0 8px"}}
+        style={{ margin: "0 8px" }}
       >
         <DialogContent>
           <List>
@@ -333,7 +314,7 @@ class UserDetail extends React.Component<{
                   secondary: "アカウント プロバイダ"
                 }
               ].map((item) => (
-                <ListItem style={{padding:"0 16px"}}>
+                <ListItem style={{ padding: "0 16px" }}>
                   <ListItemText primary={item.primary} secondary={item.secondary} />
                 </ListItem>
               ))

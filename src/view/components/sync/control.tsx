@@ -1,20 +1,26 @@
 import * as React from 'react';
 import { FormattedMessage } from 'react-intl';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
 import fbActions from '@/components/firebase/actions';
 import Typography from '@mui/material/Typography';
-import { _currentStore, _isSingle, _autoSync } from '@/components/settings';
+import { _currentStore, _isSingle, _autoSync, _setAutoSync } from '@/components/settings';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { scoresDB, scoreHistoryDB } from '@/components/indexedDB';
-import { Link, CircularProgress, Paper } from '@mui/material/';
-import { Link as RefLink } from "react-router-dom";
+import { CircularProgress } from '@mui/material/';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
+import Divider from "@mui/material/Divider";
 import ShowSnackBar from '../snackBar';
 import { _pText } from '@/components/settings/updateDef';
+import { Grid } from '@mui/material/';
+import CheckIcon from '@mui/icons-material/Check';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
-class SyncControlScreen extends React.Component<{ userData: any }, {
+class SyncControlScreen extends React.Component<{ userData: any, toggleSending: () => void }, {
   isLoading: boolean,
   scoreData: any,
   sentName: string,
@@ -27,13 +33,16 @@ class SyncControlScreen extends React.Component<{ userData: any }, {
   snack: {
     open: boolean,
     message: string | null
-  }
+  },
+  hideAlert: boolean,
+  uploadConfirm: boolean,
+  downloadConfirm: boolean
 }> {
 
   private fbA: fbActions = new fbActions();
   private fbLoader: fbActions = new fbActions();
 
-  constructor(props: { userData: any }) {
+  constructor(props: { userData: any, toggleSending: () => void }) {
     super(props);
     this.fbLoader.setColName(`${_currentStore()}_${_isSingle()}`).setDocName(props.userData.uid);
     this.fbA.v2SetUserCollection().setDocName(props.userData.uid);
@@ -50,7 +59,10 @@ class SyncControlScreen extends React.Component<{ userData: any }, {
       snack: {
         open: false,
         message: ""
-      }
+      },
+      hideAlert: false,
+      uploadConfirm: false,
+      downloadConfirm: false,
     }
   }
 
@@ -71,7 +83,9 @@ class SyncControlScreen extends React.Component<{ userData: any }, {
 
   upload = async () => {
     this.setState({ isLoading: true });
+    this.props.toggleSending();
     const res = await this.fbLoader.save(this.state.myName);
+    this.props.toggleSending();
     if (res.error) {
       this.toggleErrorSnack(res.reason);
       return this.setState({ isLoading: false });
@@ -81,16 +95,19 @@ class SyncControlScreen extends React.Component<{ userData: any }, {
 
   download = async () => {
     this.setState({ isLoading: true });
+    this.props.toggleSending();
     _pText("通信中");
     const res = await this.fbLoader.load();
     if (res === null || res === undefined) {
       this.toggleErrorSnack("エラーが発生しました");
+      this.props.toggleSending();
       return this.setState({ isLoading: false });
     }
     await new scoresDB().setDataWithTransaction(res.scores);
     await new scoreHistoryDB().setDataWithTransaction(res.scoresHistory);
     await new scoresDB().recalculateBPI([], true);
     await new scoreHistoryDB().recalculateBPI([], true);
+    this.props.toggleSending();
     this.setState({ isLoading: false });
   }
 
@@ -104,69 +121,142 @@ class SyncControlScreen extends React.Component<{ userData: any }, {
   }
 
   toggleErrorSnack = (mes?: string | null) => this.setState({ snack: { open: !this.state.snack.open, message: mes || null } });
+  cancelDialog = () => this.setState({ uploadConfirm: false, downloadConfirm: false })
 
   render() {
-    const { isLoading, scoreData, snack } = this.state;
+    const { isLoading, scoreData, snack, uploadConfirm, downloadConfirm } = this.state;
+    const isOlderVersionNotification = () => {
+      if (!this.isOlderVersion()) return (null);
+      return (
+        <React.Fragment>
+          <Divider style={{ marginTop: 15 }} />
+          <Alert severity="warning" style={{ background: "transparent", border: "none", margin: 0, padding: 0 }}>
+            <AlertTitle>アップロードできません</AlertTitle>
+            <p>現在選択中のIIDXバージョン({_currentStore()})は過去のバージョンです。<br />
+              このバージョンはアーカイブのダウンロードのみ実行可能です。</p>
+          </Alert>
+        </React.Fragment>
+      )
+    }
+    const isEnableAutoSync = () => {
+      const { hideAlert } = this.state;
+      if (!_autoSync() && !hideAlert) {
+        return (
+          <React.Fragment>
+            <Divider style={{ marginTop: 15 }} />
+            <Alert severity="warning" style={{ background: "transparent", border: "none", margin: 0, padding: 0 }}>
+              <AlertTitle>Auto-syncが無効です</AlertTitle>
+              <p>サーバー上のスコアデータを最新のまま維持するために、Auto-syncを有効にしてください。</p>
+              <Button
+                fullWidth
+                variant="outlined"
+                color="secondary"
+                onClick={() => {
+                  _setAutoSync(true);
+                  this.setState({ hideAlert: true });
+                }}
+                startIcon={<CheckIcon />}
+                disabled={isLoading}>
+                オンにする
+              </Button>
+            </Alert>
+          </React.Fragment>
+        )
+      } else if (hideAlert) {
+        return (
+          <React.Fragment>
+            <Divider style={{ marginTop: 15 }} />
+            <Alert severity="success" variant="outlined" style={{ border: "none", margin: 0, padding: 0 }}>
+              <AlertTitle>Auto-syncを有効にしました</AlertTitle>
+              <p>設定→Auto-syncより、いつでもこの機能を無効にできます。</p>
+            </Alert>
+          </React.Fragment>
+        )
+      }
+      return (null);
+    }
     return (
-      <Paper style={{ padding: "15px" }}>
-        <FormattedMessage id="Sync.Control.message1" /><br />
-        <FormattedMessage id="Sync.Autosync0" />
-        <RefLink to={"/settings"} style={{ textDecoration: "none" }}>
-          <Link color="secondary" component="span">
-            <FormattedMessage id="GlobalNav.Settings" />
-          </Link>
-        </RefLink>
-        <FormattedMessage id="Sync.Autosync" /><br />
-        <Divider style={{ margin: "10px 0" }} />
+      <React.Fragment>
+        <Grid container alignItems={"center"} style={{ margin: "15px 0" }}>
+          <Grid item xs={6}>
+            <Typography variant="body1">スコアデータ</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <ButtonGroup fullWidth color="secondary">
+              <Button
+                onClick={() => this.setState({ uploadConfirm: true })}
+                disabled={isLoading || this.isOlderVersion()}
+              >Upload</Button>
+              <Button
+                onClick={() => this.setState({ downloadConfirm: true })}
+                disabled={isLoading}
+              >Download</Button>
+            </ButtonGroup>
+          </Grid>
+        </Grid>
         <div style={{ margin: "15px 0" }}>
           {isLoading && (
-            <Alert severity="warning" icon={<CircularProgress color="secondary" />}>
+            <Alert variant="outlined" severity="warning" style={{ borderColor: "#663c0045" }} icon={<CircularProgress color="secondary" />}>
               <FormattedMessage id="Sync.Control.processing" /><br />
               <span id="_progressText" />
             </Alert>
           )}
           {(!isLoading && scoreData === null) && (
-            <Alert severity="error">
+            <Alert variant="outlined" severity="warning" style={{ borderColor: "#663c0045" }}>
               <FormattedMessage id="Sync.Control.nodata" />
             </Alert>
           )}
           {(!isLoading && scoreData !== null) && (
-            <Alert severity="info" icon={false}>
-              <FormattedMessage id="Sync.Control.lastupdate" /><br />
+            <Alert variant="outlined" severity="warning" style={{ borderColor: "#663c0045" }} icon={false}>
               <span id="_progressText" style={{ display: "none" }} />
-              Date: {scoreData.timeStamp}<br />
-              From: {scoreData.type ? scoreData.type : "undefined"}
+              最終同期 : {scoreData.timeStamp}<br />
+              同期端末 : {scoreData.type ? scoreData.type : "undefined"}
+              {isOlderVersionNotification()}
+              {isEnableAutoSync()}
             </Alert>
           )}
         </div>
-        <ButtonGroup fullWidth color="secondary">
-          <Button
-            onClick={this.upload}
-            disabled={isLoading || this.isOlderVersion()}
-          >Upload</Button>
-          <Button
-            onClick={this.download}
-            disabled={isLoading}
-          >Download</Button>
-        </ButtonGroup>
-        {this.isOlderVersion() && (
-          <Alert severity="warning" style={{ margin: "15px 0" }}>
-            <AlertTitle>アップロードできません</AlertTitle>
-            <p>現在選択中のIIDXバージョン(IIDX{_currentStore()})は過去のバージョンです。<br />
-              このバージョンのスコアデータはダウンロード専用になり、新たにアップロードすることはできません。</p>
-          </Alert>
-        )}
-        <Divider style={{ margin: "10px 0" }} />
-        <Typography component="p" variant="caption" style={{ textAlign: "right" }}>
-          current configures:[version:{_currentStore()}] [mode:{_isSingle() === 1 ? "Single Play" : "Double Play"}] [autoSync:{_autoSync() ? "enabled" : "disabled"}]<br />
-          userId: {this.props.userData.uid}<br />
-          <Link color="secondary" href="https://docs2.poyashi.me/tos/">免責事項・利用について</Link>
-        </Typography>
         <ShowSnackBar message={snack.message} variant="warning"
           handleClose={this.toggleErrorSnack} open={snack.open} autoHideDuration={3000} />
-      </Paper>
+        {downloadConfirm && <ConfirmDialog next={this.download} cancel={this.cancelDialog} />}
+        {uploadConfirm && <ConfirmDialog next={this.upload} cancel={this.cancelDialog} />}
+      </React.Fragment>
     );
   }
 }
 
 export default SyncControlScreen;
+
+class ConfirmDialog extends React.Component<{
+  next: () => void,
+  cancel: () => void,
+}, {}> {
+  render() {
+    const { next, cancel } = this.props;
+    return (
+      <Dialog
+        open={true}
+        onClose={cancel}
+      >
+        <DialogTitle>
+          確認
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            データがすでに存在する場合は上書きされます。<br/>
+            操作は取り消しできません。続行してもよろしいですか？
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancel}>キャンセル</Button>
+          <Button onClick={()=>{
+            next();
+            cancel();
+          }} autoFocus>
+            続行
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  }
+}

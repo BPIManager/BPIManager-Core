@@ -908,3 +908,5 @@ text.react-calendar-heatmap-weekday-label {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.syncPublicSwitch{margin-right:7px !important;}
