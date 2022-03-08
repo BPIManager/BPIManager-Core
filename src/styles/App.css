@@ -660,9 +660,42 @@ text.react-calendar-heatmap-weekday-label {
   border-bottom: 2px solid #ccc;
 }
 
-.TypographywithIcon {
+.TypographywithIconAndLinesContainer {
+  position: relative;
+}
+
+.TypographywithIconAndLinesInner{
+  display:inline-block;
+  position: relative;
+}
+
+.TypographywithIconAndLines {
+  margin: 0;
   display: flex;
-  align-items: center;
+  font-weight: normal;
+  padding-right: 15px;
+}
+
+#__dark .TypographywithIconAndLines{ background-color:#0a0a0a;}
+#__deepsea .TypographywithIconAndLines{ background-color:#000d19;}
+#__light .TypographywithIconAndLines{ background-color:#fff;}
+
+.IndexGrids{
+  text-align: right;
+}
+
+.TypographywithIconAndLinesContainer:before {
+  content: '';
+  background-color: rgba(255, 255, 255, 0.12);
+  display: block;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  padding-right: 15px;
 }
 
 .narrowCards .MuiCardContent-root {
@@ -909,4 +942,17 @@ text.react-calendar-heatmap-weekday-label {
   white-space: nowrap;
 }
 
-.syncPublicSwitch{margin-right:7px !important;}
+.syncPublicSwitch {
+  margin-right: 7px !important;
+}
+
+.footer{
+   margin-top: 25px;
+   font-size: 8px;
+   text-align:right;
+   display:block;
+}
+
+@media screen and (max-width:468px){
+  .footer{text-align:left;}
+}

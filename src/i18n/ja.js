@@ -32,7 +32,7 @@ const ja = {
   "Index.songsListButton": "楽曲一覧",
   "Index.enqueteButton": "アンケートにご協力ください",
   "Index.helpButton": "ヘルプを読む",
-  "Index.notes1": "beatmaniaは株式会社コナミデジタルエンタテインメントの登録商標です。",
+  "Index.notes1": "beatmaniaは(株)コナミデジタルエンタテインメントの登録商標です。",
   "Index.notes2": "本サービスは当該法人とは一切関係を有さない個人が制作したものです。",
   "Index.notes3": "本ツールはnorimiso様考案のBPIおよびZUBU様制作のBPICLのそれぞれにインスパイアされて制作されました。",
   "Data.add": "スコアのインポート",

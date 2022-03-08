@@ -368,14 +368,13 @@ export default class fbActions {
     qus.push(where(q, ">=", downLimit));
     qus.push(where(q, "<=", upLimit));
     qus.push(...this.versionQuery());
-    qus.push(limit(30));
     let _query: Query = query(collection(db, this.setUserCollection()), ...qus);
     if (searchBy !== "総合BPI") {
-      return await this.getUsers(_query);
+      return (await this.getUsers(_query)).slice(0,30);
     }
     return (await this.getUsers(_query)).sort((a: any, b: any) => {
       return Math.abs(total - (Number(a.totalBPI) || -15)) - Math.abs(total - (Number(b.totalBPI) || -15))
-    })
+    }).slice(0,30);
   }
 
   async addedAsRivals(): Promise<rivalStoreData[]> {

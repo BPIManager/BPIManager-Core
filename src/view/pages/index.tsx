@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { Link as RefLink, Divider, Avatar, Grid, Typography, CardActions, Card, CardContent, Container, CircularProgress, ListItem, ListItemAvatar, ListItemText, List } from '@mui/material/';
+import { Link as RefLink, Divider, Avatar, Grid, Typography, Card, CardContent, Container, CircularProgress, ListItem, ListItemAvatar, ListItemText, List } from '@mui/material/';
 import { _currentVersion, _currentTheme, _currentQuickAccessComponents } from '@/components/settings';
 import UpdateIcon from '@mui/icons-material/Update';
 import Loader from '@/view/components/common/loader';
@@ -13,7 +13,6 @@ import { getAltTwitterIcon } from '@/components/rivals';
 import { alternativeImg, getUA, blurredBackGround } from '@/components/common';
 import bpiCalcuator from '@/components/bpi';
 import statMain from '@/components/stats/main';
-import EventNoteIcon from '@mui/icons-material/EventNote';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
@@ -33,10 +32,7 @@ import ModalUser from '../components/rivals/modal';
 import AppsIcon from '@mui/icons-material/Apps';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import { BeforeInstallPromptEvent } from '@/components/context/global';
-import { expandUserData, getRanking } from '@/components/ranking/api';
-import { RankListItem } from './ranking/search';
-import WeeklyModal from './ranking/modal';
-
+import { timeCompare } from '@/components/common/timeFormatter';
 
 class Index extends React.Component<{ global: any } & RouteComponentProps, {
   user: any,
@@ -95,7 +91,7 @@ class Index extends React.Component<{ global: any } & RouteComponentProps, {
     const themeColor = _currentTheme();
     const bg = blurredBackGround();
     const { user, auth, isLoading, userLoading } = this.state;
-    const xs = 12, sm = 6, md = 4, lg = 4;
+    const xs = 12, sm = 12, md = 3, lg = 3;
     return (
       <div>
         <Helmet>
@@ -197,69 +193,81 @@ class Index extends React.Component<{ global: any } & RouteComponentProps, {
               </div>
             </CardContent>
           </Card>
-          <Divider style={{ margin: "25px 0" }} />
         </Container>
         {isLoading && <Loader />}
         {!isLoading && (
           <Container>
             <Grid container direction="row" justifyContent="space-between" spacing={3} className="narrowCards">
               <Grid item xs={xs} sm={sm} md={md} lg={lg}>
-                <Card>
-                  <CardContent>
-                    <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
+                <div className="TypographywithIconAndLinesContainer">
+                  <div className="TypographywithIconAndLinesInner">
+                    <Typography color="textSecondary" gutterBottom className="TypographywithIconAndLines">
                       <TimelineIcon />&nbsp;<FormattedMessage id="Stats.TotalBPI" />(☆12)
                   </Typography>
-                    <Typography color="textSecondary" variant="h2">
+                  </div>
+                </div>
+                <Grid container alignItems="center">
+                  <Grid item xs={6}>
+                    <Typography color="textSecondary" variant="h4">
                       {this.state.totalBPI}
                     </Typography>
-                  </CardContent>
-                  <CardActions>
+                  </Grid>
+                  <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
                     <Button size="small" onClick={() => this.props.history.push("/stats")}><FormattedMessage id="Index.ShowTotalBPI" /></Button>
-                  </CardActions>
-                </Card>
+                  </Grid>
+                </Grid>
               </Grid>
               <Grid item xs={xs} sm={sm} md={md} lg={lg}>
-                <Card>
-                  <CardContent>
-                    <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
+                <div className="TypographywithIconAndLinesContainer">
+                  <div className="TypographywithIconAndLinesInner">
+                    <Typography color="textSecondary" gutterBottom className="TypographywithIconAndLines">
                       <LibraryMusicIcon />&nbsp;<FormattedMessage id="Index.UpdatedInWeek" />
                     </Typography>
-                    <Typography color="textSecondary" variant="h2">
+                  </div>
+                </div>
+                <Grid container alignItems="center">
+                  <Grid item xs={6}>
+                    <Typography color="textSecondary" variant="h4">
                       {this.state.lastWeekUpdates}
                     </Typography>
-                  </CardContent>
-                  <CardActions>
+                  </Grid>
+                  <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
                     <Button size="small" onClick={() => this.props.history.push("/songs")}><FormattedMessage id="Index.ShowSongs" /></Button>
-                  </CardActions>
-                </Card>
+                  </Grid>
+                </Grid>
               </Grid>
               <Grid item xs={xs} sm={sm} md={md} lg={lg}>
-                <Card>
-                  <CardContent>
-                    <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
-                      <WbIncandescentIcon />&nbsp;<FormattedMessage id="Index.AAARemain" />(☆12)
-                  </Typography>
-                    <Typography color="textSecondary" variant="h2">
+                <div className="TypographywithIconAndLinesContainer">
+                  <div className="TypographywithIconAndLinesInner">
+                    <Typography color="textSecondary" gutterBottom className="TypographywithIconAndLines">
+                      <WbIncandescentIcon />&nbsp;<FormattedMessage id="Index.AAARemain" />
+                    </Typography>
+                  </div>
+                </div>
+                <Grid container alignItems="center">
+                  <Grid item xs={6}>
+                    <Typography color="textSecondary" variant="h4">
                       {this.state.remains}
                     </Typography>
-                  </CardContent>
-                  <CardActions>
+                  </Grid>
+                  <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
                     <Button size="small" onClick={() => this.props.history.push("/AAATable")}><FormattedMessage id="Index.ShowAAA" /></Button>
-                  </CardActions>
-                </Card>
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
           </Container>
         )}
-        <RankList history={this.props.history} />
         <RecentUsers history={this.props.history} />
-        <small style={{ marginTop: "25px", fontSize: "8px", textAlign: "center", display: "block", padding: "15px" }}>
-          <FormattedMessage id="Index.notes1" /><br />
-          <FormattedMessage id="Index.notes2" /><br />
-          <FormattedMessage id="Index.notes3" /><br /><br />
-          Made with &hearts; by poyashi.me<br/>
-          Author : <RefLink href="https://twitter.com/210120090722O19" target="_blank" color="secondary">@210120090722O19</RefLink>
-        </small>
+        <Container>
+          <small className="footer">
+            <FormattedMessage id="Index.notes1" /><br />
+            <FormattedMessage id="Index.notes2" /><br />
+            <FormattedMessage id="Index.notes3" /><br /><br />
+            Made with &hearts; by poyashi.me<br />
+            Author : <RefLink href="https://twitter.com/210120090722O19" target="_blank" color="secondary">@210120090722O19</RefLink>
+          </small>
+        </Container>
       </div>
     )
   }
@@ -427,74 +435,6 @@ class InstallAlert extends React.Component<{ global: any }, { hide: boolean }>{
 
 }
 
-class RankList extends React.Component<{ history: any }, { loading: boolean, list: any[], open: boolean, id: string }>{
-
-  state = {
-    loading: true,
-    list: [],
-    open: false,
-    id: ""
-  }
-
-  componentDidMount() {
-    this.getRanking();
-  }
-
-  handleOpenRanking = (rankId: string = "") => this.setState(
-    {
-      open: !this.state.open,
-      id: rankId
-    }
-  )
-
-  getRanking = async () => {
-    const res:any = await getRanking(false, 0);
-    if (res.data.error || res.data.info.length === 0) {
-      return this.setState({ loading: false, list: [] });
-    }
-    const list = await expandUserData(res.data.info);
-    return this.setState({ list: list, loading: false });
-  }
-
-  render() {
-    const { loading, list, open, id } = this.state;
-    return (
-      <React.Fragment>
-        <Container>
-          <Divider style={{ margin: "25px 0" }} />
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
-                <EventNoteIcon />&nbsp;
-                <FormattedMessage id="Index.OngoingWR" />
-              </Typography>
-              {loading && <Loader />}
-              {(!loading && list.length > 0) && (
-                <React.Fragment>
-                  <List>
-                    {list.map((item, i) => <RankListItem key={i} item={item} handleOpenRanking={this.handleOpenRanking} />)}
-                  </List>
-                  <Button startIcon={<ArrowRightIcon />} fullWidth size="small" onClick={() => this.props.history.push("/ranking/")}>
-                    <FormattedMessage id="ShowMore" />
-                  </Button>
-                </React.Fragment>
-              )}
-              {(!loading && list.length === 0) && (
-                <Button startIcon={<ArrowRightIcon />} fullWidth size="small" onClick={() => this.props.history.push("/ranking/")}>
-                  ランキングを作成
-              </Button>
-              )}
-            </CardContent>
-          </Card>
-        </Container>
-        {open &&
-          <WeeklyModal isOpen={open} rankingId={id} handleOpen={this.handleOpenRanking} />
-        }
-      </React.Fragment>
-    )
-  }
-}
-
 class RecentUsers extends React.Component<{ history: any }, { loading: boolean, list: any[], open: boolean, username: string }>{
 
   state = {
@@ -512,45 +452,51 @@ class RecentUsers extends React.Component<{ history: any }, { loading: boolean, 
   open = (uid: string) => this.setState({ open: true, username: uid });
 
   getRecentUsers = async () => {
-    const res = await new fbActions().recentUpdated(null, null, "すべて");
-    return this.setState({ loading: false, list: res.slice(0, 5) });
+    const fbA = new fbActions();
+    fbA.auth().onAuthStateChanged(async (user: any) => {
+      const res = (await fbA.recommendedByBPI()).filter((item) => {
+        if (user) {
+          return item.uid !== user.uid && timeCompare(new Date(), item.timeStamp, "day") < 15
+        }
+        return timeCompare(new Date(), item.timeStamp, "day") < 15
+      })
+      return this.setState({ loading: false, list: res.slice(0, 5) });
+    });
   }
 
   render() {
     const { loading, list, open, username } = this.state;
     const { history } = this.props;
+    if (loading) return <div style={{ marginTop: 24 }}><Loader /></div>;
     return (
       <React.Fragment>
-        <Container>
-          <Divider style={{ margin: "25px 0" }} />
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
-                <PeopleIcon />&nbsp;
-              <FormattedMessage id="Index.RecentlyUpdated" />
-              </Typography>
-              {loading && <Loader />}
-              {!loading && (
-                <List>
-                  {list.map((item: rivalStoreData) => (
-                    <ListItem key={item.uid} button onClick={() => this.open(item.displayName)}>
-                      <ListItemAvatar>
-                        <Avatar>
-                          <img src={item.photoURL ? item.photoURL.replace("_normal", "") : "noimage"} style={{ width: "100%", height: "100%" }}
-                            alt={item.displayName}
-                            onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(item) || alternativeImg(item.displayName)} />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText primary={item.displayName} secondary={item.arenaRank + " / 総合BPI:" + item.totalBPI + " / " + updatedTime((item.serverTime as any).toDate())} />
-                    </ListItem>
-                  ))}
-                </List>
-              )}
-              <Button startIcon={<ArrowRightIcon />} fullWidth size="small" onClick={() => history.push("/rivals?tab=3")}>
-                <FormattedMessage id="ShowMore" />
-              </Button>
-            </CardContent>
-          </Card>
+        <Container style={{ marginTop: 24 }}>
+          <div className="TypographywithIconAndLinesContainer">
+            <div className="TypographywithIconAndLinesInner">
+              <Typography color="textSecondary" gutterBottom className="TypographywithIconAndLines">
+                <PeopleIcon />&nbsp;あなたに実力が近いユーザー
+                  </Typography>
+            </div>
+          </div>
+          {!loading && (
+            <List>
+              {list.map((item: rivalStoreData) => (
+                <ListItem key={item.uid} button onClick={() => this.open(item.displayName)} style={{ padding: "5px 0" }}>
+                  <ListItemAvatar>
+                    <Avatar>
+                      <img src={item.photoURL ? item.photoURL.replace("_normal", "") : "noimage"} style={{ width: "100%", height: "100%" }}
+                        alt={item.displayName}
+                        onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(item) || alternativeImg(item.displayName)} />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary={item.displayName} secondary={item.arenaRank + " / 総合BPI:" + item.totalBPI + " / " + updatedTime((item.serverTime as any).toDate())} />
+                </ListItem>
+              ))}
+            </List>
+          )}
+          <Button startIcon={<ArrowRightIcon />} fullWidth size="small" onClick={() => history.push("/rivals?tab=1")}>
+            <FormattedMessage id="ShowMore" />
+          </Button>
         </Container>
         {open && <ModalUser isOpen={open} currentUserName={username} handleOpen={(flag: boolean) => this.handleModalOpen(flag)} />}
       </React.Fragment>
