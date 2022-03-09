@@ -724,16 +724,16 @@ text.react-calendar-heatmap-weekday-label {
 
 .topMenuScrollableWrapper {
   scrollbar-color: #ccc transparent !important;
-  scrollbar-width: thin !important;
+  scrollbar-width: 5px !important;
 }
 
 :root {
-  scrollbar-color: #ccc transparent !important;
-  scrollbar-width: thin !important;
+  scrollbar-color: #444 transparent !important;
+  scrollbar-width: 5px !important;
 }
 
 ::-webkit-scrollbar {
-  width: 9px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -741,7 +741,7 @@ text.react-calendar-heatmap-weekday-label {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #ccc;
+  background-color: #222;
 }
 
 #__light .updateDefAlert {

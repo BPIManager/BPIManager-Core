@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { Link as RefLink, Divider, Avatar, Grid, Typography, Card, CardContent, Container, CircularProgress, ListItem, ListItemAvatar, ListItemText, List } from '@mui/material/';
+import { Link as RefLink, Divider, Avatar, Grid, Typography, Container, CircularProgress, ListItem, ListItemAvatar, ListItemText, List } from '@mui/material/';
 import { _currentVersion, _currentTheme, _currentQuickAccessComponents } from '@/components/settings';
 import UpdateIcon from '@mui/icons-material/Update';
 import Loader from '@/view/components/common/loader';
@@ -89,9 +89,31 @@ class Index extends React.Component<{ global: any } & RouteComponentProps, {
 
   render() {
     const themeColor = _currentTheme();
-    const bg = blurredBackGround();
     const { user, auth, isLoading, userLoading } = this.state;
     const xs = 12, sm = 12, md = 3, lg = 3;
+
+    const ListItem = (icon: any, text: string, data: string | number, target: string, targetText: string) => (
+      <Grid item xs={xs} sm={sm} md={md} lg={lg}>
+        <div className="TypographywithIconAndLinesContainer">
+          <div className="TypographywithIconAndLinesInner">
+            <Typography color="textSecondary" gutterBottom className="TypographywithIconAndLines">
+              {icon}&nbsp;<FormattedMessage id={text} />
+            </Typography>
+          </div>
+        </div>
+        <Grid container alignItems="center">
+          <Grid item xs={6}>
+            <Typography color="textSecondary" variant="h4">
+              {data}
+            </Typography>
+          </Grid>
+          <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Button size="small" onClick={() => this.props.history.push(target)}><FormattedMessage id={targetText} /></Button>
+          </Grid>
+        </Grid>
+      </Grid>
+    )
+
     return (
       <div>
         <Helmet>
@@ -100,7 +122,7 @@ class Index extends React.Component<{ global: any } & RouteComponentProps, {
           />
         </Helmet>
         <div style={{ background: `url("/images/background/${themeColor}.svg")`, backgroundSize: "cover" }}>
-          <div style={{ background: themeColor === "light" ? "transparent" : "rgba(0,0,0,0)", display: "flex", padding: "1vh 0", width: "100%", height: "100%", paddingBottom: "90px" }}>
+          <div style={{ background: themeColor === "light" ? "transparent" : "rgba(0,0,0,0)", display: "flex", padding: ".5vh 0", width: "100%", height: "100%" }}>
             {userLoading && (
               <Container className="topMenuContainer">
                 <Grid container alignContent="space-between" alignItems="center" style={{ padding: "20px" }}>
@@ -162,15 +184,22 @@ class Index extends React.Component<{ global: any } & RouteComponentProps, {
             )}
           </div>
         </div>
-        <Container style={{ marginTop: "-90px" }} className="topMenuContainer">
+        <Container className="topMenuContainer">
           {(!userLoading && (!auth || !user)) && <BeginnerAlert />}
           <InstallAlert global={this.props.global} />
           <UpdateDef />
-          <Card style={bg}>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom className="TypographywithIcon">
-                <MenuOpenIcon />&nbsp;<FormattedMessage id="Index.QuickAccess" />
-              </Typography>
+        </Container>
+        {isLoading && <Loader />}
+        {!isLoading && (
+          <Container style={{ paddingTop: 15 }} className="topMenuContainer">
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+              <div className="TypographywithIconAndLinesContainer">
+                <div className="TypographywithIconAndLinesInner">
+                  <Typography color="textSecondary" gutterBottom className="TypographywithIconAndLines">
+                    <MenuOpenIcon />&nbsp;<FormattedMessage id="Index.QuickAccess" />
+                  </Typography>
+                </div>
+              </div>
               <div style={{ overflowX: "scroll" }} className="topMenuScrollableWrapper">
                 <Grid container direction="row" wrap="nowrap" alignItems="center" style={{ width: "100%", margin: "20px 0 0 0" }} className="topMenuContaienrGridWrapper">
                   {quickAccessTable.map((item: any) => {
@@ -191,70 +220,11 @@ class Index extends React.Component<{ global: any } & RouteComponentProps, {
                   </Grid>
                 </Grid>
               </div>
-            </CardContent>
-          </Card>
-        </Container>
-        {isLoading && <Loader />}
-        {!isLoading && (
-          <Container>
+            </Grid>
             <Grid container direction="row" justifyContent="space-between" spacing={3} className="narrowCards">
-              <Grid item xs={xs} sm={sm} md={md} lg={lg}>
-                <div className="TypographywithIconAndLinesContainer">
-                  <div className="TypographywithIconAndLinesInner">
-                    <Typography color="textSecondary" gutterBottom className="TypographywithIconAndLines">
-                      <TimelineIcon />&nbsp;<FormattedMessage id="Stats.TotalBPI" />(☆12)
-                  </Typography>
-                  </div>
-                </div>
-                <Grid container alignItems="center">
-                  <Grid item xs={6}>
-                    <Typography color="textSecondary" variant="h4">
-                      {this.state.totalBPI}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Button size="small" onClick={() => this.props.history.push("/stats")}><FormattedMessage id="Index.ShowTotalBPI" /></Button>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item xs={xs} sm={sm} md={md} lg={lg}>
-                <div className="TypographywithIconAndLinesContainer">
-                  <div className="TypographywithIconAndLinesInner">
-                    <Typography color="textSecondary" gutterBottom className="TypographywithIconAndLines">
-                      <LibraryMusicIcon />&nbsp;<FormattedMessage id="Index.UpdatedInWeek" />
-                    </Typography>
-                  </div>
-                </div>
-                <Grid container alignItems="center">
-                  <Grid item xs={6}>
-                    <Typography color="textSecondary" variant="h4">
-                      {this.state.lastWeekUpdates}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Button size="small" onClick={() => this.props.history.push("/songs")}><FormattedMessage id="Index.ShowSongs" /></Button>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item xs={xs} sm={sm} md={md} lg={lg}>
-                <div className="TypographywithIconAndLinesContainer">
-                  <div className="TypographywithIconAndLinesInner">
-                    <Typography color="textSecondary" gutterBottom className="TypographywithIconAndLines">
-                      <WbIncandescentIcon />&nbsp;<FormattedMessage id="Index.AAARemain" />
-                    </Typography>
-                  </div>
-                </div>
-                <Grid container alignItems="center">
-                  <Grid item xs={6}>
-                    <Typography color="textSecondary" variant="h4">
-                      {this.state.remains}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Button size="small" onClick={() => this.props.history.push("/AAATable")}><FormattedMessage id="Index.ShowAAA" /></Button>
-                  </Grid>
-                </Grid>
-              </Grid>
+              {ListItem(<TimelineIcon />, "Stats.TotalBPI", this.state.totalBPI, "/stats", "Index.ShowTotalBPI")}
+              {ListItem(<LibraryMusicIcon />, "Index.UpdatedInWeek", this.state.lastWeekUpdates, "/songs", "Index.ShowSongs")}
+              {ListItem(<WbIncandescentIcon />, "Index.AAARemain", this.state.remains, "/AAATable", "Index.ShowAAA")}
             </Grid>
           </Container>
         )}
@@ -325,7 +295,7 @@ class UpdateDef extends React.Component<{}, {
       return (null);
     }
     return (
-      <Alert variant="outlined" className="MuiPaper-root updateDefAlert" icon={false} severity="info" style={{ marginBottom: "25px" }}>
+      <Alert variant="outlined" className="MuiPaper-root updateDefAlert" style={{border:0,background:"transparent"}} icon={false} severity="info">
         <AlertTitle>定義データを更新</AlertTitle>
         <div>
           {progress === 0 && <div>
