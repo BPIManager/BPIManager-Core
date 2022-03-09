@@ -178,8 +178,7 @@ export const getUA = () => {
 
 export const blurredBackGround = () => (
   {
-    backgroundColor: _currentTheme() === "light" ? "#ffffff00" : _currentTheme() === "dark" ? "#00000030" : "#001625ab",
-    backdropFilter: "blur(4px)"
+    backgroundColor: "transparent"
   }
 );
 
