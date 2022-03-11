@@ -20,6 +20,6 @@ export const getListsForNobi = async (targetLevel = 12) => {
   const exec = await new statMain(targetLevel).load();
   const songs = await new scoresDB().getAll();
   const bpi = new bpiCalcuator();
-  const totalBPI = bpi.setSongs(exec.at(), exec.at().length);
+  const totalBPI = await bpi.setSongs(exec.at());
   return songs.filter((item: scoreData) => item.difficultyLevel === String(targetLevel) && (item.currentBPI < Math.pow(totalBPI, 0.9)));
 }

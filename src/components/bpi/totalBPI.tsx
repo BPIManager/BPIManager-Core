@@ -27,12 +27,12 @@ export default class totalBPI {
 
   }
 
-  currentVersion() {
-    return this.bpiCalc.setSongs(this._currentVersion, this._currentVersion.length) || -15;
+  async currentVersion() {
+    return await this.bpiCalc.setSongs(this._currentVersion,String(this.targetLevel) as "11"|"12") || -15;
   }
 
-  lastVersion() {
-    return this.bpiCalc.setSongs(this._lastVersion, this._lastVersion.length) || -15;
+  async lastVersion() {
+    return await this.bpiCalc.setSongs(this._lastVersion,String(this.targetLevel) as "11"|"12") || -15;
   }
 
 

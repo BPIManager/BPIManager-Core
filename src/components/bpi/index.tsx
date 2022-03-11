@@ -164,6 +164,10 @@ export default class bpiCalculator {
   set allTwelvesBPI(val: number[]) { this._allTwelvesBPI = val }
 
   totalBPI(): number {
+    /*
+    _allTwelvesBPI: スコア記録済みの☆12楽曲数
+    _allTwelvesLength: WR登録がある全☆12楽曲数
+    */
     const playedSongs = this._allTwelvesBPI.length;
     if (playedSongs === 0) return -15;
     let sum = 0, k = Math.log2(this._allTwelvesLength);
@@ -179,9 +183,11 @@ export default class bpiCalculator {
     return sum > 0 ? res : -res;
   }
 
-  setSongs(songs: number[], sum: number = songs.length): number {
-    this.allTwelvesBPI = songs;
-    this.allTwelvesLength = !Number.isNaN(sum) ? sum : songs.length;
+  async setSongs(songs: number[], level: "11" | "12" | null = "12", forceSongLen?: number): Promise<number> {
+    this._allTwelvesBPI = songs;
+    console.log(forceSongLen,level);
+    this._allTwelvesLength = forceSongLen || await this.songsDB.getSongsNum(level ? level as string : "12");
+    console.log(songs, this._allTwelvesBPI, this._allTwelvesLength, this._allTwelvesBPI.length);
     return this.totalBPI();
   }
 }

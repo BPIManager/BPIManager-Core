@@ -24,7 +24,7 @@ export default class statMain {
 
   private songs: songData[] = [];
 
-  private targetLevel: number = 12;
+  private targetLevel: number;
   private store: string = _currentStore();
   private db = new scoresDB(isSingle, this.store);
 
@@ -315,10 +315,11 @@ export default class statMain {
       return groups;
     }, {});
     const bpi = new bpiCalcuator();
-    Object.keys(distByBPM).map((item: string) => {
-      result[item as BPMDIST] = bpi.setSongs(distByBPM[item as BPMDIST], numDistByBPM[item as BPMDIST]);
-      return 0;
-    });
+    const keys = Object.keys(distByBPM) as BPMDIST[];
+    for (let i = 0; i < keys.length; ++i) {
+      const item = distByBPM[keys[i]];
+      result[keys[i]] = await bpi.setSongs(item,null,item.length);
+    }
     return Object.keys(result).reduce((groups: distBPMI[], item: string) => {
       const name = item as BPMDIST;
       groups.push({

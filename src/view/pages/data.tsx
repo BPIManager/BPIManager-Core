@@ -80,7 +80,7 @@ class Index extends React.Component<P & RouteComponentProps, {
     if (user) {
       const bpi = new bpiCalcuator();
       const exec = await new statMain(12).load();
-      const totalBPI = bpi.setSongs(exec.at(), exec.at().length);
+      const totalBPI = await bpi.setSongs(exec.at());
       this.setState({
         uid: user.uid || user.photoURL,
         noName: !user.uid,
@@ -208,7 +208,7 @@ class Index extends React.Component<P & RouteComponentProps, {
 
       const bpi = new bpiCalcuator();
       const statsAPI = await new statMain(12).load();
-      const totalBPI = bpi.setSongs(statsAPI.at(), statsAPI.at().length);
+      const totalBPI = await bpi.setSongs(statsAPI.at());
       const lastDay = await statsAPI.eachDaySum(4, dayjs().subtract(1, 'day').format());
       const lastWeek = await statsAPI.eachDaySum(4, dayjs().subtract(1, 'week').format());
       const rank = bpi.rank(totalBPI, false);

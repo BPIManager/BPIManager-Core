@@ -54,7 +54,7 @@ class SongRelations extends React.Component<P, S> {
     }
 
     let exec = await (await new statMain(12).load()).setLastData(String(Number(_currentStore()) - 1));
-    const totalBPI = new bpiCalculator().setSongs(exec.at(), exec.at().length) || -15;
+    const totalBPI = await new bpiCalculator().setSongs(exec.at()) || -15;
     console.log(totalBPI);
     return this.setState({
       dataset: await this.getSuggest(song),

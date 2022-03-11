@@ -101,7 +101,7 @@ class Captured extends React.Component<P, S> {
     }
     const bpi = new bpiCalcuator();
     const statsAPI = await new statMain(12).load();
-    const totalBPI = bpi.setSongs(statsAPI.at(), statsAPI.at().length);
+    const totalBPI = await bpi.setSongs(statsAPI.at());
     const lastDay = await statsAPI.eachDaySum(4, dayjs().subtract(1, 'day').format());
     const lastWeek = await statsAPI.eachDaySum(4, dayjs().subtract(1, 'week').format());
     const rank = bpi.rank(totalBPI, false);

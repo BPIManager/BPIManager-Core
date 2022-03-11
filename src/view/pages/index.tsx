@@ -62,7 +62,7 @@ class Index extends React.Component<{ global: any } & RouteComponentProps, {
   async componentDidMount() {
     const bpi = new bpiCalcuator();
     let exec = await new statMain(12).load();
-    const totalBPI = bpi.setSongs(exec.at(), exec.at().length) || -15;
+    const totalBPI = await bpi.setSongs(exec.at()) || -15;
     let shift = await new scoresDB().getAll();
     shift = shift.filter((data: scoreData) => isSameWeek(data.updatedAt, new Date()));
     const _named = await named(12);
@@ -427,7 +427,7 @@ class RecentUsers extends React.Component<{ history: any }, { loading: boolean, 
   getRecentUsers = async () => {
     const fbA = new fbActions();
     fbA.auth().onAuthStateChanged(async (user: any) => {
-      const total = (await new totalBPI().load()).currentVersion();
+      const total = await (await new totalBPI().load()).currentVersion();
       const gt = total > 60 ? 50 : total - 2;
       const lt = total > 50 ? 100 : total + 5;
       const res = (await _apiFetch("users/getRecommend", { gt: gt, lt: lt }));

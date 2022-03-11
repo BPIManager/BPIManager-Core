@@ -184,7 +184,7 @@ export default class fbActions {
     const bpi = new bpiCalcuator();
     bpi.setTraditionalMode(0);
     const statsAPI = await new statMain(12).load();
-    const totalBPI = bpi.setSongs(statsAPI.at(), statsAPI.at().length);
+    const totalBPI = await bpi.setSongs(statsAPI.at());
     return totalBPI;
   }
 
@@ -361,7 +361,7 @@ export default class fbActions {
     }
     const qus: any[] = [];
     const q = searchQuery();
-    let total = exactBPI || (await new totalBPI().load()).currentVersion();
+    let total = exactBPI || await (await new totalBPI().load()).currentVersion();
     if(searchBy !== "総合BPI"){
       const radar = await getRadar();
       const target = radar.find((item)=>item.title === searchBy);
