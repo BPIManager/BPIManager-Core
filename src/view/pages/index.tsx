@@ -443,7 +443,7 @@ class RecentUsers extends React.Component<{ history: any }, { loading: boolean, 
   }
 
   render() {
-    const { loading, list, open, username } = this.state;
+    const { loading, list, open, username, maintenance } = this.state;
     const { history } = this.props;
     if (loading) return <div style={{ marginTop: 24 }}><Loader /></div>;
     return (
@@ -456,25 +456,33 @@ class RecentUsers extends React.Component<{ history: any }, { loading: boolean, 
                   </Typography>
             </div>
           </div>
-          {!loading && (
-            <List>
-              {list.map((item: any) => (
-                <ListItem key={item.uid} button onClick={() => this.open(item.displayName)} style={{ padding: "5px 0" }}>
-                  <ListItemAvatar>
-                    <Avatar>
-                      <img src={item.photoURL ? item.photoURL.replace("_normal", "") : "noimage"} style={{ width: "100%", height: "100%" }}
-                        alt={item.displayName}
-                        onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(item) || alternativeImg(item.displayName)} />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary={item.displayName} secondary={item.arenaRank + " / 総合BPI:" + item.totalBPI + " / " + updatedTime(item.updatedAt)} />
-                </ListItem>
-              ))}
-            </List>
+          {(!loading && maintenance) && (
+            <Typography variant="caption" color="textSecondary">
+              現在この機能はメンテナンス中のためご利用いただけません。<br/>
+              (毎日午前3時~午前5時は一部機能がご利用いただけなくなります。)
+            </Typography>
           )}
-          <Button startIcon={<ArrowRightIcon />} fullWidth size="small" onClick={() => history.push("/rivals?tab=1")}>
-            <FormattedMessage id="ShowMore" />
-          </Button>
+          {(!loading && !maintenance) && (
+            <React.Fragment>
+              <List>
+                {list.map((item: any) => (
+                  <ListItem key={item.uid} button onClick={() => this.open(item.displayName)} style={{ padding: "5px 0" }}>
+                    <ListItemAvatar>
+                      <Avatar>
+                        <img src={item.photoURL ? item.photoURL.replace("_normal", "") : "noimage"} style={{ width: "100%", height: "100%" }}
+                          alt={item.displayName}
+                          onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(item) || alternativeImg(item.displayName)} />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={item.displayName} secondary={item.arenaRank + " / 総合BPI:" + item.totalBPI + " / " + updatedTime(item.updatedAt)} />
+                  </ListItem>
+                ))}
+              </List>
+              <Button startIcon={<ArrowRightIcon />} fullWidth size="small" onClick={() => history.push("/rivals?tab=1")}>
+                <FormattedMessage id="ShowMore" />
+              </Button>
+            </React.Fragment>
+          )}
         </Container>
         {open && <ModalUser isOpen={open} currentUserName={username} handleOpen={(flag: boolean) => this.handleModalOpen(flag)} />}
       </React.Fragment>
