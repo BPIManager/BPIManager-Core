@@ -33,6 +33,8 @@ import AppsIcon from '@mui/icons-material/Apps';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import { BeforeInstallPromptEvent } from '@/components/context/global';
 import { timeCompare } from '@/components/common/timeFormatter';
+import totalBPI from "@/components/bpi/totalBPI";
+import { _apiFetch } from "@/components/common/rankApi";
 
 class Index extends React.Component<{ global: any } & RouteComponentProps, {
   user: any,
@@ -295,7 +297,7 @@ class UpdateDef extends React.Component<{}, {
       return (null);
     }
     return (
-      <Alert variant="outlined" className="MuiPaper-root updateDefAlert" style={{border:0,background:"transparent"}} icon={false} severity="info">
+      <Alert variant="outlined" className="MuiPaper-root updateDefAlert" style={{ border: 0, background: "transparent" }} icon={false} severity="info">
         <AlertTitle>定義データを更新</AlertTitle>
         <div>
           {progress === 0 && <div>
@@ -405,10 +407,11 @@ class InstallAlert extends React.Component<{ global: any }, { hide: boolean }>{
 
 }
 
-class RecentUsers extends React.Component<{ history: any }, { loading: boolean, list: any[], open: boolean, username: string }>{
+class RecentUsers extends React.Component<{ history: any }, { loading: boolean, list: any[], open: boolean, username: string, maintenance: boolean }>{
 
   state = {
     loading: true,
+    maintenance: false,
     list: [],
     open: false,
     username: ""
@@ -424,13 +427,18 @@ class RecentUsers extends React.Component<{ history: any }, { loading: boolean, 
   getRecentUsers = async () => {
     const fbA = new fbActions();
     fbA.auth().onAuthStateChanged(async (user: any) => {
-      const res = (await fbA.recommendedByBPI()).filter((item) => {
-        if (user) {
-          return item.uid !== user.uid && timeCompare(new Date(), item.timeStamp, "day") < 15
-        }
-        return timeCompare(new Date(), item.timeStamp, "day") < 15
-      })
-      return this.setState({ loading: false, list: res.slice(0, 5) });
+      const total = (await new totalBPI().load()).currentVersion();
+      const gt = total > 60 ? 50 : total - 2;
+      const lt = total > 50 ? 100 : total + 5;
+      const res = (await _apiFetch("users/getRecommend", { gt: gt, lt: lt }));
+      if (res.error || res.maintenance) {
+        return this.setState({ maintenance: res.maintenance, loading: false, list: [] })
+      }
+      return this.setState({
+        maintenance: res.maintenance, loading: false, list: res.body.sort((a: any, b: any) => {
+          return Math.abs(total - (Number(a.totalBPI) || -15)) - Math.abs(total - (Number(b.totalBPI) || -15))
+        }).slice(0, 5)
+      });
     });
   }
 
@@ -450,7 +458,7 @@ class RecentUsers extends React.Component<{ history: any }, { loading: boolean, 
           </div>
           {!loading && (
             <List>
-              {list.map((item: rivalStoreData) => (
+              {list.map((item: any) => (
                 <ListItem key={item.uid} button onClick={() => this.open(item.displayName)} style={{ padding: "5px 0" }}>
                   <ListItemAvatar>
                     <Avatar>
@@ -459,7 +467,7 @@ class RecentUsers extends React.Component<{ history: any }, { loading: boolean, 
                         onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(item) || alternativeImg(item.displayName)} />
                     </Avatar>
                   </ListItemAvatar>
-                  <ListItemText primary={item.displayName} secondary={item.arenaRank + " / 総合BPI:" + item.totalBPI + " / " + updatedTime((item.serverTime as any).toDate())} />
+                  <ListItemText primary={item.displayName} secondary={item.arenaRank + " / 総合BPI:" + item.totalBPI + " / " + updatedTime(item.updatedAt)} />
                 </ListItem>
               ))}
             </List>

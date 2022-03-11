@@ -6,6 +6,7 @@ export const config = {
   lastUpdate: "2022/03/07 JST",
   latestStore: "29",
   baseUrl: "https://bpi.poyashi.me",
+  apiUrl:"https://proxy.poyashi.me/bpim/api/v1/",
   cfVersion: "v2"
 }
 

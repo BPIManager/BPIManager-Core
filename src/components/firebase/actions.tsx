@@ -1,7 +1,7 @@
 import fb, { auth, twitter, google } from ".";
 import { Auth, User, UserCredential, getAdditionalUserInfo, signOut, updateProfile, getRedirectResult, signInWithRedirect } from "firebase/auth";
 import {
-  getFirestore, FieldValue, DocumentReference, Query, QueryDocumentSnapshot,addDoc,
+  getFirestore, FieldValue, DocumentReference, Query, QueryDocumentSnapshot, addDoc,
   arrayUnion, runTransaction, setDoc, serverTimestamp, updateDoc, getDoc, doc, increment,
   collection, writeBatch, getDocs, deleteDoc, query, where, orderBy, startAfter, startAt, endAt, limit
 } from "firebase/firestore";
@@ -350,7 +350,7 @@ export default class fbActions {
     return [where("isPublic", "==", true), where("versions", "array-contains", _currentStore())];
   }
 
-  async recommendedByBPI(exactBPI?: number | null, searchBy: string = "総合BPI") {
+  async recommendedByBPI(exactBPI?: number | null, searchBy: string = "総合BPI", _limit: number = 30, willAsc: boolean = false) {
     const searchQuery = () => {
       switch (searchBy) {
         case "総合BPI":
@@ -361,20 +361,32 @@ export default class fbActions {
     }
     const qus: any[] = [];
     const q = searchQuery();
-    qus.push(orderBy(q, "desc"));
-    const total = exactBPI || (await new totalBPI().load()).currentVersion();
-    const downLimit = total > 60 ? 50 : total - 5;
+    let total = exactBPI || (await new totalBPI().load()).currentVersion();
+    if(searchBy !== "総合BPI"){
+      const radar = await getRadar();
+      const target = radar.find((item)=>item.title === searchBy);
+      if(target && target.TotalBPI){
+        total = target.TotalBPI;
+      }
+    }
+    const downLimit = total > 60 ? 50 : total - 1;
     const upLimit = total > 50 ? 100 : total + 5;
     qus.push(where(q, ">=", downLimit));
     qus.push(where(q, "<=", upLimit));
     qus.push(...this.versionQuery());
-    let _query: Query = query(collection(db, this.setUserCollection()), ...qus);
-    if (searchBy !== "総合BPI") {
-      return (await this.getUsers(_query)).slice(0,30);
+    if (willAsc && searchBy === "総合BPI") {
+      qus.push(orderBy(q, "asc"))
+    } else {
+      qus.push(orderBy(q, "desc"))
     }
-    return (await this.getUsers(_query)).sort((a: any, b: any) => {
+    let _query: Query = query(collection(db, this.setUserCollection()), ...qus);
+    const res = await this.getUsers(_query);
+    if (searchBy !== "総合BPI") {
+      return (res).slice(0, 30);
+    }
+    return (res).sort((a: any, b: any) => {
       return Math.abs(total - (Number(a.totalBPI) || -15)) - Math.abs(total - (Number(b.totalBPI) || -15))
-    }).slice(0,30);
+    }).slice(0, _limit);
   }
 
   async addedAsRivals(): Promise<rivalStoreData[]> {
