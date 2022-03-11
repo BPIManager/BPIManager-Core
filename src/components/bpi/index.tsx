@@ -185,9 +185,7 @@ export default class bpiCalculator {
 
   async setSongs(songs: number[], level: "11" | "12" | null = "12", forceSongLen?: number): Promise<number> {
     this._allTwelvesBPI = songs;
-    console.log(forceSongLen,level);
     this._allTwelvesLength = forceSongLen || await this.songsDB.getSongsNum(level ? level as string : "12");
-    console.log(songs, this._allTwelvesBPI, this._allTwelvesLength, this._allTwelvesBPI.length);
     return this.totalBPI();
   }
 }
