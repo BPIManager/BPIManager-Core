@@ -49,7 +49,6 @@ class Main extends React.Component<{ intl: any, derived?: rivalScoreData[] } & R
 
   async updateScoreData(targetLevel = 12) {
     const bpi = new bpiCalcuator();
-    console.log(targetLevel);
     let exec = await (await new statMain(targetLevel).load(this.props.derived)).setLastData(String(Number(_currentStore()) - 1));
     const t = await new _totalBPI(targetLevel).load(true);
     const totalBPI = await t.currentVersion();

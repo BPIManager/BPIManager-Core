@@ -11,8 +11,6 @@ import WarningIcon from '@mui/icons-material/Warning';
 import { Helmet } from 'react-helmet';
 import { getAltTwitterIcon } from '@/components/rivals';
 import { alternativeImg, getUA, blurredBackGround } from '@/components/common';
-import bpiCalcuator from '@/components/bpi';
-import statMain from '@/components/stats/main';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
@@ -23,7 +21,7 @@ import WbIncandescentIcon from '@mui/icons-material/WbIncandescent';
 import { named, getTable, CLBody } from '@/components/aaaDiff/data';
 import fbActions from '@/components/firebase/actions';
 import { scoresDB } from '@/components/indexedDB';
-import { scoreData, rivalStoreData } from '@/types/data';
+import { scoreData } from '@/types/data';
 import { isSameWeek, updatedTime } from '@/components/common/timeFormatter';
 import { quickAccessTable } from '@/components/common/quickAccess';
 import PeopleIcon from '@mui/icons-material/People';
@@ -32,7 +30,6 @@ import ModalUser from '../components/rivals/modal';
 import AppsIcon from '@mui/icons-material/Apps';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import { BeforeInstallPromptEvent } from '@/components/context/global';
-import { timeCompare } from '@/components/common/timeFormatter';
 import totalBPI from "@/components/bpi/totalBPI";
 import { _apiFetch } from "@/components/common/rankApi";
 
@@ -60,9 +57,7 @@ class Index extends React.Component<{ global: any } & RouteComponentProps, {
   }
 
   async componentDidMount() {
-    const bpi = new bpiCalcuator();
-    let exec = await new statMain(12).load();
-    const totalBPI = await bpi.setSongs(exec.at()) || -15;
+    const total = await (await new totalBPI().load()).currentVersion();
     let shift = await new scoresDB().getAll();
     shift = shift.filter((data: scoreData) => isSameWeek(data.updatedAt, new Date()));
     const _named = await named(12);
@@ -76,7 +71,7 @@ class Index extends React.Component<{ global: any } & RouteComponentProps, {
       this.setState({ auth: user, userLoading: false });
     });
     this.setState({
-      totalBPI: totalBPI,
+      totalBPI: total,
       lastWeekUpdates: shift.length || 0,
       remains: concatted.filter((item: CLBody) => item.bpi > (Number.isNaN(item.currentBPI) ? -999 : item.currentBPI)).length,
       isLoading: false
@@ -103,16 +98,19 @@ class Index extends React.Component<{ global: any } & RouteComponentProps, {
             </Typography>
           </div>
         </div>
-        <Grid container alignItems="center">
-          <Grid item xs={6}>
-            <Typography color="textSecondary" variant="h4">
-              {data}
-            </Typography>
+        {isLoading && <Loader />}
+        {!isLoading && (
+          <Grid container alignItems="center">
+            <Grid item xs={6}>
+              <Typography color="textSecondary" variant="h4">
+                {data}
+              </Typography>
+            </Grid>
+            <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
+              <Button size="small" onClick={() => this.props.history.push(target)}><FormattedMessage id={targetText} /></Button>
+            </Grid>
           </Grid>
-          <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
-            <Button size="small" onClick={() => this.props.history.push(target)}><FormattedMessage id={targetText} /></Button>
-          </Grid>
-        </Grid>
+        )}
       </Grid>
     )
 
@@ -191,45 +189,42 @@ class Index extends React.Component<{ global: any } & RouteComponentProps, {
           <InstallAlert global={this.props.global} />
           <UpdateDef />
         </Container>
-        {isLoading && <Loader />}
-        {!isLoading && (
-          <Container style={{ paddingTop: 15 }} className="topMenuContainer">
-            <Grid item xs={12} sm={12} md={12} lg={12}>
-              <div className="TypographywithIconAndLinesContainer">
-                <div className="TypographywithIconAndLinesInner">
-                  <Typography color="textSecondary" gutterBottom className="TypographywithIconAndLines">
-                    <MenuOpenIcon />&nbsp;<FormattedMessage id="Index.QuickAccess" />
+        <Container style={{ paddingTop: 15 }} className="topMenuContainer">
+          <Grid item xs={12} sm={12} md={12} lg={12}>
+            <div className="TypographywithIconAndLinesContainer">
+              <div className="TypographywithIconAndLinesInner">
+                <Typography color="textSecondary" gutterBottom className="TypographywithIconAndLines">
+                  <MenuOpenIcon />&nbsp;<FormattedMessage id="Index.QuickAccess" />
+                </Typography>
+              </div>
+            </div>
+            <div style={{ overflowX: "scroll" }} className="topMenuScrollableWrapper">
+              <Grid container direction="row" wrap="nowrap" alignItems="center" style={{ width: "100%", margin: "20px 0 0 0" }} className="topMenuContaienrGridWrapper">
+                {quickAccessTable.map((item: any) => {
+                  if (!this.QAindexOf(item.com)) return (null);
+                  return (
+                    <Grid container direction="column" alignItems="center" onClick={() => this.props.history.push(item.href)} key={item.name}>
+                      {item.icon}
+                      <Typography color="textSecondary" variant="caption">{item.name}</Typography>
+                    </Grid>
+                  )
+                })
+                }
+                <Grid container direction="column" alignItems="center" onClick={() => this.props.history.push("/settings?tab=1")}>
+                  <AppsIcon />
+                  <Typography color="textSecondary" variant="caption">
+                    <FormattedMessage id="Index.EditQA" />
                   </Typography>
-                </div>
-              </div>
-              <div style={{ overflowX: "scroll" }} className="topMenuScrollableWrapper">
-                <Grid container direction="row" wrap="nowrap" alignItems="center" style={{ width: "100%", margin: "20px 0 0 0" }} className="topMenuContaienrGridWrapper">
-                  {quickAccessTable.map((item: any) => {
-                    if (!this.QAindexOf(item.com)) return (null);
-                    return (
-                      <Grid container direction="column" alignItems="center" onClick={() => this.props.history.push(item.href)} key={item.name}>
-                        {item.icon}
-                        <Typography color="textSecondary" variant="caption">{item.name}</Typography>
-                      </Grid>
-                    )
-                  })
-                  }
-                  <Grid container direction="column" alignItems="center" onClick={() => this.props.history.push("/settings?tab=1")}>
-                    <AppsIcon />
-                    <Typography color="textSecondary" variant="caption">
-                      <FormattedMessage id="Index.EditQA" />
-                    </Typography>
-                  </Grid>
                 </Grid>
-              </div>
-            </Grid>
-            <Grid container direction="row" justifyContent="space-between" spacing={3} className="narrowCards">
-              {ListItem(<TimelineIcon />, "Stats.TotalBPI", this.state.totalBPI, "/stats", "Index.ShowTotalBPI")}
-              {ListItem(<LibraryMusicIcon />, "Index.UpdatedInWeek", this.state.lastWeekUpdates, "/songs", "Index.ShowSongs")}
-              {ListItem(<WbIncandescentIcon />, "Index.AAARemain", this.state.remains, "/AAATable", "Index.ShowAAA")}
-            </Grid>
-          </Container>
-        )}
+              </Grid>
+            </div>
+          </Grid>
+          <Grid container direction="row" justifyContent="space-between" spacing={3} className="narrowCards">
+            {ListItem(<TimelineIcon />, "Stats.TotalBPI", this.state.totalBPI, "/stats", "Index.ShowTotalBPI")}
+            {ListItem(<LibraryMusicIcon />, "Index.UpdatedInWeek", this.state.lastWeekUpdates, "/songs", "Index.ShowSongs")}
+            {ListItem(<WbIncandescentIcon />, "Index.AAARemain", this.state.remains, "/AAATable", "Index.ShowAAA")}
+          </Grid>
+        </Container>
         <RecentUsers history={this.props.history} />
         <Container>
           <small className="footer">
@@ -435,7 +430,12 @@ class RecentUsers extends React.Component<{ history: any }, { loading: boolean, 
         return this.setState({ maintenance: res.maintenance, loading: false, list: [] })
       }
       return this.setState({
-        maintenance: res.maintenance, loading: false, list: res.body.sort((a: any, b: any) => {
+        maintenance: res.maintenance, loading: false, list: res.body.filter((item: any) => {
+          if (user) {
+            return user.uid !== item.uid;
+          }
+          return true;
+        }).sort((a: any, b: any) => {
           return Math.abs(total - (Number(a.totalBPI) || -15)) - Math.abs(total - (Number(b.totalBPI) || -15))
         }).slice(0, 5)
       });
@@ -445,7 +445,6 @@ class RecentUsers extends React.Component<{ history: any }, { loading: boolean, 
   render() {
     const { loading, list, open, username, maintenance } = this.state;
     const { history } = this.props;
-    if (loading) return <div style={{ marginTop: 24 }}><Loader /></div>;
     return (
       <React.Fragment>
         <Container style={{ marginTop: 24 }}>
@@ -456,9 +455,10 @@ class RecentUsers extends React.Component<{ history: any }, { loading: boolean, 
                   </Typography>
             </div>
           </div>
+          {loading && <div style={{ marginTop: 8 }}><Loader /></div>}
           {(!loading && maintenance) && (
             <Typography variant="caption" color="textSecondary">
-              現在この機能はメンテナンス中のためご利用いただけません。<br/>
+              現在この機能はメンテナンス中のためご利用いただけません。<br />
               (毎日午前3時~午前5時は一部機能がご利用いただけなくなります。)
             </Typography>
           )}

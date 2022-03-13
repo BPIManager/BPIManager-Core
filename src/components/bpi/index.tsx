@@ -171,10 +171,13 @@ export default class bpiCalculator {
     const playedSongs = this._allTwelvesBPI.length;
     if (playedSongs === 0) return -15;
     let sum = 0, k = Math.log2(this._allTwelvesLength);
-
     for (let i = 0; i < this._allTwelvesLength; ++i) {
       if (i < playedSongs) {
         const bpi = this._allTwelvesBPI[i], m = Math.pow(Math.abs(bpi), k) / this._allTwelvesLength;
+        sum += bpi > 0 ? m : -m;
+      }else{
+        //未プレイ楽曲を-15で埋める
+        const bpi = -15, m = Math.pow(Math.abs(bpi), k) / this._allTwelvesLength;
         sum += bpi > 0 ? m : -m;
       }
     }
