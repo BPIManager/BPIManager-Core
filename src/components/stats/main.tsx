@@ -318,6 +318,7 @@ export default class statMain {
     const keys = Object.keys(distByBPM) as BPMDIST[];
     for (let i = 0; i < keys.length; ++i) {
       const item = distByBPM[keys[i]];
+      console.log(await bpi.setSongs(item,null,item.length));
       result[keys[i]] = await bpi.setSongs(item,null,item.length);
     }
     return Object.keys(result).reduce((groups: distBPMI[], item: string) => {
