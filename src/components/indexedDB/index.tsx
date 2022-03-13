@@ -850,7 +850,13 @@ export const songsDB = class extends storageWrapper {
   async getSongsNum(level = "12") {
     try {
       return this.getAll(_isSingle()).then(result => {
-        return result.filter((item: songData) => item.difficultyLevel === level && item.wr !== -1).length;
+        return result.filter((item: songData) => {
+          if(_isSingle()){
+            return item.difficultyLevel === level && item.wr !== -1 && !item.removed ;
+          }else{
+            return item.difficultyLevel === level && item.wr !== -1 && !item.removed ;
+          }
+        }).length;
       })
     } catch (e: any) {
       return 1;

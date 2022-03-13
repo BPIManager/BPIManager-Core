@@ -12,7 +12,7 @@ import TableContainer from "@mui/material/TableContainer";
 import { scoresDB, songsDB } from "@/components/indexedDB";
 import { _currentStore, _isSingle } from "@/components/settings";
 import bpiCalculator from "@/components/bpi";
-import statMain from "@/components/stats/main";
+import totalBPI from "@/components/bpi/totalBPI";
 import { Alert, AlertTitle } from "@mui/material";
 
 interface P {
@@ -53,13 +53,11 @@ class SongRelations extends React.Component<P, S> {
       return;
     }
 
-    let exec = await (await new statMain(12).load()).setLastData(String(Number(_currentStore()) - 1));
-    const totalBPI = new bpiCalculator().setSongs(exec.at(), exec.at().length) || -15;
-    console.log(totalBPI);
+    const _totalBPI = await (await new totalBPI().load()).currentVersion();
     return this.setState({
       dataset: await this.getSuggest(song),
       isLoading: false,
-      totalBPI: totalBPI
+      totalBPI: _totalBPI
     })
   }
 

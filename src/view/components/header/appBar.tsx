@@ -324,7 +324,8 @@ class GlobalHeader extends React.Component<{ global: any, classes: any, theme: a
         ))}
         <Divider />
         <Typography align="center" variant="caption" style={{ margin: "8px 0", width: "100%", display: "block", paddingBottom: "15px" }}>
-          {config.versionString}&nbsp;
+          <Version/>
+          &nbsp;
           {config.lastUpdate}<br />
           <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManagerから最新情報を受け取る</RefLink>
           <div style={{ marginTop: 10 }} />
@@ -471,5 +472,26 @@ class InnerList extends React.Component<{
         </Collapse>
       </List>
     );
+  }
+}
+
+class Version extends React.Component<{}, { text: string }>{
+
+  state = {
+    text: ""
+  }
+
+  async componentDidMount() {
+    fetch("/assets/version.txt")
+      .then((response) => response.text())
+      .then((textContent) => {
+        this.setState({ text: textContent.replace(/\s/g,"") });
+      });
+  }
+
+  render() {
+    const { text } = this.state;
+    if (text) return "v-" + text + "-d" + config.versionNumber;
+    return (null);
   }
 }

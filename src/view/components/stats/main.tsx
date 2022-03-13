@@ -15,6 +15,7 @@ import statMain, { BPITicker } from '@/components/stats/main';
 import { rivalScoreData } from '@/types/data';
 import { ShareOnTwitter } from '../common/shareButtons';
 import { config } from '@/config';
+import _totalBPI from "@/components/bpi/totalBPI";
 import dayjs from 'dayjs';
 
 class Main extends React.Component<{ intl: any, derived?: rivalScoreData[] } & RouteComponentProps, S> {
@@ -48,12 +49,10 @@ class Main extends React.Component<{ intl: any, derived?: rivalScoreData[] } & R
 
   async updateScoreData(targetLevel = 12) {
     const bpi = new bpiCalcuator();
-
     let exec = await (await new statMain(targetLevel).load(this.props.derived)).setLastData(String(Number(_currentStore()) - 1));
-
-    const totalBPI = bpi.setSongs(exec.at(), exec.at().length) || -15;
-    const lastVerTotalBPI = bpi.setSongs(exec.at(true), exec.at(true).length);
-
+    const t = await new _totalBPI(targetLevel).load(true);
+    const totalBPI = await t.currentVersion();
+    const lastVerTotalBPI = await t.lastVersion();
     //BPI別集計
 
     this.setState({
