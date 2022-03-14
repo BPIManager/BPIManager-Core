@@ -189,6 +189,8 @@ export default class statMain {
       return t;
     }
     let lastDay: string;
+
+    const songsLen = await new songsDB().getSongsNum(String(this.targetLevel));
     Object.keys(allDiffs).map((item) => {
       if (!last || dayjs(item).isBefore(last)) {
         eachDayShift[item] = lastDay ? eachDayShift[lastDay].concat() : [];
@@ -206,11 +208,10 @@ export default class statMain {
 
         const shift = this.getBPIShifts(eachDayShift[item]);
         const BPIsArray = getBPIArray(allDiffs[item]);
-
         eachDaySum.push({
           name: item,
           sum: allDiffs[item].length,
-          shiftedBPI: _bpi.setBPIs(shift).setLength(shift.length).totalBPI(),
+          shiftedBPI: _bpi.setBPIs(shift).setLength(songsLen).totalBPI(),
           max: Math.max(...BPIsArray),
           min: Math.min(...BPIsArray),
           med: this.getMedian(BPIsArray),
