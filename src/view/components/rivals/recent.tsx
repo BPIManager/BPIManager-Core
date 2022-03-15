@@ -292,7 +292,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps, S> {
               </Grid>
             </Grid>
             <FormControl fullWidth>
-              <InputLabel htmlFor="searchForm">ユーザー名・IIDX IDで検索</InputLabel>
+              <InputLabel htmlFor="searchForm">ユーザー名・IIDX ID・Twitter IDで検索</InputLabel>
               <Input
                 id="searchForm"
                 value={searchInput}

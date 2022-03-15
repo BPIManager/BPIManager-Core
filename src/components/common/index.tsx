@@ -1,5 +1,6 @@
 import { _currentTheme } from "../settings";
 import { untilDate, isBeforeSpecificDate } from "./timeFormatter";
+import { toSvg } from "jdenticon";
 
 export const commonFunc = class {
 
@@ -74,51 +75,8 @@ export const bgColorByBPI = (totalBPI: number) => {
 
 export const noimg = "https://files.poyashi.me/noimg.png"
 export const alternativeImg = (input: string) => {
-  const namebased = () => {
-    if (!input) {
-      return "frogideas";
-    }
-    switch (input[0].toLowerCase()) {
-      case "a":
-      case "k":
-      case "u":
-        return "frogideas";
-      case "b":
-      case "l":
-        return "sugarsweets";
-      case "c":
-      case "m":
-      case "v":
-        return "berrypie";
-      case "d":
-      case "n":
-      case "w":
-        return "heatwave";
-      case "e":
-      case "o":
-        return "daisygarden";
-      case "f":
-      case "p":
-      case "x":
-        return "seascape";
-      case "g":
-      case "q":
-      case "y":
-        return "summerwarmth";
-      case "h":
-      case "r":
-        return "bythepool";
-      case "i":
-      case "s":
-      case "z":
-      default:
-        return "duskfalling"
-      case "j":
-      case "t":
-        return "base";
-    }
-  }
-  return "https://www.tinygraphs.com/squares/" + input + "?theme=" + namebased() + "&numcolors=3&size=240&fmt=svg";
+  console.log('data:image/svg+xml;base64,' + window.btoa(toSvg(input, 128)))
+  return 'data:image/svg+xml;base64,' + window.btoa(toSvg(input, 128));
 }
 
 const themeColor = _currentTheme();

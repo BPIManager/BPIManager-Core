@@ -238,6 +238,7 @@ export default class fbActions {
           uid: this.docName,
           iidxId: iidxId,
           twitter: _twitterId,
+          twitterSearch: _twitterId ? _twitterId.toLowerCase() : "",
           displayName: displayName,
           displayNameSearch: displayName.toLowerCase(),
           profile: profile,
@@ -300,18 +301,25 @@ export default class fbActions {
         });
       }
       if (!input || (input === "")) { return []; }
+      let ans:any[] = [];
       const inputID = zenToHan(input).replace(/\D/g, "") || ""; // 数字のみ絞り出し、数字が無い場合（=空欄）は検索しない
       const inputHN = zenToHan(input).toLowerCase();
       let q1 = [orderBy("displayNameSearch"), startAt(inputHN), endAt(inputHN + "\uf8ff"), ...this.versionQuery()];
       const res = await getDocs(query(collection(db, this.setUserCollection()), ...q1));
+      ans = ans.concat(res.docs);
+      let qt = [orderBy("twitterSearch"), startAt(inputHN), endAt(inputHN + "\uf8ff"), ...this.versionQuery()];
+      const at = await getDocs(query(collection(db, this.setUserCollection()), ...qt));
+      if(!at.empty){
+        ans = ans.concat(at.docs)
+      }
       if (inputID) {
         let q2 = [orderBy("iidxId"), startAt(inputID), endAt(inputID + "\uf8ff"), ...this.versionQuery()];
         const res2 = await getDocs(query(collection(db, this.setUserCollection()), ...q2));
         if (!res.empty || !res2.empty) {
-          return res.docs.concat(res2.docs);
+          return ans.concat(res2.docs);
         }
       }
-      return res.docs;
+      return ans;
     } catch (e: any) {
       console.log(e);
       return [];
