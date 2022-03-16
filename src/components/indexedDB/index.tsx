@@ -851,10 +851,10 @@ export const songsDB = class extends storageWrapper {
     try {
       return this.getAll(_isSingle()).then(result => {
         return result.filter((item: songData) => {
-          if(_isSingle()){
-            return item.difficultyLevel === level && item.wr !== -1 && !item.removed ;
-          }else{
-            return item.difficultyLevel === level && item.wr !== -1 && !item.removed ;
+          if (_isSingle()) {
+            return item.difficultyLevel === level && item.wr !== -1 && !item.removed;
+          } else {
+            return item.difficultyLevel === level && item.wr !== -1 && !item.removed;
           }
         }).length;
       })
@@ -1053,7 +1053,12 @@ export const rivalListsDB = class extends storageWrapper {
 
   async getAllScoresWithTitle(title: string, difficulty: string): Promise<rivalScoreData[]> {
     try {
-      return this.rivals.where({ isSingle: _isSingle(), storedAt: _currentStore(), title: title, difficulty: difficulty }).toArray();
+      return (await this.rivals.toArray()).filter(item=>
+        item.isSingle === _isSingle() &&
+        item.storedAt === _currentStore() &&
+        item.title === title &&
+        item.difficulty === difficulty
+      );
     } catch (e: any) {
       return [];
     }

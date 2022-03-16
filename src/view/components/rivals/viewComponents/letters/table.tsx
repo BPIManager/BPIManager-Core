@@ -116,6 +116,7 @@ export default class LettersTable extends React.Component<P, S> {
                     </TableRow>
                     <TableRow className="rivalBody">
                       <TableCell
+                        className="dense"
                         style={{
                           borderLeft: `4px solid rgb(255, 151, 151)`,
                           position: "relative"

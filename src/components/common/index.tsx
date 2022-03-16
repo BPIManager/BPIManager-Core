@@ -75,7 +75,6 @@ export const bgColorByBPI = (totalBPI: number) => {
 
 export const noimg = "https://files.poyashi.me/noimg.png"
 export const alternativeImg = (input: string) => {
-  console.log('data:image/svg+xml;base64,' + window.btoa(toSvg(input, 128)))
   return 'data:image/svg+xml;base64,' + window.btoa(toSvg(input, 128));
 }
 
