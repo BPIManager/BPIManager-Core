@@ -515,7 +515,7 @@ export default class fbActions {
       if (willAdd) {
         for (let i = 0; i < rivals.length; ++i) {
           let to: DocumentReference = doc(db, this.setUserCollection(), rivals[i]["uid"]);
-          const target = doc(db, "followings");
+          const target = doc(collection(db, "followings"));
           batch.set(target, {
             from: from,
             isPublic: !!isPublic,
