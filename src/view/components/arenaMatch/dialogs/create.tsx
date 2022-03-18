@@ -11,7 +11,7 @@ import InputLabel from '@mui/material/InputLabel';
 import fbArenaMatch from "@/components/firebase/arenaMatch";
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
-
+import Typography from "@mui/material/Typography";
 interface S {
   title: string,
   arenaRank: string,
@@ -47,7 +47,7 @@ class CreateDialog extends React.Component<P & RouteComponentProps, S> {
     const t = localStorage.getItem("social");
     if (!t) return "";
     const p = JSON.parse(t);
-    return p.displayName !== "" ? p.displayName + " のマッチ" : "";
+    return p.displayName !== "" ? p.displayName + " のルーム" : "";
 
   }
 
@@ -89,9 +89,9 @@ class CreateDialog extends React.Component<P & RouteComponentProps, S> {
     const { title, description, arenaRank, loading } = this.state;
     return (
       <Dialog open={true} onClose={() => loading ? null : this.props.toggle()}>
-        <DialogTitle>マッチを作成</DialogTitle>
+        <DialogTitle>ルームを作成</DialogTitle>
         <DialogContent>
-          <TextBox loading={loading} title="マッチ タイトル" value={title} changeEvent={this.changeTitle} />
+          <TextBox loading={loading} title="ルーム タイトル" value={title} changeEvent={this.changeTitle} />
           <FormControl fullWidth style={{ margin: "8px 0" }}>
             <InputLabel>アリーナランク</InputLabel>
             <Select disabled={loading} fullWidth value={arenaRank} onChange={(e: SelectChangeEvent<string>, ) => {
@@ -102,6 +102,7 @@ class CreateDialog extends React.Component<P & RouteComponentProps, S> {
             </Select>
           </FormControl>
           <TextBox loading={loading} title="募集内容(オプション)" value={description} changeEvent={this.changeDesc} />
+          <Typography variant="caption">1 つのルームの有効期限は 3 時間です。</Typography>
         </DialogContent>
         <DialogActions>
           <Button disabled={loading} onClick={() => loading ? null : this.props.toggle()}>閉じる</Button>
@@ -113,7 +114,7 @@ class CreateDialog extends React.Component<P & RouteComponentProps, S> {
             variant="outlined"
           >
             作成
-      </LoadingButton>
+          </LoadingButton>
         </DialogActions>
       </Dialog>
 

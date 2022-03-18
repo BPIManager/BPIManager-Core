@@ -225,7 +225,7 @@ class RivalChallengeLetters extends React.Component<P & RouteComponentProps, sta
     if (isLoading) {
       return (<Loader />)
     }
-    if (!isLoading && (!scoreData || scoreData.length === 0 && filterByName === "")) {
+    if (!isLoading && ((!scoreData || scoreData.length === 0) && filterByName === "")) {
       return (
         <Container fixed className="commonLayout">
           <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>

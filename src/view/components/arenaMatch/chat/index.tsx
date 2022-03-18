@@ -29,45 +29,17 @@ import {
 } from "firebase/firestore";
 
 interface P {
-  id: string
+  id: string,
+  detail: any,
+  user: any,
 }
 
-class Chat extends React.Component<P, {
-  user: any,
-  isLoading: boolean,
-}> {
-
-  state = { user: null as any, isLoading: true }
-
-  async componentDidMount() {
-    const fbA = new fbActions();
-    const user = fbA.authInfo();
-    if (!user) return this.setState({ isLoading: false });
-
-    const userData = await fbA.setDocName(user.uid).getSelfUserData()
-    if (!userData.exists()) return this.setState({ isLoading: false });
-
-    this.setState({
-      user: userData.data(),
-      isLoading: false
-    })
-  }
+class Chat extends React.Component<P, {}> {
 
   render() {
-    if (this.state.isLoading) {
-      return (
-        <React.Fragment>
-          <LinearProgress color="secondary" style={{ margin: "8px 0" }} />
-          <p style={{ textAlign: "center" }}>ルームに接続しています</p>
-        </React.Fragment>
-      )
-    }
     return (
       <React.Fragment>
-        <Container>
-          <View id={this.props.id} user={this.state.user} />
-          <TxtForm id={this.props.id} user={this.state.user} />
-        </Container>
+        <View detail={this.props.detail} id={this.props.id} user={this.props.user} />
       </React.Fragment>
     );
   }
@@ -77,12 +49,15 @@ export default Chat;
 
 class View extends React.Component<{
   id: string,
-  user: any
+  user: any,
+  detail: any
 }, {
     messages: any[],
     isModalOpen: boolean,
     currentUserName: string,
     initialState: boolean,
+    commentBoxHeight: string,
+    viewBoxHeight: string,
   }>{
 
   boxRef = React.createRef<HTMLDivElement>();
@@ -92,7 +67,9 @@ class View extends React.Component<{
     messages: [] as any[],
     isModalOpen: false,
     currentUserName: "",
-    initialState: true
+    initialState: true,
+    commentBoxHeight: "360px",
+    viewBoxHeight: "400px",
   }
 
   async componentDidMount() {
@@ -102,14 +79,27 @@ class View extends React.Component<{
 
   watch = (snapshot: QuerySnapshot<DocumentData>) => {
     snapshot.docChanges().forEach((change) => {
-      const messages = new Array().concat(this.state.messages);
+      const messages = ([] as any).concat(this.state.messages);
       if (change.type === "added") {
         const data = change.doc.data({ serverTimestamps: "estimate" });
         messages.push(data);
       }
       this.setState({ messages: messages, initialState: false });
       this.boxRef ?.current ?.scrollIntoView(false);
+      this.setHeight();
       return;
+    });
+  }
+
+  setHeight = () => {
+    const d = (mx: string) => document.getElementById(mx);
+    const header = d("mxHeaderBox") ?.clientHeight || 0;
+    const tab = d("mxTabBox") ?.clientHeight || 0;
+    const comment = d("mxCommentBox") ?.clientHeight || 0;
+    const gHeader = 56;
+    return this.setState({
+      commentBoxHeight: `calc( 100vh - ${header + tab + comment + gHeader + 75}px )`,
+      viewBoxHeight: `calc( 100vh - ${header + tab + gHeader + 75}px )`
     });
   }
 
@@ -120,7 +110,7 @@ class View extends React.Component<{
   }
 
   render() {
-    const { messages, isModalOpen, currentUserName, initialState } = this.state;
+    const { messages, isModalOpen, currentUserName, initialState, commentBoxHeight, viewBoxHeight } = this.state;
     if (initialState) {
       return (
         <React.Fragment>
@@ -130,13 +120,13 @@ class View extends React.Component<{
       )
     }
     return (
-      <React.Fragment>
-        <List sx={{ width: "100%", maxHeight: "360px", overflowY: "scroll", marginBottom: "8px" }}>
+      <Container style={{ height: viewBoxHeight }}>
+        <List sx={{ width: "100%", maxHeight: commentBoxHeight, overflowY: "scroll", marginBottom: "8px" }}>
           {messages.sort((a, b) => a.createdAt.toMillis() - b.createdAt.toMillis()).map((item) => {
             const avatar = () => (
-              <ListItemAvatar>
+              <ListItemAvatar onClick={() => this.open(item.displayName)}>
                 <Avatar>
-                  <img src={item.photoURL ? item.photoURL : "noimg"} style={{ width: "100%", height: "100%" }}
+                  <img src={item.photoURL ? item.photoURL.replace("_normal", "") : "noimg"} style={{ width: "100%", height: "100%" }}
                     alt={item.displayName}
                     onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(item, false, "normal") || alternativeImg(item.displayName)} />
                 </Avatar>
@@ -146,15 +136,15 @@ class View extends React.Component<{
             const thisIsMyText = this.props.user ? item.uid === this.props.user.uid : false;
             return (
               <React.Fragment key={item.createdAt}>
-                <ListItem alignItems="flex-start" onClick={() => this.open(item.displayName)}>
+                <ListItem alignItems="flex-start">
                   {!thisIsMyText && avatar()}
                   <ListItemText
                     style={{ textAlign: thisIsMyText ? "right" : "left", marginRight: thisIsMyText ? "16px" : "0" }}
                     primary={(
                       <Typography variant="caption">
-                        {thisIsMyText && date()}
-                        &nbsp;{item.displayName}&nbsp;
-                      {!thisIsMyText && date()}
+                        {thisIsMyText && <span style={{ opacity: .5 }}>{date()}&nbsp;</span>}
+                        {item.displayName}
+                        {!thisIsMyText && <span style={{ opacity: .5 }}>&nbsp;{date()}</span>}
                       </Typography>)}
                     secondary={
                       <React.Fragment>
@@ -175,7 +165,7 @@ class View extends React.Component<{
                 {item.displayName === "サーバーからのメッセージ" && (
                   <React.Fragment>
                     <div style={{ marginTop: "5px" }}>
-                      <ShareList withTitle={true} disableSubHeader text={"アリーナモードでの対戦相手を待っています: "} />
+                      <ShareList withTitle={true} disableSubHeader text={`アリーナモードで対戦相手を待っています(アリーナランク:${this.props.detail.arenaRank}) `} />
                     </div>
                     <Divider style={{ margin: "8px 0" }} />
                   </React.Fragment>
@@ -186,7 +176,8 @@ class View extends React.Component<{
           <div ref={this.boxRef} />
         </List>
         {isModalOpen && <ModalUser isOpen={isModalOpen} currentUserName={currentUserName} handleOpen={(flag: boolean) => this.handleModalOpen(flag)} />}
-      </React.Fragment>
+        <TxtForm detail={this.props.detail} id={this.props.id} user={this.props.user} />
+      </Container>
     );
   }
 }
@@ -194,7 +185,8 @@ class View extends React.Component<{
 
 class TxtForm extends React.Component<{
   id: string,
-  user: any
+  user: any,
+  detail: any
 }, {
     txt: string
   }>{
@@ -202,7 +194,7 @@ class TxtForm extends React.Component<{
   state = { txt: "" }
 
   change = (e: any) => {
-    this.setState({ txt: e.target.value });
+    this.setState({ txt: e.target.value.substr(0, 1000) });
   }
 
   send = async () => {
@@ -210,6 +202,20 @@ class TxtForm extends React.Component<{
     const { id, user } = this.props;
     if (!txt) return;
     const fb = new fbArenaMatch();
+    if (txt.indexOf("/timer set") > -1) {
+      const p = txt.match(/[0-9]+/g);
+      if (!p) {
+        await fb.enterChat(id, "無効なコマンドです: " + txt, user);
+      } else {
+        if (this.props.detail.uid !== user.uid) {
+          await fb.enterChat(id, "/timer: タイマーの操作権限がありません", user);
+        } else {
+          await fb.setTimer(p[0], id);
+          await fb.enterChat(id, "/timer: タイマーを" + p[0] + "秒にセットしました", user);
+        }
+      }
+      return this.setState({ txt: "" });
+    }
     await fb.enterChat(id, txt, user);
     return this.setState({ txt: "" });
   }
@@ -218,12 +224,12 @@ class TxtForm extends React.Component<{
     const { txt } = this.state;
     const { user } = this.props;
     if (!user) return (
-      <Typography variant="body1">
+      <Typography variant="body1" id="mxCommentBox">
         <RefLink to="/sync/settings"><Link color="secondary">チャットに参加するにはログインしてください。</Link></RefLink>
       </Typography>
     );
     return (
-      <FormControl variant="standard" fullWidth>
+      <FormControl variant="standard" fullWidth id="mxCommentBox">
         <InputLabel>
           {user.displayName ? user.displayName + " / Enterで送信" : ""}
         </InputLabel>

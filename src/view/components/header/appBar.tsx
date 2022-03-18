@@ -419,7 +419,7 @@ class GlobalHeader extends React.Component<{ global: any, classes: any, theme: a
             </Drawer>
           </Hidden>
         </nav>
-        <main className={classes.content} style={{ width: "100%", marginBottom: "15px" }}>
+        <main className={classes.content + (window.location.href.match("arena/") ? " arenaDetail" : "")} style={{ width: "100%", marginBottom: "15px" }}>
           {this.props.children}
         </main>
         <ShowSnackBar message={"実行中の処理があるため続行できません"} variant="warning"

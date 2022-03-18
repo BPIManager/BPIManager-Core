@@ -1,14 +1,13 @@
 import React from 'react';
 import Loader from '@/view/components/common/loader';
-import Container from '@mui/material/Container';
-import Button from "@mui/material/Button";
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import CreateDialog from "@/view/components/arenaMatch/dialogs/create";
 import MatchList from "./list";
+import { _currentTheme } from '@/components/settings';
+import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
 
 interface S {
   isLoading: boolean,
-  createDialog: boolean,
 }
 
 class Index extends React.Component<{} & RouteComponentProps, S> {
@@ -17,27 +16,32 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
     super(props);
     this.state = {
       isLoading: false,
-      createDialog: false,
     }
   }
 
-  openCreateDialog = () => this.setState({ createDialog: !this.state.createDialog });
-
-  async componentDidMount() {
-  }
-
   render() {
-    const { isLoading, createDialog } = this.state;
+    const { isLoading } = this.state;
+    const themeColor = _currentTheme();
 
     if (isLoading) {
       return (<Loader />);
     }
     return (
-      <Container fixed className="commonLayout">
-        <Button fullWidth onClick={this.openCreateDialog}>新しいマッチを作成</Button>
-        <MatchList/>
-        {createDialog && <CreateDialog toggle={this.openCreateDialog} />}
-      </Container>
+      <React.Fragment>
+        <div style={{ background: `url("/images/background/${themeColor}.svg")`, backgroundSize: "cover" }} id="mxHeaderBox">
+          <div style={{ background: themeColor === "light" ? "transparent" : "rgba(0,0,0,0)", display: "flex", padding: "30px 8px", width: "100%", height: "100%", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+            <Typography variant="h5">
+              ArenaMatch
+            </Typography>
+            <Typography variant="caption" style={{ marginTop: 15, textAlign: "center" }}>
+              アリーナ / BPLバトル向け<br/>
+              リアルタイムコミュニケーションツール<br />
+              <Link color="secondary" target="_blank" href="https://docs2.poyashi.me">詳しい使い方はこちら</Link>
+            </Typography>
+          </div>
+        </div>
+        <MatchList />
+      </React.Fragment>
     );
   }
 }

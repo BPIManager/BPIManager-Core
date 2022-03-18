@@ -64,12 +64,12 @@ export const _isBetween = (date: string | Date, rfrom: string | Date, rto: strin
   return dayjs(date).isBetween(rfrom, rto, "day", '[]');
 }
 
-export const subtract = (num: number, r: "day" | "month") => {
+export const subtract = (num: number, r: "day" | "month" | "hour") => {
   return dayjs().subtract(num, r);
 }
 
-export const d_add = (num: number, r: "day" | "month") => {
-  return dayjs().add(num, r);
+export const d_add = (num: number, r: "day" | "month" | "second", date = new Date()) => {
+  return dayjs(date).add(num, r);
 }
 
 export const isBefore = (date: string, month: number = 1) => {

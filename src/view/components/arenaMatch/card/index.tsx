@@ -57,7 +57,7 @@ export default class UserCard extends React.Component<{
         <ListItem button alignItems="flex-start" onClick={()=>this.props.history.push("/arena/" + item.matchId)}>
           <ListItemAvatar>
             <Avatar onClick={() => this.props.open(item.admin.displayName)}>
-              <img src={item.admin.photoURL ? item.admin.photoURL : "noimg"} style={{ width: "100%", height: "100%" }}
+              <img src={item.admin.photoURL ? item.admin.photoURL.replace("_normal", "") : "noimg"} style={{ width: "100%", height: "100%" }}
                 alt={item.admin.displayName}
                 onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(item.admin, false, "normal") || alternativeImg(item.admin.displayName)} />
             </Avatar>
