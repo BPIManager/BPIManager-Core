@@ -11,7 +11,6 @@ import InputLabel from '@mui/material/InputLabel';
 import fbArenaMatch from "@/components/firebase/arenaMatch";
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
-import { Switch, FormControlLabel, Grid, Typography } from '@mui/material/';
 
 interface S {
   title: string,
@@ -75,10 +74,11 @@ class CreateDialog extends React.Component<P & RouteComponentProps, S> {
     this.setState({ loading: true });
     const fb = new fbArenaMatch();
     const p = await fb.create({ title: title, description: description, arenaRank: arenaRank, isBPLMode: isBPLMode, isPublicKey: isPublicKey });
-    if(p){
+    if (p) {
       this.props.history.push("/arena/" + p);
-    }else{
+    } else {
       alert("作成に失敗しました");
+      this.setState({ loading: false });
     }
   }
 
@@ -86,7 +86,7 @@ class CreateDialog extends React.Component<P & RouteComponentProps, S> {
   handlePublicKey = (e: React.ChangeEvent<HTMLInputElement>) => this.setState({ isPublicKey: e.target.checked });
 
   render() {
-    const { title, description, arenaRank, loading, isBPLMode, isPublicKey } = this.state;
+    const { title, description, arenaRank, loading } = this.state;
     return (
       <Dialog open={true} onClose={() => loading ? null : this.props.toggle()}>
         <DialogTitle>マッチを作成</DialogTitle>
@@ -102,35 +102,6 @@ class CreateDialog extends React.Component<P & RouteComponentProps, S> {
             </Select>
           </FormControl>
           <TextBox loading={loading} title="募集内容(オプション)" value={description} changeEvent={this.changeDesc} />
-          <Grid container style={{margin:"8px 0"}}>
-            <Grid item xs={10}>
-              <Typography variant="body1">BPLモード</Typography>
-            </Grid>
-            <Grid item xs={2} style={{ justifyContent: "flex-end", display: "flex" }}>
-              <FormControl component="fieldset" variant="standard">
-                <FormControlLabel
-                  control={<Switch size="small" checked={isBPLMode} onChange={this.handleBPLMode} name="isBPLMode" />}
-                  label=""
-                  className="syncPublicSwitch"
-                />
-              </FormControl>
-            </Grid>
-          </Grid>
-          <Grid container style={{margin:"8px 0"}}>
-            <Grid item xs={10}>
-              <Typography variant="body1">誰でも参加可能</Typography>
-            </Grid>
-            <Grid item xs={2} style={{ justifyContent: "flex-end", display: "flex" }}>
-              <FormControl component="fieldset" variant="standard">
-                <FormControlLabel
-                  control={<Switch size="small" checked={isPublicKey} onChange={this.handleBPLMode} name="isPublicKey" />}
-                  label=""
-                  className="syncPublicSwitch"
-                />
-              </FormControl>
-            </Grid>
-          </Grid>
-          <Typography variant="caption">「誰でも参加可能」をオフにすると、パスコード(BPLモードオン)や開始までの残り時間(BPLモードオフ)の閲覧前に参加承認を必要とします</Typography>
         </DialogContent>
         <DialogActions>
           <Button disabled={loading} onClick={() => loading ? null : this.props.toggle()}>閉じる</Button>

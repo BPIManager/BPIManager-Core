@@ -20,7 +20,9 @@ import Link from "@mui/material/Link";
 import { Link as RefLink } from 'react-router-dom';
 import ModalUser from '@/view/components/rivals/modal';
 import LinearProgress from '@mui/material/LinearProgress';
+import Divider from "@mui/material/Divider";
 import ReactTimeAgo from 'react-time-ago';
+import { ShareList } from "@/view/components/common/shareButtons";
 
 import {
   QuerySnapshot, DocumentData, Unsubscribe
@@ -112,7 +114,10 @@ class View extends React.Component<{
   }
 
   handleModalOpen = (flag: boolean) => this.setState({ isModalOpen: flag });
-  open = (uid: string) => this.setState({ isModalOpen: true, currentUserName: uid })
+  open = (uid: string) => {
+    if (uid === "サーバーからのメッセージ") return;
+    this.setState({ isModalOpen: true, currentUserName: uid })
+  }
 
   render() {
     const { messages, isModalOpen, currentUserName, initialState } = this.state;
@@ -130,7 +135,7 @@ class View extends React.Component<{
           {messages.sort((a, b) => a.createdAt.toMillis() - b.createdAt.toMillis()).map((item) => {
             const avatar = () => (
               <ListItemAvatar>
-                <Avatar onClick={() => this.open(item.displayName)}>
+                <Avatar>
                   <img src={item.photoURL ? item.photoURL : "noimg"} style={{ width: "100%", height: "100%" }}
                     alt={item.displayName}
                     onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(item, false, "normal") || alternativeImg(item.displayName)} />
@@ -140,31 +145,42 @@ class View extends React.Component<{
             const date = () => <ReactTimeAgo date={item.createdAt.toDate()} locale="en-US" timeStyle="twitter" />;
             const thisIsMyText = this.props.user ? item.uid === this.props.user.uid : false;
             return (
-              <ListItem alignItems="flex-start" key={item.createdAt}>
-                {!thisIsMyText && avatar()}
-                <ListItemText
-                  style={{ textAlign: thisIsMyText ? "right" : "left", marginRight: thisIsMyText ? "16px" : "0" }}
-                  primary={(
-                    <Typography variant="caption">
-                      {thisIsMyText && date()}
-                      &nbsp;{item.displayName}&nbsp;
+              <React.Fragment key={item.createdAt}>
+                <ListItem alignItems="flex-start" onClick={() => this.open(item.displayName)}>
+                  {!thisIsMyText && avatar()}
+                  <ListItemText
+                    style={{ textAlign: thisIsMyText ? "right" : "left", marginRight: thisIsMyText ? "16px" : "0" }}
+                    primary={(
+                      <Typography variant="caption">
+                        {thisIsMyText && date()}
+                        &nbsp;{item.displayName}&nbsp;
                       {!thisIsMyText && date()}
-                    </Typography>)}
-                  secondary={
-                    <React.Fragment>
-                      <Typography
-                        sx={{ display: 'inline' }}
-                        component="span"
-                        variant="body2"
-                        color="text.primary"
-                      >
-                        {item.body}
-                      </Typography>
-                    </React.Fragment>
-                  }
-                />
-                {thisIsMyText && avatar()}
-              </ListItem>
+                      </Typography>)}
+                    secondary={
+                      <React.Fragment>
+                        <Typography
+                          sx={{ display: 'inline' }}
+                          style={{ whiteSpace: 'pre-line' }}
+                          component="span"
+                          variant="body2"
+                          color="text.primary"
+                        >
+                          {item.body}
+                        </Typography>
+                      </React.Fragment>
+                    }
+                  />
+                  {thisIsMyText && avatar()}
+                </ListItem>
+                {item.displayName === "サーバーからのメッセージ" && (
+                  <React.Fragment>
+                    <div style={{ marginTop: "5px" }}>
+                      <ShareList withTitle={true} disableSubHeader text={"アリーナモードでの対戦相手を待っています: "} />
+                    </div>
+                    <Divider style={{ margin: "8px 0" }} />
+                  </React.Fragment>
+                )}
+              </React.Fragment>
             )
           })}
           <div ref={this.boxRef} />

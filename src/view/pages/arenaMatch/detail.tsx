@@ -13,6 +13,7 @@ import Chip from "@mui/material/Chip";
 import { alternativeImg } from "@/components/common";
 import { getAltTwitterIcon } from "@/components/rivals";
 import Chat from "@/view/components/arenaMatch/chat";
+import Settings from "@/view/components/arenaMatch/settings";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
@@ -106,6 +107,7 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
         <div style={{display:tab === 0 ? "block" : "none"}}>
           <Chat id={detail.matchId} />
         </div>
+        {tab === 1 && <Settings meta={detail}/>}
       </React.Fragment>
     );
   }

@@ -25,7 +25,7 @@ export default class ShareButtons extends React.Component<{ withTitle: boolean, 
   }
 }
 
-export class ShareList extends React.Component<{ withTitle: boolean, url?: string, text?: string }, {}> {
+export class ShareList extends React.Component<{ withTitle: boolean, url?: string, text?: string, disableSubHeader?: boolean }, {}> {
 
   render() {
 
@@ -34,7 +34,7 @@ export class ShareList extends React.Component<{ withTitle: boolean, url?: strin
       { icon: <TwitterIcon />, primary: "Twitterでシェア", secondary: "", onClick: () => window.open(`https://twitter.com/intent/tweet?url=${this.props.url || window.location.href}&text=${encodeURIComponent(this.props.withTitle ? (this.props.text || "BPIManagerを使っています:") : "")}&hashtags=BPIM&related=BPIManager`) },
     ]
     return (
-      <List subheader={<ListSubheader>プロフィールをシェア</ListSubheader>}>
+      <List subheader={this.props.disableSubHeader ? <span/> : <ListSubheader>プロフィールをシェア</ListSubheader>}>
         {buttons.map((item, i) => {
           return (
             <DefListCard key={i} onAction={item.onClick} disabled={false} icon={item.icon}

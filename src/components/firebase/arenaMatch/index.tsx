@@ -43,9 +43,21 @@ export default class {
         matchId: docRef.id,
         mesToken: mesToken,
       }), { merge: true });
+      await this.enterChat(docRef.id,
+        `正常にルームが作成されました。\n対戦希望のプレイヤーを待つほか、SNSでプレイヤーを募ることができます。\n\n
+        Android 端末をご利用の場合、BPIM を閉じても、他のユーザーがチャットしたときに通知でお知らせします。`,{
+        displayName:"サーバーからのメッセージ",
+        photoURL:"https://bpi.poyashi.me/images/icons/icon-192x192.png",
+        arenaRank: "-",
+        totalBPI: -15,
+        twitter: "BPIManager",
+        profile: "SERVER",
+        uid: ""
+      })
       return docRef.id;
     } catch (e) {
       console.log(e);
+      alert(String(e))
       return;
     }
   }
