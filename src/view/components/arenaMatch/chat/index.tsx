@@ -215,6 +215,10 @@ class TxtForm extends React.Component<{
       }
       return this.setState({ txt: "" });
     }
+    if (txt.indexOf("/rand") > -1) {
+      await fb.randChat(id, user);
+      return this.setState({ txt: "" });
+    }
     await fb.enterChat(id, txt, user);
     return this.setState({ txt: "" });
   }

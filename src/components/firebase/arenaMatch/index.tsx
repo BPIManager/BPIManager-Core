@@ -52,7 +52,7 @@ export default class fbArenaMatch {
           twitter: "BPIManager",
           profile: "SERVER",
           uid: ""
-      });
+        });
       const d = doc(collection(db, "arenaMatchBody"), docRef.id);
       setDoc(d, {
         uid: user.uid
@@ -73,6 +73,15 @@ export default class fbArenaMatch {
   realtime = onSnapshot;
 
   getMessages = (matchId: string) => query(collection(db, "arenaMatchBody", matchId, "chat"), orderBy("createdAt", "desc"), limit(100));
+
+  randChat = async (matchId: string, userData: any) => {
+    const getRand = (r:string[])=> r[Math.floor(Math.random() * r.length)];
+    const stages = ["2 STAGE", "3 STAGE", "4 STAGE"];
+    const levels = ["制限なし", "先鋒戦 LEVEL 8~10", "中堅戦 LEVEL 10~11", "大将戦 LEVEL12"];
+    const fumen = ["制限なし", "NOTES", "CHORD", "PEAK", "CHARGE", "SCRATCH", "SOF-LAN"];
+
+    return this.enterChat(matchId,`/rand :\nステージ:${getRand(stages)}\nレベル:${getRand(levels)}\n譜面傾向:${getRand(fumen)}`,userData);
+  }
 
   enterChat = async (matchId: string, text: string, userData: any) => {
     try {
@@ -101,7 +110,7 @@ export default class fbArenaMatch {
 
     const m = await fetch("https://proxy.poyashi.me");
     const date = m.headers.get("date");
-    if(!date && date !== null){
+    if (!date && date !== null) {
       alert("サーバー時間の取得に失敗しました");
     }
     const now = new Date(date as string);

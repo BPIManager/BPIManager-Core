@@ -18,13 +18,16 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Alert from "@mui/material/Alert";
 import { isBeforeSpecificDate } from "@/components/common/timeFormatter";
+import ModalUser from '@/view/components/rivals/modal';
 
 interface S {
   isLoading: boolean,
   detail: any,
   uid: string,
   tab: number,
-  user: any
+  user: any,
+  isModalOpen: boolean,
+  currentUserName: string,
 }
 
 class Index extends React.Component<{} & RouteComponentProps, S> {
@@ -38,6 +41,8 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
       detail: null,
       uid: "",
       tab: 0,
+      isModalOpen: false,
+      currentUserName: "",
       user: null
     }
   }
@@ -77,8 +82,13 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
     this.setState({ tab: newValue });
   };
 
+  handleModalOpen = (flag: boolean) => this.setState({ isModalOpen: flag });
+  open = (uid: string) => {
+    this.setState({ isModalOpen: true, currentUserName: uid })
+  }
+
   render() {
-    const { isLoading, detail, tab, uid, user } = this.state;
+    const { isLoading, detail, tab, uid, user, isModalOpen, currentUserName } = this.state;
     const themeColor = _currentTheme();
     if (isLoading || !detail) {
       return (<Loader />);
@@ -90,7 +100,8 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
             <Typography variant="h5">
               {detail.title}
             </Typography>
-            <div style={{ display: "flex", alignItems: "center", marginTop: 10 }}>
+            {detail.description && <span style={{ margin: "8px 0", display: "block" }}> {detail.description}</span>}
+            <div style={{ display: "flex", alignItems: "center", marginTop: 0 }} onClick={() => this.open(detail.admin.displayName)}>
               <Chip
                 avatar={(
                   <Avatar>
@@ -114,7 +125,6 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
                 />
               )}
             </div>
-            {detail.description && <span style={{ margin: "0", display: "block" }}> {detail.description}</span>}
           </div>
         </div>
         {detail.startAt && <Timer timer={detail.startAt} />}
@@ -129,6 +139,7 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
           <Chat user={user} detail={detail} id={detail.matchId} />
         </div>
         {tab === 1 && <Settings user={user} meta={detail} />}
+        {isModalOpen && <ModalUser isOpen={isModalOpen} currentUserName={currentUserName} handleOpen={(flag: boolean) => this.handleModalOpen(flag)} />}
       </React.Fragment>
     );
   }
