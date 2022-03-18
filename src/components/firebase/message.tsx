@@ -16,7 +16,7 @@ export class messanger {
   refreshToken(refreshedToken?: string) {
     try {
       new fbActions().auth().onAuthStateChanged(async (user: any) => {
-        console.info("Login Status:",user);
+        console.info("Login Status:", user);
         if (user && user.uid) {
           const token = refreshedToken || (await this.getToken());
           new fbActions().updateToken(user.uid, token);
@@ -27,7 +27,6 @@ export class messanger {
     } catch (e: any) {
       alert(e);
     }
-
   }
 
   async requestPermission() {

@@ -15,6 +15,7 @@ const ja = {
   "GlobalNav.Sync": "Sync",
   "GlobalNav.Rivals": "Rivals",
   "GlobalNav.Weekly": "Ranking",
+  "GlobalNav.ArenaMatch": "ArenaMatch",
   "GlobalNav.History": "Records history",
   "GlobalNav.AAATable": "AAA Table",
   "GlobalNav.Tools": "Tools",

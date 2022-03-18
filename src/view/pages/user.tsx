@@ -31,8 +31,6 @@ import { getTwitterName, getAltTwitterIcon } from '@/components/rivals';
 import { withRivalData, radarData, getRadar } from '@/components/stats/radar';
 import RivalStatViewFromUserPage from '../components/rivals/viewComponents/statsFromUserPage';
 import Alert from '@mui/material/Alert/Alert';
-import EventNoteIcon from '@mui/icons-material/EventNote';
-import WeeklyList from '@/view/pages/ranking/list';
 import getUserData from '@/components/user';
 import FolloweeCounter from '../components/users/count';
 import { makeHeatmap, colorClassifier } from '@/components/user/heatmap';
@@ -375,18 +373,11 @@ class User extends React.Component<{ intl: any, currentUserName?: string, limite
         </Container>
       )
     }
-    if (currentView === 5) {
-      //IR参加履歴
-      return (
-        <WeeklyList viewInUser backToMainPage={this.backToMainPage} uid={uid} name={res.displayName} />
-      )
-    }
 
     const buttons = [
       { icon: <ViewListIcon />, primary: "スコア比較", secondary: (res.displayName) + "さんと自分のスコアを比較します", onClick: () => this.view(1) },
       { icon: <WbIncandescentIcon />, primary: "AAA達成表", secondary: "BPIに基づいたAAA達成難易度表を表示します", onClick: () => this.view(2) },
       { icon: <StarHalfIcon />, primary: "BPIMRanks (外部サイト)", secondary: "BPIManager ユーザー内での順位を表示します", onClick: () => this.showBPIMRanks() },
-      { icon: <EventNoteIcon />, primary: "ランキング", secondary: "ランキング参加履歴を表示します", onClick: () => this.view(5) },
     ]
     buttons.push({ icon: <CommentIcon />, primary: "投稿ノート一覧", secondary: (res.displayName) + "さんが投稿した攻略情報一覧", onClick: () => this.view(3) });
 

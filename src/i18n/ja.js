@@ -11,7 +11,7 @@ const ja = {
   "GlobalNav.Statistics": "統計",
   "GlobalNav.Sync": "Sync",
   "GlobalNav.Rivals": "ライバル",
-  "GlobalNav.Weekly": "ランキング",
+  "GlobalNav.ArenaMatch": "ArenaMatch",
   "GlobalNav.compare": "データ比較",
   "GlobalNav.History": "更新ログ",
   "GlobalNav.AAATable": "AAA達成表",

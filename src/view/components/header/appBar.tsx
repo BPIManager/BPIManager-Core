@@ -47,6 +47,8 @@ import ArenaRankCheck from "../arenaRankCheck";
 import GitHubIcon from '@mui/icons-material/GitHub';
 import Button from '@mui/material/Button';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import { getMessaging, onMessage } from "firebase/messaging";
+import fb from "@/components/firebase";
 
 interface navBars {
   to: string,
@@ -148,8 +150,8 @@ const social: navBars[] = [
     icon: <StarHalfIcon />
   },
   {
-    to: "/ranking/",
-    id: "GlobalNav.Weekly",
+    to: "/arena",
+    id: "GlobalNav.ArenaMatch",
     icon: <EventNoteIcon />
   }
 ]
@@ -211,6 +213,13 @@ class GlobalHeader extends React.Component<{ global: any, classes: any, theme: a
 
   async componentDidMount() {
     this.userData();
+    const messaging = getMessaging(fb);
+    onMessage(messaging, (payload) => {
+      if(payload.data && !window.location.href.match(payload.data?.matchId)){
+        console.log('Message received. ', payload);
+      }
+    });
+
   }
 
   componentDidUpdate(prevProps: any) {
@@ -275,8 +284,8 @@ class GlobalHeader extends React.Component<{ global: any, classes: any, theme: a
           return "GlobalNav.Help";
         case "notes":
           return "GlobalNav.Notes";
-        case "ranking":
-          return "GlobalNav.Weekly";
+        case "arena":
+          return "GlobalNav.ArenaMatch";
         case "u":
           return page[2];
         case "share":
@@ -343,8 +352,8 @@ class GlobalHeader extends React.Component<{ global: any, classes: any, theme: a
         <AppBar className={window.location.href.split('/').pop() === "" ? "appBarIndex " + classes.appBar + " apbar" : classes.appBar + " apbar"}>
           <Toolbar>
             <Typography variant="h6" style={{ flexGrow: 1 }}>
-              {(page.length === 2 || page[1] === "lists" || page[1] === "notes" || page[1] === "songs" || page[1] === "sync" || page[1] === "ranking" || page[1] === "history") && <FormattedMessage id={currentPage()} />}
-              {(page.length > 2 && page[1] !== "lists" && page[1] !== "notes" && page[1] !== "songs" && page[1] !== "sync" && page[1] !== "ranking" && page[1] !== "history") && currentPage()}
+              {(page.length === 2 || page[1] === "lists" || page[1] === "notes" || page[1] === "songs" || page[1] === "sync" || page[1] === "arena" || page[1] === "history") && <FormattedMessage id={currentPage()} />}
+              {(page.length > 2 && page[1] !== "lists" && page[1] !== "notes" && page[1] !== "songs" && page[1] !== "sync" && page[1] !== "arena" && page[1] !== "history") && currentPage()}
             </Typography>
             {user && (
               <IconButton
