@@ -52,7 +52,7 @@ export default class fbArenaMatch {
           twitter: "BPIManager",
           profile: "SERVER",
           uid: ""
-        })
+      });
       const d = doc(collection(db, "arenaMatchBody"), docRef.id);
       setDoc(d, {
         uid: user.uid
@@ -68,7 +68,7 @@ export default class fbArenaMatch {
   detail = (docId: string) => doc(collection(db, "arenaMatchList"), docId);
   listenDetail = (docId: string, func: any) => onSnapshot(this.detail(docId), func);
 
-  list = () => query(collection(db, "arenaMatchList"), where("updatedAt", ">", new Date(timeFormatter(3, subtract(6, "hour")))), orderBy("updatedAt", "desc"));
+  list = () => query(collection(db, "arenaMatchList"), where("updatedAt", ">", new Date(timeFormatter(3, subtract(3, "hour")))), orderBy("updatedAt", "desc"));
 
   realtime = onSnapshot;
 

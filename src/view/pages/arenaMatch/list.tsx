@@ -79,6 +79,8 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
     }
   }
 
+  uid = () => new fbActions().authInfo()?.uid;
+
   render() {
     const { isLoading, createDialog, matchList, radarNode } = this.state;
     const alreadyOwns = this.isAvailableMyMatch();
@@ -86,12 +88,13 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
       return (<Loader />);
     }
     const style = {
-      borderRadius:0,borderLeft:0,borderRight:0
+      borderRadius: 0, borderLeft: 0, borderRight: 0
     }
     return (
       <React.Fragment>
-        {alreadyOwns && <Button fullWidth style={style} color="secondary" variant="outlined" onClick={this.openMyMatch}>自分のルームを表示</Button>}
-        {!alreadyOwns && <Button fullWidth style={style} color="secondary" variant="outlined" onClick={this.openCreateDialog}>新しいルームを作成</Button>}
+        {!this.uid() && <Button fullWidth style={style} color="secondary" variant="outlined" onClick={()=>this.props.history.push("/sync/settings")}>ルームの作成にはログインが必要です</Button>}
+        {(this.uid() && alreadyOwns) && <Button fullWidth style={style} color="secondary" variant="outlined" onClick={this.openMyMatch}>自分のルームを表示</Button>}
+        {(this.uid() && !alreadyOwns) && <Button fullWidth style={style} color="secondary" variant="outlined" onClick={this.openCreateDialog}>新しいルームを作成</Button>}
         <List>
           {matchList.map((item: any) => {
             return (

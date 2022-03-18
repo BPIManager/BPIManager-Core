@@ -80,7 +80,6 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
   render() {
     const { isLoading, detail, tab, uid, user } = this.state;
     const themeColor = _currentTheme();
-    console.log(isLoading, detail);
     if (isLoading || !detail) {
       return (<Loader />);
     }

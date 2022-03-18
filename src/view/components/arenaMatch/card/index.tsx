@@ -66,7 +66,7 @@ export default class UserCard extends React.Component<{
             primary={<React.Fragment>{item.title}&nbsp;<small>{updatedTime(item.updatedAt.toDate())}</small></React.Fragment>}
             secondary={<React.Fragment>
               <Tooltip title={"アリーナランク"}>
-                <Chip component="span" size="small" style={{ backgroundColor: arenaRankColor(item.admin.arenaRank), color: "#fff", margin: "5px 0" }} label={item.admin.arenaRank || "-"} />
+                <Chip component="span" size="small" style={{ backgroundColor: arenaRankColor(item.arenaRank), color: "#fff", margin: "5px 0" }} label={item.arenaRank || "-"} />
               </Tooltip>
               {(!isNaN(item.admin.totalBPI)) && (
                 <Tooltip title={"総合BPI"}>

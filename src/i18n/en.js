@@ -242,7 +242,7 @@ const ja = {
   "Signin.list1": "Permanent backup of score data on the web",
   "Signin.list2": "Share your scores with others",
   "Signin.list3": "Find rivals with similar abilities based on BPI and arena rank",
-  "Signin.list4": "Interact with other users through Notes and Rankings",
+  "Signin.list4": "Interact with other users through Notes and ArenaMatch",
   "Signin.warn1": "Available OAuth login via Twitter or Google. The account you linked is used only for user identification, and we have no authority to create posts or edit profiles of your account.",
   "Signin.warn2": "When creating an account, we assume you have agreed to the term of use and privacy policy.",
   "Signin.warn3": "Please check here for the term of use and privacy policy.",
