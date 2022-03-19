@@ -506,7 +506,7 @@ class ArenaMatch extends React.Component<{ history: any }, { list: any[] }>{
 
   getRoomList = async () => {
     const fbArena = new fbArenaMatch();
-    fbArena.realtime(fbArena.list(), (snapshot) => {
+    fbArena.realtime(await fbArena.list(), (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         let matchList = ([] as any[]).concat(this.state.list);
         if (change.type === "added") {
@@ -565,7 +565,7 @@ class ArenaMatch extends React.Component<{ history: any }, { list: any[] }>{
             </React.Fragment>
           )}
           <Button startIcon={<ArrowRightIcon />} fullWidth size="small" onClick={() => history.push("/arena")}>
-            <FormattedMessage id="ShowMore" />
+            <FormattedMessage id="ShowMore" /> / ルーム作成
           </Button>
         </Container>
       </React.Fragment>

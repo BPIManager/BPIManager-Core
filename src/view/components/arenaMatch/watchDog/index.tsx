@@ -30,12 +30,12 @@ class ArenaMatchWatcher extends React.Component<RouteComponentProps, {
     loaded: 0,
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const f = new fbArenaMatch();
     const auth = new fbActions().authInfo();
     if (auth && auth.uid) {
       const myId = auth.uid;
-      this.unsubscribe = f.realtime(f.getSelfMatches(myId), this.watchList);
+      this.unsubscribe = f.realtime(await f.getSelfMatches(myId), this.watchList);
     }
   }
 

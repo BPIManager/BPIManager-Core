@@ -17,7 +17,7 @@ import Settings from "@/view/components/arenaMatch/settings";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Alert from "@mui/material/Alert";
-import timeFormatter, { isBeforeSpecificDate } from "@/components/common/timeFormatter";
+import { isBeforeSpecificDate } from "@/components/common/timeFormatter";
 import ModalUser from '@/view/components/rivals/modal';
 
 interface S {
@@ -44,6 +44,12 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
       isModalOpen: false,
       currentUserName: "",
       user: null
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
     }
   }
 
@@ -149,6 +155,11 @@ class Timer extends React.Component<{ timer: any }, {
   latency: number
 }>{
 
+  constructor(props: { timer: any }) {
+    super(props);
+    this.intv = null;
+  }
+
   state = { latency: 0 }
 
   intv: any = null;
@@ -185,24 +196,14 @@ class Timer extends React.Component<{ timer: any }, {
   }
 
   setLatency = async () => {
-    try {
-      const sendTime = new Date().getTime();
-      const f = await fetch("http://worldtimeapi.org/api/timezone/Asia/Tokyo");
-      const timeobj = await f.json();
-      const endTime = new Date().getTime();
-      const fixedTime = parseInt(String(timeobj.unixtime * 1000 + (endTime - sendTime) / 2), 10);
-      const localTime = new Date().getTime()
-      const offset = fixedTime - localTime;
-      this.setState({ latency: offset });
-    } catch (e) {
-      console.log(e);
-    }
+    const f = new fbArenaMatch();
+    const offset = await f.getLatency();
+    this.setState({ latency: offset });
   }
 
   UNSAFE_componentWillUpdate(props: any) {
     clearInterval(this.intv);
     if (this.isBefore(props)) {
-      console.log("a");
       this.intv = setInterval(this.timerCount, 10);
     } else {
       clearInterval(this.intv);

@@ -65,19 +65,41 @@ export default class fbArenaMatch {
     }
   }
 
+  getLatency = async () => {
+    try {
+      const sendTime = new Date().getTime();
+      const f = await fetch("http://worldtimeapi.org/api/timezone/Asia/Tokyo");
+      const timeobj = await f.json();
+      const endTime = new Date().getTime();
+      const fixedTime = parseInt(String(timeobj.unixtime * 1000 + (endTime - sendTime) / 2), 10);
+      const localTime = new Date().getTime()
+      const offset = fixedTime - localTime;
+      return offset;
+    } catch (e) {
+      console.log(e);
+      return 0;
+    }
+  }
+
   detail = (docId: string) => doc(collection(db, "arenaMatchList"), docId);
   listenDetail = (docId: string, func: any) => onSnapshot(this.detail(docId), func);
 
-  list = () => query(
-    collection(db, "arenaMatchList"),
-    where("updatedAt", ">", new Date(timeFormatter(3, subtract(3, "hour")))),
-    orderBy("updatedAt", "desc")
-  );
+  list = async () => {
+    const offset = await this.getLatency();
+    return query(
+      collection(db, "arenaMatchList"),
+      where("updatedAt", ">", new Date(timeFormatter(3, subtract(3, "hour", new Date().getTime() + offset)))),
+      orderBy("updatedAt", "desc")
+    );
+  }
 
-  getSelfMatches = (myId: string) => query(
-    collection(db, "arenaMatchList"),
-    where("uid", "==", myId), where("updatedAt", ">", new Date(timeFormatter(3, subtract(3, "hour"))))
-  );
+  getSelfMatches = async (myId: string) => {
+    const offset = await this.getLatency();
+    return query(
+      collection(db, "arenaMatchList"),
+      where("uid", "==", myId), where("updatedAt", ">", new Date(timeFormatter(3, subtract(3, "hour", new Date().getTime() + offset))))
+    );
+  }
 
   realtime = onSnapshot;
 
@@ -120,12 +142,8 @@ export default class fbArenaMatch {
 
   setTimer = async (timeAfter: string, matchId: string) => {
 
-    const m = await fetch("https://proxy.poyashi.me");
-    const date = m.headers.get("date");
-    if (!date && date !== null) {
-      alert("サーバー時間の取得に失敗しました");
-    }
-    const now = new Date(date as string);
+    const m = await this.getLatency();
+    const now = new Date().getTime() + m;
 
     const time = d_add(Number(timeAfter), "second", now);
     const docRef = doc(collection(db, "arenaMatchList"), matchId);

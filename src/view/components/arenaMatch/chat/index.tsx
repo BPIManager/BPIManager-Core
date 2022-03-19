@@ -63,6 +63,12 @@ class View extends React.Component<{
   boxRef = React.createRef<HTMLDivElement>();
   unsubscribe: Unsubscribe | null = null;
 
+  componentWillUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
+  }
+
   state = {
     messages: [] as any[],
     isModalOpen: false,
@@ -85,17 +91,17 @@ class View extends React.Component<{
         messages.push(data);
       }
       this.setState({ messages: messages, initialState: false });
-      this.boxRef ?.current ?.scrollIntoView(false);
+      this.boxRef?.current?.scrollIntoView(false);
       this.setHeight();
       return;
     });
   }
 
   setHeight = () => {
-    const d = (mx: string) => document.getElementById(mx);
-    const header = d("mxHeaderBox") ?.clientHeight || 0;
-    const tab = d("mxTabBox") ?.clientHeight || 0;
-    const comment = d("mxCommentBox") ?.clientHeight || 0;
+    const d = (mx: string) => document.getElementById(mx)?.clientHeight || 0;
+    const header = d("mxHeaderBox");
+    const tab = d("mxTabBox");
+    const comment = d("mxCommentBox");
     const gHeader = 56;
     return this.setState({
       commentBoxHeight: `calc( 100vh - ${header + tab + comment + gHeader + 75}px )`,

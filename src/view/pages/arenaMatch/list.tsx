@@ -17,7 +17,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Alert from "@mui/material/Alert";
-import Container from "@mui/material/Container";
+import AlertTitle from "@mui/material/AlertTitle";
 
 const defaultChecks = ["A1", "A2", "A3", "A4", "A5", "B1", "B2", "B3", "B4", "B5"];
 
@@ -26,7 +26,8 @@ interface S {
   matchList: any[],
   radarNode: radarData[],
   createDialog: boolean,
-  currentChecks: string[]
+  currentChecks: string[],
+  firstView: boolean
 }
 
 class Index extends React.Component<{} & RouteComponentProps, S> {
@@ -40,7 +41,14 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
       matchList: [] as any[],
       radarNode: [],
       createDialog: false,
-      currentChecks: defaultChecks
+      currentChecks: defaultChecks,
+      firstView: true,
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
     }
   }
 
@@ -49,11 +57,12 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
   async componentDidMount() {
     this.setState({ radarNode: await getRadar(), isLoading: false })
     const f = new fbArenaMatch();
-    this.unsubscribe = f.realtime(f.list(), this.watch);
+    this.unsubscribe = f.realtime(await f.list(), this.watch);
   }
 
   watch = (snapshot: QuerySnapshot<DocumentData>) => {
-    if(snapshot.empty){
+    this.setState({ firstView: false });
+    if (snapshot.empty) {
       this.setState({ isLoading: false });
     }
     snapshot.docChanges().forEach((change) => {
@@ -107,10 +116,10 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
     this.setState({ currentChecks: defaultChecks.filter(item => currentChecks.indexOf(item) === -1) });
   }
 
-  uid = () => new fbActions().authInfo() ?.uid;
+  uid = () => new fbActions().authInfo()?.uid;
 
   render() {
-    const { isLoading, createDialog, matchList, radarNode, currentChecks } = this.state;
+    const { firstView, isLoading, createDialog, matchList, radarNode, currentChecks } = this.state;
     const alreadyOwns = this.isAvailableMyMatch();
     if (isLoading) {
       return (<Loader />);
@@ -124,10 +133,12 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
         {(this.uid() && alreadyOwns) && <Button fullWidth style={style} color="secondary" variant="outlined" onClick={this.openMyMatch}>自分のルームを表示</Button>}
         {(this.uid() && !alreadyOwns) && <Button fullWidth style={style} color="secondary" variant="outlined" onClick={this.openCreateDialog}>新しいルームを作成</Button>}
         <Filter currentChecks={currentChecks} reverse={this.reverseChecks} handleChange={this.handleChange} />
-        {matchList.filter((item) => currentChecks.indexOf(item.arenaRank) > -1).length === 0 && (
-          <Container>
-
-          </Container>
+        {!firstView && matchList.filter((item) => currentChecks.indexOf(item.arenaRank) > -1).length === 0 && (
+          <Alert severity="error">
+            <AlertTitle>ルームがありません</AlertTitle>
+            <p>まだ誰もルームを作成していないようです。<br/>
+            <b>「新しいルームを作成」ボタンからルームを作成</b>し、バトル相手を募りましょう！</p>
+          </Alert>
         )}
         <List>
           {matchList.filter((item) => currentChecks.indexOf(item.arenaRank) > -1).map((item: any) => {
