@@ -164,8 +164,7 @@ class Settings extends React.Component<P, S> {
             }}
           />
           <Typography variant="caption" display="block">
-            プレイ済み楽曲リストにおいて、グラフィカルな楽曲一覧表示を使用します。<br />
-            (補助表示の設定項目は無視されます)
+            自分が作成した ArenaMatch のルームに他のプレイヤーがコメントした際、アプリ内にて通知を表示します。
           </Typography>
         </Paper>
       </Container>

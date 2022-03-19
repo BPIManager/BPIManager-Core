@@ -8,6 +8,7 @@ import Grid from "@mui/material/Grid";
 import Avatar from "@mui/material/Avatar";
 import { alternativeImg } from "@/components/common";
 import { getAltTwitterIcon } from "@/components/rivals";
+import { _foregroundNotification } from '@/components/settings';
 
 import {
   QuerySnapshot, DocumentData, Unsubscribe
@@ -63,6 +64,7 @@ class ArenaMatchWatcher extends React.Component<RouteComponentProps, {
     const self = this;
     if (self.state.loaded === 0) return self.setState({ loaded: 1 });
     snapshot.docChanges().forEach((change) => {
+      if (!_foregroundNotification()) return;
       const m = change.doc.data({ serverTimestamps: "estimate" });
       if (window.location.href.indexOf(m.matchId) > 0) return;
       return self.setState({
@@ -82,8 +84,7 @@ class ArenaMatchWatcher extends React.Component<RouteComponentProps, {
         <Snackbar
           style={{ width: "100%", bottom: 0, left: 0 }}
           open={open}
-          autoHideDuration={5000}
-          onClick={()=>this.props.history.push("/arena/" + newMessage.matchId)}
+          onClick={() => this.props.history.push("/arena/" + newMessage.matchId)}
           onClose={this.handleClose}
         >
           <SnackbarContent
@@ -99,13 +100,12 @@ class ArenaMatchWatcher extends React.Component<RouteComponentProps, {
                     </Avatar>
                   </Grid>
                   <Grid item xs={10}>
-                    <span style={{ opacity: 0.6 }}>{newMessage.displayName}</span><br/>
+                    <span style={{ opacity: 0.6 }}>{newMessage.displayName}</span><br />
                     {newMessage.body.length > 20 ? newMessage.body.substr(0, 19) + "..." : newMessage.body}
                   </Grid>
                 </Grid>
               </React.Fragment>
-            )}
-            action={() => null} />
+            )} />
         </Snackbar>
       )
     }

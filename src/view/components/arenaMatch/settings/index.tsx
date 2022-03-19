@@ -72,11 +72,11 @@ class Settings extends React.Component<P, {
                   label="カウントダウンを指定"
                   onChange={this.handleChange}
                 >
-                  {["15", "30", "45", "60"].map((item) => <MenuItem value={String(item)}>{item}秒後</MenuItem>)}
+                  {["15", "30", "45", "60"].map((item) => <MenuItem key={item} value={String(item)}>{item}秒後</MenuItem>)}
                 </Select>
               </FormControl>
             </Grid>
-            <Grid xs={2}>
+            <Grid item xs={2}>
               <Button fullWidth onClick={this.setTimer}>設定</Button>
             </Grid>
           </Grid>

@@ -17,7 +17,7 @@ import Settings from "@/view/components/arenaMatch/settings";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Alert from "@mui/material/Alert";
-import { isBeforeSpecificDate } from "@/components/common/timeFormatter";
+import timeFormatter, { isBeforeSpecificDate } from "@/components/common/timeFormatter";
 import ModalUser from '@/view/components/rivals/modal';
 
 interface S {
@@ -156,7 +156,7 @@ class Timer extends React.Component<{ timer: any }, {
   timerCount = () => {
     const { latency } = this.state;
     const p = window.document.getElementById("timerCount");
-    const full = this.props.timer.toMillis() - new Date().getTime() - latency;
+    const full = this.props.timer.toMillis() - (new Date().getTime() + latency);
     const seconds = Math.round(full * 100) / 100;
     if (!p) return;
     if (seconds < 0) {
@@ -171,10 +171,11 @@ class Timer extends React.Component<{ timer: any }, {
     clearInterval(this.intv);
   }
 
-  componentDidMount() {
-    const isBefore = isBeforeSpecificDate(new Date(), this.props.timer.toDate());
-    this.setLatency();
-    if (isBefore) {
+  isBefore = (prop: any = this.props) => isBeforeSpecificDate(new Date().getTime() + this.state.latency, prop.timer.toDate());
+
+  async componentDidMount() {
+    await this.setLatency();
+    if (this.isBefore()) {
       this.intv = setInterval(this.timerCount, 10);
     } else {
       const p = window.document.getElementById("timerCount");
@@ -184,20 +185,24 @@ class Timer extends React.Component<{ timer: any }, {
   }
 
   setLatency = async () => {
-    const sendTime = new Date().getTime();
-    const f = await fetch("http://worldtimeapi.org/api/timezone/Asia/Tokyo");
-    const timeobj = await f.json();
-    const endTime = new Date().getTime();
-    const fixedTime = parseInt(String(timeobj.unixtime * 1000 + (endTime - sendTime) / 2), 10);
-    const localTime = new Date().getTime()
-    const offset = fixedTime - localTime;
-    this.setState({ latency: offset });
+    try {
+      const sendTime = new Date().getTime();
+      const f = await fetch("http://worldtimeapi.org/api/timezone/Asia/Tokyo");
+      const timeobj = await f.json();
+      const endTime = new Date().getTime();
+      const fixedTime = parseInt(String(timeobj.unixtime * 1000 + (endTime - sendTime) / 2), 10);
+      const localTime = new Date().getTime()
+      const offset = fixedTime - localTime;
+      this.setState({ latency: offset });
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   UNSAFE_componentWillUpdate(props: any) {
     clearInterval(this.intv);
-    const isBefore = isBeforeSpecificDate(new Date(), props.timer.toDate())
-    if (isBefore) {
+    if (this.isBefore(props)) {
+      console.log("a");
       this.intv = setInterval(this.timerCount, 10);
     } else {
       clearInterval(this.intv);

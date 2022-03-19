@@ -22,6 +22,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Divider from "@mui/material/Divider";
 import ReactTimeAgo from 'react-time-ago';
 import { ShareList } from "@/view/components/common/shareButtons";
+import Badge from "@mui/material/Badge";
 
 import {
   QuerySnapshot, DocumentData, Unsubscribe
@@ -124,11 +125,18 @@ class View extends React.Component<{
           {messages.sort((a, b) => a.createdAt.toMillis() - b.createdAt.toMillis()).map((item) => {
             const avatar = () => (
               <ListItemAvatar onClick={() => this.open(item.displayName)}>
-                <Avatar>
-                  <img src={item.photoURL ? item.photoURL.replace("_normal", "") : "noimg"} style={{ width: "100%", height: "100%" }}
-                    alt={item.displayName}
-                    onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(item, false, "normal") || alternativeImg(item.displayName)} />
-                </Avatar>
+                <Badge
+                  color="primary"
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                  }} badgeContent={item.arenaRank}>
+                  <Avatar>
+                    <img src={item.photoURL ? item.photoURL.replace("_normal", "") : "noimg"} style={{ width: "100%", height: "100%" }}
+                      alt={item.displayName}
+                      onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(item, false, "normal") || alternativeImg(item.displayName)} />
+                  </Avatar>
+                </Badge>
               </ListItemAvatar>
             );
             const date = () => <ReactTimeAgo date={item.createdAt.toDate()} locale="en-US" timeStyle="twitter" />;
