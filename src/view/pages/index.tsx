@@ -508,7 +508,7 @@ class ArenaMatch extends React.Component<{ history: any }, { list: any[] }>{
     const fbArena = new fbArenaMatch();
     fbArena.realtime(fbArena.list(), (snapshot) => {
       snapshot.docChanges().forEach((change) => {
-        const matchList = ([] as any[]).concat(this.state.list);
+        let matchList = ([] as any[]).concat(this.state.list);
         if (change.type === "added") {
           matchList.push(change.doc.data());
         }
@@ -522,7 +522,8 @@ class ArenaMatch extends React.Component<{ history: any }, { list: any[] }>{
         }
         if (change.type === "removed") {
           const removed = change.doc.data();
-          matchList.filter((item) => item.matchId !== removed.matchId);
+          console.log(change.doc.data());
+          matchList = matchList.filter((item) => item.matchId !== removed.matchId);
         }
         return this.setState({
           list: matchList.slice(0, 5)

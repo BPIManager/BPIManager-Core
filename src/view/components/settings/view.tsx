@@ -4,7 +4,10 @@ import Typography from '@mui/material/Typography';
 import { injectIntl, FormattedMessage } from 'react-intl';
 import Paper from '@mui/material/Paper';
 import FormControl from '@mui/material/FormControl';
-import { _currentViewComponents, _setCurrentViewComponents, _setShowLatestSongs, _showLatestSongs, _currentQuickAccessComponents, _setQuickAccessComponents, _showRichView, _setShowRichView } from '@/components/settings';
+import {
+  _currentViewComponents, _setCurrentViewComponents, _setShowLatestSongs, _showLatestSongs, _currentQuickAccessComponents,
+  _setQuickAccessComponents, _showRichView, _setShowRichView, _foregroundNotification, _setForegroundNotification
+} from '@/components/settings';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Checkbox from '@mui/material/Checkbox';
@@ -20,6 +23,7 @@ interface S {
   quickAccess: string[],
   showLatestSongs: boolean,
   showRichView: boolean,
+  foregroundNotification: boolean,
 }
 
 interface P {
@@ -37,6 +41,7 @@ class Settings extends React.Component<P, S> {
       quickAccess: _currentQuickAccessComponents().split(","),
       showLatestSongs: _showLatestSongs(),
       showRichView: _showRichView(),
+      foregroundNotification: _foregroundNotification(),
     }
   }
 
@@ -69,7 +74,7 @@ class Settings extends React.Component<P, S> {
   }
 
   render() {
-    const { isLoading, showLatestSongs, showRichView } = this.state;
+    const { isLoading, showLatestSongs, showRichView, foregroundNotification } = this.state;
     if (isLoading) {
       return (<Loader />);
     }
@@ -140,6 +145,21 @@ class Settings extends React.Component<P, S> {
               if (typeof e.target.checked === "boolean") {
                 _setShowRichView(e.target.checked);
                 return this.setState({ showRichView: e.target.checked })
+              }
+            }}
+          />
+          <Typography variant="caption" display="block">
+            プレイ済み楽曲リストにおいて、グラフィカルな楽曲一覧表示を使用します。<br />
+            (補助表示の設定項目は無視されます)
+          </Typography>
+          <Divider style={{ margin: "10px 0" }} />
+          <FormLabel component="legend">フォアグラウンドで ArenaMatch の通知を表示</FormLabel>
+          <Switch
+            checked={foregroundNotification}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>, ) => {
+              if (typeof e.target.checked === "boolean") {
+                _setForegroundNotification(e.target.checked);
+                return this.setState({ foregroundNotification: e.target.checked })
               }
             }}
           />

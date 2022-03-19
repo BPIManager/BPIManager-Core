@@ -49,6 +49,7 @@ import Button from '@mui/material/Button';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import { getMessaging, onMessage } from "firebase/messaging";
 import fb from "@/components/firebase";
+import ArenaMatchWatcher from "@/view/components/arenaMatch/watchDog";
 
 interface navBars {
   to: string,
@@ -422,6 +423,7 @@ class GlobalHeader extends React.Component<{ global: any, classes: any, theme: a
         <main className={classes.content + (window.location.href.match("arena/") ? " arenaDetail" : "")} style={{ width: "100%", marginBottom: "15px" }}>
           {this.props.children}
         </main>
+        <ArenaMatchWatcher/>
         <ShowSnackBar message={"実行中の処理があるため続行できません"} variant="warning"
           handleClose={this.toggleErrorSnack} open={this.state.errorSnack} autoHideDuration={3000} />
       </div>

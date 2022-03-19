@@ -64,6 +64,9 @@ export default class Initialize extends React.Component<{ global: any }, { show:
       if (!localStorage.getItem("showLatestSongs")) {
         localStorage.setItem("showLatestSongs", "true");
       }
+      if (!localStorage.getItem("foregroundNotification")) {
+        localStorage.setItem("foregroundNotification", "true");
+      }
       //this.sinusIridum();
       this.removeDeletedSongs();
       const songsAvailable: string[] = await this.songsDB.getAll();

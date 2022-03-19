@@ -34,9 +34,8 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
               ArenaMatch
             </Typography>
             <Typography variant="caption" style={{ marginTop: 15, textAlign: "center" }}>
-              アリーナ / BPLバトル向け<br/>
-              リアルタイムコミュニケーションツール<br />
-              <Link color="secondary" target="_blank" href="https://docs2.poyashi.me">詳しい使い方はこちら</Link>
+              アリーナ / BPLバトル向けチャットツール<br />
+              <Link color="secondary" target="_blank" href="https://docs2.poyashi.me">使い方はこちら</Link>
             </Typography>
           </div>
         </div>

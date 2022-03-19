@@ -2,7 +2,7 @@ import fb from "../";
 import {
   getFirestore, query,
   setDoc, serverTimestamp, where, doc, orderBy, updateDoc,
-  collection, onSnapshot, limit, deleteDoc, Timestamp
+  collection, onSnapshot, limit, deleteDoc
 } from "firebase/firestore";
 import timeFormatter, { subtract, d_add } from "../../common/timeFormatter";
 import fbActions from "../actions";
@@ -68,19 +68,31 @@ export default class fbArenaMatch {
   detail = (docId: string) => doc(collection(db, "arenaMatchList"), docId);
   listenDetail = (docId: string, func: any) => onSnapshot(this.detail(docId), func);
 
-  list = () => query(collection(db, "arenaMatchList"), where("updatedAt", ">", new Date(timeFormatter(3, subtract(3, "hour")))), orderBy("updatedAt", "desc"));
+  list = () => query(
+    collection(db, "arenaMatchList"),
+    where("updatedAt", ">", new Date(timeFormatter(3, subtract(3, "hour")))),
+    orderBy("updatedAt", "desc")
+  );
+
+  getSelfMatches = (myId: string) => query(
+    collection(db, "arenaMatchList"),
+    where("uid", "==", myId), where("updatedAt", ">", new Date(timeFormatter(3, subtract(3, "hour"))))
+  );
 
   realtime = onSnapshot;
 
-  getMessages = (matchId: string) => query(collection(db, "arenaMatchBody", matchId, "chat"), orderBy("createdAt", "desc"), limit(100));
+  getMessages = (matchId: string) => query(
+    collection(db, "arenaMatchBody", matchId, "chat"),
+    orderBy("createdAt", "desc"), limit(100)
+  );
 
   randChat = async (matchId: string, userData: any) => {
-    const getRand = (r:string[])=> r[Math.floor(Math.random() * r.length)];
+    const getRand = (r: string[]) => r[Math.floor(Math.random() * r.length)];
     const stages = ["2 STAGE", "3 STAGE", "4 STAGE"];
     const levels = ["制限なし", "先鋒戦 LEVEL 8~10", "中堅戦 LEVEL 10~11", "大将戦 LEVEL12"];
     const fumen = ["制限なし", "NOTES", "CHORD", "PEAK", "CHARGE", "SCRATCH", "SOF-LAN"];
 
-    return this.enterChat(matchId,`/rand :\nステージ:${getRand(stages)}\nレベル:${getRand(levels)}\n譜面傾向:${getRand(fumen)}`,userData);
+    return this.enterChat(matchId, `/rand :\nステージ:${getRand(stages)}\nレベル:${getRand(levels)}\n譜面傾向:${getRand(fumen)}`, userData);
   }
 
   enterChat = async (matchId: string, text: string, userData: any) => {

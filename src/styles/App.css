@@ -971,3 +971,7 @@ text.react-calendar-heatmap-weekday-label {
   height: 100vh;
   margin-bottom: 0 !important;
 }
+
+.MuiSnackbarContent-message {
+  width: 100%;
+}

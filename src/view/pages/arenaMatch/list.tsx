@@ -11,12 +11,22 @@ import {
 } from "firebase/firestore";
 import CreateDialog from "@/view/components/arenaMatch/dialogs/create";
 import Button from "@mui/material/Button";
+import FormLabel from '@mui/material/FormLabel';
+import FormControl from '@mui/material/FormControl';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Alert from "@mui/material/Alert";
+import Container from "@mui/material/Container";
+
+const defaultChecks = ["A1", "A2", "A3", "A4", "A5", "B1", "B2", "B3", "B4", "B5"];
 
 interface S {
   isLoading: boolean,
   matchList: any[],
   radarNode: radarData[],
   createDialog: boolean,
+  currentChecks: string[]
 }
 
 class Index extends React.Component<{} & RouteComponentProps, S> {
@@ -29,7 +39,8 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
       isLoading: true,
       matchList: [] as any[],
       radarNode: [],
-      createDialog: false
+      createDialog: false,
+      currentChecks: defaultChecks
     }
   }
 
@@ -42,8 +53,11 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
   }
 
   watch = (snapshot: QuerySnapshot<DocumentData>) => {
+    if(snapshot.empty){
+      this.setState({ isLoading: false });
+    }
     snapshot.docChanges().forEach((change) => {
-      const matchList = ([] as any[]).concat(this.state.matchList);
+      let matchList = ([] as any[]).concat(this.state.matchList);
       if (change.type === "added") {
         matchList.push(change.doc.data());
       }
@@ -57,7 +71,7 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
       }
       if (change.type === "removed") {
         const removed = change.doc.data();
-        matchList.filter((item) => item.matchId !== removed.matchId);
+        matchList = matchList.filter((item) => item.matchId !== removed.matchId);
       }
       return this.setState({ matchList: matchList });
     });
@@ -79,10 +93,24 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
     }
   }
 
-  uid = () => new fbActions().authInfo()?.uid;
+  handleChange = (target: string, _event: React.ChangeEvent<HTMLInputElement>) => {
+    const { currentChecks } = this.state;
+    if (currentChecks.indexOf(target) > -1) {
+      this.setState({ currentChecks: currentChecks.filter((item) => item !== target) });
+    } else {
+      this.setState({ currentChecks: currentChecks.concat(target) });
+    }
+  }
+
+  reverseChecks = () => {
+    const { currentChecks } = this.state;
+    this.setState({ currentChecks: defaultChecks.filter(item => currentChecks.indexOf(item) === -1) });
+  }
+
+  uid = () => new fbActions().authInfo() ?.uid;
 
   render() {
-    const { isLoading, createDialog, matchList, radarNode } = this.state;
+    const { isLoading, createDialog, matchList, radarNode, currentChecks } = this.state;
     const alreadyOwns = this.isAvailableMyMatch();
     if (isLoading) {
       return (<Loader />);
@@ -92,11 +120,17 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
     }
     return (
       <React.Fragment>
-        {!this.uid() && <Button fullWidth style={style} color="secondary" variant="outlined" onClick={()=>this.props.history.push("/sync/settings")}>ルームの作成にはログインが必要です</Button>}
+        {!this.uid() && <Button fullWidth style={style} color="secondary" variant="outlined" onClick={() => this.props.history.push("/sync/settings")}>ルームの作成にはログインが必要です</Button>}
         {(this.uid() && alreadyOwns) && <Button fullWidth style={style} color="secondary" variant="outlined" onClick={this.openMyMatch}>自分のルームを表示</Button>}
         {(this.uid() && !alreadyOwns) && <Button fullWidth style={style} color="secondary" variant="outlined" onClick={this.openCreateDialog}>新しいルームを作成</Button>}
+        <Filter currentChecks={currentChecks} reverse={this.reverseChecks} handleChange={this.handleChange} />
+        {matchList.filter((item) => currentChecks.indexOf(item.arenaRank) > -1).length === 0 && (
+          <Container>
+
+          </Container>
+        )}
         <List>
-          {matchList.map((item: any) => {
+          {matchList.filter((item) => currentChecks.indexOf(item.arenaRank) > -1).map((item: any) => {
             return (
               <UserCard history={this.props.history} key={item.uid} radarNode={radarNode} open={() => null} item={item} processing={false} />
             )
@@ -104,6 +138,33 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
         </List>
         {createDialog && <CreateDialog toggle={this.openCreateDialog} />}
       </React.Fragment>
+    );
+  }
+}
+
+class Filter extends React.Component<{
+  currentChecks: string[],
+  handleChange: (item: string, e: React.ChangeEvent<HTMLInputElement>) => void,
+  reverse: () => void
+}, {}>{
+  render() {
+    return (
+      <Alert icon={false} severity="info" variant="outlined" style={{ margin: 15 }}>
+        <FormControl component="fieldset" fullWidth>
+          <FormLabel component="legend">ルームのランクを選択 / <span onClick={this.props.reverse} style={{ textDecoration: "underline" }}>状態反転</span></FormLabel>
+          <FormGroup row={true} style={{ justifyContent: "space-around" }}>
+            {defaultChecks.map((item) => (
+              <FormControlLabel
+                key={item}
+                control={
+                  <Checkbox checked={this.props.currentChecks.indexOf(item) > -1} onChange={(e) => this.props.handleChange(item, e)} name={item} />
+                }
+                label={item}
+              />
+            ))}
+          </FormGroup>
+        </FormControl>
+      </Alert>
     );
   }
 }
