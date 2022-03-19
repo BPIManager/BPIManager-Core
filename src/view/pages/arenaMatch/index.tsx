@@ -35,7 +35,7 @@ class Index extends React.Component<{} & RouteComponentProps, S> {
             </Typography>
             <Typography variant="caption" style={{ marginTop: 15, textAlign: "center" }}>
               アリーナ / BPLバトル向けチャットツール<br />
-              <Link color="secondary" target="_blank" href="https://docs2.poyashi.me">使い方はこちら</Link>
+              <Link color="secondary" target="_blank" href="https://docs2.poyashi.me/docs/social/match/">使い方はこちら</Link>
             </Typography>
           </div>
         </div>
