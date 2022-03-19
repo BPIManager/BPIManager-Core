@@ -61,7 +61,7 @@ class ArenaMatchWatcher extends React.Component<RouteComponentProps, {
   watchMessage = (snapshot: QuerySnapshot<DocumentData>) => {
     //初回ロード時はメッセージを通知しない
     const self = this;
-    //if (self.state.loaded === 0) return self.setState({ loaded: 1 });
+    if (self.state.loaded === 0) return self.setState({ loaded: 1 });
     snapshot.docChanges().forEach((change) => {
       const m = change.doc.data({ serverTimestamps: "estimate" });
       if (window.location.href.indexOf(m.matchId) > 0) return;
