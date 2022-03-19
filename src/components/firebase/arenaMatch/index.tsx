@@ -157,7 +157,6 @@ export default class fbArenaMatch {
 
   deleteRoom = async (matchId: string) => {
     await deleteDoc(doc(collection(db, "arenaMatchList"), matchId));
-    await deleteDoc(doc(collection(db, "arenaMatchBody"), matchId));
     await deleteDoc(doc(collection(db, "arenaMatchNotify"), matchId));
     return true;
   }
