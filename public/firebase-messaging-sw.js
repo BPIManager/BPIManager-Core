@@ -4,7 +4,7 @@ importScripts('https://www.gstatic.com/firebasejs/7.14.4/firebase-messaging.js')
 
 if (firebase.messaging.isSupported()) {
   console.log("FCM Available, service-worker is enabled.")
-  firebase.initializeApp({
+  const firebaseApp = firebase.initializeApp({
     apiKey: "AIzaSyAIlzzxI0kZtIe4vvjSIiRwfqSQVZtbluM",
     authDomain: "bpimv2.firebaseapp.com",
     projectId: "bpimv2",
@@ -13,7 +13,7 @@ if (firebase.messaging.isSupported()) {
     appId: "1:199747072203:web:79b7545a4e426763b5ab4e",
     measurementId: "G-4V5QE3YXF9"
   });
-  const messaging = firebase.messaging();
+  const messaging = firebase.messaging(firebaseApp);
 
   messaging.setBackgroundMessageHandler(function(payload) {
     console.log('[FCMv1] Received background message ', payload);

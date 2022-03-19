@@ -13,6 +13,8 @@ import Rivals from "../view/pages/rivals";
 import User from "../view/pages/user";
 import AAATable from "../view/pages/AAATable";
 import Shared from "../view/pages/shared";
+import ArenaMatchIndex from "../view/pages/arenaMatch";
+import ArenaMatchDetail from "../view/pages/arenaMatch/detail";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 
@@ -32,9 +34,6 @@ import RivalChallengeLetters from '../view/components/rivals/rivalChallengeLette
 import Note from '@/view/pages/note';
 import NoteIndv from '@/view/pages/noteIndv';
 import HelpNotes from '@/view/pages/helpNotes';
-import RankingSearch from '@/view/pages/ranking/search';
-import WeeklyOnGoing from '@/view/pages/ranking/ongoing';
-import WeeklyList from '@/view/pages/ranking/list';
 import HelpWR from '@/view/pages/helpWR';
 import Camera from '@/view/pages/camera/camera';
 import RedirectMyProfile from '@/view/pages/myprofile';
@@ -85,11 +84,9 @@ class Router extends React.Component<{ global: any }, {}> {
                     <Route path="/notes" exact component={Note} />
                     <Route path="/history/:date?" exact component={History} />
                     <Route path="/notes/:title/:diff/:single" exact component={NoteIndv} />
-                    <Route path="/ranking/" exact component={RankingSearch} />
-                    <Route path="/ranking/id/:id" exact component={WeeklyOnGoing} />
-                    <Route path="/ranking/ongoing" exact component={WeeklyOnGoing} />
-                    <Route path="/ranking/list/:uid" exact component={WeeklyList} />
                     <Route path="/camera" exact component={Camera} />
+                    <Route path="/arena" exact component={ArenaMatchIndex} />
+                    <Route path="/arena/:docId" exact component={ArenaMatchDetail} />
                     <Route path="*"><NoMatch /></Route>
                   </Switch>
                 </AppBar>

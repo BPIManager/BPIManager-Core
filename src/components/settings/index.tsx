@@ -122,6 +122,14 @@ export const _setShowRichView = (newState: boolean) => {
   return localStorage.setItem("showRichView", String(newState));
 }
 
+export const _setForegroundNotification = (newState: boolean) => {
+  return localStorage.setItem("foregroundNotification", String(newState));
+}
+
+export const _foregroundNotification = () => {
+  return localStorage.getItem("foregroundNotification") === "true";
+}
+
 export const _chartColor = () => {
   const c = _currentTheme();
   if (c === "dark" || c === "deepsea") {

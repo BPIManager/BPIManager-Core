@@ -664,8 +664,8 @@ text.react-calendar-heatmap-weekday-label {
   position: relative;
 }
 
-.TypographywithIconAndLinesInner{
-  display:inline-block;
+.TypographywithIconAndLinesInner {
+  display: inline-block;
   position: relative;
 }
 
@@ -676,11 +676,19 @@ text.react-calendar-heatmap-weekday-label {
   padding-right: 15px;
 }
 
-#__dark .TypographywithIconAndLines{ background-color:#0a0a0a;}
-#__deepsea .TypographywithIconAndLines{ background-color:#000d19;}
-#__light .TypographywithIconAndLines{ background-color:#fff;}
+#__dark .TypographywithIconAndLines {
+  background-color: #0a0a0a;
+}
 
-.IndexGrids{
+#__deepsea .TypographywithIconAndLines {
+  background-color: #000d19;
+}
+
+#__light .TypographywithIconAndLines {
+  background-color: #fff;
+}
+
+.IndexGrids {
   text-align: right;
 }
 
@@ -946,13 +954,24 @@ text.react-calendar-heatmap-weekday-label {
   margin-right: 7px !important;
 }
 
-.footer{
-   margin-top: 25px;
-   font-size: 8px;
-   text-align:right;
-   display:block;
+.footer {
+  margin-top: 25px;
+  font-size: 8px;
+  text-align: right;
+  display: block;
 }
 
-@media screen and (max-width:468px){
-  .footer{text-align:left;}
+@media screen and (max-width:468px) {
+  .footer {
+    text-align: left;
+  }
+}
+
+.arenaDetail {
+  height: 100vh;
+  margin-bottom: 0 !important;
+}
+
+.MuiSnackbarContent-message {
+  width: 100%;
 }

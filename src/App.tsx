@@ -12,6 +12,10 @@ import GlobalContainer from './components/context/global';
 import fb from "@/components/firebase";
 import { isSupported, getToken, getMessaging, onMessage } from 'firebase/messaging';
 import { pubkey, messanger } from './components/firebase/message';
+import TimeAgo from 'javascript-time-ago'
+import en from 'javascript-time-ago/locale/en.json'
+
+TimeAgo.addDefaultLocale(en)
 
 
 declare module '@mui/styles/defaultTheme' {
