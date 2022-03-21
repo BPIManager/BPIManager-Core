@@ -68,7 +68,7 @@ export default class fbArenaMatch {
   getLatency = async () => {
     try {
       const sendTime = new Date().getTime();
-      const f = await fetch("http://worldtimeapi.org/api/timezone/Asia/Tokyo");
+      const f = await fetch("https://worldtimeapi.org/api/timezone/Asia/Tokyo");
       const timeobj = await f.json();
       const endTime = new Date().getTime();
       const fixedTime = parseInt(String(timeobj.unixtime * 1000 + (endTime - sendTime) / 2), 10);

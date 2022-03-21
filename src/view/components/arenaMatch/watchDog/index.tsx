@@ -42,14 +42,15 @@ class ArenaMatchWatcher extends React.Component<RouteComponentProps, {
   watchList = (snapshot: QuerySnapshot<DocumentData>) => {
     const { list } = this.state;
     const self = this;
+    let l:any[] = ([] as any[]).concat(list);
     snapshot.docChanges().forEach((change) => {
       const f = new fbArenaMatch();
       if (change.type === "added") {
         const data = change.doc.data({ serverTimestamps: "estimate" });
-        list.push(data);
+        l.push(data);
       } else if (change.type === "removed") {
         const removed = change.doc.data();
-        list.filter((item) => item.matchId !== removed.matchId);
+        l = list.filter((item) => item.matchId !== removed.matchId);
       }
       self.setState({ list: list });
       for (let i = 0; i < list.length; ++i) {
