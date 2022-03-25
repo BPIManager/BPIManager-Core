@@ -37,7 +37,6 @@
     "javascript-time-ago": "^2.3.13",
     "jdenticon": "^3.1.1",
     "jssha": "^3.2.0",
-    "lodash": "^4.17.21",
     "platform": "^1.3.6",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
@@ -64,7 +63,8 @@
   "devDependencies": {
     "cross-env": "^7.0.3",
     "gh-pages": "^3.2.3",
-    "react-app-rewired": "^2.1.8"
+    "react-app-rewired": "^2.1.8",
+    "webpack-bundle-analyzer": "^4.5.0"
   },
   "scripts": {
     "start": "git rev-parse --short HEAD > ./public/assets/version.txt && react-app-rewired start",
@@ -72,7 +72,8 @@
     "test": "react-app-rewired test ",
     "eject": "react-app-rewired eject ",
     "deploy": "npm run build&&gh-pages -d build ",
-    "dpl": "dploy deploy"
+    "dpl": "dploy deploy",
+    "analyze": "webpack-bundle-analyzer build/bundle-stats.json"
   },
   "eslintConfig": {
     "extends": "react-app"

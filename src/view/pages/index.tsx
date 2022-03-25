@@ -477,7 +477,7 @@ class RecentUsers extends React.Component<{ history: any }, { loading: boolean, 
                           onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(item) || alternativeImg(item.displayName)} />
                       </Avatar>
                     </ListItemAvatar>
-                    <ListItemText primary={item.displayName} secondary={item.arenaRank + " / 総合BPI:" + item.totalBPI + " / " + updatedTime(item.updatedAt)} />
+                    <ListItemText primary={item.displayName} secondary={item.arenaRank + " / 総合BPI:" + item.totalBPI} />
                   </ListItem>
                 ))}
               </List>
