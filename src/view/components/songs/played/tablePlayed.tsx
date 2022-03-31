@@ -103,7 +103,9 @@ export default class SongsTable extends React.Component<Readonly<P>, S>{
               {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row: scoreData, i: number) => {
                 const prefix = _prefix(row.difficulty);
                 const f = this.props.allSongsData.get(row.title + prefix);
-                if (!f) { return (null); }
+                if (!f) {
+                  return (null);
+                }
                 const max = f["notes"] * 2;
                 return (
                   <TableRow

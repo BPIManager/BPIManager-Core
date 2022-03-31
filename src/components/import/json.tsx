@@ -42,7 +42,7 @@ export default class importJSON {
             difficultyLevel: "-",
             exScore: Number(p.score),
             missCount: NaN,
-            clearState: p.clear,
+            clearState: Number(p.clear),
             lastScore: -1,
             storedAt: self.currentStore,
             isSingle: self.isSingle,

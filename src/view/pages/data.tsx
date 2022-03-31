@@ -92,6 +92,23 @@ class Index extends React.Component<P & RouteComponentProps, {
     } else {
       this.setState({ isLoading: false });
     }
+    if ((this.props.match.params as any).docId) {
+      this.setState({
+        isSaving: true
+      })
+      await this.loadTempItems();
+    }
+  }
+
+  loadTempItems = async () => {
+    const tempId = (this.props.match.params as any).docId || "";
+    const res = await (await fetch("https://proxy.poyashi.me/bpim/api/v1/bookmarklet/get?tempId=" + tempId)).json();
+    if (res.body) {
+      this.setState({
+        raw: JSON.stringify(res.body)
+      });
+      await this.execute();
+    }
   }
 
   isJSON = (arg: any) => {
@@ -274,6 +291,7 @@ class Index extends React.Component<P & RouteComponentProps, {
                 </Typography>
                 <TextField
                   onChange={this.onChangeText}
+                  disabled={isSaving}
                   value={this.state.raw}
                   style={{ width: "100%" }}
                   margin="dense"
@@ -385,25 +403,23 @@ class Navigation extends React.Component<{}, { open: boolean }>{
             <Typography variant="caption" component="p">
               2.<Link color="secondary" href="https://p.eagate.573.jp/game/2dx/27/top/index.html" target="_blank" rel="noopener noreferrer">IIDX公式サイト</Link>
               を開きます。
-          </Typography>
+            </Typography>
             <Typography variant="caption" component="p">
               3.登録したブックマークレットを実行します。
-          </Typography>
-            <img src="https://files.poyashi.me/bpim/sample_completed.jpg" alt="完了画面" style={{ display: "block", margin: "10px auto", width: "350px", maxWidth: "100%", border: "1px solid #ccc" }} />
+            </Typography>
             <Typography variant="caption" component="p">
-              4.処理が完了したら、テキストボックスが画面に表示されますので、その中のテキストをコピーします。
-          </Typography>
-            <Typography variant="caption" component="p">6.下の「取り込み実行」ボタンをクリックします。</Typography>
-            <Alert severity="warning">
+              4.処理が完了したら自動的に BPIManager へ遷移しデータがインポートされます。
+            </Typography>
+            <Alert severity="warning" style={{marginTop:"5px"}}>
               <AlertTitle>
                 注意事項
-            </AlertTitle>
+              </AlertTitle>
               <Typography variant="caption" component="p">
-                IIDX公式サイトの仕様変更によりブックマークレットが機能しなくなるかもしれません。その場合はお問い合わせください。<br />
-                ブックマークレットにより更新できる情報はEXスコアとクリアランプのみです。ミスカウントなどは集計されません。<br />
-                更新日時は最終プレイ日時ではなく、取り込み日時となります。<br />
-                ブックマークレットは現段階ではSPのみ対応しています。
-            </Typography>
+              IIDX公式サイトの仕様変更によりブックマークレットが機能しなくなるかもしれません。その場合はお問い合わせください。<br />
+              ブックマークレットにより更新できる情報はEXスコアとクリアランプのみです。ミスカウントなどは集計されません。<br />
+              更新日時は最終プレイ日時ではなく、取り込み日時となります。<br />
+              ブックマークレットは現段階ではSPのみ対応しています。
+              </Typography>
             </Alert>
           </div>
         )}

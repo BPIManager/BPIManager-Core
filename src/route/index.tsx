@@ -63,7 +63,7 @@ class Router extends React.Component<{ global: any }, {}> {
                 <AppBar global={global}>
                   <Switch>
                     <Route path="/" exact render={_props => <Index global={global} />} />
-                    <Route path="/data" exact render={_props => <Data global={global} updateGlobal={this.globalUpdateScore} />} />
+                    <Route path="/data/:docId?" exact render={_props => <Data global={global} updateGlobal={this.globalUpdateScore} />} />
                     <Route path="/songs/:today?" exact component={Songs} />
                     <Route path="/lists" exact component={Lists} />
                     <Route path="/lists/:listTitle" exact component={ListsBody} />

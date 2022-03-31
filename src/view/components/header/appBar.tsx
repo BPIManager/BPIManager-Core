@@ -353,8 +353,8 @@ class GlobalHeader extends React.Component<{ global: any, classes: any, theme: a
         <AppBar className={window.location.href.split('/').pop() === "" ? "appBarIndex " + classes.appBar + " apbar" : classes.appBar + " apbar"}>
           <Toolbar>
             <Typography variant="h6" style={{ flexGrow: 1 }}>
-              {(page.length === 2 || page[1] === "lists" || page[1] === "notes" || page[1] === "songs" || page[1] === "sync" || page[1] === "arena" || page[1] === "history") && <FormattedMessage id={currentPage()} />}
-              {(page.length > 2 && page[1] !== "lists" && page[1] !== "notes" && page[1] !== "songs" && page[1] !== "sync" && page[1] !== "arena" && page[1] !== "history") && currentPage()}
+              {(page.length === 2 || page[1] === "lists" || page[1] === "notes" || page[1] === "songs" || page[1] === "sync" || page[1] === "arena" || page[1] === "history" || page[1] === "data") && <FormattedMessage id={currentPage()} />}
+              {(page.length > 2 && page[1] !== "lists" && page[1] !== "notes" && page[1] !== "songs" && page[1] !== "sync" && page[1] !== "arena" && page[1] !== "history" && page[1] !== "data") && currentPage()}
             </Typography>
             {user && (
               <IconButton
