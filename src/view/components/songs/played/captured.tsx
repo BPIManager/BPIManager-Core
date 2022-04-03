@@ -93,7 +93,9 @@ class Captured extends React.Component<P, S> {
       const lastWeek = await this.getLastWeek();
       const updates = await this.getUpdatesToday();
       const rankPer = this.getRankPer(rank);
-      const profileURL = this.state.userName ? config.baseUrl + "/r/u/" + this.state.userName : "";
+      const user = JSON.parse(localStorage.getItem("social") || "{}");
+      const userName = (user && user.displayName) ? user.displayName : "";
+      const profileURL = userName ? config.baseUrl + "/r/u/" + userName : "";
 
       const image = new File([blob], 'tmp.png', { type: 'image/png' });
       navigator.share({
