@@ -30,6 +30,9 @@ interface S {
 
 class Captured extends React.Component<P, S> {
 
+  private stat: statMain = new statMain(12);
+  private bpi: bpiCalcuator = new bpiCalcuator();
+
   constructor(props: P) {
     super(props);
     this.state = {
@@ -43,6 +46,7 @@ class Captured extends React.Component<P, S> {
   }
 
   async componentDidMount() {
+    await this.stat.load();
     this.captureUpdates();
   }
 
@@ -61,6 +65,12 @@ class Captured extends React.Component<P, S> {
     html2canvas(target, { scale: 2, width: target.clientWidth, height: target.clientHeight }).then(canvas => {
       const targetImgUri = canvas;
       document.documentElement.classList.remove("hide-scrollbar");
+
+      if (this.isMobile()) {
+        //Android or iPhone の場合はネイティブAPIを利用
+        this.setState({ capturing: false });
+        return this.shareWithNativeAPI(targetImgUri);
+      }
       this.setState({ capturing: false, completed: true, result: targetImgUri, token: token, userName: (user && user.displayName) ? user.displayName : "" });
     });
   }
@@ -70,6 +80,32 @@ class Captured extends React.Component<P, S> {
       saveAsImage(this.state.result.toDataURL("image/jpeg"));
       this.props.close();
     }
+  }
+
+  shareWithNativeAPI = (targetImgUri: HTMLCanvasElement | null) => {
+    if (!targetImgUri) return alert("Error");
+    targetImgUri.toBlob(async (blob) => {
+      if (!blob) return alert("An error occured while converting image into blob!");
+
+      const totalBPI = await this.bpi.setSongs(this.stat.at());
+      const rank = this.bpi.rank(totalBPI, false);
+      const lastDay = await this.getLastDay();
+      const lastWeek = await this.getLastWeek();
+      const updates = await this.getUpdatesToday();
+      const rankPer = this.getRankPer(rank);
+      const profileURL = this.state.userName ? config.baseUrl + "/r/u/" + this.state.userName : "";
+
+      const image = new File([blob], 'tmp.png', { type: 'image/png' });
+      navigator.share({
+        text: `本日のスコア更新数：${updates.length || 0}件\n` +
+          `総合BPI:${totalBPI}(前日比:${showBpiDist(totalBPI, lastDay)},前週比:${showBpiDist(totalBPI, lastWeek)})\n推定順位:${rank}位,皆伝上位${rankPer}％\n#BPIM`,
+        url: profileURL,
+        files: [image]
+      }).catch((error) => {
+        console.log(error)
+      })
+    })
+    return;
   }
 
   fetcher = async (endpoint: string, data: string) => {
@@ -90,36 +126,22 @@ class Captured extends React.Component<P, S> {
 
   isMobile = () => navigator.userAgent.match(/iPhone|Android.+Mobile/)
 
+  getUpdatesToday = () => new statMain(12).load().then(s => s.updatedAtToday());
+  getLastDay = () => this.stat.eachDaySum(4, dayjs().subtract(1, 'day').format());
+  getLastWeek = () => this.stat.eachDaySum(4, dayjs().subtract(1, 'week').format());
+  getRankPer = (rank: number) => Math.round(rank / this.bpi.getTotalKaidens() * 1000000) / 10000;
+
   upload = async () => {
     if (!this.state.result) {
       return;
     }
-    const bpi = new bpiCalcuator();
-    const statsAPI = await new statMain(12).load();
-    const totalBPI = await bpi.setSongs(statsAPI.at());
-    const lastDay = await statsAPI.eachDaySum(4, dayjs().subtract(1, 'day').format());
-    const lastWeek = await statsAPI.eachDaySum(4, dayjs().subtract(1, 'week').format());
-    const rank = bpi.rank(totalBPI, false);
-    const rankPer = Math.round(rank / bpi.getTotalKaidens() * 1000000) / 10000;
+    const totalBPI = await this.bpi.setSongs(this.stat.at());
+    const rank = this.bpi.rank(totalBPI, false);
+    const lastDay = await this.getLastDay();
+    const lastWeek = await this.getLastWeek();
+    const updates = await this.getUpdatesToday();
+    const rankPer = this.getRankPer(rank);
     const profileURL = this.state.userName ? config.baseUrl + "/r/u/" + this.state.userName : "";
-    const updates = await statsAPI.updatedAtToday();
-
-    if (this.isMobile()) {
-      //Android or iPhone の場合はネイティブAPIを利用
-      this.state.result.toBlob((blob) => {
-        if (!blob) return alert("An error occured while converting image into blob!");
-        const image = new File([blob], 'tmp.png', { type: 'image/png' });
-        navigator.share({
-          text: `本日のスコア更新数：${updates.length || 0}件\n` +
-            `総合BPI:${totalBPI}(前日比:${showBpiDist(totalBPI, lastDay)},前週比:${showBpiDist(totalBPI, lastWeek)})\n推定順位:${rank}位,皆伝上位${rankPer}％\n#BPIM`,
-          url: profileURL,
-          files: [image]
-        }).catch((error) => {
-          console.log(error)
-        })
-      })
-      return this.modalClose();
-    }
 
     this.setState({ uploading: true });
     const t = await this.fetcher("tweet/upload", this.state.result.toDataURL("image/jpeg").replace("data:image/jpeg;base64,", ""));
@@ -143,6 +165,7 @@ class Captured extends React.Component<P, S> {
 
   modalClose = () => {
     //アニメーション表示のため
+    if (this.state.uploading) return;
     this.setState({ completed: false });
     setTimeout(() => {
       this.props.close();
