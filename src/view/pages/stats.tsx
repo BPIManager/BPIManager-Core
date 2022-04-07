@@ -1,6 +1,5 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Container from '@mui/material/Container';
-import { injectIntl } from 'react-intl';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
@@ -10,50 +9,34 @@ import Radar from "@/view/components/stats/radar";
 import Shift from '@/view/components/stats/shift';
 import { AppBar } from '@mui/material';
 
-interface S {
-  currentTab: number
+const Stats: React.FC = () => {
+  const [currentTab, setCurrentTab] = useState<number>(0);
+  return (
+    <React.Fragment>
+      <AppBar position="static" className="subAppBar">
+        <Tabs
+          value={currentTab}
+          onChange={(_event: React.ChangeEvent<{}>, newValue: number) => setCurrentTab(newValue)}
+          indicatorColor="secondary"
+          variant="scrollable"
+          scrollButtons
+          textColor="secondary"
+          allowScrollButtonsMobile>
+          <Tab label="基本" />
+          <Tab label="レーダー" />
+          <Tab label="推移" />
+          <Tab label="自己歴代" />
+        </Tabs>
+      </AppBar>
+      <Container fixed className="commonLayout" id="stat">
+        {currentTab === 0 && <Main />}
+        {currentTab === 1 && <Radar />}
+        {currentTab === 2 && <Shift />}
+        {currentTab === 3 && <MyBest />}
+      </Container>
+    </React.Fragment >
+  );
+
 }
 
-class Stats extends React.Component<{ intl: any }, S> {
-
-  constructor(props: { intl: any }) {
-    super(props);
-    this.state = {
-      currentTab: 0,
-    }
-  }
-
-  handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {
-    this.setState({ currentTab: newValue });
-  };
-
-  render() {
-    return (
-      <React.Fragment>
-        <AppBar position="static" className="subAppBar">
-          <Tabs
-            value={this.state.currentTab}
-            onChange={this.handleChange}
-            indicatorColor="secondary"
-            variant="scrollable"
-            scrollButtons
-            textColor="secondary"
-            allowScrollButtonsMobile>
-            <Tab label="基本" />
-            <Tab label="レーダー" />
-            <Tab label="推移" />
-            <Tab label="自己歴代" />
-          </Tabs>
-        </AppBar>
-        <Container fixed className="commonLayout" id="stat">
-          {this.state.currentTab === 0 && <Main />}
-          {this.state.currentTab === 1 && <Radar />}
-          {this.state.currentTab === 2 && <Shift />}
-          {this.state.currentTab === 3 && <MyBest />}
-        </Container>
-      </React.Fragment>
-    );
-  }
-}
-
-export default injectIntl(Stats);
+export default Stats;
