@@ -18,11 +18,10 @@ const Settings: React.FC<{ intl: any, global: any } & RouteComponentProps> = (pr
   }
 
   useEffect(() => {
-
     const search = new URLSearchParams(props.location.search);
     const tab = Number(search.get("tab"));
     setCurrentTab(tab || 0);
-  }, []);
+  }, [props.location.search]);
 
   return (
     <React.Fragment>

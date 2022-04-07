@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { scoresDB, songsDB } from '@/components/indexedDB';
 import { songData } from '@/types/data';
 import { difficultyDiscriminator } from '@/components/songs/filter';
@@ -9,7 +9,7 @@ import AdsCard from '@/components/ad';
 
 const NotPlayed: React.FC = () => {
   const [full, setFull] = useState<songData[]>([]);
-  const updateScoreData = async (whenUpdated: boolean = false, willDeleteItem?: { title: string, difficulty: string }) => {
+  const updateScoreData = useCallback(async (whenUpdated: boolean = false, willDeleteItem?: { title: string, difficulty: string }) => {
     if (whenUpdated && willDeleteItem) {
       setFull(full.filter((item: songData) => {
         if (item.title !== willDeleteItem.title) {
@@ -38,11 +38,11 @@ const NotPlayed: React.FC = () => {
       }
     }
     setFull(newFull);
-  }
-
+  },[full]);
 
   useEffect(() => {
     updateScoreData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (full.length === 0) {

@@ -6,10 +6,10 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 const RedirectMyProfile: React.FC<RouteComponentProps> = props => {
   useEffect(() => {
     new fbActions().auth().onAuthStateChanged((user: any) => {
-      console.log(user);
       props.history.push("/u/_/" + user.uid);
     });
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (<Loader hasMargin text="読み込んでいます。お待ち下さい..." />);
 }
 

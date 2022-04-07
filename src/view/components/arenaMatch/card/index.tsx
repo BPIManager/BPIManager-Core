@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { alternativeImg, arenaRankColor, bgColorByBPI } from "@/components/common";
 import Avatar from "@mui/material/Avatar";
 import Chip from "@mui/material/Chip";
@@ -22,7 +22,7 @@ const UserCard: React.FC<{
 }> = props => {
   const [radar, setRadar] = useState<radarData[]>([]);
 
-  const concatRadar = () => {
+  const concatRadar = useCallback(() => {
     const { item, radarNode } = props;
     if (!radarNode || !item.admin) return [];
     const node = radarNode.slice().map((row) => Object.assign({}, row));
@@ -37,10 +37,11 @@ const UserCard: React.FC<{
       res.push(node[i]);
     }
     return setRadar(res);
-  }
+  }, [props]);
 
   useEffect(() => {
     concatRadar();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const { item } = props;

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Container from '@mui/material/Container';
 import { historyDataWithLastScore } from '@/types/history';
 import FormControl from '@mui/material/FormControl';
@@ -17,261 +17,229 @@ import { scoreHistoryDB } from '@/components/indexedDB';
 import timeFormatter from '@/components/common/timeFormatter';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 
-export interface IDays {key:string,num:number}
+export interface IDays { key: string, num: number }
 
-interface S {
-  isLoading:boolean,
-  filtered:historyDataWithLastScore[],
-  days:IDays[],
-  currentDate:string,
-  page:number,
-  showNumber:number,
-}
+const History: React.FC<RouteComponentProps> = props => {
 
-class History extends React.Component<RouteComponentProps,S> {
+  const hist: HistoryDataReceiver = useMemo(()=>new HistoryDataReceiver(),[]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [filtered, setFiltered] = useState<historyDataWithLastScore[]>([]);
+  const [days, setDays] = useState<IDays[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [currentDate, setCurrentDate] = useState<string>("すべて");
 
-  private hist:HistoryDataReceiver = new HistoryDataReceiver();
+  const initialLoading = useCallback(async () => {
+    (await hist.load()).generate();
+    const days = hist.getUpdateDays();
+    const p = (props.match.params as any).date;
 
-  constructor(props:RouteComponentProps){
-    super(props);
-    this.state ={
-      isLoading:true,
-      filtered:[],
-      days:[],
-      page:1,
-      showNumber:10,
-      currentDate:"すべて"
-    }
-  }
-
-  async componentDidMount(){
-    (await this.hist.load()).generate();
-    const days = this.hist.getUpdateDays();
-    const p = (this.props.match.params as any).date;
-
-    let date = p ? timeFormatter(7,p) :  "すべて";
-    let data = this.hist.setDate(date).getData();
-    if(date !== "すべて" && data.length === 0 ){
-      data = this.hist.getResult();
+    let date = p ? timeFormatter(7, p) : "すべて";
+    let data = hist.setDate(date).getData();
+    if (date !== "すべて" && data.length === 0) {
+      data = hist.getResult();
       date = "すべて";
     }
-    this.setState({
-      isLoading:false,
-      filtered:data,
-      days: days,
-      currentDate:date
-    })
-  }
+    setIsLoading(false);
+    setFiltered(data);
+    setDays(days);
+    setCurrentDate(date);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  changeDate = (input:SelectChangeEvent<string>)=>{
+  const changeDate = async (input: SelectChangeEvent<string>) => {
     const date = input.target.value as string;
-    return this.setState({
-      currentDate:date,
-      page:1,
-      filtered:this.hist.setDate(date).getData()
-    });
+    setCurrentDate(date);
+    setPage(1);
+    setFiltered(hist.setDate(date).getData());
+    return;
   }
 
-  changePage = (_e:Object,p:number)=> this.setState({page:p});
+  const changePage = (_e: Object, p: number) => setPage(p);
+  const showNumber = 10;
 
-  render(){
-    const {isLoading,filtered,days,currentDate,page,showNumber} = this.state;
-    if(isLoading) return (<Loader/>)
-    return (
-      <Container fixed  className="commonLayout" id="stat">
-        <DateSelector days={days} currentDate={currentDate} handleChange={this.changeDate}/>
-        <Pagination count={Math.ceil(filtered.length / showNumber)} page={page} color="secondary" onChange={this.changePage} style={{marginBottom:"15px"}} />
-          {filtered.slice((page - 1) * 10, page * 10 ).map((item:historyDataWithLastScore,i:number)=> (
-              <React.Fragment key={item.title + item.difficulty + i}>
-                <HistoryView item={item}/>
-              </React.Fragment>
-            )
-          )}
-        <Pagination count={Math.ceil(filtered.length / showNumber)} page={page} color="secondary" onChange={this.changePage} />
-      </Container>
-    );
-  }
+  useEffect(() => {
+    initialLoading();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (isLoading) return (<Loader />)
+  return (
+    <Container fixed className="commonLayout" id="stat">
+      <DateSelector days={days} currentDate={currentDate} handleChange={changeDate} />
+      <Pagination count={Math.ceil(filtered.length / showNumber)} page={page} color="secondary" onChange={changePage} style={{ marginBottom: "15px" }} />
+      {filtered.slice((page - 1) * 10, page * 10).map((item: historyDataWithLastScore, i: number) => (
+        <HistoryView item={item} key={item.title + item.difficulty + i} />
+      ))}
+      <Pagination count={Math.ceil(filtered.length / showNumber)} page={page} color="secondary" onChange={changePage} />
+    </Container>
+  );
 }
 
 
-interface IDateSelector {days:IDays[],currentDate:string,handleChange:(input:SelectChangeEvent<string>)=>void}
-class DateSelector extends React.Component<IDateSelector>{
+interface IDateSelector { days: IDays[], currentDate: string, handleChange: (input: SelectChangeEvent<string>) => void }
 
-  getAllCount = ()=> this.props.days.reduce((sum:number,item:IDays)=> sum += item.num,0);
+const DateSelector: React.FC<IDateSelector> = props => {
 
-  render(){
-    return (
-      <FormControl fullWidth style={{marginBottom:"15px"}}>
-        <InputLabel>
-          更新日
-        </InputLabel>
-        <Select
-          value={this.props.currentDate}
-          onChange={this.props.handleChange}
-          displayEmpty
-        >
-          <MenuItem value={"すべて"}>すべて({this.getAllCount()})</MenuItem>
-          {this.props.days.map((item)=><MenuItem value={item.key} key={item.key}>{item.key}({item.num})</MenuItem>)}
-        </Select>
-      </FormControl>
-    )
-  }
+  const getAllCount = () => props.days.reduce((sum: number, item: IDays) => sum += item.num, 0);
+  return (
+    <FormControl fullWidth style={{ marginBottom: "15px" }}>
+      <InputLabel>
+        更新日
+      </InputLabel>
+      <Select
+        value={props.currentDate}
+        onChange={props.handleChange}
+        displayEmpty
+      >
+        <MenuItem value={"すべて"}>すべて({getAllCount()})</MenuItem>
+        {props.days.map((item) => <MenuItem value={item.key} key={item.key}>{item.key}({item.num})</MenuItem>)}
+      </Select>
+    </FormControl>
+  )
 }
 
-class HistoryView extends React.Component<{item:historyDataWithLastScore},{open:boolean}>{
+const HistoryView: React.FC<{ item: historyDataWithLastScore }> = props => {
 
-  state = {open:false}
-
-  handleOpen = ()=>this.setState({open:!this.state.open})
-
-  render(){
-    const {item} = this.props;
-    const {open} = this.state;
-    return (
+  const [open, setOpen] = useState<boolean>(false);
+  const { item } = props;
+  return (
     <React.Fragment>
-    <TableContainer style={{marginBottom:"8px"}} onClick={this.handleOpen}>
-      <Table size="small">
-        <TableBody>
-          <TableRow>
-            <TableCell component="th" scope="row" className="tableTopDiff" style={{fontWeight:"bold",background:historyBgColor()}}>
-              ☆{item.difficultyLevel} {item.title}{_prefix(item.difficulty)}
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-      <Table>
-        <TableBody>
-          <TableRow>
-            <TableCell component="th" scope="row" className="dense tableTopDiff">
-            </TableCell>
-            <TableCell className="denseCont">
-            前回
-            </TableCell>
-            <TableCell className="denseCont">
-            更新後
-            </TableCell>
-            <TableCell className="denseCont">
-            差分
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell component="th" scope="row" className="dense tableTopDiff">
-            EX
-            </TableCell>
-            <TableCell className="denseCont">
-              {item.lastScore}
-            </TableCell>
-            <TableCell className="denseCont">
-              {item.exScore}
-            </TableCell>
-            <TableCell className="denseCont">
-              +{item.exScore - item.lastScore}
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell component="th" scope="row" className="dense">
-            BPI
-            </TableCell>
-            <TableCell className="denseCont">
-            {item.lastBPI.toFixed(2)}
-            </TableCell>
-            <TableCell className="denseCont">
-            {item.BPI.toFixed(2)}
-            </TableCell>
-            <TableCell className="denseCont">
-            +{(item.BPI - item.lastBPI).toFixed(2)}
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-      <Table className="textCenter">
-        <TableBody>
-          <TableRow>
-            <TableCell className="dense tableTopDiff" style={{textAlign:"center"}}>
-            {item.updatedAt}
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    </TableContainer>
-    {open && <HistoryPopper handleOpen={this.handleOpen} title={item.title} diff={item.difficulty}/>}
+      <TableContainer style={{ marginBottom: "8px" }} onClick={() => setOpen(!open)}>
+        <Table size="small">
+          <TableBody>
+            <TableRow>
+              <TableCell component="th" scope="row" className="tableTopDiff" style={{ fontWeight: "bold", background: historyBgColor() }}>
+                ☆{item.difficultyLevel} {item.title}{_prefix(item.difficulty)}
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+        <Table>
+          <TableBody>
+            <TableRow>
+              <TableCell component="th" scope="row" className="dense tableTopDiff" />
+              <TableCell className="denseCont">
+                前回
+              </TableCell>
+              <TableCell className="denseCont">
+                更新後
+              </TableCell>
+              <TableCell className="denseCont">
+                差分
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell component="th" scope="row" className="dense tableTopDiff">
+                EX
+              </TableCell>
+              <TableCell className="denseCont">
+                {item.lastScore}
+              </TableCell>
+              <TableCell className="denseCont">
+                {item.exScore}
+              </TableCell>
+              <TableCell className="denseCont">
+                +{item.exScore - item.lastScore}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell component="th" scope="row" className="dense">
+                BPI
+              </TableCell>
+              <TableCell className="denseCont">
+                {item.lastBPI.toFixed(2)}
+              </TableCell>
+              <TableCell className="denseCont">
+                {item.BPI.toFixed(2)}
+              </TableCell>
+              <TableCell className="denseCont">
+                +{(item.BPI - item.lastBPI).toFixed(2)}
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+        <Table className="textCenter">
+          <TableBody>
+            <TableRow>
+              <TableCell className="dense tableTopDiff" style={{ textAlign: "center" }}>
+                {item.updatedAt}
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {open && <HistoryPopper handleOpen={() => setOpen(!open)} title={item.title} diff={item.difficulty} />}
     </React.Fragment>
-    );
-  }
+  );
 }
 
-class HistoryPopper extends React.Component<{
-  handleOpen:()=>void,
-  title:string,
-  diff:string
-},{
-  dataset:historyData[],
-}>{
+const HistoryPopper: React.FC<{
+  handleOpen: () => void,
+  title: string,
+  diff: string
+}> = props => {
 
-  state = {
-    dataset:[],
-  }
+  const [dataset, setDataset] = useState<historyData[]>([]);
 
-  async componentDidMount(){
-    const {title,diff} = this.props;
+  const load = useCallback(async () => {
+    const { title, diff } = props;
     const s = new scoreHistoryDB();
-    let set = await s._getWithinVersion(title,diff);
-    return this.setState({
-      dataset:set.reduce((groups,item)=>{
-        item.currentBPI = item.BPI === Infinity ? "-" : item.BPI;
-        groups.push(item);
-        return groups;
-      },[]),
-    })
-  }
+    let set = await s._getWithinVersion(title, diff);
+    return setDataset(set.reduce((groups, item) => {
+      item.currentBPI = item.BPI === Infinity ? "-" : item.BPI;
+      groups.push(item);
+      return groups;
+    }, []));
+  },[props]);
 
-  render(){
+  const columns = [
+    { id: "updatedAt", label: "Date" },
+    { id: "exScore", label: "EX" },
+    { id: "currentBPI", label: "BPI" },
+  ];
 
-    const columns = [
-      { id: "updatedAt", label: "Date"},
-      { id: "exScore", label: "EX" },
-      { id: "currentBPI", label: "BPI" },
-    ];
+  useEffect(() => {
+    load();
+  }, [load]);
 
-    return (
-      <Dialog open={true} onClick={this.props.handleOpen}>
-        <DialogTitle className="narrowDialogTitle">{this.props.title}{_prefix(this.props.diff)}</DialogTitle>
-        <DialogContent className="narrowDialogContent">
-          <Table size="small" className="detailedDiffs">
-            <TableHead>
-              <TableRow>
-                {columns.map((column,i) => (
-                  <TableCell className="dense"
-                    key={column.id}
-                    style={i===0 ? {minWidth:"150px"} : undefined}
-                  >
-                    {column.label}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {this.state.dataset.map((row:historyData,i:number) => {
-                return (
-                  <TableRow
-                    hover role="checkbox" tabIndex={-1} key={row.title + row.difficulty + i} className={ i % 2 ? "isOdd" : "isEven"}>
-                    {columns.map((column,_j) => {
-                      return (
-                        <TableCell key={column.id}>
-                          {(_j === 0) && timeFormatter(0,row[column.id])}
-                          {(_j !== 0) && row[column.id]}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </DialogContent>
-      </Dialog>
-    )
-  }
+  return (
+    <Dialog open={true} onClick={props.handleOpen}>
+      <DialogTitle className="narrowDialogTitle">{props.title}{_prefix(props.diff)}</DialogTitle>
+      <DialogContent className="narrowDialogContent">
+        <Table size="small" className="detailedDiffs">
+          <TableHead>
+            <TableRow>
+              {columns.map((column, i) => (
+                <TableCell className="dense"
+                  key={column.id}
+                  style={i === 0 ? { minWidth: "150px" } : undefined}
+                >
+                  {column.label}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {dataset.map((row: historyData, i: number) => {
+              return (
+                <TableRow
+                  hover role="checkbox" tabIndex={-1} key={row.title + row.difficulty + i} className={i % 2 ? "isOdd" : "isEven"}>
+                  {columns.map((column, _j) => {
+                    return (
+                      <TableCell key={column.id}>
+                        {(_j === 0) && timeFormatter(0, row[column.id])}
+                        {(_j !== 0) && row[column.id]}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </DialogContent>
+    </Dialog>
+  )
 }
 
 export default withRouter(History);

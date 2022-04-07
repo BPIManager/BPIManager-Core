@@ -30,6 +30,7 @@ const Songs: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
     const d = !!(props.match.params as any).today || false;
     setDefToday(d);
     updateData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
 
   if (!full || isLoading) {

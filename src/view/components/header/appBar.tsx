@@ -260,7 +260,7 @@ const GlobalHeader: React.FC<{ global: any, classes: any, theme: any, children: 
     getUserData();
     const messaging = getMessaging(fb);
     onMessage(messaging, (payload) => {
-      if (payload.data && !window.location.href.match(payload.data ?.matchId)) {
+      if (payload.data && !window.location.href.match(payload.data?.matchId)) {
         console.log('Message received. ', payload);
       }
     });
