@@ -12,7 +12,6 @@ import Compare from "../view/pages/compare";
 import Rivals from "../view/pages/rivals";
 import User from "../view/pages/user";
 import AAATable from "../view/pages/AAATable";
-import Shared from "../view/pages/shared";
 import ArenaMatchIndex from "../view/pages/arenaMatch";
 import ArenaMatchDetail from "../view/pages/arenaMatch/detail";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
@@ -69,7 +68,6 @@ export const Router: React.FC<{global:UnstatedContainer<any>}> = props => {
             <Route path="/rivals" exact component={Rivals} />
             <Route path="/rivalCompare" exact component={RivalChallengeLetters} />
             <Route path="/AAATable" exact component={AAATable} />
-            <Route path="/share/:id" exact component={Shared} />
             <Route path="/u/:uid/:exactId?" exact component={User} />
             <Route path="/redirect/myprofile" exact component={RedirectMyProfile} />
             <Route path="/r/u/:uid" exact component={RedirectUserProfile} />

@@ -53,7 +53,7 @@ class SongDetails extends React.Component<P> {
                     rows="4"
                     error={newMemo.length > 1000}
                     onChange={handleMemo}
-                    value={!memoModified ? song.memo : newMemo}
+                    value={(!memoModified || !newMemo) ? song.memo : newMemo}
                     helperText={newMemo.length > 1000 ? "テキストが長すぎます." : ""}
                   />
                 </TableCell>
