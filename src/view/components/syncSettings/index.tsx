@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Container from '@mui/material/Container';
 import SyncLoginScreen from '../sync/login';
 import fbActions from '@/components/firebase/actions';

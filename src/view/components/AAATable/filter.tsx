@@ -23,7 +23,7 @@ interface Props {
   toggle: () => void,
   defaultPM: number[],
   _default: number[],
-  target: 0,
+  target: number,
 }
 
 export const AAATableFilterModal: React.FC<Props> = props => {

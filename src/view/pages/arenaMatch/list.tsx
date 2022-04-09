@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Loader from '@/view/components/common/loader';
 import List from '@mui/material/List';
 import { getRadar, radarData } from '@/components/stats/radar';
@@ -21,163 +21,140 @@ import AlertTitle from "@mui/material/AlertTitle";
 
 const defaultChecks = ["A1", "A2", "A3", "A4", "A5", "B1", "B2", "B3", "B4", "B5"];
 
-interface S {
-  isLoading: boolean,
-  matchList: any[],
-  radarNode: radarData[],
-  createDialog: boolean,
-  currentChecks: string[],
-  firstView: boolean
-}
+const MatchList: React.FC<RouteComponentProps> = ({ history }) => {
 
-class Index extends React.Component<{} & RouteComponentProps, S> {
+  const [loading, setLoading] = useState(true);
+  const [createDialog, setCreateDialog] = useState(false);
+  const [radarNode, setRadarNode] = useState<radarData[]>([]);
+  const [firstView, setFirstView] = useState(true);
+  const [matchList, setMatchList] = useState<any[]>([]);
+  const [currentChecks, setCurrentChecks] = useState<string[]>(defaultChecks);
+  const unsubscribe = useRef<Unsubscribe | null>(null);
+  const toggleCreateDialog = () => setCreateDialog(!createDialog);
 
-  unsubscribe: Unsubscribe | null = null;
-
-  constructor(props: {} & RouteComponentProps) {
-    super(props);
-    this.state = {
-      isLoading: true,
-      matchList: [] as any[],
-      radarNode: [],
-      createDialog: false,
-      currentChecks: defaultChecks,
-      firstView: true,
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.unsubscribe) {
-      this.unsubscribe();
-    }
-  }
-
-  openCreateDialog = () => this.setState({ createDialog: !this.state.createDialog });
-
-  async componentDidMount() {
-    this.setState({ radarNode: await getRadar(), isLoading: false })
+  const load = async () => {
+    setRadarNode(await getRadar());
     const f = new fbArenaMatch();
-    this.unsubscribe = f.realtime(await f.list(), this.watch);
+    unsubscribe.current = f.realtime(await f.list(), watch);
   }
 
-  watch = (snapshot: QuerySnapshot<DocumentData>) => {
-    this.setState({ firstView: false });
+  useEffect(() => {
+    load();
+    return (()=>{
+      if(unsubscribe.current){
+        unsubscribe.current();
+      }
+    })
+  }, []);
+
+  const watch = (snapshot: QuerySnapshot<DocumentData>) => {
+    setFirstView(false);
+    console.log(snapshot.docs);
     if (snapshot.empty) {
-      this.setState({ isLoading: false });
+      setLoading(false);
     }
     snapshot.docChanges().forEach((change) => {
-      let matchList = ([] as any[]).concat(this.state.matchList);
+      let newList = ([] as any[]).concat(matchList);
       if (change.type === "added") {
-        matchList.push(change.doc.data());
+        newList.push(change.doc.data());
       }
       if (change.type === "modified") {
         const newData = change.doc.data();
-        matchList.forEach((item, index) => {
+        newList.forEach((item, index) => {
           if (item.matchId === newData.matchId) {
-            matchList[index] = newData;
+            newList[index] = newData;
           }
         });
       }
       if (change.type === "removed") {
         const removed = change.doc.data();
-        matchList = matchList.filter((item) => item.matchId !== removed.matchId);
+        newList = newList.filter((item) => item.matchId !== removed.matchId);
       }
-      return this.setState({ matchList: matchList });
+      setMatchList(newList);
+      setLoading(false);
     });
   }
 
-  isAvailableMyMatch = () => {
+  const isAvailableMyMatch = () => {
     const auth = new fbActions().authInfo();
-    if (auth && auth.uid && this.state.matchList.find((item) => item.uid === auth.uid)) {
-      return true;
-    }
-    return false;
+    return auth && auth.uid && matchList.find((item) => item.uid === auth.uid);
   }
 
-  openMyMatch = () => {
+  const openMyMatch = () => {
     const auth = new fbActions().authInfo();
     if (auth && auth.uid) {
-      const myMatch = this.state.matchList.find((item) => item.uid === auth.uid);
-      this.props.history.push("/arena/" + myMatch.matchId);
+      const myMatch = matchList.find((item) => item.uid === auth.uid);
+      history.push("/arena/" + myMatch.matchId);
     }
   }
 
-  handleChange = (target: string, _event: React.ChangeEvent<HTMLInputElement>) => {
-    const { currentChecks } = this.state;
+  const handleChange = (target: string, _event: React.ChangeEvent<HTMLInputElement>) => {
     if (currentChecks.indexOf(target) > -1) {
-      this.setState({ currentChecks: currentChecks.filter((item) => item !== target) });
+      setCurrentChecks(currentChecks.filter((item) => item !== target));
     } else {
-      this.setState({ currentChecks: currentChecks.concat(target) });
+      setCurrentChecks(currentChecks.concat(target));
     }
   }
 
-  reverseChecks = () => {
-    const { currentChecks } = this.state;
-    this.setState({ currentChecks: defaultChecks.filter(item => currentChecks.indexOf(item) === -1) });
+  const reverseChecks = () => setCurrentChecks(defaultChecks.filter(item => currentChecks.indexOf(item) === -1));
+
+  const uid = () => new fbActions().authInfo() ?.uid;
+  const alreadyOwns = isAvailableMyMatch();
+  if (loading) {
+    return (<Loader />);
   }
-
-  uid = () => new fbActions().authInfo()?.uid;
-
-  render() {
-    const { firstView, isLoading, createDialog, matchList, radarNode, currentChecks } = this.state;
-    const alreadyOwns = this.isAvailableMyMatch();
-    if (isLoading) {
-      return (<Loader />);
-    }
-    const style = {
-      borderRadius: 0, borderLeft: 0, borderRight: 0
-    }
-    return (
-      <React.Fragment>
-        {!this.uid() && <Button fullWidth style={style} color="secondary" variant="outlined" onClick={() => this.props.history.push("/sync/settings")}>ルームの作成にはログインが必要です</Button>}
-        {(this.uid() && alreadyOwns) && <Button fullWidth style={style} color="secondary" variant="outlined" onClick={this.openMyMatch}>自分のルームを表示</Button>}
-        {(this.uid() && !alreadyOwns) && <Button fullWidth style={style} color="secondary" variant="outlined" onClick={this.openCreateDialog}>新しいルームを作成</Button>}
-        <Filter currentChecks={currentChecks} reverse={this.reverseChecks} handleChange={this.handleChange} />
-        {!firstView && matchList.filter((item) => currentChecks.indexOf(item.arenaRank) > -1).length === 0 && (
-          <Alert severity="error">
-            <AlertTitle>ルームがありません</AlertTitle>
-            <p>まだ誰もルームを作成していないようです。<br/>
+  const style = {
+    borderRadius: 0, borderLeft: 0, borderRight: 0
+  }
+  return (
+    <React.Fragment>
+      {!uid() && <Button fullWidth style={style} color="secondary" variant="outlined" onClick={() => history.push("/sync/settings")}>ルームの作成にはログインが必要です</Button>}
+      {(uid() && alreadyOwns) && <Button fullWidth style={style} color="secondary" variant="outlined" onClick={openMyMatch}>自分のルームを表示</Button>}
+      {(uid() && !alreadyOwns) && <Button fullWidth style={style} color="secondary" variant="outlined" onClick={toggleCreateDialog}>新しいルームを作成</Button>}
+      <Filter currentChecks={currentChecks} reverse={reverseChecks} handleChange={handleChange} />
+      {!firstView && matchList.filter((item) => currentChecks.indexOf(item.arenaRank) > -1).length === 0 && (
+        <Alert severity="error">
+          <AlertTitle>ルームがありません</AlertTitle>
+          <p>まだ誰もルームを作成していないようです。<br />
             <b>「新しいルームを作成」ボタンからルームを作成</b>し、バトル相手を募りましょう！</p>
-          </Alert>
-        )}
-        <List>
-          {matchList.filter((item) => currentChecks.indexOf(item.arenaRank) > -1).map((item: any) => {
-            return (
-              <UserCard history={this.props.history} key={item.uid} radarNode={radarNode} open={() => null} item={item} processing={false} />
-            )
-          })}
-        </List>
-        {createDialog && <CreateDialog toggle={this.openCreateDialog} />}
-      </React.Fragment>
-    );
-  }
+        </Alert>
+      )}
+      <List>
+        {matchList.filter((item) => currentChecks.indexOf(item.arenaRank) > -1).map((item: any) => {
+          return (
+            <UserCard history={history} key={item.uid} radarNode={radarNode} open={() => null} item={item} processing={false} />
+          )
+        })}
+      </List>
+      {createDialog && <CreateDialog toggle={toggleCreateDialog} />}
+    </React.Fragment>
+  );
+
 }
 
-class Filter extends React.Component<{
+const Filter: React.FC<{
   currentChecks: string[],
   handleChange: (item: string, e: React.ChangeEvent<HTMLInputElement>) => void,
   reverse: () => void
-}, {}>{
-  render() {
-    return (
-      <Alert icon={false} severity="info" variant="outlined" style={{ margin: 15 }}>
-        <FormControl component="fieldset" fullWidth>
-          <FormLabel component="legend">ルームのランクを選択 / <span onClick={this.props.reverse} style={{ textDecoration: "underline" }}>状態反転</span></FormLabel>
-          <FormGroup row={true} style={{ justifyContent: "space-around" }}>
-            {defaultChecks.map((item) => (
-              <FormControlLabel
-                key={item}
-                control={
-                  <Checkbox checked={this.props.currentChecks.indexOf(item) > -1} onChange={(e) => this.props.handleChange(item, e)} name={item} />
-                }
-                label={item}
-              />
-            ))}
-          </FormGroup>
-        </FormControl>
-      </Alert>
-    );
-  }
+}> = ({ currentChecks, handleChange, reverse }) => {
+  return (
+    <Alert icon={false} severity="info" variant="outlined" style={{ margin: 15 }}>
+      <FormControl component="fieldset" fullWidth>
+        <FormLabel component="legend">ルームのランクを選択 / <span onClick={reverse} style={{ textDecoration: "underline" }}>状態反転</span></FormLabel>
+        <FormGroup row={true} style={{ justifyContent: "space-around" }}>
+          {defaultChecks.map((item) => (
+            <FormControlLabel
+              key={item}
+              control={
+                <Checkbox checked={currentChecks.indexOf(item) > -1} onChange={(e) => handleChange(item, e)} name={item} />
+              }
+              label={item}
+            />
+          ))}
+        </FormGroup>
+      </FormControl>
+    </Alert>
+  );
 }
 
-export default withRouter(Index);
+export default withRouter(MatchList);

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import User from "@/view/pages/user";
 import { _currentTheme } from '@/components/settings';
 import Dialog from '@mui/material/Dialog';
@@ -42,6 +42,7 @@ export default class ModalUser extends React.Component<{
     const c = _currentTheme();
     const { isOpen, handleOpen, initialView } = this.props;
     const { currentUserName } = this.state;
+    console.log(currentUserName);
     return (
       <Dialog
         id="detailedScreen"

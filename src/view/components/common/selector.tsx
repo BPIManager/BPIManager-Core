@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { FormattedMessage } from "react-intl";
 import Grid from '@mui/material/Grid';
 import FormLabel from '@mui/material/FormLabel';

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import html2canvas from "html2canvas";
 import Backdrop from '@mui/material/Backdrop';
 import Loader from '../../common/loader';

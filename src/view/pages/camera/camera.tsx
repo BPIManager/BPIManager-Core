@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { CameraClass, OCRExScore } from '@/components/camera/songs';
 import CameraMode from './camView';
 import { CameraSettings } from './settings';

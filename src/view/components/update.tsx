@@ -1,58 +1,50 @@
-import { Component } from "react";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import Container from "@mui/material/Container";
 import CircularProgress from "@mui/material/CircularProgress";
 
-export default class ReloadModal extends Component<{ registration: ServiceWorkerRegistration }, { show: boolean }> {
-  state = {
-    show: !!this.props.registration.waiting
-  };
+const ReloadModal: React.FC<{ registration: ServiceWorkerRegistration }> = ({ registration }) => {
+  const [visible, _] = useState<boolean>(!!registration.waiting);
 
-  handleClose = () => {
-    this.setState({ show: false });
-  }
-
-  componentDidMount() {
-    console.log(this.props.registration);
-    if ((this.props.registration && this.props.registration.waiting)) {
-      this.handleUpdate();
-    }
-  }
-
-  wait = (msec: number) => {
+  const wait = (msec: number) => {
     return new Promise((resolve, _reject) => {
       setTimeout(resolve, msec);
     });
   }
 
-  handleUpdate = async () => {
-    (this.props.registration && this.props.registration.waiting) && this.props.registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-    await this.wait(1000);
+  const handleUpdate = async () => {
+    (registration && registration.waiting) && registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+    await wait(1000);
     window.location.reload();
   };
 
-  render() {
-    const { show } = this.state;
-    if (!show) {
-      return null;
+  useEffect(() => {
+    if ((registration && registration.waiting)) {
+      handleUpdate();
     }
-    return (
-      <React.Fragment>
-        <Dialog
-          open={show}
-        >
-          <DialogTitle id="alert-dialog-title"></DialogTitle>
-          <DialogContent>
-            <Container fixed className="loaderCentered" style={{ flexDirection: "column" }}>
-              <CircularProgress />
-              <p style={{ marginTop: "15px" }}>アプリケーションの更新中...</p>
-            </Container>
-          </DialogContent>
-        </Dialog>
-      </React.Fragment>
-    );
+  });
+  
+  if (!visible) {
+    return null;
   }
+  return (
+    <React.Fragment>
+      <Dialog
+        open={visible}
+      >
+        <DialogTitle id="alert-dialog-title"></DialogTitle>
+        <DialogContent>
+          <Container fixed className="loaderCentered" style={{ flexDirection: "column" }}>
+            <CircularProgress />
+            <p style={{ marginTop: "15px" }}>アプリケーションの更新中...</p>
+          </Container>
+        </DialogContent>
+      </Dialog>
+    </React.Fragment>
+  );
+
 }
+
+export default ReloadModal;

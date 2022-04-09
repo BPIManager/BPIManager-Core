@@ -51,7 +51,7 @@ export interface Props {
   handleClose?: () => void
 }
 
-export default function ShowSnackBar(props: Props) {
+const ShowSnackBar:React.FC<Props> = (props) => {
   const classes = styles();
   if (!props.open) {
     return (null);
@@ -70,3 +70,5 @@ export default function ShowSnackBar(props: Props) {
     />
   );
 }
+
+export default ShowSnackBar;

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { FormattedMessage, injectIntl } from 'react-intl';
@@ -177,32 +177,6 @@ class Settings extends React.Component<P, S> {
             <FormattedMessage id="Common.Apply" />
           </Button>
           <Divider style={{ margin: "10px 0" }} />
-          {/*
-          <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
-            ストレージ占有率
-          </Typography>
-          {(usage === 0 && quota === 0) && <p>お使いの端末ではサポートされていない機能です。</p>}
-          {(usage || quota) && <div>
-            <LinearProgress
-              variant="determinate"
-              color="secondary"
-              style={{margin:"15px 0"}}
-              value={(usage / quota) * 100}
-            />
-            <p style={{textAlign:"center"}}>{usage} / {quota} ({((usage / quota) * 100).toFixed(5)}%)</p>
-          </div>}
-          <Typography variant="caption" display="block">
-            ストレージ使用の永続化を許可しておらず、ストレージが上限まで使用された場合、古いデータから自動的にデータが削除されます。<br/>
-            データの削除を防ぐために、ライバルスコアの削除などをお試しください。
-          </Typography>
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={this.persistency}>
-            永続化リクエスト
-          </Button>
-          <Divider style={{margin:"10px 0"}}/>
-          */}
           <FormControl>
             <InputLabel><FormattedMessage id="Settings.dataClear" /></InputLabel>
             <Select value={currentResetStore} onChange={(e: SelectChangeEvent<string>, ) => {

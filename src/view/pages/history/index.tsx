@@ -21,7 +21,7 @@ export interface IDays { key: string, num: number }
 
 const History: React.FC<RouteComponentProps> = props => {
 
-  const hist: HistoryDataReceiver = useMemo(()=>new HistoryDataReceiver(),[]);
+  const hist: HistoryDataReceiver = useMemo(() => new HistoryDataReceiver(), []);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [filtered, setFiltered] = useState<historyDataWithLastScore[]>([]);
   const [days, setDays] = useState<IDays[]>([]);
@@ -98,10 +98,9 @@ const DateSelector: React.FC<IDateSelector> = props => {
   )
 }
 
-const HistoryView: React.FC<{ item: historyDataWithLastScore }> = props => {
+const HistoryView: React.FC<{ item: historyDataWithLastScore }> = ({ item }) => {
 
   const [open, setOpen] = useState<boolean>(false);
-  const { item } = props;
   return (
     <React.Fragment>
       <TableContainer style={{ marginBottom: "8px" }} onClick={() => setOpen(!open)}>
@@ -190,7 +189,7 @@ const HistoryPopper: React.FC<{
       groups.push(item);
       return groups;
     }, []));
-  },[props]);
+  }, [props]);
 
   const columns = [
     { id: "updatedAt", label: "Date" },

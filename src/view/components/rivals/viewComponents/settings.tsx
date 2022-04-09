@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import Paper from '@mui/material/Paper';
 import FormControl from '@mui/material/FormControl';

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Grid from '@mui/material/Grid';
 import { Twitter as TwitterIcon } from "@/assets/twitter";
 import { Line as LINEIcon } from "@/assets/line";

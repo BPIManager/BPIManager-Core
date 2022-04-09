@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { loader } from '@/components/rivals/letters';
 import FilterByLevelAndDiff from '../common/selector';
 import LettersTable from './viewComponents/letters/table';

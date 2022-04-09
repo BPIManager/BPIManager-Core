@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Button from '@mui/material/Button';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
 import { Link as RefLink, Divider, Avatar, Grid, Typography, Container, CircularProgress, ListItem, ListItemAvatar, ListItemText, List } from '@mui/material/';

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import timeFormatter from "../common/timeFormatter";
 import { songsDB, scoresDB, favsDB, scoreHistoryDB, rivalListsDB } from "../indexedDB";
 import WarningIcon from '@mui/icons-material/Warning';

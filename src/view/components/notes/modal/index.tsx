@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { _currentTheme } from '@/components/settings';
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';

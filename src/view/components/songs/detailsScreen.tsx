@@ -8,7 +8,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import { _prefixFromNum } from "@/components/songs/filter";
 import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
-import TextField from "@mui/material/TextField";
 import { FormattedMessage } from "react-intl";
 import bpiCalcuator, { B } from "@/components/bpi";
 import Button from '@mui/material/Button';
@@ -17,10 +16,10 @@ import { scoresDB, scoreHistoryDB, songsDB } from "@/components/indexedDB";
 import { _currentTheme, _area, _isSingle, _currentStore } from "@/components/settings";
 import _djRank from "@/components/common/djRank";
 import { scoreData, songData } from "@/types/data";
-import EditList from "./detailScreen/editList";
-import JumpWeb from "./detailScreen/jumpWeb";
 import DetailedScreenBody from "./detailScreen/tabPanel";
 import ShowSnackBar from "../snackBar";
+import ScoreEditor from "./detailScreen/scoreEditor";
+import UntilNextBPI from "./detailScreen/untilNextBPI";
 
 interface P {
   isOpen: boolean,
@@ -52,10 +51,16 @@ const DetailedSongInformation: React.FC<P & { intl?: any }> = props => {
     setNewData({ ...newData, [target]: value, memoModified: target === "memo" && newData.memo !== song.memo });
   }
 
+  const overridePopstate = () => handleOpen(true);
+
   useEffect(() => {
     if (!song || !score) return;
     calc.setData(song.notes * 2, song.avg, song.wr);
     calc.setCoef(song.coef || -1);
+
+    window.history.pushState(null, "Detail", null);
+    window.addEventListener("popstate", overridePopstate, false);
+    return (() =>window.removeEventListener("popstate", overridePopstate, false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -139,8 +144,8 @@ const DetailedSongInformation: React.FC<P & { intl?: any }> = props => {
         </Toolbar>
       </AppBar>
       <Toolbar />
-      <div style={{height: "calc( 100% - 285px )"}}>
-        <DetailedTopHeaderDisplay newData={newData} score={score} song={song} />
+      <div style={{ height: "calc( 100% - 285px )" }}>
+        <DetailedTopHeader newData={newData} score={score} song={song} />
         <UntilNextBPI newData={newData} score={score} song={song} />
         <Divider />
         <ScoreEditor newData={newData} score={score} song={song} handleScoreInput={handleScoreInput} />
@@ -152,7 +157,7 @@ const DetailedSongInformation: React.FC<P & { intl?: any }> = props => {
   );
 }
 
-const DetailedTopHeaderDisplay: React.FC<{
+const DetailedTopHeader: React.FC<{
   newData: newDataProps,
   score: scoreData,
   song: songData
@@ -211,73 +216,6 @@ const DetailedTopHeaderDisplay: React.FC<{
           </div>}
         </Typography>
       </Grid>
-    </Grid>
-  )
-}
-
-const UntilNextBPI: React.FC<{
-  newData: newDataProps,
-  score: scoreData,
-  song: songData
-}> = ({ newData, score, song }) => {
-
-  const [nextScore, setNextScore] = useState(0);
-  const nextBPI = Math.ceil((!Number.isNaN(newData.bpi) ? newData.bpi : score ? score.currentBPI : -15) / 10) * 10;
-  const currentScore = !Number.isNaN(newData.score) ? newData.score : score ? score.exScore : 0;
-
-  const nextBPIBody = (nextBPI: number, currentScore: number) => {
-    if (nextBPI < 0) nextBPI = 0;
-    return <span>BPI{nextBPI}まであと&nbsp;{nextScore - currentScore}&nbsp;点</span>
-  }
-
-  const calc = useMemo(() => new bpiCalcuator(), []);
-
-  useEffect(() => {
-    calc.setData(song.notes * 2, song.avg, song.wr);
-    calc.setCoef(song.coef || -1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    setNextScore(calc.calcFromBPI(nextBPI, true));
-  }, [newData, score]);
-
-  if ((!Number.isNaN(nextBPI) && nextBPI !== Infinity)) {
-    return (
-      <Typography component="p" variant="caption" style={{ textAlign: "center", position: "relative", bottom: "7px", fontSize: "10px" }}>
-        {nextBPIBody(nextBPI, currentScore)}
-      </Typography>
-    )
-  }
-  return (null);
-}
-
-const ScoreEditor: React.FC<{
-  newData: newDataProps,
-  score: scoreData,
-  song: songData,
-  handleScoreInput: (e: React.FocusEvent<HTMLInputElement>) => Promise<void>
-}> = ({ newData, score, song, handleScoreInput }) => {
-
-  const currentScore = !Number.isNaN(newData.score) ? newData.score : score ? score.exScore : 0;
-
-  return (
-    <Grid container flexWrap="nowrap" >
-      <Grid item xs={10}>
-        <form noValidate autoComplete="off" style={{ margin: "10px 6px 0" }} className="detailedInputForm">
-          <TextField
-            type="number"
-            size="small"
-            style={{ width: "100%" }}
-            label={<span style={{ fontSize: "13px !important" }}><FormattedMessage id="Details.typeNewScore" /></span>}
-            value={currentScore}
-            onChange={handleScoreInput}
-            onKeyPress={(e) => { if (e.key === "Enter") e.preventDefault() }}
-          />
-        </form>
-      </Grid>
-      <EditList song={song} />
-      <JumpWeb song={song} />
     </Grid>
   )
 }

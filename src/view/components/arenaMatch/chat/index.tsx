@@ -145,10 +145,11 @@ class View extends React.Component<{
                 </Badge>
               </ListItemAvatar>
             );
+            const millis = item.createdAt.toMillis();
             const date = () => <ReactTimeAgo date={item.createdAt.toDate()} locale="en-US" timeStyle="twitter" />;
             const thisIsMyText = this.props.user ? item.uid === this.props.user.uid : false;
             return (
-              <React.Fragment key={item.createdAt}>
+              <React.Fragment key={millis}>
                 <ListItem alignItems="flex-start">
                   {!thisIsMyText && avatar()}
                   <ListItemText

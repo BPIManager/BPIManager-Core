@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { scoresDB } from '@/components/indexedDB';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';

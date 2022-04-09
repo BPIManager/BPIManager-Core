@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { scoresDB, songsDB } from '@/components/indexedDB';
 import { _isSingle, _goalBPI, _goalPercentage, _currentStore } from "@/components/settings";
 import Container from "@mui/material/Container";

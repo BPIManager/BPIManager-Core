@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import AppBar from "../view/components/header/appBar";
 import { IntlProvider } from 'react-intl'
 import Data from "../view/pages/data";
@@ -56,7 +56,7 @@ export const Router: React.FC<{global:UnstatedContainer<any>}> = props => {
         <AppBar global={global}>
           <Switch>
             <Route path="/" exact render={_props => <Index global={global} />} />
-            <Route path="/data/:docId?" exact render={_props => <Data global={global} updateGlobal={globalUpdateScore} />} />
+            <Route path="/data/:docId?" exact render={_props => <Data updateGlobal={globalUpdateScore} />} />
             <Route path="/songs/:today?" exact component={Songs} />
             <Route path="/lists" exact component={Lists} />
             <Route path="/lists/:listTitle" exact component={ListsBody} />

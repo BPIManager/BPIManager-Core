@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Webcam from "react-webcam";
 import Fab from '@mui/material/Fab';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
