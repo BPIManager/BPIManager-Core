@@ -8,7 +8,7 @@ import {
 import timeFormatter from "../common/timeFormatter";
 import { scoresDB, scoreHistoryDB } from "../indexedDB";
 import platform from "platform";
-import { rivalStoreData, scoreData, DBRivalStoreData, songData } from "../../types/data";
+import { rivalStoreData, DBRivalStoreData, songData } from "../../types/data";
 import bpiCalcuator from '../bpi';
 import { _currentStore } from "../settings";
 import { messanger } from "./message";

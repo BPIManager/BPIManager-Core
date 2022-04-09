@@ -1,7 +1,4 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { _prefixFromNum } from "@/components/songs/filter";
-import { _currentTheme, _area, _isSingle, _currentStore } from "@/components/settings";
-import _djRank from "@/components/common/djRank";
 import { scoreData, songData } from "@/types/data";
 import { newDataProps } from "../detailsScreen";
 import bpiCalcuator from "@/components/bpi";
@@ -32,6 +29,7 @@ const UntilNextBPI: React.FC<{
 
   useEffect(() => {
     setNextScore(calc.calcFromBPI(nextBPI, true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newData, score]);
 
   if ((!Number.isNaN(nextBPI) && nextBPI !== Infinity)) {

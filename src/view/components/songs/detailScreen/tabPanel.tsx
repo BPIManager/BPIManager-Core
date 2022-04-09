@@ -76,7 +76,8 @@ const DetailedScreenBody: React.FC<{
 
   useEffect(() => {
     setCurrentChart(makeGraph(newData.score).reverse());
-    setChartUpdated(new Date().getTime())
+    setChartUpdated(new Date().getTime());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newData])
 
   return (

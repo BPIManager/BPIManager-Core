@@ -1,10 +1,7 @@
 import React from "react";
-import { _prefixFromNum } from "@/components/songs/filter";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import { FormattedMessage } from "react-intl";
-import { _currentTheme, _area, _isSingle, _currentStore } from "@/components/settings";
-import _djRank from "@/components/common/djRank";
 import { scoreData, songData } from "@/types/data";
 import { newDataProps } from "../detailsScreen";
 import EditList from "./editList";

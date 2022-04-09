@@ -2,7 +2,7 @@ import bpiCalcuator from '@/components/bpi';
 import importCSV from "@/components/import/csv";
 import importJSON from "@/components/import/json";
 import bpiCalculator, { showBpiDist } from "@/components/bpi";
-import { _currentStore, _isSingle, _currentStoreWithFullName } from '@/components/settings';
+import { _currentStore, _isSingle } from '@/components/settings';
 import { _autoSync } from '@/components/settings';
 import { getUA } from '@/components/common';
 import { scoresDB, importer } from "@/components/indexedDB";

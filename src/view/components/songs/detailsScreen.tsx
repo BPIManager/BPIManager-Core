@@ -13,7 +13,7 @@ import bpiCalcuator, { B } from "@/components/bpi";
 import Button from '@mui/material/Button';
 import Tooltip from "@mui/material/Tooltip";
 import { scoresDB, scoreHistoryDB, songsDB } from "@/components/indexedDB";
-import { _currentTheme, _area, _isSingle, _currentStore } from "@/components/settings";
+import { _currentTheme } from "@/components/settings";
 import _djRank from "@/components/common/djRank";
 import { scoreData, songData } from "@/types/data";
 import DetailedScreenBody from "./detailScreen/tabPanel";
@@ -144,7 +144,7 @@ const DetailedSongInformation: React.FC<P & { intl?: any }> = props => {
         </Toolbar>
       </AppBar>
       <Toolbar />
-      <div style={{ height: "calc( 100% - 285px )" }}>
+      <div style={{ height: "calc( 100% - 277px )" }}>
         <DetailedTopHeader newData={newData} score={score} song={song} />
         <UntilNextBPI newData={newData} score={score} song={song} />
         <Divider />

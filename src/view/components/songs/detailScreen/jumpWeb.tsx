@@ -14,7 +14,7 @@ import StarHalfIcon from '@mui/icons-material/StarHalf';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import Filter1Icon from '@mui/icons-material/Filter1';
 import Button from "@mui/material/Button";
-import { _currentTheme, _area, _isSingle, _currentStore } from "@/components/settings";
+import {  _area, _isSingle, _currentStore } from "@/components/settings";
 import { difficultyDiscriminator } from "@/components/songs/filter";
 
 const JumpWeb: React.FC<{

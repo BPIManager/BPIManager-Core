@@ -67,6 +67,7 @@ const Detail: React.FC<RouteComponentProps> = ({ match }) => {
         unsubscribe.current();
       }
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading || !detail) {
@@ -163,6 +164,7 @@ const Timer: React.FC<{ timer: any }> = ({ timer }) => {
   useEffect(() => {
     initialize();
     return (() => clearInterval(intv.current));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -172,6 +174,7 @@ const Timer: React.FC<{ timer: any }> = ({ timer }) => {
     } else {
       clearInterval(intv.current);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timer]);
 
   if (!timer || !timer.toDate) return (null);
