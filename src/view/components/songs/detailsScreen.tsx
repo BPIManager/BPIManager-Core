@@ -144,7 +144,7 @@ const DetailedSongInformation: React.FC<P & { intl?: any }> = props => {
         </Toolbar>
       </AppBar>
       <Toolbar />
-      <div style={{ height: "calc( 100% - 277px )" }}>
+      <div style={{ height: "calc( 100% - 285px )" }}>
         <DetailedTopHeader newData={newData} score={score} song={song} />
         <UntilNextBPI newData={newData} score={score} song={song} />
         <Divider />
