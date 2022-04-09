@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Button from '@mui/material/Button';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import fbActions from '@/components/firebase/actions';

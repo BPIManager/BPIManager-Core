@@ -467,15 +467,6 @@ export default class fbActions {
     });
   }
 
-  async createShare(score: scoreData, uid: string) {
-    const d = doc(collection(db, "shared"));
-    await setDoc(d, Object.assign(score, {
-      uid: uid,
-      updatedAt: timeFormatter(3)
-    }));
-    return d.id;
-  }
-
   async syncLoadRival(isDescribed = false) {
     try {
       const uid = this.docName;

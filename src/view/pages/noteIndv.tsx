@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { _currentStore, _currentTheme } from '@/components/settings';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import Typography from '@mui/material/Typography';

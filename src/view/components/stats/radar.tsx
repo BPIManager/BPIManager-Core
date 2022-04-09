@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Container from '@mui/material/Container';
 import { injectIntl } from 'react-intl';
 import Grid from '@mui/material/Grid';

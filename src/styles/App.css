@@ -852,6 +852,11 @@ text.react-calendar-heatmap-weekday-label {
   background-image: none;
 }
 
+#detailedScreen{
+  height:100vh !important;
+  overflow-y: hidden;
+}
+
 #detailedScreen #mainFilters>div {
   flex-wrap: wrap !important;
 }

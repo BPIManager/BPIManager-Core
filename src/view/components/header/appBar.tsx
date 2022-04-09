@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -191,250 +191,227 @@ interface HideOnScrollProps {
   window?: () => Window,
 };
 
-class GlobalHeader extends React.Component<{ global: any, classes: any, theme: any, children: any } & HideOnScrollProps & RouteComponentProps, {
-  isOpen: boolean,
-  isOpenSongs: boolean,
-  isOpenMyStat: boolean,
-  isOpenSocial: boolean,
-  errorSnack: boolean,
-  user: any,
-}>{
+const GlobalHeader: React.FC<{ global: any, classes: any, theme: any, children: any } & HideOnScrollProps & RouteComponentProps> = props => {
 
-  constructor(props: { global: any, classes: any, theme: any, children: any } & HideOnScrollProps & RouteComponentProps) {
-    super(props);
-    this.state = {
-      isOpen: false,
-      isOpenSongs: true,
-      isOpenMyStat: false,
-      isOpenSocial: false,
-      errorSnack: false,
-      user: null,
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpenSongs, setIsOpenSongs] = useState<boolean>(true);
+  const [isOpenMyStat, setIsOpenMyStat] = useState<boolean>(false);
+  const [isOpenSocial, setIsOpenSocial] = useState<boolean>(false);
+  const [errorSnack, setErrorSnack] = useState<boolean>(false);
+  const [user, setUser] = useState<any>(null);
+
+  const page = props.location.pathname.split("/");
+  const currentPage = () => {
+    switch (page[1]) {
+      default:
+        return "Top.Title";
+      case "data":
+        return "GlobalNav.Data";
+      case "lists":
+        return "GlobalNav.FavoriteSongs";
+      case "songs":
+        return "GlobalNav.SongList";
+      case "notPlayed":
+        return "GlobalNav.unregisteredSongs";
+      case "compare":
+        return "GlobalNav.compare";
+      case "stats":
+        return "GlobalNav.Statistics";
+      case "rivals":
+        return "GlobalNav.Rivals";
+      case "rivalCompare":
+        return "GlobalNav.RivalCompare";
+      case "sync":
+        return "GlobalNav.Sync";
+      case "history":
+        return "GlobalNav.History";
+      case "AAATable":
+        return "GlobalNav.AAATable";
+      case "tools":
+        return "GlobalNav.Tools";
+      case "settings":
+        return "GlobalNav.Settings";
+      case "help":
+        return "GlobalNav.Help";
+      case "notes":
+        return "GlobalNav.Notes";
+      case "arena":
+        return "GlobalNav.ArenaMatch";
+      case "u":
+        return page[2];
+      case "share":
+        return "BPIManager"
     }
   }
+  const { classes, history } = props;
 
-  async componentDidMount() {
-    this.userData();
-    const messaging = getMessaging(fb);
-    onMessage(messaging, (payload) => {
-      if(payload.data && !window.location.href.match(payload.data?.matchId)){
-        console.log('Message received. ', payload);
-      }
-    });
-
-  }
-
-  componentDidUpdate(prevProps: any) {
-    if (
-      this.props.location.pathname !== prevProps.location.pathname
-    ) {
-      window.scrollTo(0, 0);
-    }
-  }
-
-  userData = async () => {
+  const getUserData = async () => {
     return new fbActions().auth().onAuthStateChanged(async (user: any) => {
-      if (!user) { return this.setState({ user: null }) }
+      if (!user) { return setUser(null) }
       const u = await new fbActions().setDocName(user.uid).getSelfUserData();
       if (u && u.exists()) {
         localStorage.setItem("social", JSON.stringify(u.data()));
       }
-      return this.setState({ user: u.data() });
+      return setUser(u.data());
     });
   }
 
-  toggleNav = () => this.setState({ isOpen: !this.state.isOpen });
-  handleClickStats = () => this.setState({ isOpenMyStat: !this.state.isOpenMyStat });
-  handleClickSongs = () => this.setState({ isOpenSongs: !this.state.isOpenSongs });
-  handleClickSocial = () => this.setState({ isOpenSocial: !this.state.isOpenSocial });
-  toggleErrorSnack = () => this.setState({ errorSnack: !this.state.errorSnack });
-
-  render() {
-    const { isOpen, isOpenSongs, isOpenMyStat, isOpenSocial, user } = this.state;
-    const page = this.props.location.pathname.split("/");
-    const currentPage = () => {
-      switch (page[1]) {
-        default:
-          return "Top.Title";
-        case "data":
-          return "GlobalNav.Data";
-        case "lists":
-          return "GlobalNav.FavoriteSongs";
-        case "songs":
-          return "GlobalNav.SongList";
-        case "notPlayed":
-          return "GlobalNav.unregisteredSongs";
-        case "compare":
-          return "GlobalNav.compare";
-        case "stats":
-          return "GlobalNav.Statistics";
-        case "rivals":
-          return "GlobalNav.Rivals";
-        case "rivalCompare":
-          return "GlobalNav.RivalCompare";
-        case "sync":
-          return "GlobalNav.Sync";
-        case "history":
-          return "GlobalNav.History";
-        case "AAATable":
-          return "GlobalNav.AAATable";
-        case "tools":
-          return "GlobalNav.Tools";
-        case "settings":
-          return "GlobalNav.Settings";
-        case "help":
-          return "GlobalNav.Help";
-        case "notes":
-          return "GlobalNav.Notes";
-        case "arena":
-          return "GlobalNav.ArenaMatch";
-        case "u":
-          return page[2];
-        case "share":
-          return "BPIManager"
+  useEffect(() => {
+    getUserData();
+    const messaging = getMessaging(fb);
+    onMessage(messaging, (payload) => {
+      if (payload.data && !window.location.href.match(payload.data?.matchId)) {
+        console.log('Message received. ', payload);
       }
-    }
-    const { classes, history } = this.props;
-    const drawer = (isPerment: boolean) => (
-      <React.Fragment>
-        <div style={{ margin: "8px 0", padding: "0 8px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div onClick={() => { history.push("/"); if (!isPerment) { this.toggleNav() } }} style={{ width: "44px", height: "44px" }}><Logo /></div>
-          </div>
+    });
+  }, []);
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  });
+
+  const toggleNav = () => setIsOpen(!isOpen);
+
+  const drawer = (isPerment: boolean) => (
+    <React.Fragment>
+      <div style={{ margin: "8px 0", padding: "0 8px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div onClick={() => { history.push("/"); if (!isPerment) { toggleNav() } }} style={{ width: "44px", height: "44px" }}><Logo /></div>
         </div>
-        <Divider />
-        {navBarTop.map(item => (
-          <ListItem key={item.id} onClick={() => { history.push(item.to); if (!isPerment) { this.toggleNav() } }} button>
-            <ListItemIcon>
-              {item.icon}
-            </ListItemIcon>
-            <ListItemText primary={<FormattedMessage id={item.id} />} />
-          </ListItem>
-        ))}
-        <InnerList child={songs} handleClick={this.handleClickSongs} classes={classes} history={history} toggleNav={this.toggleNav} isPerment={isPerment}
-          parent={{ id: "GlobalNav.Parent.Songs", icon: <QueueMusicIcon /> }} isOpen={isOpenSongs} />
-        <InnerList child={myStat} handleClick={this.handleClickStats} classes={classes} history={history} toggleNav={this.toggleNav} isPerment={isPerment}
-          parent={{ id: "GlobalNav.Parent.Stats", icon: <SportsEsportsIcon /> }} isOpen={isOpenMyStat} />
-        <InnerList child={social} handleClick={this.handleClickSocial} classes={classes} history={history} toggleNav={this.toggleNav} isPerment={isPerment}
-          parent={{ id: "GlobalNav.Parent.Social", icon: <LanguageIcon /> }} isOpen={isOpenSocial} />
-        <Divider />
-        {navBarBottom.map(item => (
-          <ListItem key={item.id} onClick={() => {
-            if (item.to.indexOf("https") > -1) {
-              window.open(item.to);
-              return;
-            }
-            history.push(item.to); if (!isPerment) { this.toggleNav() }
-          }
-          } button>
-            <ListItemIcon>
-              {item.icon}
-            </ListItemIcon>
-            <ListItemText primary={<FormattedMessage id={item.id} />} />
-          </ListItem>
-        ))}
-        <Divider />
-        <Typography align="center" variant="caption" style={{ margin: "8px 0", width: "100%", display: "block", paddingBottom: "15px" }}>
-          <Version/>
-          &nbsp;
-          {config.lastUpdate}<br />
-          <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManagerから最新情報を受け取る</RefLink>
-          <div style={{ marginTop: 10 }} />
-          <Button color="secondary" size="small" target="_blank" href="https://github.com/BPIManager" variant="outlined" startIcon={<GitHubIcon />}>
-            Available on GitHub
-          </Button>
-
-        </Typography>
-      </React.Fragment>
-    );
-
-    return (
-      <div className={classes.root}>
-        <ArenaRankCheck />
-        <AppBar className={window.location.href.split('/').pop() === "" ? "appBarIndex " + classes.appBar + " apbar" : classes.appBar + " apbar"}>
-          <Toolbar>
-            <Typography variant="h6" style={{ flexGrow: 1 }}>
-              {(page.length === 2 || page[1] === "lists" || page[1] === "notes" || page[1] === "songs" || page[1] === "sync" || page[1] === "arena" || page[1] === "history" || page[1] === "data") && <FormattedMessage id={currentPage()} />}
-              {(page.length > 2 && page[1] !== "lists" && page[1] !== "notes" && page[1] !== "songs" && page[1] !== "sync" && page[1] !== "arena" && page[1] !== "history" && page[1] !== "data") && currentPage()}
-            </Typography>
-            {user && (
-              <IconButton
-                onClick={(_e) => { history.push("/sync/settings"); }}
-                color="inherit"
-                size="large">
-                <img src={user.photoURL ? user.photoURL.replace("_normal", "") : "noimage"} style={{ width: "32px", height: "32px", borderRadius: "100%" }}
-                  alt={user.displayName || "Private-mode User"}
-                  onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(user) || alternativeImg(user.displayName)} />
-              </IconButton>
-            )}
-            {!user && (
-              <Chip
-                avatar={(
-                  <Avatar style={{ width: "32px", height: "32px" }}>
-                    <LockOpenIcon />
-                  </Avatar>
-                )}
-                onClick={() => history.push("/sync/settings")}
-                label={<FormattedMessage id={"SignIn"} />}
-                clickable
-                color="primary"
-              />
-            )}
-            <IconButton
-              edge="end"
-              color="inherit"
-              aria-label="menu"
-              className={classes.menuButton}
-              onClick={() => {
-                if (!this.props.global.state.cannotMove) {
-                  return this.toggleNav();
-                } else {
-                  return this.toggleErrorSnack();
-                }
-              }}
-              size="large">
-              <MenuIcon />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        <nav className={classes.drawer}>
-          <Hidden smUp implementation="css">
-            <SwipeableDrawer open={isOpen}
-              onClose={this.toggleNav}
-              onOpen={this.toggleNav}
-              anchor="right"
-              classes={{
-                paper: classes.drawerPaper,
-              }}>
-              {drawer(false)}
-            </SwipeableDrawer>
-          </Hidden>
-          <Hidden smDown implementation="css">
-            <Drawer
-              classes={{
-                paper: classes.drawerPaper,
-              }}
-              variant="permanent"
-              open
-            >
-              {drawer(true)}
-            </Drawer>
-          </Hidden>
-        </nav>
-        <main className={classes.content + (window.location.href.match("arena/") ? " arenaDetail" : "")} style={{ width: "100%", marginBottom: "15px" }}>
-          {this.props.children}
-        </main>
-        <ArenaMatchWatcher/>
-        <ShowSnackBar message={"実行中の処理があるため続行できません"} variant="warning"
-          handleClose={this.toggleErrorSnack} open={this.state.errorSnack} autoHideDuration={3000} />
       </div>
-    );
-  }
+      <Divider />
+      {navBarTop.map(item => (
+        <ListItem key={item.id} onClick={() => { history.push(item.to); if (!isPerment) { toggleNav() } }} button>
+          <ListItemIcon>
+            {item.icon}
+          </ListItemIcon>
+          <ListItemText primary={<FormattedMessage id={item.id} />} />
+        </ListItem>
+      ))}
+      <InnerList child={songs} handleClick={() => setIsOpenSongs(!isOpenSongs)} classes={classes} history={history} toggleNav={toggleNav} isPerment={isPerment}
+        parent={{ id: "GlobalNav.Parent.Songs", icon: <QueueMusicIcon /> }} isOpen={isOpenSongs} />
+      <InnerList child={myStat} handleClick={() => setIsOpenMyStat(!isOpenMyStat)} classes={classes} history={history} toggleNav={toggleNav} isPerment={isPerment}
+        parent={{ id: "GlobalNav.Parent.Stats", icon: <SportsEsportsIcon /> }} isOpen={isOpenMyStat} />
+      <InnerList child={social} handleClick={() => setIsOpenSocial(!isOpenSocial)} classes={classes} history={history} toggleNav={toggleNav} isPerment={isPerment}
+        parent={{ id: "GlobalNav.Parent.Social", icon: <LanguageIcon /> }} isOpen={isOpenSocial} />
+      <Divider />
+      {navBarBottom.map(item => (
+        <ListItem key={item.id} onClick={() => {
+          if (item.to.indexOf("https") > -1) {
+            window.open(item.to);
+            return;
+          }
+          history.push(item.to); if (!isPerment) { toggleNav() }
+        }
+        } button>
+          <ListItemIcon>
+            {item.icon}
+          </ListItemIcon>
+          <ListItemText primary={<FormattedMessage id={item.id} />} />
+        </ListItem>
+      ))}
+      <Divider />
+      <Typography align="center" variant="caption" style={{ margin: "8px 0", width: "100%", display: "block", paddingBottom: "15px" }}>
+        <Version />
+        &nbsp;
+        {config.lastUpdate}<br />
+        <RefLink color="secondary" href="https://twitter.com/BPIManager">@BPIManagerから最新情報を受け取る</RefLink>
+        <div style={{ marginTop: 10 }} />
+        <Button color="secondary" size="small" target="_blank" href="https://github.com/BPIManager" variant="outlined" startIcon={<GitHubIcon />}>
+          Available on GitHub
+        </Button>
+
+      </Typography>
+    </React.Fragment>
+  );
+
+  return (
+    <div className={classes.root}>
+      <ArenaRankCheck />
+      <AppBar className={window.location.href.split('/').pop() === "" ? "appBarIndex " + classes.appBar + " apbar" : classes.appBar + " apbar"}>
+        <Toolbar>
+          <Typography variant="h6" style={{ flexGrow: 1 }}>
+            {(page.length === 2 || page[1] === "lists" || page[1] === "notes" || page[1] === "songs" || page[1] === "sync" || page[1] === "arena" || page[1] === "history" || page[1] === "data") && <FormattedMessage id={currentPage()} />}
+            {(page.length > 2 && page[1] !== "lists" && page[1] !== "notes" && page[1] !== "songs" && page[1] !== "sync" && page[1] !== "arena" && page[1] !== "history" && page[1] !== "data") && currentPage()}
+          </Typography>
+          {user && (
+            <IconButton
+              onClick={() => { history.push("/sync/settings"); }}
+              color="inherit"
+              size="large">
+              <img src={user.photoURL ? user.photoURL.replace("_normal", "") : "noimage"} style={{ width: "32px", height: "32px", borderRadius: "100%" }}
+                alt={user.displayName || "Private-mode User"}
+                onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(user) || alternativeImg(user.displayName)} />
+            </IconButton>
+          )}
+          {!user && (
+            <Chip
+              avatar={(
+                <Avatar style={{ width: "32px", height: "32px" }}>
+                  <LockOpenIcon />
+                </Avatar>
+              )}
+              onClick={() => history.push("/sync/settings")}
+              label={<FormattedMessage id={"SignIn"} />}
+              clickable
+              color="primary"
+            />
+          )}
+          <IconButton
+            edge="end"
+            color="inherit"
+            aria-label="menu"
+            className={classes.menuButton}
+            onClick={() => {
+              if (!props.global.state.cannotMove) {
+                return toggleNav();
+              } else {
+                return setErrorSnack(!errorSnack);
+              }
+            }}
+            size="large">
+            <MenuIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      <nav className={classes.drawer}>
+        <Hidden smUp implementation="css">
+          <SwipeableDrawer open={isOpen}
+            onClose={toggleNav}
+            onOpen={toggleNav}
+            anchor="right"
+            classes={{
+              paper: classes.drawerPaper,
+            }}>
+            {drawer(false)}
+          </SwipeableDrawer>
+        </Hidden>
+        <Hidden smDown implementation="css">
+          <Drawer
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+            variant="permanent"
+            open
+          >
+            {drawer(true)}
+          </Drawer>
+        </Hidden>
+      </nav>
+      <main className={classes.content + (window.location.href.match("arena/") ? " arenaDetail" : "")} style={{ width: "100%", marginBottom: "15px" }}>
+        {props.children}
+      </main>
+      <ArenaMatchWatcher />
+      <ShowSnackBar message={"実行中の処理があるため続行できません"} variant="warning"
+        handleClose={() => setErrorSnack(!errorSnack)} open={errorSnack} autoHideDuration={3000} />
+    </div>
+  );
 
 }
 
 export default withRouter(withStyles(styles, { withTheme: true })(GlobalHeader));
 
-class InnerList extends React.Component<{
+const InnerList: React.FC<{
   parent: {
     id: string,
     icon: JSX.Element
@@ -446,63 +423,63 @@ class InnerList extends React.Component<{
   classes: any,
   toggleNav: () => void,
   isPerment: boolean,
-}, {}>{
+}> = props => {
 
-  render() {
-    const { child, handleClick, isOpen, history, classes, parent, toggleNav, isPerment } = this.props;
-    return (
-      <List style={{ width: Number(drawerWidth - 1) + "px" }} disablePadding key={parent.id}>
-        <ListItem button onClick={handleClick}>
-          <ListItemIcon>
-            {parent.icon}
-          </ListItemIcon>
-          <ListItemText primary={<FormattedMessage id={parent.id} />} />
-          {isOpen ? <ExpandLess /> : <ExpandMore />}
-        </ListItem>
-        <Collapse in={isOpen} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            {child.map(item => (
-              <ListItem onClick={() => {
+  const { child, handleClick, isOpen, history, classes, parent, toggleNav, isPerment } = props;
+  return (
+    <List style={{ width: Number(drawerWidth - 1) + "px" }} disablePadding key={parent.id}>
+      <ListItem button onClick={handleClick}>
+        <ListItemIcon>
+          {parent.icon}
+        </ListItemIcon>
+        <ListItemText primary={<FormattedMessage id={parent.id} />} />
+        {isOpen ? <ExpandLess /> : <ExpandMore />}
+      </ListItem>
+      <Collapse in={isOpen} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding>
+          {child.map(item => (
+            <ListItem onClick={() => {
 
 
-                if (item.to.indexOf("https") > -1) {
-                  window.open(item.to);
-                  return;
-                }
+              if (item.to.indexOf("https") > -1) {
+                window.open(item.to);
+                return;
+              }
 
-                history.push(item.to);
-                if (!isPerment) { toggleNav() }
-              }} key={item.id} button className={classes.nested}>
-                <ListItemIcon>
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText primary={<FormattedMessage id={item.id} />} />
-              </ListItem>
-            ))}
-          </List>
-        </Collapse>
-      </List>
-    );
-  }
+              history.push(item.to);
+              if (!isPerment) { toggleNav() }
+            }} key={item.id} button className={classes.nested}>
+              <ListItemIcon>
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText primary={<FormattedMessage id={item.id} />} />
+            </ListItem>
+          ))}
+        </List>
+      </Collapse>
+    </List>
+  );
 }
 
-class Version extends React.Component<{}, { text: string }>{
+const Version: React.FC<{}> = () => {
+  const [text, setText] = useState<string>("");
 
-  state = {
-    text: ""
-  }
-
-  async componentDidMount() {
+  const loadVersion = async () => {
     fetch("/assets/version.txt")
       .then((response) => response.text())
       .then((textContent) => {
-        this.setState({ text: textContent.replace(/\s/g,"") });
+        setText(textContent.replace(/\s/g, ""));
       });
   }
 
-  render() {
-    const { text } = this.state;
-    if (text) return "v-" + text + "-d" + config.versionNumber;
-    return (null);
-  }
+  useEffect(() => {
+    loadVersion()
+  }, []);
+
+  if (text) return (
+    <>
+      v-{text}-d{config.versionNumber}
+    </>
+  );
+  return (null);
 }

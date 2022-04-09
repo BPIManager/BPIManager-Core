@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import SongsList from '@/view/components/songs/played/songsList';
 import { scoresDB, favsDB } from '@/components/indexedDB';
 import { scoreData, songData } from '@/types/data';

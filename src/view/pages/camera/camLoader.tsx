@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Fab from '@mui/material/Fab';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import SettingsIcon from '@mui/icons-material/Settings';

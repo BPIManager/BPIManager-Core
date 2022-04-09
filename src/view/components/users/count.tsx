@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import FolloweeList from './list';
 import Link from '@mui/material/Link';
@@ -9,32 +9,18 @@ interface P {
   userName: string
 }
 
-interface S {
-  showList: boolean
-}
+const FolloweeCounter: React.FC<P> = ({ ids, text, userName }) => {
+  const [showList, setShowList] = useState(false);
+  const toggle = ()=> setShowList(!showList);
 
-class FolloweeCounter extends React.Component<P, S> {
-
-  constructor(props: P) {
-    super(props);
-    this.state = {
-      showList: false
-    }
-  }
-
-  toggleShowList = () => this.setState({ showList: !this.state.showList });
-
-  render() {
-    const { ids, text, userName } = this.props;
-    return (
-      <React.Fragment>
-        <Typography component="span" variant="caption" color="textSecondary" onClick={this.toggleShowList} style={{ fontWeight: "bold" }}>
-          {text}&nbsp;<Link color="secondary">{ids.length}</Link>
-        </Typography>
-        {this.state.showList && <FolloweeList handleClose={this.toggleShowList} ids={ids} text={text} userName={userName} />}
-      </React.Fragment>
-    );
-  }
+  return (
+    <React.Fragment>
+      <Typography component="span" variant="caption" color="textSecondary" onClick={toggle} style={{ fontWeight: "bold" }}>
+        {text}&nbsp;<Link color="secondary">{ids.length}</Link>
+      </Typography>
+      {showList && <FolloweeList handleClose={toggle} ids={ids} text={text} userName={userName} />}
+    </React.Fragment>
+  );
 }
 
 export default FolloweeCounter;

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Typography from '@mui/material/Typography';
