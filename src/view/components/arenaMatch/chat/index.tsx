@@ -34,24 +34,7 @@ interface P {
   user: any,
 }
 
-class Chat extends React.Component<P, {}> {
-
-  render() {
-    return (
-      <React.Fragment>
-        <View detail={this.props.detail} id={this.props.id} user={this.props.user} />
-      </React.Fragment>
-    );
-  }
-}
-
-export default Chat;
-
-class View extends React.Component<{
-  id: string,
-  user: any,
-  detail: any
-}, {
+class Chat extends React.Component<P, {
     messages: any[],
     isModalOpen: boolean,
     currentUserName: string,
@@ -91,14 +74,14 @@ class View extends React.Component<{
         messages.push(data);
       }
       this.setState({ messages: messages, initialState: false });
-      this.boxRef?.current?.scrollIntoView(false);
+      this.boxRef ?.current ?.scrollIntoView(false);
       this.setHeight();
       return;
     });
   }
 
   setHeight = () => {
-    const d = (mx: string) => document.getElementById(mx)?.clientHeight || 0;
+    const d = (mx: string) => document.getElementById(mx) ?.clientHeight || 0;
     const header = d("mxHeaderBox");
     const tab = d("mxTabBox");
     const comment = d("mxCommentBox");
@@ -283,3 +266,5 @@ class TxtForm extends React.Component<{
     );
   }
 }
+
+export default Chat;

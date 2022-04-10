@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Button from '@mui/material/Button';
 import { withRouter, RouteComponentProps, Link } from 'react-router-dom';
-import { Link as RefLink, Divider, Avatar, Grid, Typography, Container, CircularProgress, ListItem, ListItemAvatar, ListItemText, List } from '@mui/material/';
+import { Link as RefLink, Avatar, Grid, Typography, Container, CircularProgress, ListItem, ListItemAvatar, ListItemText, List } from '@mui/material/';
 import { _currentVersion, _currentTheme, _currentQuickAccessComponents } from '@/components/settings';
 import UpdateIcon from '@mui/icons-material/Update';
 import Loader from '@/view/components/common/loader';
@@ -34,6 +34,7 @@ import totalBPI from "@/components/bpi/totalBPI";
 import { _apiFetch } from "@/components/common/rankApi";
 import fbArenaMatch from "@/components/firebase/arenaMatch";
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import CachedIcon from '@mui/icons-material/Cached';
 
 class Index extends React.Component<{ global: any } & RouteComponentProps, {
   user: any,
@@ -93,13 +94,7 @@ class Index extends React.Component<{ global: any } & RouteComponentProps, {
 
     const ListItem = (icon: any, text: string, data: string | number, target: string, targetText: string) => (
       <Grid item xs={xs} sm={sm} md={md} lg={lg}>
-        <div className="TypographywithIconAndLinesContainer">
-          <div className="TypographywithIconAndLinesInner">
-            <Typography color="textSecondary" gutterBottom className="TypographywithIconAndLines">
-              {icon}&nbsp;<FormattedMessage id={text} />
-            </Typography>
-          </div>
-        </div>
+        <SubHeader icon={icon} text={<FormattedMessage id={text} />} />
         {isLoading && <Loader />}
         {!isLoading && (
           <Grid container alignItems="center">
@@ -245,94 +240,120 @@ class Index extends React.Component<{ global: any } & RouteComponentProps, {
 
 export default withRouter(Index);
 
-class UpdateDef extends React.Component<{}, {
-  showUpdate: boolean,
-  latestVersion: string,
-  updateInfo: string,
-  progress: number,
-  res: string,
-}>{
+const styled = {color:"#ff4040"};
+const UpdateContainer: React.FC = ({ children }) => (
+  <Grid item xs={12} style={{paddingTop:"15px"}}>
+    <SubHeader icon={<CachedIcon style={styled}/>} text={<span style={styled}>定義データを更新</span>} />
+    {children}
+  </Grid>
+)
 
-  constructor(props: {}) {
-    super(props);
-    this.state = {
-      showUpdate: false,
-      latestVersion: "",
-      updateInfo: "",
-      progress: 0,
-      res: ""
-    }
-  }
+const UpdateDef: React.FC = () => {
+  const [showUpdate, setShowUpdate] = useState(false);
+  const [updateInfo, setUpdateInfo] = useState<{ version: string, url: string }>({ version: "", url: "" });
+  const [progress, setProgress] = useState(0);
+  const [result, setResult] = useState("");
 
-  async componentDidMount() {
+  const initialize = async () => {
     try {
       const versions = await fetch("https://proxy.poyashi.me/?type=bpiVersion");
       const data = await versions.json();
       const currentVersion = _currentVersion();
       if (data.version !== currentVersion) {
-        this.setState({
-          showUpdate: true,
-          latestVersion: data.version,
-          updateInfo: data.updateInfo,
-        });
+        setShowUpdate(true);
+        setUpdateInfo({ version: data.version, url: data.updateInfo });
       }
     } catch (e: any) {
       console.log(e);
     }
   }
+  const progressRef = useRef(null);
 
-  updateButton = async () => {
-    this.setState({ progress: 1 });
-    const p = await updateDefFile();
-    this.setState({ progress: 2, res: p.message });
+  const update = async () => {
+    setProgress(1);
+    const p = await updateDefFile(progressRef);
+    setProgress(2);
+    setResult(p.message);
   }
 
-  handleToggle = () => this.setState({ showUpdate: false });
+  const handleToggle = () => setShowUpdate(false);
 
-  render() {
-    const { showUpdate, latestVersion, updateInfo, progress, res } = this.state;
-    if (!showUpdate) {
-      return (null);
-    }
+  useEffect(() => {
+    initialize();
+  }, []);
+
+  if (!showUpdate) {
+    return (null);
+  }
+  if (progress === 0) {
     return (
-      <Alert variant="outlined" className="MuiPaper-root updateDefAlert" style={{ border: 0, background: "transparent" }} icon={false} severity="info">
-        <AlertTitle>定義データを更新</AlertTitle>
-        <div>
-          {progress === 0 && <div>
-            最新の楽曲データ(ver{latestVersion})が利用可能です。<br />
-            「更新」ボタンをクリックして今すぐ更新できます。<br />
-            <RefLink href={updateInfo} target="_blank" color="secondary">ここをクリック</RefLink>して、最新の楽曲データにおける変更点を確認できます。
-            <Divider style={{ margin: "8px 0" }} />
-            <Button
-              fullWidth
-              variant="outlined"
-              color="secondary"
-              size="large"
-              onClick={this.updateButton}
-              startIcon={<UpdateIcon />}>
-              今すぐ更新
-            </Button>
-          </div>}
-          {progress === 1 && <div>
+      <UpdateContainer>
+        <Typography variant="body2" style={{ margin: 0 }}>
+          最新の楽曲データ(ver{updateInfo.version})が利用可能です。<br />
+          <RefLink href={updateInfo.url} target="_blank" color="secondary">こちらのページ</RefLink>より変更点をご確認の上、アップデートを適用してください。
+        </Typography>
+        <Button
+          style={{ marginTop: "8px" }}
+          variant="outlined"
+          color="secondary"
+          fullWidth
+          onClick={update}
+          startIcon={<UpdateIcon />}>
+          今すぐ更新
+          </Button>
+      </UpdateContainer>
+    )
+  }
+  if (progress === 1) {
+    return (
+      <UpdateContainer>
+        <Grid container>
+          <Grid item xs={3} style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
             <Loader />
-            <p style={{ textAlign: "center" }}>更新しています<br /><span id="_progressText" /></p>
-          </div>}
-          {progress === 2 && <div>
-            <div style={{ display: "flex", alignItems: "center", margin: "20px 0", flexDirection: "column" }}>
-              {(res === "定義データはすでに最新です" || res === "更新完了") && <CheckIcon style={{ fontSize: 60 }} />}
-              {(res !== "定義データはすでに最新です" && res !== "更新完了") && <WarningIcon style={{ fontSize: 60 }} />}
-              <span>{res}</span>
-              {(res !== "定義データはすでに最新です" && res !== "更新完了") && <span><RefLink href="https://gist.github.com/potakusan/11b5322c732bfca4d41fc378dab9b992" color="secondary" target="_blank">トラブルシューティングを表示</RefLink></span>}
-            </div>
-            <Button onClick={this.handleToggle} color="secondary" fullWidth style={{ marginTop: "8px" }}>
+          </Grid>
+          <Grid item xs={9}>
+            <p>
+              更新しています<br />
+              <span id="_progressText" ref={progressRef} />
+            </p>
+          </Grid>
+        </Grid>
+      </UpdateContainer>
+    )
+  }
+  if (progress === 2) {
+    return (
+      <UpdateContainer>
+        <Grid container>
+          <Grid item xs={3} style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+            {(result === "定義データはすでに最新です" || result === "更新完了") && <CheckIcon style={{ fontSize: 60, margin: 0 }} />}
+            {(result !== "定義データはすでに最新です" && result !== "更新完了") && <WarningIcon style={{ fontSize: 60, margin: 0 }} />}
+          </Grid>
+          <Grid item xs={9}>
+            <p>
+              <span>{result}</span>
+              {(result !== "定義データはすでに最新です" && result !== "更新完了") && <span><RefLink href="https://gist.github.com/potakusan/11b5322c732bfca4d41fc378dab9b992" color="secondary" target="_blank">トラブルシューティングを表示</RefLink></span>}
+            </p>
+            <Button onClick={handleToggle} color="secondary" variant="outlined" size="small">
               閉じる
             </Button>
-          </div>}
-        </div>
-      </Alert>
-    );
+          </Grid>
+        </Grid>
+      </UpdateContainer>
+    )
   }
+  return (null);
 }
+
+const SubHeader: React.FC<{ icon: React.ReactNode, text: string | React.ReactNode }> = ({ icon, text }) => (
+  <div className="TypographywithIconAndLinesContainer">
+    <div className="TypographywithIconAndLinesInner">
+      <Typography color="textSecondary" gutterBottom className="TypographywithIconAndLines">
+        {icon}&nbsp;{text}
+      </Typography>
+    </div>
+  </div>
+)
 
 class BeginnerAlert extends React.Component<{}, {}>{
 
@@ -451,13 +472,7 @@ class RecentUsers extends React.Component<{ history: any }, { loading: boolean, 
     return (
       <React.Fragment>
         <Container style={{ marginTop: 24 }}>
-          <div className="TypographywithIconAndLinesContainer">
-            <div className="TypographywithIconAndLinesInner">
-              <Typography color="textSecondary" gutterBottom className="TypographywithIconAndLines">
-                <PeopleIcon />&nbsp;あなたに実力が近いユーザー
-              </Typography>
-            </div>
-          </div>
+          <SubHeader icon={<PeopleIcon />} text="あなたに実力が近いユーザー" />
           {loading && <div style={{ marginTop: 8 }}><Loader /></div>}
           {(!loading && maintenance) && (
             <Typography variant="caption" color="textSecondary">
@@ -538,13 +553,7 @@ class ArenaMatch extends React.Component<{ history: any }, { list: any[] }>{
     return (
       <React.Fragment>
         <Container style={{ marginTop: 24 }}>
-          <div className="TypographywithIconAndLinesContainer">
-            <div className="TypographywithIconAndLinesInner">
-              <Typography color="textSecondary" gutterBottom className="TypographywithIconAndLines">
-                <AccessTimeIcon />&nbsp;ArenaMatch で待機中
-              </Typography>
-            </div>
-          </div>
+          <SubHeader icon={<AccessTimeIcon />} text="ArenaMatch で待機中" />
           {list.length === 0 && <div style={{ marginTop: 8 }}></div>}
           {(list.length > 0) && (
             <React.Fragment>

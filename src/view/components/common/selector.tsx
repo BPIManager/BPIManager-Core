@@ -17,59 +17,53 @@ interface P {
   handleChange: (name: string, target: string) => (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-class FilterByLevelAndDiff extends React.Component<P, {}> {
-
-  render() {
-    const { options, handleChange, includePMButtons } = this.props;
-    return (
-      <Grid container spacing={1} id="mainFilters" style={{ margin: "5px 0" }}>
-        <Grid item xs={includePMButtons ? 4 : 6}>
-          <FormControl component="fieldset">
-            <FormLabel component="legend"><FormattedMessage id="Songs.filterByLevel" /></FormLabel>
-            <FormGroup row>
-              {levelsSelector.map(item => (
-                <FormControlLabel
-                  key={item.label}
-                  control={<Checkbox checked={options.level.some(t => t === item.name)} onChange={handleChange(item.name, "level")} value={item.val} />}
-                  label={item.label}
-                />
-              ))}
-            </FormGroup>
-          </FormControl>
-        </Grid>
-        <Grid item xs={includePMButtons ? 5 : 6}>
-          <FormControl component="fieldset">
-            <FormLabel component="legend"><FormattedMessage id="Songs.filterByDifficulty" /></FormLabel>
-            <FormGroup row>
-              {difficultiesSelector.map(item => (
-                <FormControlLabel
-                  key={item.label}
-                  control={<Checkbox checked={options.difficulty.some(t => t === item.name)} onChange={handleChange(item.name, "difficulty")} value={item.val} />}
-                  label={item.label}
-                />
-              ))}
-            </FormGroup>
-          </FormControl>
-        </Grid>
-        {includePMButtons && (
-          <Grid item xs={3}>
-            <FormControl component="fieldset">
-              <FormLabel component="legend"><FormattedMessage id="Compare.filterByPlusMinus" /></FormLabel>
-              <FormGroup row>
-                {pmSelector.map(item => (
-                  <FormControlLabel
-                    key={item.label}
-                    control={<Checkbox checked={options.pm.some(t => t === item.name)} onChange={handleChange(item.name, "pm")} value={item.val} />}
-                    label={item.label}
-                  />
-                ))}
-              </FormGroup>
-            </FormControl>
-          </Grid>
-        )}
+const FilterByLevelAndDiff: React.FC<P> = ({ includePMButtons, options, handleChange }) => (
+  <Grid container spacing={1} id="mainFilters" style={{ margin: "5px 0" }}>
+    <Grid item xs={includePMButtons ? 4 : 6}>
+      <FormControl component="fieldset">
+        <FormLabel component="legend"><FormattedMessage id="Songs.filterByLevel" /></FormLabel>
+        <FormGroup row>
+          {levelsSelector.map(item => (
+            <FormControlLabel
+              key={item.label}
+              control={<Checkbox checked={options.level.some(t => t === item.name)} onChange={handleChange(item.name, "level")} value={item.val} />}
+              label={item.label}
+            />
+          ))}
+        </FormGroup>
+      </FormControl>
+    </Grid>
+    <Grid item xs={includePMButtons ? 5 : 6}>
+      <FormControl component="fieldset">
+        <FormLabel component="legend"><FormattedMessage id="Songs.filterByDifficulty" /></FormLabel>
+        <FormGroup row>
+          {difficultiesSelector.map(item => (
+            <FormControlLabel
+              key={item.label}
+              control={<Checkbox checked={options.difficulty.some(t => t === item.name)} onChange={handleChange(item.name, "difficulty")} value={item.val} />}
+              label={item.label}
+            />
+          ))}
+        </FormGroup>
+      </FormControl>
+    </Grid>
+    {includePMButtons && (
+      <Grid item xs={3}>
+        <FormControl component="fieldset">
+          <FormLabel component="legend"><FormattedMessage id="Compare.filterByPlusMinus" /></FormLabel>
+          <FormGroup row>
+            {pmSelector.map(item => (
+              <FormControlLabel
+                key={item.label}
+                control={<Checkbox checked={options.pm.some(t => t === item.name)} onChange={handleChange(item.name, "pm")} value={item.val} />}
+                label={item.label}
+              />
+            ))}
+          </FormGroup>
+        </FormControl>
       </Grid>
-    );
-  }
-}
+    )}
+  </Grid>
+)
 
 export default FilterByLevelAndDiff;

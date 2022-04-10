@@ -48,6 +48,8 @@ interface P {
 
 class Settings extends React.Component<P, S> {
 
+  ref: React.MutableRefObject<any> | null = null;
+
   constructor(props: P) {
     super(props);
     this.state = {
@@ -76,7 +78,7 @@ class Settings extends React.Component<P, S> {
     try {
       this.props.global.setMove(true);
       this.setState({ disableUpdateBtn: true, message: "" });
-      const updater = await updateDefFile();
+      const updater = await updateDefFile(this.ref);
       end();
       this.setState({ currentVersion: updater.newVersion, disableUpdateBtn: false, message: updater.message });
     } catch (e: any) {
@@ -254,7 +256,7 @@ class Settings extends React.Component<P, S> {
               </FormControl>
               <Typography variant="caption" display="block">
                 {message}
-                <span id="_progressText" />
+                <span ref={this.ref} id="_progressText" />
               </Typography>
               <Typography variant="caption" display="block">
                 <FormattedMessage id="Settings.currentVersion" />{this.state.currentVersion}

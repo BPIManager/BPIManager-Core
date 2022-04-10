@@ -555,7 +555,7 @@ export const scoresDB = class extends storageWrapper {
     { currentBPI: !currentBPI.error ? currentBPI.bpi : -15 }
   );
 
-  async recalculateBPI(updatedSongs: string[] = [], force: boolean = false) {
+  async recalculateBPI(updatedSongs: string[] = [], force: boolean = false, ref: React.MutableRefObject<any> | null = null) {
     try {
       const self = this;
       this.setCalcClass();
@@ -570,21 +570,21 @@ export const scoresDB = class extends storageWrapper {
           continue;
         }
         const bpi = await self.calculator.setIsSingle(t.isSingle).calc(t.title, difficultyParser(t.difficulty, t.isSingle), t.exScore);
-        _pText("Scores:BPI更新中 " + t["title"] + _prefixFromNum(t["difficulty"]));
+        _pText(ref, "Scores:BPI更新中 " + t["title"] + _prefixFromNum(t["difficulty"]));
         this.modifyBPI(t, bpi);
       }
     } catch (e: any) {
       console.log(e);
     }
-    _pText("");
+    _pText(ref, "");
   }
 
   //置き換え予定
-  async setDataWithTransaction(scores: scoreData[]) {
+  async setDataWithTransaction(scores: scoreData[], ref: React.MutableRefObject<any> | null = null) {
     await this.transaction("rw", this.scores, async () => {
       await this.scores.where({ storedAt: _currentStore(), isSingle: _isSingle() }).delete();
       return Promise.all(scores.map(item => {
-        _pText("Saving : " + item["title"]);
+        _pText(ref, "Saving : " + item["title"]);
         this.putItem(item);
         return 0;
       }));
@@ -635,6 +635,7 @@ export const scoreHistoryDB = class extends storageWrapper {
   //legacy
   add(score: scoreData | null, data: { currentBPI: number, exScore: number }, forceUpdateTime: boolean = false): boolean {
     try {
+      console.warn("scoreHistoryDB.add is deprecated method. Use scoreHistoryDB._add instead.")
       if (!score) { return false; }
       this.scoreHistory.add({
         title: score.title,
@@ -784,7 +785,7 @@ export const scoreHistoryDB = class extends storageWrapper {
     { currentBPI: !currentBPI.error ? currentBPI.bpi : -15 }
   );
 
-  async recalculateBPI(updatedSongs: string[] = [], force: boolean = false) {
+  async recalculateBPI(updatedSongs: string[] = [], force: boolean = false, ref: React.MutableRefObject<any> | null = null) {
     try {
       const self = this;
       this.setCalcClass();
@@ -800,7 +801,7 @@ export const scoreHistoryDB = class extends storageWrapper {
           continue;
         }
         const bpi = await self.calculator.setIsSingle(t.isSingle).calc(t.title, difficultyParser(t.difficulty, t.isSingle), t.exScore);
-        _pText("ScoreHistory:BPI更新中 " + t["title"] + _prefixFromNum(t["difficulty"]));
+        _pText(ref, "ScoreHistory:BPI更新中 " + t["title"] + _prefixFromNum(t["difficulty"]));
         this.modifyBPI(t, bpi);
       }
     } catch (e: any) {
@@ -808,7 +809,7 @@ export const scoreHistoryDB = class extends storageWrapper {
       console.log("failed recalculate [scoreHistoryDB] - ");
       return;
     }
-    _pText("");
+    _pText(ref, "");
   }
 
   async setDataWithTransaction(history: any[]) {
@@ -1054,7 +1055,7 @@ export const rivalListsDB = class extends storageWrapper {
 
   async getAllScoresWithTitle(title: string, difficulty: string): Promise<rivalScoreData[]> {
     try {
-      return (await this.rivals.toArray()).filter(item=>
+      return (await this.rivals.toArray()).filter(item =>
         item.isSingle === _isSingle() &&
         item.storedAt === _currentStore() &&
         item.title === title &&

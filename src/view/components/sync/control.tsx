@@ -39,6 +39,8 @@ class SyncControlScreen extends React.Component<{ userData: any, toggleSending: 
   downloadConfirm: boolean
 }> {
 
+  ref: React.MutableRefObject<any> | null = null;
+
   private fbA: fbActions = new fbActions();
   private fbLoader: fbActions = new fbActions();
 
@@ -96,17 +98,17 @@ class SyncControlScreen extends React.Component<{ userData: any, toggleSending: 
   download = async () => {
     this.setState({ isLoading: true });
     this.props.toggleSending();
-    _pText("通信中");
+    _pText(this.ref, "通信中");
     const res = await this.fbLoader.load();
     if (res === null || res === undefined) {
       this.toggleErrorSnack("エラーが発生しました");
       this.props.toggleSending();
       return this.setState({ isLoading: false });
     }
-    await new scoresDB().setDataWithTransaction(res.scores);
+    await new scoresDB().setDataWithTransaction(res.scores,this.ref);
     await new scoreHistoryDB().setDataWithTransaction(res.scoresHistory);
-    await new scoresDB().recalculateBPI([], true);
-    await new scoreHistoryDB().recalculateBPI([], true);
+    await new scoresDB().recalculateBPI([], true,this.ref);
+    await new scoreHistoryDB().recalculateBPI([], true,this.ref);
     this.props.toggleSending();
     this.setState({ isLoading: false });
   }
@@ -198,7 +200,7 @@ class SyncControlScreen extends React.Component<{ userData: any, toggleSending: 
           {isLoading && (
             <Alert variant="outlined" severity="warning" style={{ borderColor: "#663c0045" }} icon={<CircularProgress color="secondary" />}>
               <FormattedMessage id="Sync.Control.processing" /><br />
-              <span id="_progressText" />
+              <span ref={this.ref} id="_progressText" />
             </Alert>
           )}
           {(!isLoading && scoreData === null) && (
@@ -243,13 +245,13 @@ class ConfirmDialog extends React.Component<{
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            データがすでに存在する場合は上書きされます。<br/>
+            データがすでに存在する場合は上書きされます。<br />
             操作は取り消しできません。続行してもよろしいですか？
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={cancel}>キャンセル</Button>
-          <Button onClick={()=>{
+          <Button onClick={() => {
             next();
             cancel();
           }} autoFocus>
