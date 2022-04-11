@@ -17,6 +17,7 @@ import { ShareOnTwitter } from '../common/shareButtons';
 import { config } from '@/config';
 import _totalBPI from "@/components/bpi/totalBPI";
 import dayjs from 'dayjs';
+import MyRekidaiChart from "./charts/mybest";
 
 class Main extends React.Component<{ intl: any, derived?: rivalScoreData[] } & RouteComponentProps, S> {
 
@@ -254,6 +255,11 @@ class Main extends React.Component<{ intl: any, derived?: rivalScoreData[] } & R
               }
               {groupedByClearState.length === 0 && <p>No data found.</p>}
             </div>
+          </Grid>
+        </Grid>
+        <Grid container style={{marginTop:"20px"}}>
+          <Grid item xs={12} md={6} lg={6}>
+            <MyRekidaiChart withTitle diff={targetLevel}/>
           </Grid>
         </Grid>
       </Container>

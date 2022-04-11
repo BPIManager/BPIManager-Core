@@ -56,38 +56,34 @@ class Main extends React.Component<{ intl: any } & RouteComponentProps, {
     return (
       <Container fixed style={{ padding: 0 }}>
         {(_isSingle() === 1 && radar && radar.length > 0) &&
-          <Grid container>
-            <Grid item xs={12} md={12} lg={12}>
-              <Grid container spacing={0}>
-                <Grid item xs={12} md={12} lg={6} style={{ height: "350px" }}>
-                  <div style={{ width: "100%", height: "100%" }}>
-                    <ResponsiveContainer>
-                      <RadarChart outerRadius={110} data={radar}>
-                        <PolarGrid />
-                        <PolarAngleAxis dataKey="title" stroke={chartColor} />
-                        <PolarRadiusAxis />
-                        <Radar name="TotalBPI" dataKey="TotalBPI" fill={barColor} fillOpacity={0.6} />
-                      </RadarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </Grid>
-                <Grid item xs={12} md={12} lg={6}>
-                  <Paper style={{ padding: "5px" }}>
-                    <Table size="small" style={{ minHeight: "350px" }}>
-                      <TableBody>
-                        {radar.concat().sort((a, b) => b.TotalBPI - a.TotalBPI).map(row => (
-                          <TableRow key={row.title} onClick={() => this.toggleRadarDetail(row.title)}>
-                            <TableCell component="th">
-                              {row.title}
-                            </TableCell>
-                            <TableCell align="right">{row.TotalBPI.toFixed(2)}<span style={{ fontSize: "7px" }}>(上位{Math.floor(row.rank * 100) / 100}%)</span></TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </Paper>
-                </Grid>
-              </Grid>
+          <Grid container spacing={0}>
+            <Grid item xs={12} md={12} lg={6} style={{ height: "350px" }}>
+              <div style={{ width: "100%", height: "100%" }}>
+                <ResponsiveContainer>
+                  <RadarChart outerRadius={110} data={radar}>
+                    <PolarGrid />
+                    <PolarAngleAxis dataKey="title" stroke={chartColor} />
+                    <PolarRadiusAxis />
+                    <Radar name="TotalBPI" dataKey="TotalBPI" fill={barColor} fillOpacity={0.6} />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+            </Grid>
+            <Grid item xs={12} md={12} lg={6}>
+              <Paper style={{ padding: "5px" }}>
+                <Table size="small" style={{ minHeight: "350px" }}>
+                  <TableBody>
+                    {radar.concat().sort((a, b) => b.TotalBPI - a.TotalBPI).map(row => (
+                      <TableRow key={row.title} onClick={() => this.toggleRadarDetail(row.title)}>
+                        <TableCell component="th">
+                          {row.title}
+                        </TableCell>
+                        <TableCell align="right">{row.TotalBPI.toFixed(2)}<span style={{ fontSize: "7px" }}>(上位{Math.floor(row.rank * 100) / 100}%)</span></TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Paper>
             </Grid>
           </Grid>
         }

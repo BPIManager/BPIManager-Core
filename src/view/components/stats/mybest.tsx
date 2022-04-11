@@ -1,9 +1,7 @@
 import React from 'react';
-import { scoresDB } from '@/components/indexedDB';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import { _isSingle, } from "@/components/settings";
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -17,11 +15,7 @@ import TablePagination from '@mui/material/TablePagination';
 import { scoreData } from '@/types/data';
 import Loader from '../common/loader';
 import { _prefix } from '@/components/songs/filter';
-
-interface scoreByVersion {
-  name: string,
-  value: number,
-}
+import { myBest, scoreByVersion, apply } from "@/components/stats/myBest";
 
 interface S {
   isLoading: boolean,
@@ -72,57 +66,16 @@ class MyBest extends React.Component<{}, S> {
   async updateScoreData(newData: { targetLevel: string } = {
     targetLevel: this.state.targetLevel,
   }) {
-    const isSingle = _isSingle();
-    let { targetLevel } = newData;
-    let scoreDataKeys: { [key: string]: scoreData } = {};
-    const data = (await new scoresDB(isSingle).getAllVersions()).filter(item => item.difficultyLevel === targetLevel);
-    for (let key in data) {
-      const d = data[key];
-      const title = d["title"] + d["difficulty"];
-      if (!scoreDataKeys[title] || d["exScore"] > scoreDataKeys[title]["exScore"]) {
-        scoreDataKeys[title] = d;
-      }
-    }
-    let v: { [key: string]: number } = {};
-    this.setState(Object.assign({
-      isLoading: false,
-      scoreData: this.apply(Object.keys(scoreDataKeys).reduce((group: scoreData[], item) => {
-        group.push(scoreDataKeys[item]);
-        if (v[scoreDataKeys[item]["storedAt"]]) {
-          v[scoreDataKeys[item]["storedAt"]]++;
-        } else {
-          v[scoreDataKeys[item]["storedAt"]] = 1;
-        }
-        return group;
-      }, [])),
-      scoreByVersion: Object.keys(v).reduce((group: scoreByVersion[], item: string) => {
-        group.push({
-          name: item,
-          value: v[item]
-        })
-        return group;
-      }, [])
-    }, newData));
+    const data = await myBest(newData.targetLevel, this.state.sort, this.state.isDesc);
+    console.log(data);
+    return this.setState({
+      scoreData: data.scoreData,
+      scoreByVersion: data.scoreByVersion,
+      isLoading: false
+    })
   }
 
-  apply = (data = this.state.scoreData) => {
-    return data.sort((a, b): number => {
-      const p = (): boolean => {
-        switch (this.state.sort) {
-          case 0:
-            return b.title.localeCompare(a.title, "ja", { numeric: true }) > -1;
-          case 1:
-            return Number(b.storedAt) - Number(a.storedAt) > 0;
-          default:
-          case 2:
-            return b.exScore - a.exScore > 0;
-          case 3:
-            return b.currentBPI - a.currentBPI > 0
-        }
-      }
-      return (this.state.isDesc ? p() : !p()) ? 1 : -1
-    });
-  }
+  apply = () => apply(this.state.sort, this.state.isDesc, this.state.scoreData);
 
   handleLevelChange = async (event: SelectChangeEvent<string>): Promise<void> => {
     if (typeof event.target.value !== "string") return;

@@ -5,3 +5,10 @@ export const versionTitles: { num: string, title: string }[] = [
   { num: "28", title: "28 BISTROVER" },
   { num: "29", title: "29 CastHour" }
 ];
+
+export const versionConverter: { [key: string]: string } = {
+  "26": "26 Rootage",
+  "27": "27 HEROIC VERSE",
+  "28": "28 BISTROVER",
+  "29": "29 CastHour",
+};

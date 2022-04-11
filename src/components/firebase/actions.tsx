@@ -3,7 +3,7 @@ import { Auth, User, UserCredential, getAdditionalUserInfo, signOut, updateProfi
 import {
   getFirestore, FieldValue, DocumentReference, Query, QueryDocumentSnapshot, addDoc,
   arrayUnion, runTransaction, setDoc, serverTimestamp, updateDoc, getDoc, doc, increment,
-  collection, writeBatch, getDocs, deleteDoc, query, where, orderBy, startAfter, startAt, endAt, limit
+  collection, writeBatch, getDocs, deleteDoc, query, where, orderBy, startAfter, startAt, endAt, limit, WriteBatch, DocumentData
 } from "firebase/firestore";
 import timeFormatter from "../common/timeFormatter";
 import { scoresDB, scoreHistoryDB } from "../indexedDB";
@@ -204,62 +204,82 @@ export default class fbActions {
     }
   }
 
-  async saveName(displayName: string, profile: string, photoURL: string, arenaRank: string, showNotes?: boolean, isPublic?: boolean, _iidxId?: string, _twitterId?: string) {
+  async saveUserData(newData: any) {
     try {
       if (!this.name || !this.docName) { return { error: true, date: null }; }
-      if (displayName.length > 16 || profile.length > 140) {
+
+      if (newData.displayName.length > 16 || newData.profile.length > 140) {
         throw new Error("too long error");
       }
-      if (displayName.length !== 0 && !/^[a-zA-Z0-9]+$/g.test(displayName)) {
+      if (newData.displayName.length !== 0 && !/^[a-zA-Z0-9]+$/g.test(newData.displayName)) {
         throw new Error("invalid inputs error");
       }
-      const duplication = await this.searchRival(displayName, true);
-      if (duplication !== null && displayName !== "" && duplication.uid !== this.docName) {
+
+      const duplication = await this.searchRival(newData.displayName, true);
+
+      if (duplication !== null && newData.displayName !== "" && duplication.uid !== this.docName) {
         throw new Error("already used error");
       }
+
       const batch = writeBatch(db);
-      const from = doc(db, this.setUserCollection(), this.docName);
-      if (displayName === "" || !isPublic) {
-        await updateDoc(doc(db, this.setUserCollection(), this.docName), { isPublic: false });
-        const _query = query(collection(db, "followings"), where("from", "==", from));
-        getDocs(_query).then(async (querySnapshot) => {
-          querySnapshot.forEach(doc => batch.update(doc.ref, { isPublic: false }));
-          batch.commit();
-        });
+      const targetDoc = doc(db, this.setUserCollection(), this.docName);
+      if (newData.displayName === "" || !newData.isPublic) {
+        await updateDoc(targetDoc, { isPublic: false });
+        this.setFollowState(batch, targetDoc, false);
       } else {
-        const idMatcher = profile.match(/(\d{4}-\d{4}|\d{8})/);
+        const idMatcher = newData.profile.match(/(\d{4}-\d{4}|\d{8})/);
         let iidxId = idMatcher ? idMatcher[0].replace(/\D/g, "") : "";
-        if (_iidxId) iidxId = _iidxId;
-        const v = "totalBPIs." + _currentStore();
-        await updateDoc(doc(db, this.setUserCollection(), this.docName), {
+        if (iidxId) newData.iidxId = iidxId;
+        const totalBPI = await this.totalBPI();
+
+        const data = {
           timeStamp: timeFormatter(3),
-          isPublic: isPublic || false,
+          isPublic: newData.isPublic || false,
           serverTime: this.time(),
           uid: this.docName,
-          iidxId: iidxId,
-          twitter: _twitterId,
-          twitterSearch: _twitterId ? _twitterId.toLowerCase() : "",
-          displayName: displayName,
-          displayNameSearch: displayName.toLowerCase(),
-          profile: profile,
-          photoURL: photoURL,
-          arenaRank: arenaRank,
-          showNotes: showNotes || false,
-          totalBPI: await this.totalBPI(),
-          [v]: await this.totalBPI(),
-          versions: arrayUnion(_currentStore()),
-        });
-        const _query = query(collection(db, "followings"), where("from", "==", from));
-        getDocs(_query).then(async (querySnapshot) => {
-          querySnapshot.forEach(doc => batch.update(doc.ref, { isPublic: true, }));
-          batch.commit();
-        });
+          iidxId: newData.iidxId,
+          twitter: newData.twitter,
+          twitterSearch: newData.twitter ? newData.twitter.toLowerCase() : "",
+          displayName: newData.displayName,
+          displayNameSearch: newData.displayName.toLowerCase(),
+          profile: newData.profile,
+          photoURL: newData.photoURL,
+          arenaRank: newData.arenaRank,
+          showNotes: newData.showNotes || false,
+          totalBPI: totalBPI,
+          versions: arrayUnion(_currentStore())
+        };
+
+        const target = await getDoc(targetDoc);
+        if (target.exists()) {
+          const v = "totalBPIs." + _currentStore();
+          await updateDoc(targetDoc, {
+            ...data,
+            [v]: totalBPI,
+          });
+        } else {
+          await setDoc(targetDoc, {
+            ...data,
+            totalBPIs: {
+              [_currentStore()]: totalBPI
+            }
+          }, { merge: true });
+        }
+        this.setFollowState(batch, targetDoc, true);
       }
       return { error: false, date: timeFormatter(3) };
     } catch (e: any) {
       console.log(e);
       return { error: true, date: null };
     }
+  }
+
+  async setFollowState(batch: WriteBatch, from: DocumentReference<DocumentData>, state: boolean) {
+    const _query = query(collection(db, "followings"), where("from", "==", from));
+    getDocs(_query).then(async (querySnapshot) => {
+      querySnapshot.forEach(doc => batch.update(doc.ref, { isPublic: state, }));
+      batch.commit();
+    });
   }
 
   async searchByExactId(input: string) {
@@ -301,7 +321,7 @@ export default class fbActions {
         });
       }
       if (!input || (input === "")) { return []; }
-      let ans:any[] = [];
+      let ans: any[] = [];
       const inputID = zenToHan(input).replace(/\D/g, "") || ""; // 数字のみ絞り出し、数字が無い場合（=空欄）は検索しない
       const inputHN = zenToHan(input).toLowerCase();
       let q1 = [orderBy("displayNameSearch"), startAt(inputHN), endAt(inputHN + "\uf8ff"), ...this.versionQuery()];
@@ -309,7 +329,7 @@ export default class fbActions {
       ans = ans.concat(res.docs);
       let qt = [orderBy("twitterSearch"), startAt(inputHN), endAt(inputHN + "\uf8ff"), ...this.versionQuery()];
       const at = await getDocs(query(collection(db, this.setUserCollection()), ...qt));
-      if(!at.empty){
+      if (!at.empty) {
         ans = ans.concat(at.docs)
       }
       if (inputID) {
@@ -370,10 +390,10 @@ export default class fbActions {
     const qus: any[] = [];
     const q = searchQuery();
     let total = exactBPI || await (await new totalBPI().load()).currentVersion();
-    if(searchBy !== "総合BPI"){
+    if (searchBy !== "総合BPI") {
       const radar = await getRadar();
-      const target = radar.find((item)=>item.title === searchBy);
-      if(target && target.TotalBPI){
+      const target = radar.find((item) => item.title === searchBy);
+      if (target && target.TotalBPI) {
         total = target.TotalBPI;
       }
     }

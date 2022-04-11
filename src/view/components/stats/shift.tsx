@@ -12,6 +12,24 @@ import { ChangeLevel } from './main';
 import { injectIntl } from 'react-intl';
 import AdsCard from '@/components/ad';
 
+const config = [
+  { value: 0, label: "更新楽曲数" },
+  { value: 1, label: "平均値" },
+  { value: 2, label: "最高値" },
+  { value: 3, label: "最低値" },
+  { value: 4, label: "中央値" }
+];
+const period = [
+  { value: 4, label: "日次" },
+  { value: 5, label: "週次" },
+  { value: 6, label: "月次" }
+];
+const range = [
+  { value: 10, label: "10件" },
+  { value: 30, label: "30件" },
+  { value: 99999, label: "すべて" }
+];
+
 class Shift extends React.Component<{ intl: any, propdata?: any } & RouteComponentProps, ShiftType> {
 
   constructor(props: { intl: any } & RouteComponentProps) {
@@ -63,13 +81,6 @@ class Shift extends React.Component<{ intl: any, propdata?: any } & RouteCompone
   hasItems = (name: number) => this.state.displayData.indexOf(name) > -1;
   currentPeriod = (name: number) => this.state.currentPeriod === name;
   currentRange = (name: number) => this.state.range === name;
-  /*
-  0:更新楽曲数
-  1:平均
-  2:最高
-  3:最低
-  4:中央
-   */
 
   handleItems = (name: number) => {
     const { displayData } = this.state;
@@ -100,23 +111,6 @@ class Shift extends React.Component<{ intl: any, propdata?: any } & RouteCompone
   render() {
     const { isLoading, perDate, targetLevel, graphLastUpdated } = this.state;
     const { formatMessage } = this.props.intl;
-    const config = [
-      { value: 0, label: "更新楽曲数" },
-      { value: 1, label: "平均値" },
-      { value: 2, label: "最高値" },
-      { value: 3, label: "最低値" },
-      { value: 4, label: "中央値" }
-    ];
-    const period = [
-      { value: 4, label: "日次" },
-      { value: 5, label: "週次" },
-      { value: 6, label: "月次" }
-    ];
-    const range = [
-      { value: 10, label: "10件" },
-      { value: 30, label: "30件" },
-      { value: 99999, label: "すべて" }
-    ];
     const chartColor = _chartColor();
     const barColor = _chartBarColor("bar");
     const lineColor = _chartBarColor("line");
@@ -204,37 +198,31 @@ class Shift extends React.Component<{ intl: any, propdata?: any } & RouteCompone
 
 export default withRouter(injectIntl(Shift));
 
-class CheckBoxes extends React.Component<{
+const CheckBoxes: React.FC<{
   config: any[],
   hasData: (name: number) => boolean,
   handleNewData: (name: number) => void,
   title: string
-}, {}>{
-
-  render() {
-    const { config, hasData, handleNewData, title } = this.props;
-    return (
-      <FormGroup>
-        <FormControl component="fieldset">
-          <FormLabel component="legend">{title}</FormLabel>
-          <FormGroup row>
-            {config.map((item: { value: number, label: string }) => (
-              <FormControlLabel
-                key={item.value}
-                control={
-                  <Checkbox
-                    checked={hasData(item.value)}
-                    onChange={() => handleNewData(item.value)}
-                    value={item.value}
-                    color="primary"
-                  />
-                }
-                label={item.label}
+}> = ({ config, hasData, handleNewData, title }) => (
+  <FormGroup>
+    <FormControl component="fieldset">
+      <FormLabel component="legend">{title}</FormLabel>
+      <FormGroup row>
+        {config.map((item: { value: number, label: string }) => (
+          <FormControlLabel
+            key={item.value}
+            control={
+              <Checkbox
+                checked={hasData(item.value)}
+                onChange={() => handleNewData(item.value)}
+                value={item.value}
+                color="primary"
               />
-            ))}
-          </FormGroup>
-        </FormControl>
+            }
+            label={item.label}
+          />
+        ))}
       </FormGroup>
-    );
-  }
-}
+    </FormControl>
+  </FormGroup>
+)

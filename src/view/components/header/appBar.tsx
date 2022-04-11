@@ -251,6 +251,12 @@ const GlobalHeader: React.FC<{ global: any, classes: any, theme: any, children: 
       const u = await new fbActions().setDocName(user.uid).getSelfUserData();
       if (u && u.exists()) {
         localStorage.setItem("social", JSON.stringify(u.data()));
+      }else{
+        setUser({
+          photoURL:user.photoURL,
+          displayName:"",
+        });
+        return;
       }
       return setUser(u.data());
     });

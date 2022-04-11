@@ -105,10 +105,10 @@ class SyncControlScreen extends React.Component<{ userData: any, toggleSending: 
       this.props.toggleSending();
       return this.setState({ isLoading: false });
     }
-    await new scoresDB().setDataWithTransaction(res.scores,this.ref);
+    await new scoresDB().setDataWithTransaction(res.scores, this.ref);
     await new scoreHistoryDB().setDataWithTransaction(res.scoresHistory);
-    await new scoresDB().recalculateBPI([], true,this.ref);
-    await new scoreHistoryDB().recalculateBPI([], true,this.ref);
+    await new scoresDB().recalculateBPI([], true, this.ref);
+    await new scoreHistoryDB().recalculateBPI([], true, this.ref);
     this.props.toggleSending();
     this.setState({ isLoading: false });
   }
@@ -229,36 +229,28 @@ class SyncControlScreen extends React.Component<{ userData: any, toggleSending: 
 
 export default SyncControlScreen;
 
-class ConfirmDialog extends React.Component<{
-  next: () => void,
-  cancel: () => void,
-}, {}> {
-  render() {
-    const { next, cancel } = this.props;
-    return (
-      <Dialog
-        open={true}
-        onClose={cancel}
-      >
-        <DialogTitle>
-          確認
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            データがすでに存在する場合は上書きされます。<br />
-            操作は取り消しできません。続行してもよろしいですか？
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={cancel}>キャンセル</Button>
-          <Button onClick={() => {
-            next();
-            cancel();
-          }} autoFocus>
-            続行
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
-}
+const ConfirmDialog: React.FC<{ next: () => void, cancel: () => void }> = ({ next, cancel }) => (
+  <Dialog
+    open={true}
+    onClose={cancel}
+  >
+    <DialogTitle>
+      確認
+    </DialogTitle>
+    <DialogContent>
+      <DialogContentText>
+        データがすでに存在する場合は上書きされます。<br />
+        操作は取り消しできません。続行してもよろしいですか？
+      </DialogContentText>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={cancel}>キャンセル</Button>
+      <Button onClick={() => {
+        next();
+        cancel();
+      }} autoFocus>
+        続行
+      </Button>
+    </DialogActions>
+  </Dialog>
+)
