@@ -18,6 +18,7 @@ import {
 } from "@/components/settings";
 import bpiCalcuator from "@/components/bpi";
 import { scoresDB } from "@/components/indexedDB";
+import { defaultBackground } from "@/themes/ifColor";
 
 const columns = [
   { id: "difficultyLevel", label: "" },
@@ -102,6 +103,7 @@ export default class SongsTable extends React.Component<Readonly<P>, S> {
         style={{
           width: "100%",
           overflowX: "auto",
+          background: defaultBackground(),
         }}
         id="screenCaptureTarget"
         className={_traditionalMode() === 1 ? "traditionalMode" : ""}
