@@ -102,7 +102,6 @@ export default class SongsTable extends React.Component<Readonly<P>, S> {
         style={{
           width: "100%",
           overflowX: "auto",
-          background: "transparent",
         }}
         id="screenCaptureTarget"
         className={_traditionalMode() === 1 ? "traditionalMode" : ""}

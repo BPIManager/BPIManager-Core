@@ -104,9 +104,7 @@ export default class SongsTable extends React.Component<Readonly<P>, S> {
       this.state;
     const { page, data, changeSort, sort, isDesc } = this.props;
     return (
-      <Paper
-        style={{ width: "100%", overflowX: "auto", background: "transparent" }}
-      >
+      <Paper style={{ width: "100%", overflowX: "auto" }}>
         <div>
           <Table>
             <TableHead>
