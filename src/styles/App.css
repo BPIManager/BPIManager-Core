@@ -22,7 +22,7 @@ a {
   text-decoration: none !important;
 }
 
-@media screen and (min-width:768px) {
+@media screen and (min-width: 768px) {
   .heroLayout {
     margin: 8px 0 0 0;
   }
@@ -49,7 +49,7 @@ a {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background: rgba(255, 255, 255, .7);
+  background: rgba(255, 255, 255, 0.7);
   color: #777;
 }
 
@@ -61,12 +61,17 @@ td.MuiTableCell-root.MuiTableCell-body:first-child:not(.dense, .titleForceLeft),
   width: 35px;
 }
 
-th.MuiTableCell-root.MuiTableCell-head.auto, td.auto {
+th.MuiTableCell-root.MuiTableCell-head.auto,
+td.auto {
   width: auto !important;
 }
 
-.MuiTableBody-root.rival .MuiTableRow-root:not(.rivalBody) th.MuiTableCell-root.MuiTableCell-head:first-child,
-.MuiTableBody-root.rival .MuiTableRow-root:not(.rivalBody) td.MuiTableCell-root.MuiTableCell-body:first-child {
+.MuiTableBody-root.rival
+  .MuiTableRow-root:not(.rivalBody)
+  th.MuiTableCell-root.MuiTableCell-head:first-child,
+.MuiTableBody-root.rival
+  .MuiTableRow-root:not(.rivalBody)
+  td.MuiTableCell-root.MuiTableCell-body:first-child {
   padding: 20px 8px !important;
 }
 
@@ -79,25 +84,32 @@ th.MuiTableCell-root.MuiTableCell-head {
   user-select: none;
 }
 
-.MuiTableCell-head, .MuiTableCell-body {
+.MuiTableCell-head,
+.MuiTableCell-body {
   cursor: pointer;
 }
 
-#__light .MuiTableBody-root>tr:hover, #__light .MuiTableBody-root>tr:hover .plusOverlayScore, #__light .MuiTableBody-root>tr:hover .plusOverlayScoreBottom {
+.MuiTableBody-root > tr {
+  transition: 0.2s;
+}
+
+#__light .MuiTableBody-root > tr:hover {
   background: #ececec !important;
 }
 
-#__dark .MuiTableBody-root>tr:hover,
-#__dark .MuiTableBody-root>tr:hover .plusOverlayScore,
-#__dark .MuiTableBody-root>tr:hover .plusOverlayScoreBottom {
-  background: #313131 !important;
+#__dark .MuiTableBody-root > tr:hover {
+  background: #111 !important;
+}
+
+#__deepsea .MuiTableBody-root > tr:hover {
+  background: #00101e !important;
 }
 
 header.apbar {
   box-shadow: 0 0 0 !important;
 }
 
-@media screen and (min-width:600px) {
+@media screen and (min-width: 600px) {
   .subAppBar {
     margin-top: 8px !important;
   }
@@ -124,7 +136,8 @@ a.link:hover {
   text-decoration: underline;
 }
 
-#songsVil span.MuiButtonBase-root.MuiIconButton-root.MuiCheckbox-root.MuiCheckbox-colorSecondary.MuiIconButton-colorSecondary {
+#songsVil
+  span.MuiButtonBase-root.MuiIconButton-root.MuiCheckbox-root.MuiCheckbox-colorSecondary.MuiIconButton-colorSecondary {
   padding: 6px !important;
 }
 
@@ -172,13 +185,13 @@ legend.MuiFormLabel-root {
   margin: 10px 0 !important;
 }
 
-@media screen and (min-width:992px) {
+@media screen and (min-width: 992px) {
   .responsiveTotalBPI {
     height: 270px !important;
   }
 }
 
-@media screen and (max-width:1399px) {
+@media screen and (max-width: 1399px) {
   .xsInvisible {
     display: none;
   }
@@ -214,7 +227,7 @@ legend.MuiFormLabel-root {
 }
 
 .displayNoneObject {
-  display: none !important
+  display: none !important;
 }
 
 .MuiDialog-paperScrollPaper:not(.MuiDialog-paperFullScreen):not(.MuiPickersModal-dialogRoot) {
@@ -228,15 +241,18 @@ legend.MuiFormLabel-root {
 }
 
 .MuiTableBody-root .MuiTableCell-root:not(:first-child) {
-  border-left: 1px dotted rgba(224, 224, 224, .3);
+  border-left: 1px dotted rgba(224, 224, 224, 0.3);
 }
 
 .rivalBody td.MuiTableCell-root.MuiTableCell-body {
   padding: 0 20px !important;
 }
 
-#songsVil .MuiTableCell-root:nth-child(3), #songsVil .MuiTableCell-root:nth-child(4), #songsVil .MuiTableCell-root:nth-child(5),
-.detailedDiffs .MuiTableCell-root:nth-child(2), .detailedDiffs .MuiTableCell-root:nth-child(3) {
+#songsVil .MuiTableCell-root:nth-child(3),
+#songsVil .MuiTableCell-root:nth-child(4),
+#songsVil .MuiTableCell-root:nth-child(5),
+.detailedDiffs .MuiTableCell-root:nth-child(2),
+.detailedDiffs .MuiTableCell-root:nth-child(3) {
   text-align: center;
 }
 
@@ -263,7 +279,7 @@ legend.MuiFormLabel-root {
   border-radius: 7px;
 }
 
-@media screen and (max-width:440px) {
+@media screen and (max-width: 440px) {
   .addImage {
     float: inherit;
     margin: 10px auto;
@@ -277,21 +293,34 @@ legend.MuiFormLabel-root {
 }
 
 .custom-tooltip {
-  background: rgba(255, 255, 255, .8);
+  background: rgba(255, 255, 255, 0.8);
   padding: 6px 12px;
   border: 1px solid #ccc;
   color: #000 !important;
+  width: 100%;
+}
+
+.custom-tooltip p {
+  margin: 4px 0;
 }
 
 #__dark .MuiFormLabel-root.Mui-focused {
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
-#__light #songsVil .traditionalMode .MuiTableBody-root .MuiTableCell-root:nth-child(3) {
+#__light
+  #songsVil
+  .traditionalMode
+  .MuiTableBody-root
+  .MuiTableCell-root:nth-child(3) {
   color: #c50000;
 }
 
-#__dark #songsVil .traditionalMode .MuiTableBody-root .MuiTableCell-root:nth-child(3) {
+#__dark
+  #songsVil
+  .traditionalMode
+  .MuiTableBody-root
+  .MuiTableCell-root:nth-child(3) {
   color: #ffdbdb;
 }
 
@@ -379,7 +408,7 @@ th.MuiTableCell-root.MuiTableCell-head:first-child {
   height: 64px !important;
 }
 
-@media screen and (max-width:767px) {
+@media screen and (max-width: 767px) {
   .mdCentered {
     text-align: center;
     margin-top: 25px;
@@ -418,7 +447,8 @@ th.MuiTableCell-root.MuiTableCell-head:first-child {
   margin-bottom: 7px;
 }
 
-.indexGrids .indexGridsIcon, .indexGrids h5 {
+.indexGrids .indexGridsIcon,
+.indexGrids h5 {
   font-size: 33px;
 }
 
@@ -431,11 +461,12 @@ th.MuiTableCell-root.MuiTableCell-head:first-child {
   text-decoration: none !important;
 }
 
-.MuiDrawer-root .MuiBackdrop-root, .MuiDialog-root .MuiBackdrop-root:not(.absolutelyTop) {
+.MuiDrawer-root .MuiBackdrop-root,
+.MuiDialog-root .MuiBackdrop-root:not(.absolutelyTop) {
   z-index: -1 !important;
 }
 
-div#root>div>.MuiContainer-root {
+div#root > div > .MuiContainer-root {
   padding: 0 20px !important;
 }
 
@@ -474,7 +505,8 @@ div#root>div>.MuiContainer-root {
   width: 100%;
 }
 
-html, body {
+html,
+body {
   width: 100% !important;
   margin: 0;
   padding: 0;
@@ -498,7 +530,7 @@ html, body {
   width: 50%;
   height: 4px;
   background: #fff;
-  opacity: .5;
+  opacity: 0.5;
 }
 
 .swipeableContentTab.active {
@@ -538,7 +570,7 @@ html, body {
   align-items: center;
 }
 
-@media screen and (max-width:330px) {
+@media screen and (max-width: 330px) {
   .topFlexContent {
     display: flex;
     justify-content: center;
@@ -547,7 +579,8 @@ html, body {
   }
 }
 
-#__deepsea .MuiTableCell-root, #__dark .MuiTableCell-root {
+#__deepsea .MuiTableCell-root,
+#__dark .MuiTableCell-root {
   border-bottom: 1px solid rgb(245 245 245 / 8%) !important;
 }
 
@@ -693,7 +726,7 @@ text.react-calendar-heatmap-weekday-label {
 }
 
 .TypographywithIconAndLinesContainer:before {
-  content: '';
+  content: "";
   background-color: #36363654;
   display: block;
   position: absolute;
@@ -720,9 +753,9 @@ text.react-calendar-heatmap-weekday-label {
   margin-bottom: 8px;
 }
 
-@media screen and (min-width:968px) {
+@media screen and (min-width: 968px) {
   .topMenuContaienrGridWrapper {
-    justify-content: space-between !important
+    justify-content: space-between !important;
   }
 
   .topMenuContainer .MuiGrid-container {
@@ -796,7 +829,7 @@ text.react-calendar-heatmap-weekday-label {
 }
 
 .keeperTriangle::before {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   width: 0;
@@ -835,7 +868,8 @@ text.react-calendar-heatmap-weekday-label {
   width: 35px !important;
 }
 
-.MuiTableCell-root.MuiTableCell-body.dense, .textCenter {
+.MuiTableCell-root.MuiTableCell-body.dense,
+.textCenter {
   text-align: center !important;
 }
 
@@ -852,12 +886,12 @@ text.react-calendar-heatmap-weekday-label {
   background-image: none;
 }
 
-#detailedScreen{
-  height:100vh !important;
+#detailedScreen {
+  height: 100vh !important;
   overflow-y: hidden;
 }
 
-#detailedScreen #mainFilters>div {
+#detailedScreen #mainFilters > div {
   flex-wrap: wrap !important;
 }
 
@@ -877,7 +911,8 @@ text.react-calendar-heatmap-weekday-label {
   justify-content: space-around !important;
 }
 
-.detailsScreenTopGrid, .MuiGrid-root {
+.detailsScreenTopGrid,
+.MuiGrid-root {
   margin-left: 0 !important;
 }
 
@@ -896,7 +931,7 @@ text.react-calendar-heatmap-weekday-label {
   justify-content: space-between;
 }
 
-.spaceBetween>.MuiTypography-root {
+.spaceBetween > .MuiTypography-root {
   font-size: 12px !important;
 }
 
@@ -904,33 +939,37 @@ text.react-calendar-heatmap-weekday-label {
   padding-top: 0;
 }
 
-#__light .listHighlighted, .lightDetailedScreen .listHighlighted {
+#__light .listHighlighted,
+.lightDetailedScreen .listHighlighted {
   color: #000 !important;
 }
 
-#__dark .listHighlighted, #__deepsea .listHighlighted, .darkDetailedScreen .listHighlighted, .deepSeaDetailedScreen .listHighlighted {
+#__dark .listHighlighted,
+#__deepsea .listHighlighted,
+.darkDetailedScreen .listHighlighted,
+.deepSeaDetailedScreen .listHighlighted {
   color: #fff !important;
 }
 
-@media screen and (min-width:1200px) {
+@media screen and (min-width: 1200px) {
   .gridWithPad {
     padding: 0 16px !important;
   }
 }
 
-@media screen and (max-width:340px) {
+@media screen and (max-width: 340px) {
   .MuiPagination-ul {
     transform: scale(0.83);
   }
 }
 
 .withClearLamp {
-  transition: .2s;
+  transition: 0.2s;
   position: relative;
 }
 
 .gridWithPad .MuiCardContent-root {
-  transition: .2s;
+  transition: 0.2s;
 }
 
 .gridWithPad .MuiCardContent-root:hover {
@@ -966,7 +1005,7 @@ text.react-calendar-heatmap-weekday-label {
   display: block;
 }
 
-@media screen and (max-width:468px) {
+@media screen and (max-width: 468px) {
   .footer {
     text-align: left;
   }

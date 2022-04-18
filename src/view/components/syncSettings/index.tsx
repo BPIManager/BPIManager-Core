@@ -1,46 +1,36 @@
-import React from 'react';
-import Container from '@mui/material/Container';
-import SyncLoginScreen from '../sync/login';
-import fbActions from '@/components/firebase/actions';
-import Loader from '../common/loader';
-import ControlTab from './control';
+import React, { useEffect, useState } from "react";
+import Container from "@mui/material/Container";
+import SyncLoginScreen from "../sync/login";
+import fbActions from "@/components/firebase/actions";
+import Loader from "../common/loader";
+import ControlTab from "./control";
 
 interface S {
-  isLoading: boolean,
-  isError: boolean,
-  userData: any
+  isLoading: boolean;
+  isError: boolean;
+  userData: any;
 }
 
-class SyncSettings extends React.Component<{}, S> {
+const SyncSettings: React.FC = () => {
+  const [loading, setLoading] = useState(true);
+  const [userData, setUserData] = useState<any>(null);
 
-  constructor(props: {}) {
-    super(props);
-    this.state = {
-      isLoading: true,
-      isError: false,
-      userData: null,
-    }
-  }
-
-  componentDidMount() {
+  useEffect(() => {
     new fbActions().auth().onAuthStateChanged((user: any) => {
-      this.setState({ userData: user, isLoading: false })
+      setUserData(user);
+      setLoading(false);
     });
-  }
+  }, []);
 
-  render() {
-    const { isLoading, userData } = this.state;
-
-    if (isLoading) {
-      return (<Loader hasMargin />);
-    }
-    return (
-      <Container fixed className="commonLayout">
-        {!userData && <SyncLoginScreen mode={0} />}
-        {userData && <ControlTab userData={userData} />}
-      </Container>
-    );
+  if (loading) {
+    return <Loader hasMargin />;
   }
-}
+  return (
+    <Container fixed className="commonLayout">
+      {!userData && <SyncLoginScreen mode={0} />}
+      {userData && <ControlTab userData={userData} />}
+    </Container>
+  );
+};
 
 export default SyncSettings;
