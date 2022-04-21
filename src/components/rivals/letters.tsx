@@ -4,29 +4,34 @@ import bpiCalcuator from "../bpi";
 import { difficultyDiscriminator } from "../songs/filter";
 import fbActions from "../firebase/actions";
 
-interface rivalScoreObject { [key: string]: rivalScoreData[] };
+interface rivalScoreObject {
+  [key: string]: rivalScoreData[];
+}
 
 export interface datasets {
-  rivalName: string,
-  icon: string,
-  exScore: number,
-  BPI: number,
+  rivalName: string;
+  icon: string;
+  exScore: number;
+  BPI: number;
 }
 
 const loadLocalScore = async (): Promise<scoreData[]> => {
-  return (await new scoresDB().getAll());
-}
+  return await new scoresDB().getAll();
+};
 
 const loadRivalScore = async (): Promise<rivalScoreObject> => {
-  return (await new rivalListsDB().getAllUserScores()).reduce((groups: rivalScoreObject, item: rivalScoreData) => {
-    const p = item.title + item.difficulty;
-    if (!groups[p]) {
-      groups[p] = [];
-    }
-    groups[p].push(item);
-    return groups;
-  }, {});
-}
+  return (await new rivalListsDB().getAllUserScores()).reduce(
+    (groups: rivalScoreObject, item: rivalScoreData) => {
+      const p = item.title + item.difficulty;
+      if (!groups[p]) {
+        groups[p] = [];
+      }
+      groups[p].push(item);
+      return groups;
+    },
+    {}
+  );
+};
 
 export const loader = async () => {
   const local = await loadLocalScore();
@@ -44,7 +49,7 @@ export const loader = async () => {
       difficulty: item.difficulty,
       difficultyLevel: item.difficultyLevel,
       updatedAt: item.updatedAt,
-    }
+    };
     if (rivals[p]) {
       rivals[p].map((rItem: rivalScoreData) => {
         const vs = item.exScore - rItem.exScore;
@@ -55,21 +60,27 @@ export const loader = async () => {
         }
         return 0;
       });
-      const rate = Number(obj["win"] / (obj["lose"] + obj["win"]) * 100);
+      const rate = Number((obj["win"] / (obj["lose"] + obj["win"])) * 100);
       obj["rate"] = Math.round(Number.isNaN(rate) ? 0 : rate);
       scoreObj.push(obj);
     }
     return 0;
   });
   return scoreObj;
-}
+};
 
-export const rivalShow = async (song: songData, score: scoreData | { exScore: number, currentBPI: number }): Promise<datasets[]> => {
+export const rivalShow = async (
+  song: songData,
+  score: scoreData | { exScore: number; currentBPI: number }
+): Promise<datasets[]> => {
   let list: datasets[] = [];
 
   const listsDB = new rivalListsDB();
 
-  const rivals = await listsDB.getAllScoresWithTitle(song.title, difficultyDiscriminator(song.difficulty));
+  const rivals = await listsDB.getAllScoresWithTitle(
+    song.title,
+    difficultyDiscriminator(song.difficulty)
+  );
   for (let i = 0; i < rivals.length; ++i) {
     const item = rivals[i];
     const data = await listsDB.getDisplayData(item.rivalName);
@@ -77,14 +88,14 @@ export const rivalShow = async (song: songData, score: scoreData | { exScore: nu
       rivalName: data.name,
       icon: data.icon,
       exScore: item.exScore,
-      BPI: new bpiCalcuator().setPropData(song, item.exScore, item.isSingle)
+      BPI: new bpiCalcuator().setPropData(song, item.exScore, item.isSingle),
     });
   }
   list.push({
     rivalName: "あなた",
     icon: new fbActions().currentIcon(),
     exScore: score.exScore,
-    BPI: score.currentBPI
+    BPI: score.currentBPI,
   });
   return list.sort((a, b) => b.exScore - a.exScore);
-}
+};

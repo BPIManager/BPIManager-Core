@@ -107,6 +107,7 @@ export default class SongsTable extends React.Component<Readonly<P>, S> {
     return (
       <Paper
         style={{
+          borderRadius: 0,
           width: "100%",
           overflowX: "auto",
           background: defaultBackground(),

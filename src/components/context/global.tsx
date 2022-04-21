@@ -1,49 +1,47 @@
-import { Container } from 'unstated'
-import { _lang, _currentStore, _currentTheme, _isSingle, _goalBPI, _goalPercentage, _area } from '../settings'
+import { Container } from "unstated";
+import {
+  _lang,
+  _currentStore,
+  _currentTheme,
+  _isSingle,
+  _goalBPI,
+  _goalPercentage,
+  _area,
+} from "../settings";
 
 interface S {
-  lang: string,
-  store: string,
-  theme: string,
-  cannotMove: boolean,
-  isSingle: number,
-  goalBPI: number,
-  goalPercentage: number,
-  area: number,
-  update: boolean,
-  userData: any,
+  lang: string;
+  store: string;
+  theme: string;
+  cannotMove: boolean;
+  isSingle: number;
+  goalBPI: number;
+  goalPercentage: number;
+  area: number;
+  update: boolean;
+  userData: any;
 }
 
 export interface BeforeInstallPromptEvent extends Event {
   readonly platforms: Array<string>;
 
   readonly userChoice: Promise<{
-    outcome: 'accepted' | 'dismissed',
-    platform: string
+    outcome: "accepted" | "dismissed";
+    platform: string;
   }>;
 
-  prompt(): Promise<void>
+  prompt(): Promise<void>;
 }
 
 export default class GlobalContainer extends Container<S> {
-
   prompt: BeforeInstallPromptEvent | null = null;
 
   constructor() {
     super();
-    this.setLang = this.setLang.bind(this);
-    this.setStore = this.setStore.bind(this);
-    this.setTheme = this.setTheme.bind(this);
-    this.setIsSingle = this.setIsSingle.bind(this);
-    this.setGoalBPI = this.setGoalBPI.bind(this);
-    this.setGoalPercentage = this.setGoalPercentage.bind(this);
-    this.setArea = this.setArea.bind(this);
-    this.setUpdateAvailable = this.setUpdateAvailable.bind(this);
-    this.setUserData = this.setUserData.bind(this);
     const self = this;
-    window.addEventListener('beforeinstallprompt', function(event) {
+    window.addEventListener("beforeinstallprompt", function (event) {
       event.preventDefault();
-      self.prompt = (event as BeforeInstallPromptEvent);
+      self.prompt = event as BeforeInstallPromptEvent;
       return false;
     });
   }
@@ -58,54 +56,53 @@ export default class GlobalContainer extends Container<S> {
     area: _area(),
     update: false,
     cannotMove: false,
-    userData: null
-  }
+    userData: null,
+  };
 
-  setUserData(userData: any) {
-    this.setState({ userData: userData })
-  }
+  setUserData = (userData: any) => {
+    this.setState({ userData: userData });
+  };
 
-  setLang(newLang: string) {
+  setLang = (newLang: string) => {
     localStorage.setItem("lang", newLang);
-    this.setState({ lang: newLang })
-  }
+    this.setState({ lang: newLang });
+  };
 
-  setStore(newStore: string) {
+  setStore = (newStore: string) => {
     localStorage.setItem("currentStore", newStore);
     this.setState({ store: newStore });
-  }
+  };
 
-  setTheme(newTheme: string) {
+  setTheme = (newTheme: string) => {
     localStorage.setItem("theme", newTheme);
     this.setState({ theme: newTheme });
-  }
+  };
 
-  setIsSingle(newState: number) {
+  setIsSingle = (newState: number) => {
     localStorage.setItem("isSingle", String(newState));
     this.setState({ isSingle: newState });
-  }
+  };
 
-  setGoalBPI(newState: number) {
+  setGoalBPI = (newState: number) => {
     localStorage.setItem("goalBPI", String(newState));
     this.setState({ goalBPI: newState });
-  }
+  };
 
-  setArea(newState: number) {
+  setArea = (newState: number) => {
     localStorage.setItem("area", String(newState));
     this.setState({ area: newState });
-  }
+  };
 
-  setGoalPercentage(newState: number) {
+  setGoalPercentage = (newState: number) => {
     localStorage.setItem("goalPercentage", String(newState));
     this.setState({ goalPercentage: newState });
-  }
+  };
 
-  setMove(newState: boolean) {
-    this.setState({ cannotMove: newState })
-  }
+  setMove = (newState: boolean) => {
+    this.setState({ cannotMove: newState });
+  };
 
-  setUpdateAvailable(newState: boolean) {
-    this.setState({ update: newState })
-  }
-
+  setUpdateAvailable = (newState: boolean) => {
+    this.setState({ update: newState });
+  };
 }

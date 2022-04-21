@@ -1,4 +1,3 @@
-
 //
 
 import { songData } from "@/types/data";
@@ -7,7 +6,6 @@ import { songsDB } from "../indexedDB";
 import { genTitle, _prefixFromNum } from "./filter";
 
 export default class songsAPI {
-
   private allSongs: Map<String, songData> = new Map();
 
   async load() {
@@ -24,5 +22,4 @@ export default class songsAPI {
   set = (title: string, value: songData) => this.allSongs.set(title, value);
 
   genTitle = (title: string, diff: string) => genTitle(title, diff);
-
 }

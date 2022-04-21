@@ -3,7 +3,6 @@ import timeFormatter from "../common/timeFormatter";
 import importCommon from "./common";
 
 export default class importJSON {
-
   rawData: any[] = [];
   common: importCommon = new importCommon();
 
@@ -28,7 +27,7 @@ export default class importJSON {
 
   execute(): Promise<number> {
     const self = this;
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       try {
         const lengthSum = self.rawData.length;
         for (let i = 0; i < lengthSum; ++i) {
@@ -46,7 +45,7 @@ export default class importJSON {
             lastScore: -1,
             storedAt: self.currentStore,
             isSingle: self.isSingle,
-            updatedAt: self.updateTime
+            updatedAt: self.updateTime,
           });
 
           self.common.setResultHistory({

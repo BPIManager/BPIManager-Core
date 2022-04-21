@@ -3,7 +3,10 @@ import { _showRichView } from "@/components/settings";
 import { verArr, clearArr } from "@/view/components/songs/common";
 import { songsList_stateInt } from "@/view/components/songs/played/songsList";
 
-export const defaultState_songsList = (initialBPIRange: string = "", defToday: boolean = false): songsList_stateInt => {
+export const defaultState_songsList = (
+  initialBPIRange: string = "",
+  defToday: boolean = false
+): songsList_stateInt => {
   return {
     isLoading: true,
     filterByName: "",
@@ -22,7 +25,10 @@ export const defaultState_songsList = (initialBPIRange: string = "", defToday: b
     },
     bpi: {
       min: initialBPIRange ? Number(initialBPIRange) : "",
-      max: initialBPIRange && initialBPIRange !== "100" ? Number(initialBPIRange) + 10 : "",
+      max:
+        initialBPIRange && initialBPIRange !== "100"
+          ? Number(initialBPIRange) + 10
+          : "",
     },
     dateRange: {
       from: timeFormatter(1, new Date()),
@@ -40,5 +46,5 @@ export const defaultState_songsList = (initialBPIRange: string = "", defToday: b
     clearType: clearArr(),
     openCaptureScr: false,
     showRichView: _showRichView(),
-  }
-}
+  };
+};

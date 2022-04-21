@@ -3,7 +3,9 @@ import { historyData } from "@/types/data";
 import timeFormatter, { toUnixTime, isSameDay } from "../common/timeFormatter";
 import { historyDataWithLastScore } from "@/types/history";
 import { IDays } from "@/view/pages/history";
-interface daysGrp { [key: string]: number };
+interface daysGrp {
+  [key: string]: number;
+}
 
 class historyExec {
   private data: historyData[] = [];
@@ -12,7 +14,8 @@ class historyExec {
   private result: historyDataWithLastScore[] = [];
 
   async load(propdata: historyData[] | null = null) {
-    this.data = propdata || (await new scoreHistoryDB().getAllInSpecificVersion());
+    this.data =
+      propdata || (await new scoreHistoryDB().getAllInSpecificVersion());
     return this;
   }
 
@@ -21,12 +24,16 @@ class historyExec {
   generate(): historyDataWithLastScore[] {
     if (!this.data) return [];
     this.classifyBySongs().addLastScore();
-    this.result = this.sort(this.result).reverse() as historyDataWithLastScore[];
+    this.result = this.sort(
+      this.result
+    ).reverse() as historyDataWithLastScore[];
     return this.result;
   }
 
   sort(obj: historyData[] | historyDataWithLastScore[]) {
-    return obj.sort((a, b) => toUnixTime(a.updatedAt) - toUnixTime(b.updatedAt))
+    return obj.sort(
+      (a, b) => toUnixTime(a.updatedAt) - toUnixTime(b.updatedAt)
+    );
   }
 
   classifyBySongs() {
@@ -52,16 +59,16 @@ class historyExec {
             if (target === "BPI") return -15;
           }
           return group[i - 1][target];
-        }
+        };
         const lastScore = getCont("exScore");
         const lastBPI = getCont("BPI");
         const cont = Object.assign(item, {
           lastScore: lastScore,
-          lastBPI: lastBPI
+          lastBPI: lastBPI,
         });
         this.result.push(cont);
         return 0;
-      })
+      });
     });
     return this;
   }
@@ -69,30 +76,31 @@ class historyExec {
   getUpdateDays(): IDays[] {
     // {key:2021-01-01,number:1}
     const d = this.days();
-    return Object.keys(d).reduce((result: IDays[], item: string) => {
-      result.push({ key: item, num: d[item] });
-      return result;
-    }, []).sort((a: IDays, b: IDays) => {
-      return toUnixTime(b.key) - toUnixTime(a.key)
-    })
+    return Object.keys(d)
+      .reduce((result: IDays[], item: string) => {
+        result.push({ key: item, num: d[item] });
+        return result;
+      }, [])
+      .sort((a: IDays, b: IDays) => {
+        return toUnixTime(b.key) - toUnixTime(a.key);
+      });
   }
 
-  days = () => this.result.reduce((groups: daysGrp, item: historyDataWithLastScore) => {
-    const day = timeFormatter(7, item["updatedAt"])
-    if (!groups[day]) groups[day] = 0;
-    groups[day]++;
-    return groups;
-  }, {})
+  days = () =>
+    this.result.reduce((groups: daysGrp, item: historyDataWithLastScore) => {
+      const day = timeFormatter(7, item["updatedAt"]);
+      if (!groups[day]) groups[day] = 0;
+      groups[day]++;
+      return groups;
+    }, {});
 
   // 新規スコア以外を表示
   showExceptForNewRecords = (f: historyDataWithLastScore) => {
     return f.lastScore !== 0;
-  }
-
+  };
 }
 
 export default class HistoryDataReceiver extends historyExec {
-
   date: string | null = null;
 
   public setDate(date: string): this {
@@ -106,7 +114,7 @@ export default class HistoryDataReceiver extends historyExec {
 
   public getData(): historyDataWithLastScore[] {
     return this.getResult().filter((item) => {
-      return (this.date ? isSameDay(item.updatedAt, this.date) : true)
+      return this.date ? isSameDay(item.updatedAt, this.date) : true;
     });
   }
 }

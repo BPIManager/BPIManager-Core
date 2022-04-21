@@ -10,4 +10,4 @@ export const saveAsImage = (url: string) => {
   } else {
     window.open(url);
   }
-}
+};

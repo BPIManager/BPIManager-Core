@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -101,6 +101,7 @@ export default class SongsTable extends React.Component<Readonly<P>, S> {
     return (
       <Paper
         style={{
+          borderRadius: 0,
           width: "100%",
           overflowX: "auto",
           background: defaultBackground(),

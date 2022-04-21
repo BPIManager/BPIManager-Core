@@ -1,58 +1,58 @@
-import { createTheme, } from "@mui/material";
+import { createTheme } from "@mui/material";
 
-export const theme = createTheme(({
+export const theme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: "dark",
     primary: {
-      main: '#1a1a1a',
-      light: '#ce6c52',
-      dark: '#232323',
+      main: "#1a1a1a",
+      light: "#ce6c52",
+      dark: "#232323",
     },
     secondary: {
-      main: '#ffa247',
+      main: "#ffa247",
     },
     background: {
-      default: '#0a0a0a',
+      default: "#0a0a0a",
     },
   },
 
   components: {
     MuiTextField: {
       defaultProps: {
-        variant: "standard"
-      }
+        variant: "standard",
+      },
     },
     MuiButton: {
       defaultProps: {
-        color: "secondary"
+        color: "secondary",
       },
       styleOverrides: {
         root: {
-          textTransform: 'none',
-        }
-      }
+          textTransform: "none",
+        },
+      },
     },
     MuiSelect: {
       defaultProps: {
-        variant: 'standard',
-      }
+        variant: "standard",
+      },
     },
     MuiInputLabel: {
       defaultProps: {
-        variant: 'standard',
-      }
+        variant: "standard",
+      },
     },
     MuiSwitch: {
       defaultProps: {
-        color: "secondary"
-      }
+        color: "secondary",
+      },
     },
     MuiCheckbox: {
       defaultProps: {
-        color: "secondary"
-      }
+        color: "secondary",
+      },
     },
   },
-}));
+});
 
 export default theme;

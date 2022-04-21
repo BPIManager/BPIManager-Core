@@ -3,7 +3,6 @@ import { convertClearState, convertLeggendariaStates } from "../songs/filter";
 import importCommon from "./common";
 
 export default class importCSV {
-
   rawData: string = "";
   common: importCommon = new importCommon();
 
@@ -27,7 +26,7 @@ export default class importCSV {
   execute(): Promise<number> {
     const self = this;
     let mode = 0;
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       try {
         const splittedByBreak: string[] = self.rawData.split(/\r\n|\n/);
         const check = splittedByBreak[0].split(/,/);
@@ -41,7 +40,6 @@ export default class importCSV {
         }
         for (let i = 1; i < lengthSum; ++i) {
           for (let j = 0; j < 3; ++j) {
-
             let eachObjNum: number[] = [];
             let t: string = "";
             const p = splittedByBreak[i].split(/,/);
@@ -94,8 +92,14 @@ export default class importCSV {
               continue;
             }
 
-            let { name, difficulty } = mode === 1 ? convertLeggendariaStates(p[eachObjNum[1]], t) : { name: p[eachObjNum[1]], difficulty: t };
-            const clearState: string | number = convertClearState(p[eachObjNum[6]], 0);
+            let { name, difficulty } =
+              mode === 1
+                ? convertLeggendariaStates(p[eachObjNum[1]], t)
+                : { name: p[eachObjNum[1]], difficulty: t };
+            const clearState: string | number = convertClearState(
+              p[eachObjNum[6]],
+              0
+            );
             if (typeof clearState !== "number") throw new Error();
             name = self.common.nameEscape(name);
             if (Number(p[eachObjNum[2]]) === 0) continue;
@@ -111,7 +115,7 @@ export default class importCSV {
               lastScore: -1,
               storedAt: self.currentStore,
               isSingle: self.isSingle,
-              updatedAt: p[eachObjNum[8]]
+              updatedAt: p[eachObjNum[8]],
             });
             self.common.setResultHistory({
               title: name,

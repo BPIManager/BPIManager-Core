@@ -1,10 +1,10 @@
-import fbActions from './actions';
-import { getToken, getMessaging } from 'firebase/messaging';
+import fbActions from "./actions";
+import { getToken, getMessaging } from "firebase/messaging";
 import fb from "@/components/firebase";
-export const pubkey = "BHwX2FHmMWpVIWwnELeC0Go_TDXQO4TlCr-gUsW38gqXME0LLUp3runutAAU5lxIUGQYEXgo090CVuCK-7kajms";
+export const pubkey =
+  "BHwX2FHmMWpVIWwnELeC0Go_TDXQO4TlCr-gUsW38gqXME0LLUp3runutAAU5lxIUGQYEXgo090CVuCK-7kajms";
 
 export class messanger {
-
   checkPermission() {
     return Notification.permission === "granted";
   }
@@ -21,7 +21,7 @@ export class messanger {
           const token = refreshedToken || (await this.getToken());
           new fbActions().updateToken(user.uid, token);
         } else {
-          console.error("NOT LOGGED IN, REFRESH TOKEN HAS BEEN ABORTED")
+          console.error("NOT LOGGED IN, REFRESH TOKEN HAS BEEN ABORTED");
         }
       });
     } catch (e: any) {

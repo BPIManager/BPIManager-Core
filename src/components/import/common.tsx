@@ -1,7 +1,6 @@
 import { scoreData, historyData } from "../../types/data";
 
 export default class importCommon {
-
   result: scoreData[] = [];
   resultHistory: historyData[] = [];
 
@@ -27,13 +26,14 @@ export default class importCommon {
     name = name.replace(/ +$/g, "");
     if (name === "炎影") name = "火影";
     if (name === "Rave*it!! Rave*it!!") name = "Rave*it!! Rave*it!! ";
-    if (name === "Close the World feat. a☆ru") name = "Close the World feat.a☆ru";
+    if (name === "Close the World feat. a☆ru")
+      name = "Close the World feat.a☆ru";
     if (isBookmarklet) {
-      if (name === "Blind Justice ～Torn souls, Hurt Faiths ～") name = "Blind Justice ～Torn souls， Hurt Faiths ～";
-      if (name === "ROCK女 feat. 大山愛未, Ken") name = "ROCK女 feat. 大山愛未， Ken";
+      if (name === "Blind Justice ～Torn souls, Hurt Faiths ～")
+        name = "Blind Justice ～Torn souls， Hurt Faiths ～";
+      if (name === "ROCK女 feat. 大山愛未, Ken")
+        name = "ROCK女 feat. 大山愛未， Ken";
     }
     return name;
   }
-
-
 }

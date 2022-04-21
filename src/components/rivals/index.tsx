@@ -1,15 +1,19 @@
-import fbActions from '../firebase/actions';
-import { _isSingle, _currentStore } from '../settings';
-import { rivalListsDB } from '../indexedDB';
-import { DBRivalStoreData, rivalStoreData } from '../../types/data';
-import { alternativeImg } from '../common';
+import fbActions from "../firebase/actions";
+import { _isSingle, _currentStore } from "../settings";
+import { rivalListsDB } from "../indexedDB";
+import { DBRivalStoreData, rivalStoreData } from "../../types/data";
+import { alternativeImg } from "../common";
 
 export const getTwitterName = (input: string) => {
   const match = input.match(/@[a-zA-Z0-9_]+/);
   return match ? match[0].replace(/@/g, "") : "";
-}
+};
 
-export const getAltTwitterIcon = (data: rivalStoreData | DBRivalStoreData, isLocal: boolean = false, _size: string = "original"): string => {
+export const getAltTwitterIcon = (
+  data: rivalStoreData | DBRivalStoreData,
+  isLocal: boolean = false,
+  _size: string = "original"
+): string => {
   if (isLocal) {
     data = data as DBRivalStoreData;
     if (data.socialId) {
@@ -22,13 +26,16 @@ export const getAltTwitterIcon = (data: rivalStoreData | DBRivalStoreData, isLoc
     }
   }
   if (data.profile) {
-    return getTwitterName(data.profile) ? "https://unavatar.io/twitter/" + getTwitterName(data.profile) : alternativeImg(data.uid);
+    return getTwitterName(data.profile)
+      ? "https://unavatar.io/twitter/" + getTwitterName(data.profile)
+      : alternativeImg(data.uid);
   }
   return alternativeImg(data.uid);
-}
+};
 
-export const updateRivalScore = async (rivalMeta: DBRivalStoreData): Promise<string> => {
-
+export const updateRivalScore = async (
+  rivalMeta: DBRivalStoreData
+): Promise<string> => {
   const fbA: fbActions = new fbActions();
   const fbStores: fbActions = new fbActions();
   const rdb = new rivalListsDB();
@@ -49,19 +56,24 @@ export const updateRivalScore = async (rivalMeta: DBRivalStoreData): Promise<str
     }
     const data = await fbStores.setDocName(rivalMeta.uid).load();
     if (!data || data.error) {
-      throw new Error("該当ユーザーは当該バージョン/モードにおけるスコアを登録していません。");
+      throw new Error(
+        "該当ユーザーは当該バージョン/モードにおけるスコアを登録していません。"
+      );
     }
-    const putResult = await rdb.addUser({
-      rivalName: res.displayName,
-      uid: res.uid,
-      photoURL: res.photoURL,
-      socialId: res.twitter || "",
-      profile: res.profile,
-      updatedAt: res.timeStamp,
-      lastUpdatedAt: rivalMeta.updatedAt,
-      isSingle: _isSingle(),
-      storedAt: _currentStore(),
-    }, data.scores);
+    const putResult = await rdb.addUser(
+      {
+        rivalName: res.displayName,
+        uid: res.uid,
+        photoURL: res.photoURL,
+        socialId: res.twitter || "",
+        profile: res.profile,
+        updatedAt: res.timeStamp,
+        lastUpdatedAt: rivalMeta.updatedAt,
+        isSingle: _isSingle(),
+        storedAt: _currentStore(),
+      },
+      data.scores
+    );
     if (!putResult) {
       throw new Error("追加に失敗しました");
     }
@@ -69,4 +81,4 @@ export const updateRivalScore = async (rivalMeta: DBRivalStoreData): Promise<str
   } catch (e: any) {
     return e.message;
   }
-}
+};

@@ -1,6 +1,6 @@
-
 const _withOrd = (rank: number): string => {
-  const j = rank % 10, k = rank % 100;
+  const j = rank % 10,
+    k = rank % 100;
   if (j === 1 && k !== 11) {
     return rank + "st";
   }
@@ -11,6 +11,6 @@ const _withOrd = (rank: number): string => {
     return rank + "rd";
   }
   return rank + "th";
-}
+};
 
 export default _withOrd;

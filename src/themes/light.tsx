@@ -1,15 +1,15 @@
 import { createTheme } from "@mui/material";
 
-export const theme = createTheme(({
+export const theme = createTheme({
   palette: {
-    mode: 'light',
+    mode: "light",
     primary: {
-      main: '#500000',
-      light: '#ce6c52',
-      dark: '#232323',
+      main: "#500000",
+      light: "#ce6c52",
+      dark: "#232323",
     },
     secondary: {
-      main: '#ff5b5c',
+      main: "#ff5b5c",
     },
   },
 
@@ -17,46 +17,46 @@ export const theme = createTheme(({
     MuiTab: {
       styleOverrides: {
         root: {
-          color: "inherit"
-        }
-      }
+          color: "inherit",
+        },
+      },
     },
     MuiTextField: {
       defaultProps: {
-        variant: "standard"
-      }
+        variant: "standard",
+      },
     },
     MuiButton: {
       defaultProps: {
-        color: "secondary"
+        color: "secondary",
       },
       styleOverrides: {
         root: {
-          textTransform: 'none',
-        }
-      }
+          textTransform: "none",
+        },
+      },
     },
     MuiSelect: {
       defaultProps: {
-        variant: 'standard',
-      }
+        variant: "standard",
+      },
     },
     MuiInputLabel: {
       defaultProps: {
-        variant: 'standard',
-      }
+        variant: "standard",
+      },
     },
     MuiSwitch: {
       defaultProps: {
-        color: "secondary"
-      }
+        color: "secondary",
+      },
     },
     MuiCheckbox: {
       defaultProps: {
-        color: "secondary"
-      }
+        color: "secondary",
+      },
     },
-  }
-}));
+  },
+});
 
 export default theme;

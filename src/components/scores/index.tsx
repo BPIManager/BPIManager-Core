@@ -1,9 +1,7 @@
 import { scoresDB } from "../indexedDB";
 import { scoreData } from "@/types/data";
 
-
 export default class scoresAPI {
-
   private scores: Set<scoreData> = new Set();
 
   async load(includeLatestSongs: boolean = false) {
@@ -14,11 +12,10 @@ export default class scoresAPI {
         if (item.wr === Infinity) {
           this.scores.delete(item);
         }
-      })
+      });
     }
     return this;
   }
 
   all = () => this.scores;
-
 }
