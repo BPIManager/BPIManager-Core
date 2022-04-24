@@ -24,11 +24,7 @@ const _ = async (
   uid: string = "",
   updateGlobal: (u: string) => void
 ): Promise<ImportResult> => {
-  const detectJSON = (arg: any) => {
-    arg = typeof arg === "function" ? arg() : arg;
-    if (typeof arg !== "string") {
-      return false;
-    }
+  const detectJSON = (arg: string) => {
     try {
       arg = !JSON ? false : JSON.parse(arg);
       return true;

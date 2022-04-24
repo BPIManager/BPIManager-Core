@@ -240,10 +240,6 @@ legend.MuiFormLabel-root {
   font-size: 14px !important;
 }
 
-.MuiTableBody-root .MuiTableCell-root:not(:first-child) {
-  border-left: 1px dotted rgba(224, 224, 224, 0.3);
-}
-
 .rivalBody td.MuiTableCell-root.MuiTableCell-body {
   padding: 0 20px !important;
 }
@@ -582,10 +578,6 @@ body {
 #__deepsea .MuiTableCell-root,
 #__dark .MuiTableCell-root {
   border-bottom: 1px solid rgb(245 245 245 / 8%) !important;
-}
-
-#__deepsea .MuiTableBody-root .MuiTableCell-root:not(:first-child) {
-  border-left: 1px dotted rgb(0 0 0 / 30%);
 }
 
 .userUpdateTitle {

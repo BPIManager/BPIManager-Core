@@ -922,24 +922,4 @@ export default class fbActions {
       return 0;
     }
   }
-
-  // for sitemap generator
-
-  async loadUserList() {
-    const t = await getDocs(collection(db, this.setUserCollection()));
-    if (t.size > 0) {
-      return t.docs;
-    } else {
-      return [];
-    }
-  }
-
-  async loadNoteList() {
-    const t = await getDocs(collection(db, "notes"));
-    if (t.size > 0) {
-      return t.docs;
-    } else {
-      return [];
-    }
-  }
 }

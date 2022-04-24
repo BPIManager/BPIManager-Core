@@ -30,11 +30,8 @@ class historyExec {
     return this.result;
   }
 
-  sort(obj: historyData[] | historyDataWithLastScore[]) {
-    return obj.sort(
-      (a, b) => toUnixTime(a.updatedAt) - toUnixTime(b.updatedAt)
-    );
-  }
+  sort = (obj: historyData[] | historyDataWithLastScore[]) =>
+    obj.sort((a, b) => toUnixTime(a.updatedAt) - toUnixTime(b.updatedAt));
 
   classifyBySongs() {
     this.sort(this.data).map((item: historyData) => {
@@ -112,9 +109,8 @@ export default class HistoryDataReceiver extends historyExec {
     return this;
   }
 
-  public getData(): historyDataWithLastScore[] {
-    return this.getResult().filter((item) => {
+  public getData = (): historyDataWithLastScore[] =>
+    this.getResult().filter((item) => {
       return this.date ? isSameDay(item.updatedAt, this.date) : true;
     });
-  }
 }

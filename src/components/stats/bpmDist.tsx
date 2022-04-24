@@ -8,6 +8,7 @@ export interface distSongs {
 export interface distScores {
   [key: string]: scoreData;
 }
+
 export type distBPMI = { name: BPMDIST; BPI: number };
 
 export const bpmFilter = (bpm: string): BPMDIST => {
