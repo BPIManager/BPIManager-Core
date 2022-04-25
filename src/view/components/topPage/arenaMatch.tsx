@@ -10,7 +10,6 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-  Typography,
 } from "@mui/material";
 import React from "react";
 import { FormattedMessage } from "react-intl";

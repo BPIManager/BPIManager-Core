@@ -1,17 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import Button from "@mui/material/Button";
 import { Link as RefLink, Grid, Typography } from "@mui/material/";
-import {
-  _currentVersion,
-  _currentTheme,
-  _currentQuickAccessComponents,
-} from "@/components/settings";
+import { _currentVersion } from "@/components/settings";
 import UpdateIcon from "@mui/icons-material/Update";
 import Loader from "@/view/components/common/loader";
 import { updateDefFile } from "@/components/settings/updateDef";
 import CheckIcon from "@mui/icons-material/Check";
 import WarningIcon from "@mui/icons-material/Warning";
-import { _apiFetch } from "@/components/common/rankApi";
 import CachedIcon from "@mui/icons-material/Cached";
 import SubHeader from "@/view/components/topPage/subHeader";
 

@@ -10,7 +10,6 @@ import {
   CircularProgress,
 } from "@mui/material/";
 import {
-  _currentVersion,
   _currentTheme,
   _currentQuickAccessComponents,
 } from "@/components/settings";
@@ -31,7 +30,6 @@ import { isSameWeek } from "@/components/common/timeFormatter";
 import { quickAccessTable } from "@/components/common/quickAccess";
 import AppsIcon from "@mui/icons-material/Apps";
 import totalBPI from "@/components/bpi/totalBPI";
-import { _apiFetch } from "@/components/common/rankApi";
 import SubHeader from "@/view/components/topPage/subHeader";
 import ArenaMatch from "@/view/components/topPage/arenaMatch";
 import RecentUsers from "../components/topPage/recentUsers";
