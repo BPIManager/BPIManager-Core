@@ -411,8 +411,8 @@ th.MuiTableCell-root.MuiTableCell-head:first-child {
   }
 
   .userpageIcon {
-    width: 80px !important;
-    height: 80px !important;
+    width: 100px !important;
+    height: 100px !important;
   }
 
   .heroTitle {
@@ -1010,4 +1010,8 @@ text.react-calendar-heatmap-weekday-label {
 
 .MuiSnackbarContent-message {
   width: 100%;
+}
+
+.MuiAvatarGroup-root .MuiAvatar-root:last-child {
+  margin-left: -8px !important;
 }

@@ -117,7 +117,7 @@ export default class db extends storageWrapper {
         );
       }
     ).catch((e) => {
-      console.log(e);
+      console.log(e, meta, body);
       return null;
     });
   }

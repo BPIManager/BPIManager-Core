@@ -94,21 +94,21 @@ export const rivalBgColor = (d: number) => {
   //d = 0:rival , 2:you
   const theme = _currentTheme();
   if (theme === "light") {
-    if (d === 0) return "rgb(255 18 18)";
-    if (d === 1) return "rgb(253 202 202)";
-    if (d === 2) return "rgb(255 145 145)";
-    if (d === 3) return "rgb(136 0 0)";
+    if (d === 0) return "#ff1212";
+    if (d === 1) return "#fdcaca";
+    if (d === 2) return "#ff9191";
+    if (d === 3) return "#880000";
   }
   if (theme === "dark") {
     if (d === 0) return "#c56c16";
-    if (d === 1) return "rgb(82 66 50)";
+    if (d === 1) return "#524232";
     if (d === 2) return "#653200";
-    if (d === 3) return "rgb(45 22 0)";
+    if (d === 3) return "#2d1600";
   }
   if (theme === "deepsea") {
     if (d === 0) return "#4057ff";
-    if (d === 1) return "rgb(14 43 62)";
-    if (d === 2) return "rgb(0 154 255)";
+    if (d === 1) return "#98d6ff";
+    if (d === 2) return "#009aff";
     if (d === 3) return "#75bcff";
   }
   return "#000";

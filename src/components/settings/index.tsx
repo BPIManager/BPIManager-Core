@@ -155,10 +155,10 @@ export const _foregroundNotification = () => {
 export const _chartColor = () => {
   const c = _currentTheme();
   if (c === "dark" || c === "deepsea") {
-    return "#eee";
+    return "#eeeeee";
   }
   if (c === "light") {
-    return "#666";
+    return "#666666";
   }
 };
 
