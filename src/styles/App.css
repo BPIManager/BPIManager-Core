@@ -701,14 +701,15 @@ text.react-calendar-heatmap-weekday-label {
   padding-right: 15px;
 }
 
+.darkDetailedScreen .TypographywithIconAndLines,
 #__dark .TypographywithIconAndLines {
   background-color: #0a0a0a;
 }
-
+.deepSeaDetailedScreen .TypographywithIconAndLines,
 #__deepsea .TypographywithIconAndLines {
   background-color: #000d19;
 }
-
+.lightDetailedScreen .TypographywithIconAndLines,
 #__light .TypographywithIconAndLines {
   background-color: #fff;
 }

@@ -219,13 +219,6 @@ const User: React.FC<
             />
           </>
         )}
-        {compareDetail && (
-          <CompareDetail
-            backToMainPage={backToMainPage}
-            meta={metaData}
-            rivalData={rivalData}
-          />
-        )}
         <Menu open={changePage} uid={metaData.uid} />
         <Share userName={userName} metaData={metaData} />
       </Container>

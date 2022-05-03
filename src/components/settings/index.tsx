@@ -183,7 +183,7 @@ export const _chartBarColor = (name: string) => {
     if (name === "YOU" || name === "RIVAL") {
       return "#BF4C0A";
     } else if (name === "line") {
-      return "#bbb";
+      return "#bbbbbb";
     } else if (name === "line2") {
       return "#8095ff";
     } else if (name === "line3") {
@@ -191,7 +191,7 @@ export const _chartBarColor = (name: string) => {
     } else if (name === "line4") {
       return "#7ee7ff";
     } else {
-      return "#aaa";
+      return "#aaaaaa";
     }
   }
   if (c === "deepsea") {

@@ -64,7 +64,13 @@ const CompareOverView: React.FC<{ rivalData: any }> = ({ rivalData }) => {
   return (
     <>
       <SubHeader icon={<GroupIcon />} text={<>比較</>} />
-      <div style={{ width: "100%", height: "100px", margin: "5px auto" }}>
+      <div
+        style={{
+          width: "100%",
+          height: "100px",
+          margin: "5px auto",
+        }}
+      >
         <ResponsiveContainer>
           <BarChart
             margin={{

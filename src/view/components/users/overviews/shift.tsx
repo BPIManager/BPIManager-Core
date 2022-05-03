@@ -1,3 +1,4 @@
+import { rivalBgColor } from "@/components/common";
 import { _chartBarColor, _chartColor } from "@/components/settings";
 import statMain from "@/components/stats/main";
 import BarChartIcon from "@mui/icons-material/BarChart";
@@ -28,8 +29,8 @@ const ShiftOverView: React.FC<{ rivalData: any }> = ({ rivalData }) => {
     return null;
   }
   const chartColor = _chartColor() + "cc";
-  const barColor = _chartBarColor("bar") + "80";
-  const lineColor = _chartBarColor("line");
+  const barColor = rivalBgColor(2) + "80";
+  const lineColor = rivalBgColor(0) + "80";
   return (
     <>
       <SubHeader icon={<BarChartIcon />} text={<>過去30日間の推移</>} />
