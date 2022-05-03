@@ -26,18 +26,7 @@ const CompareDetail: React.FC<{
   }
   return (
     <>
-      <Container
-        className={
-          "commonLayout " +
-          (c === "dark"
-            ? "darkTheme"
-            : c === "light"
-            ? "lightTheme"
-            : "deepSeaTheme")
-        }
-      >
-        <SubHeader icon={<GroupIcon />} text={<>比較</>} />
-      </Container>
+      <SubHeader icon={<GroupIcon />} text={<>比較</>} />
       <RivalStatViewFromUserPage
         full={stat}
         rivalRawData={rivalData}

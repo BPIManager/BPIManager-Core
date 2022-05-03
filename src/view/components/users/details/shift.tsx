@@ -1,10 +1,9 @@
 import { _currentTheme } from "@/components/settings";
-import { Container } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { makeRivalStat } from "../../rivals/view";
-import GroupIcon from "@mui/icons-material/Group";
 import SubHeader from "../../topPage/subHeader";
 import Shift from "../../stats/shift";
+import BarChartIcon from "@mui/icons-material/BarChart";
 
 const ShiftDetail: React.FC<{
   backToMainPage: () => void;
@@ -26,18 +25,7 @@ const ShiftDetail: React.FC<{
   }
   return (
     <>
-      <Container
-        className={
-          "commonLayout " +
-          (c === "dark"
-            ? "darkTheme"
-            : c === "light"
-            ? "lightTheme"
-            : "deepSeaTheme")
-        }
-      >
-        <SubHeader icon={<GroupIcon />} text={<>比較</>} />
-      </Container>
+      <SubHeader icon={<BarChartIcon />} text={<>過去30日間の推移</>} />
       <div style={{ opacity: 0.8 }}>
         <Shift propdata={rivalData} />
       </div>
