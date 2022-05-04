@@ -136,6 +136,8 @@ const User: React.FC<
       setMetaData(null);
       setUserName("");
     }
+    setCompareDetail(false);
+    setShiftDetail(false);
     setProcessing(false);
   };
 
