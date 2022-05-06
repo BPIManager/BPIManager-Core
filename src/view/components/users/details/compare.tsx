@@ -1,5 +1,4 @@
 import { _currentTheme } from "@/components/settings";
-import { Container } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { makeRivalStat } from "../../rivals/view";
 import RivalStatViewFromUserPage from "../../rivals/viewComponents/statsFromUserPage";
@@ -11,7 +10,6 @@ const CompareDetail: React.FC<{
   rivalData: any;
   meta: any;
 }> = ({ backToMainPage, rivalData, meta }) => {
-  const c = _currentTheme();
   const [stat, setStat] = useState<any>(null);
   const makeStat = async () => {
     const mkstat = await makeRivalStat(rivalData);

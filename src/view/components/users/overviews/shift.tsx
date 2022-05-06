@@ -1,5 +1,5 @@
 import { rivalBgColor } from "@/components/common";
-import { _chartBarColor, _chartColor } from "@/components/settings";
+import { _chartColor } from "@/components/settings";
 import statMain from "@/components/stats/main";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import React, { useEffect, useState } from "react";

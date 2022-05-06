@@ -114,7 +114,7 @@ export const _setTraditionalMode = (newState: number = 0) => {
 };
 
 export const _currentStoreWithFullName = () => {
-  const t: string = localStorage.getItem("currentStore") || "28";
+  const t: string = localStorage.getItem("currentStore") || "29";
   return t === "26"
     ? "26 Rootage"
     : t === "27"

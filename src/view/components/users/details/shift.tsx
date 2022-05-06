@@ -10,7 +10,6 @@ const ShiftDetail: React.FC<{
   rivalData: any;
   meta: any;
 }> = ({ backToMainPage, rivalData, meta }) => {
-  const c = _currentTheme();
   const [stat, setStat] = useState<any>(null);
   const makeStat = async () => {
     const mkstat = await makeRivalStat(rivalData);

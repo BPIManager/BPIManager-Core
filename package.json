@@ -65,7 +65,9 @@
     "eslint-plugin-react-hooks": "^4.4.0",
     "gh-pages": "^3.2.3",
     "react-app-rewired": "^2.1.8",
-    "webpack-bundle-analyzer": "^4.5.0"
+    "webpack-bundle-analyzer": "^4.5.0",
+    "ejs": ">=3.1.7",
+    "async": ">=2.6.4"
   },
   "scripts": {
     "start": "git rev-parse --short HEAD > ./public/assets/version.txt && react-app-rewired start",
