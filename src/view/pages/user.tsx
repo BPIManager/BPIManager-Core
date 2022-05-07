@@ -128,6 +128,7 @@ const User: React.FC<
       if (res.isPublic === false) {
         setMetaData(null);
         setUserName("");
+        setProcessing(false);
         return;
       }
       setRivalData(scores);
@@ -153,7 +154,7 @@ const User: React.FC<
   }
 
   if (!metaData) {
-    return <NotFound />;
+    return <NotFound isInUserPage />;
   }
 
   if (currentView === 1) {
@@ -189,13 +190,7 @@ const User: React.FC<
       <Container>
         <FollowList changeUser={changeUser} meta={metaData} />
         <div style={{ margin: "35px 0" }} />
-        {shiftDetail && (
-          <ShiftDetail
-            backToMainPage={backToMainPage}
-            meta={metaData}
-            rivalData={scoreHistory}
-          />
-        )}
+        {shiftDetail && <ShiftDetail rivalData={scoreHistory} />}
         {!shiftDetail && (
           <>
             <ShiftOverView rivalData={scoreHistory} />
@@ -205,13 +200,7 @@ const User: React.FC<
             />
           </>
         )}
-        {compareDetail && (
-          <CompareDetail
-            backToMainPage={backToMainPage}
-            meta={metaData}
-            rivalData={rivalData}
-          />
-        )}
+        {compareDetail && <CompareDetail rivalData={rivalData} />}
         {!compareDetail && (
           <>
             <CompareOverView rivalData={rivalData} />
@@ -363,12 +352,26 @@ export class DefListCard extends React.Component<
   }
 }
 
-const NotFound: React.FC = () => (
+export const NotFound: React.FC<{ isInUserPage: boolean }> = ({
+  isInUserPage,
+}) => (
   <Container style={{ marginTop: "25px" }}>
-    <Typography variant="h5">User not found</Typography>
-    <Typography variant="body1">ユーザーが見つかりませんでした</Typography>
-    <Typography variant="body1">
-      表示名が変更されたか、プロフィールが非公開にされている可能性があります。
+    <Typography variant="h5" sx={{ textAlign: "center", fontSize: "25vw" }}>
+      404
     </Typography>
+    <Typography
+      variant="h5"
+      sx={{ textAlign: "center", fontSize: "8vw", marginBottom: "15px" }}
+    >
+      {!isInUserPage ? <>Page</> : <>User</>} not found
+    </Typography>
+    {isInUserPage && (
+      <Typography
+        variant="body1"
+        sx={{ textAlign: "center", fontSize: "15px", marginBottom: "15px" }}
+      >
+        ユーザーが見つかりませんでした
+      </Typography>
+    )}
   </Container>
 );

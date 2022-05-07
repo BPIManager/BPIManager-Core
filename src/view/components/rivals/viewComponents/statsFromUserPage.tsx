@@ -1,31 +1,28 @@
-import React from 'react';
+import React from "react";
 
 //import Tabs from '@mui/material/Tabs';
 //import Tab from '@mui/material/Tab';
 //import Main from "@/view/components/stats/main";
-import { rivalScoreData } from '@/types/data';
-import Container from '@mui/material/Container/Container';
-import RivalStats from './stats';
-import { withRivalData } from '@/components/stats/radar';
+import { rivalScoreData } from "@/types/data";
+import Container from "@mui/material/Container/Container";
+import RivalStats from "./stats";
+import { withRivalData } from "@/components/stats/radar";
 
 interface S {
-  currentTab: number,
+  currentTab: number;
 }
 
 interface P {
-  backToMainPage: () => void,
-  full: withRivalData[],
-  rivalRawData: rivalScoreData[],
-  name: string
+  full: withRivalData[];
+  rivalRawData: rivalScoreData[];
 }
 
 class RivalStatViewFromUserPage extends React.Component<P, S> {
-
   constructor(props: P) {
     super(props);
     this.state = {
       currentTab: 0,
-    }
+    };
   }
 
   handleChange = (_event: React.ChangeEvent<{}>, newValue: number) => {

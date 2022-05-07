@@ -37,6 +37,7 @@ import {
   limit,
   WriteBatch,
   DocumentData,
+  deleteField,
 } from "firebase/firestore";
 import timeFormatter from "../common/timeFormatter";
 import { scoresDB, scoreHistoryDB } from "../indexedDB";
@@ -309,7 +310,10 @@ export default class fbActions {
           profile: newData.profile,
           photoURL: newData.photoURL,
           arenaRank: newData.arenaRank,
+          area: newData.area || "-",
           showNotes: newData.showNotes || false,
+          scores: deleteField(),
+          scoresHistory: deleteField(),
           totalBPI: totalBPI,
           versions: arrayUnion(_currentStore()),
         };

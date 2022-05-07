@@ -1,11 +1,11 @@
-import { alternativeImg } from "@/components/common";
 import { getAltTwitterIcon, getTwitterName } from "@/components/rivals";
 import { _currentStore, _currentTheme } from "@/components/settings";
-import { Avatar, Button, Grid, Skeleton, Typography } from "@mui/material";
+import { Button, Grid, Skeleton, Typography } from "@mui/material";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import React from "react";
 import FollowButton from "./followButton";
+import { UserIcon } from "../common/icon";
 const getIIDXId = (input: string) => {
   const match = input.match(/\d{4}(-|)\d{4}/);
   return match ? match[0].replace(/[^\d]/g, "") : "";
@@ -61,27 +61,19 @@ const UserHeader: React.FC<{
             sx={{
               display: "flex",
               justifyContent: "center",
+              alignItems: "center",
               flexDirection: "column",
             }}
           >
-            <Avatar
-              style={{ border: "1px solid #222", margin: "15px auto" }}
+            <UserIcon
+              defaultURL={
+                meta.photoURL ? meta.photoURL.replace("_normal", "") : "noimage"
+              }
+              text={meta.displayName}
+              altURL={getAltTwitterIcon(meta)}
+              style={{ margin: "15px 0" }}
               className="userpageIcon"
-            >
-              <img
-                src={
-                  meta.photoURL
-                    ? meta.photoURL.replace("_normal", "")
-                    : "noimage"
-                }
-                style={{ width: "100%", height: "100%" }}
-                alt={meta.displayName}
-                onError={(e) =>
-                  ((e.target as HTMLImageElement).src =
-                    getAltTwitterIcon(meta) || alternativeImg(meta.displayName))
-                }
-              />
-            </Avatar>
+            />
           </Grid>
           <SubHeader
             title="総合BPI"
@@ -107,7 +99,7 @@ const UserHeader: React.FC<{
               color: themeColor === "light" ? "#888" : "#aaa",
             }}
           >
-            {meta.timeStamp}
+            {meta.area || "-"} / {meta.timeStamp}
           </Typography>
         </div>
         <Grid container style={{ display: "flex", alignItems: "center" }}>
@@ -200,6 +192,7 @@ export const LoadingHeader: React.FC = () => {
             }}
           >
             <Skeleton
+              width={128}
               animation="wave"
               variant="circular"
               className="userpageIcon"

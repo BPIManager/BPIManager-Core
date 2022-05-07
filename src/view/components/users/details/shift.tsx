@@ -1,4 +1,3 @@
-import { _currentTheme } from "@/components/settings";
 import React, { useEffect, useState } from "react";
 import { makeRivalStat } from "../../rivals/view";
 import SubHeader from "../../topPage/subHeader";
@@ -6,10 +5,8 @@ import Shift from "../../stats/shift";
 import BarChartIcon from "@mui/icons-material/BarChart";
 
 const ShiftDetail: React.FC<{
-  backToMainPage: () => void;
   rivalData: any;
-  meta: any;
-}> = ({ backToMainPage, rivalData, meta }) => {
+}> = ({ rivalData }) => {
   const [stat, setStat] = useState<any>(null);
   const makeStat = async () => {
     const mkstat = await makeRivalStat(rivalData);

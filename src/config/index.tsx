@@ -9,8 +9,7 @@ export const config = {
   cfVersion: "v2",
 };
 
-export const area = [
-  "全国",
+const areaCommon: string[] = [
   "北海道",
   "青森県",
   "岩手県",
@@ -69,3 +68,7 @@ export const area = [
   "アメリカ",
   "海外",
 ];
+
+export const area: string[] = ["全国", ...areaCommon];
+
+export const areaSelect: string[] = ["-", ...areaCommon];

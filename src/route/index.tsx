@@ -10,7 +10,7 @@ import Stats from "../view/pages/stats";
 import Settings from "../view/pages/settings";
 import Compare from "../view/pages/compare";
 import Rivals from "../view/pages/rivals";
-import User from "../view/pages/user";
+import User, { NotFound } from "../view/pages/user";
 import AAATable from "../view/pages/AAATable";
 import ArenaMatchIndex from "../view/pages/arenaMatch";
 import ArenaMatchDetail from "../view/pages/arenaMatch/detail";
@@ -34,7 +34,6 @@ import RedirectMyProfile from "@/view/pages/extra/myprofile";
 import RedirectUserProfile from "@/view/pages/extra/user";
 import Index from "@/view/pages/index";
 import History from "@/view/pages/history";
-import Container from "@mui/material/Container";
 import { Container as UnstatedContainer } from "unstated";
 
 export const Router: React.FC<{ global: UnstatedContainer<any> }> = (props) => {
@@ -103,7 +102,7 @@ export const Router: React.FC<{ global: UnstatedContainer<any> }> = (props) => {
             <Route path="/arena" exact component={ArenaMatchIndex} />
             <Route path="/arena/:docId" exact component={ArenaMatchDetail} />
             <Route path="*">
-              <NoMatch />
+              <NotFound isInUserPage={false} />
             </Route>
           </Switch>
         </AppBar>
@@ -113,11 +112,3 @@ export const Router: React.FC<{ global: UnstatedContainer<any> }> = (props) => {
 };
 
 export default Router;
-
-const NoMatch: React.FC = () => {
-  return (
-    <Container fixed className="commonLayout">
-      404 Page not found.
-    </Container>
-  );
-};

@@ -11,6 +11,7 @@ import { scoreData } from "@/types/data";
 import { _prefix } from "@/components/songs/filter";
 import { timeCompare } from "@/components/common/timeFormatter";
 import dayjs from "dayjs";
+import { isOlderVersion } from "../common/versions";
 
 export interface ImportResult {
   stateText: string;
@@ -138,7 +139,7 @@ const _ = async (
     }
     await new importer().setHistory(histories).setScores(scores).exec();
     // if autosync is enabled && already logged in
-    if (_autoSync() && uid !== "" && updated > 0) {
+    if (_autoSync() && uid !== "" && updated > 0 && !isOlderVersion()) {
       updateGlobal(uid);
     }
     errors.unshift(

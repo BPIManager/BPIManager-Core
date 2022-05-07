@@ -1,48 +1,49 @@
-import React from 'react';
-import Input from '@mui/material/Input';
-import InputLabel from '@mui/material/InputLabel';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormControl from '@mui/material/FormControl';
+import React from "react";
+import Input from "@mui/material/Input";
+import InputLabel from "@mui/material/InputLabel";
+import InputAdornment from "@mui/material/InputAdornment";
+import FormControl from "@mui/material/FormControl";
 import { alternativeImg } from "@/components/common";
 import { getAltTwitterIcon } from "@/components/rivals";
 import Avatar from "@mui/material/Avatar";
-import IconButton from '@mui/material/IconButton';
-import SendIcon from '@mui/icons-material/Send';
+import IconButton from "@mui/material/IconButton";
+import SendIcon from "@mui/icons-material/Send";
 import fbArenaMatch from "@/components/firebase/arenaMatch";
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Link from "@mui/material/Link";
-import { Link as RefLink } from 'react-router-dom';
-import ModalUser from '@/view/components/rivals/modal';
-import LinearProgress from '@mui/material/LinearProgress';
+import { Link as RefLink } from "react-router-dom";
+import ModalUser from "@/view/components/rivals/modal";
+import LinearProgress from "@mui/material/LinearProgress";
 import Divider from "@mui/material/Divider";
-import ReactTimeAgo from 'react-time-ago';
+import ReactTimeAgo from "react-time-ago";
 import { ShareList } from "@/view/components/common/shareButtons";
 import Badge from "@mui/material/Badge";
 
-import {
-  QuerySnapshot, DocumentData, Unsubscribe
-} from "firebase/firestore";
+import { QuerySnapshot, DocumentData, Unsubscribe } from "firebase/firestore";
+import { UserIcon } from "../../common/icon";
 
 interface P {
-  id: string,
-  detail: any,
-  user: any,
+  id: string;
+  detail: any;
+  user: any;
 }
 
-class Chat extends React.Component<P, {
-    messages: any[],
-    isModalOpen: boolean,
-    currentUserName: string,
-    initialState: boolean,
-    commentBoxHeight: string,
-    viewBoxHeight: string,
-  }>{
-
+class Chat extends React.Component<
+  P,
+  {
+    messages: any[];
+    isModalOpen: boolean;
+    currentUserName: string;
+    initialState: boolean;
+    commentBoxHeight: string;
+    viewBoxHeight: string;
+  }
+> {
   boxRef = React.createRef<HTMLDivElement>();
   unsubscribe: Unsubscribe | null = null;
 
@@ -59,7 +60,7 @@ class Chat extends React.Component<P, {
     initialState: true,
     commentBoxHeight: "360px",
     viewBoxHeight: "400px",
-  }
+  };
 
   async componentDidMount() {
     const f = new fbArenaMatch();
@@ -78,7 +79,7 @@ class Chat extends React.Component<P, {
       this.setHeight();
       return;
     });
-  }
+  };
 
   setHeight = () => {
     const d = (mx: string) => document.getElementById(mx)?.clientHeight || 0;
@@ -87,112 +88,174 @@ class Chat extends React.Component<P, {
     const comment = d("mxCommentBox");
     const gHeader = 56;
     return this.setState({
-      commentBoxHeight: `calc( 100vh - ${header + tab + comment + gHeader + 75}px )`,
-      viewBoxHeight: `calc( 100vh - ${header + tab + gHeader + 75}px )`
+      commentBoxHeight: `calc( 100vh - ${
+        header + tab + comment + gHeader + 75
+      }px )`,
+      viewBoxHeight: `calc( 100vh - ${header + tab + gHeader + 75}px )`,
     });
-  }
+  };
 
   handleModalOpen = (flag: boolean) => this.setState({ isModalOpen: flag });
   open = (uid: string) => {
     if (uid === "サーバーからのメッセージ") return;
-    this.setState({ isModalOpen: true, currentUserName: uid })
-  }
+    this.setState({ isModalOpen: true, currentUserName: uid });
+  };
 
   render() {
-    const { messages, isModalOpen, currentUserName, initialState, commentBoxHeight, viewBoxHeight } = this.state;
+    const {
+      messages,
+      isModalOpen,
+      currentUserName,
+      initialState,
+      commentBoxHeight,
+      viewBoxHeight,
+    } = this.state;
     if (initialState) {
       return (
         <React.Fragment>
           <LinearProgress color="secondary" style={{ margin: "8px 0" }} />
           <p style={{ textAlign: "center" }}>ルームに接続しています</p>
         </React.Fragment>
-      )
+      );
     }
     return (
       <Container style={{ height: viewBoxHeight }}>
-        <List sx={{ width: "100%", maxHeight: commentBoxHeight, overflowY: "scroll", marginBottom: "8px" }}>
-          {messages.sort((a, b) => a.createdAt.toMillis() - b.createdAt.toMillis()).map((item) => {
-            const avatar = () => (
-              <ListItemAvatar onClick={() => this.open(item.displayName)}>
-                <Badge
-                  color="primary"
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                  }} badgeContent={item.arenaRank}>
-                  <Avatar>
-                    <img src={item.photoURL ? item.photoURL.replace("_normal", "") : "noimg"} style={{ width: "100%", height: "100%" }}
-                      alt={item.displayName}
-                      onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(item, false, "normal") || alternativeImg(item.displayName)} />
-                  </Avatar>
-                </Badge>
-              </ListItemAvatar>
-            );
-            const millis = item.createdAt.toMillis();
-            const date = () => <ReactTimeAgo date={item.createdAt.toDate()} locale="en-US" timeStyle="twitter" />;
-            const thisIsMyText = this.props.user ? item.uid === this.props.user.uid : false;
-            return (
-              <React.Fragment key={millis}>
-                <ListItem alignItems="flex-start">
-                  {!thisIsMyText && avatar()}
-                  <ListItemText
-                    style={{ textAlign: thisIsMyText ? "right" : "left", marginRight: thisIsMyText ? "16px" : "0" }}
-                    primary={(
-                      <Typography variant="caption">
-                        {thisIsMyText && <span style={{ opacity: .5 }}>{date()}&nbsp;</span>}
-                        {item.displayName}
-                        {!thisIsMyText && <span style={{ opacity: .5 }}>&nbsp;{date()}</span>}
-                      </Typography>)}
-                    secondary={
-                      <React.Fragment>
-                        <Typography
-                          sx={{ display: 'inline' }}
-                          style={{ whiteSpace: 'pre-line' }}
-                          component="span"
-                          variant="body2"
-                          color="text.primary"
-                        >
-                          {item.body}
+        <List
+          sx={{
+            width: "100%",
+            maxHeight: commentBoxHeight,
+            overflowY: "scroll",
+            marginBottom: "8px",
+          }}
+        >
+          {messages
+            .sort((a, b) => a.createdAt.toMillis() - b.createdAt.toMillis())
+            .map((item) => {
+              const avatar = () => (
+                <ListItemAvatar onClick={() => this.open(item.displayName)}>
+                  <Badge
+                    color="primary"
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "right",
+                    }}
+                    badgeContent={item.arenaRank}
+                  >
+                    <Avatar>
+                      <img
+                        src={
+                          item.photoURL
+                            ? item.photoURL.replace("_normal", "")
+                            : "noimg"
+                        }
+                        style={{ width: "100%", height: "100%" }}
+                        alt={item.displayName}
+                        onError={(e) =>
+                          ((e.target as HTMLImageElement).src =
+                            getAltTwitterIcon(item, false, "normal") ||
+                            alternativeImg(item.displayName))
+                        }
+                      />
+                    </Avatar>
+                  </Badge>
+                </ListItemAvatar>
+              );
+              const millis = item.createdAt.toMillis();
+              const date = () => (
+                <ReactTimeAgo
+                  date={item.createdAt.toDate()}
+                  locale="en-US"
+                  timeStyle="twitter"
+                />
+              );
+              const thisIsMyText = this.props.user
+                ? item.uid === this.props.user.uid
+                : false;
+              return (
+                <React.Fragment key={millis}>
+                  <ListItem alignItems="flex-start">
+                    {!thisIsMyText && avatar()}
+                    <ListItemText
+                      style={{
+                        textAlign: thisIsMyText ? "right" : "left",
+                        marginRight: thisIsMyText ? "16px" : "0",
+                      }}
+                      primary={
+                        <Typography variant="caption">
+                          {thisIsMyText && (
+                            <span style={{ opacity: 0.5 }}>{date()}&nbsp;</span>
+                          )}
+                          {item.displayName}
+                          {!thisIsMyText && (
+                            <span style={{ opacity: 0.5 }}>&nbsp;{date()}</span>
+                          )}
                         </Typography>
-                      </React.Fragment>
-                    }
-                  />
-                  {thisIsMyText && avatar()}
-                </ListItem>
-                {item.displayName === "サーバーからのメッセージ" && (
-                  <React.Fragment>
-                    <div style={{ marginTop: "5px" }}>
-                      <ShareList withTitle={true} disableSubHeader text={`アリーナモードで対戦相手を待っています(アリーナランク:${this.props.detail.arenaRank}) `} />
-                    </div>
-                    <Divider style={{ margin: "8px 0" }} />
-                  </React.Fragment>
-                )}
-              </React.Fragment>
-            )
-          })}
+                      }
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                            sx={{ display: "inline" }}
+                            style={{ whiteSpace: "pre-line" }}
+                            component="span"
+                            variant="body2"
+                            color="text.primary"
+                          >
+                            {item.body}
+                          </Typography>
+                        </React.Fragment>
+                      }
+                    />
+                    {thisIsMyText && avatar()}
+                  </ListItem>
+                  {item.displayName === "サーバーからのメッセージ" && (
+                    <React.Fragment>
+                      <div style={{ marginTop: "5px" }}>
+                        <ShareList
+                          withTitle={true}
+                          disableSubHeader
+                          text={`アリーナモードで対戦相手を待っています(アリーナランク:${this.props.detail.arenaRank}) `}
+                        />
+                      </div>
+                      <Divider style={{ margin: "8px 0" }} />
+                    </React.Fragment>
+                  )}
+                </React.Fragment>
+              );
+            })}
           <div ref={this.boxRef} />
         </List>
-        {isModalOpen && <ModalUser isOpen={isModalOpen} currentUserName={currentUserName} handleOpen={(flag: boolean) => this.handleModalOpen(flag)} />}
-        <TxtForm detail={this.props.detail} id={this.props.id} user={this.props.user} />
+        {isModalOpen && (
+          <ModalUser
+            isOpen={isModalOpen}
+            currentUserName={currentUserName}
+            handleOpen={(flag: boolean) => this.handleModalOpen(flag)}
+          />
+        )}
+        <TxtForm
+          detail={this.props.detail}
+          id={this.props.id}
+          user={this.props.user}
+        />
       </Container>
     );
   }
 }
 
-
-class TxtForm extends React.Component<{
-  id: string,
-  user: any,
-  detail: any
-}, {
-    txt: string
-  }>{
-
-  state = { txt: "" }
+class TxtForm extends React.Component<
+  {
+    id: string;
+    user: any;
+    detail: any;
+  },
+  {
+    txt: string;
+  }
+> {
+  state = { txt: "" };
 
   change = (e: any) => {
     this.setState({ txt: e.target.value.substr(0, 1000) });
-  }
+  };
 
   send = async () => {
     const { txt } = this.state;
@@ -205,10 +268,18 @@ class TxtForm extends React.Component<{
         await fb.enterChat(id, "無効なコマンドです: " + txt, user);
       } else {
         if (this.props.detail.uid !== user.uid) {
-          await fb.enterChat(id, "/timer: タイマーの操作権限がありません", user);
+          await fb.enterChat(
+            id,
+            "/timer: タイマーの操作権限がありません",
+            user
+          );
         } else {
           await fb.setTimer(p[0], id);
-          await fb.enterChat(id, "/timer: タイマーを" + p[0] + "秒にセットしました", user);
+          await fb.enterChat(
+            id,
+            "/timer: タイマーを" + p[0] + "秒にセットしました",
+            user
+          );
         }
       }
       return this.setState({ txt: "" });
@@ -219,16 +290,21 @@ class TxtForm extends React.Component<{
     }
     await fb.enterChat(id, txt, user);
     return this.setState({ txt: "" });
-  }
+  };
 
   render() {
     const { txt } = this.state;
     const { user } = this.props;
-    if (!user) return (
-      <Typography variant="body1" id="mxCommentBox">
-        <RefLink to="/sync/settings"><Link color="secondary">チャットに参加するにはログインしてください。</Link></RefLink>
-      </Typography>
-    );
+    if (!user)
+      return (
+        <Typography variant="body1" id="mxCommentBox">
+          <RefLink to="/sync/settings">
+            <Link color="secondary">
+              チャットに参加するにはログインしてください。
+            </Link>
+          </RefLink>
+        </Typography>
+      );
     return (
       <FormControl variant="standard" fullWidth id="mxCommentBox">
         <InputLabel>
@@ -237,26 +313,25 @@ class TxtForm extends React.Component<{
         <Input
           value={txt}
           onChange={this.change}
-          onKeyDown={e => {
+          onKeyDown={(e) => {
             if (e.key === "Enter") {
-              this.send()
+              this.send();
             }
           }}
           startAdornment={
             <InputAdornment position="start">
-              <Avatar style={{ width: 24, height: 24 }}>
-                <img src={user.photoURL ? user.photoURL : "noimg"} style={{ width: "100%", height: "100%" }}
-                  alt={user.displayName}
-                  onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(user, false, "normal") || alternativeImg(user.displayName)} />
-              </Avatar>
+              <UserIcon
+                size={24}
+                disableZoom
+                defaultURL={user.photoURL}
+                text={user.displayName}
+                altURL={getAltTwitterIcon(user, false, "normal")}
+              />
             </InputAdornment>
           }
           endAdornment={
             <InputAdornment position="end">
-              <IconButton
-                edge="end"
-                onClick={this.send}
-              >
+              <IconButton edge="end" onClick={this.send}>
                 <SendIcon />
               </IconButton>
             </InputAdornment>

@@ -1,6 +1,5 @@
 import React from "react";
-import { alternativeImg, arenaRankColor, bgColorByBPI } from "@/components/common";
-import Avatar from "@mui/material/Avatar";
+import { arenaRankColor, bgColorByBPI } from "@/components/common";
 import Chip from "@mui/material/Chip";
 import AddIcon from "@mui/icons-material/Add";
 import CheckIcon from "@mui/icons-material/Check";
@@ -16,25 +15,27 @@ import Tooltip from "@mui/material/Tooltip";
 import { radarData } from "@/components/stats/radar";
 import Radar from "@/view/components/rivals/viewComponents/ui/radar";
 import Grid from "@mui/material/Grid";
+import { UserIcon } from "@/view/components/common/icon";
 
-
-export default class UserCard extends React.Component<{
-  item: any,
-  open: (q: string) => void,
-  processing: boolean,
-  isAdded: boolean,
-  myId?: string,
-  addUser: (q: any) => void,
-  hideBottomButtons?: boolean,
-  mode?: number,
-  radarNode?: radarData[]
-}, {
-    radar?: radarData[]
-  }>{
-
-  state = {
-    radar: []
+export default class UserCard extends React.Component<
+  {
+    item: any;
+    open: (q: string) => void;
+    processing: boolean;
+    isAdded: boolean;
+    myId?: string;
+    addUser: (q: any) => void;
+    hideBottomButtons?: boolean;
+    mode?: number;
+    radarNode?: radarData[];
+  },
+  {
+    radar?: radarData[];
   }
+> {
+  state = {
+    radar: [],
+  };
 
   componentDidMount() {
     this.concatRadar();
@@ -62,27 +63,67 @@ export default class UserCard extends React.Component<{
     const { radar } = this.state;
     return (
       <React.Fragment>
-        <ListItem button alignItems="flex-start" onClick={() => this.props.open(item.displayName)}>
-          <ListItemAvatar>
-            <Avatar onClick={() => this.props.open(item.displayName)}>
-              <img src={item.photoURL ? item.photoURL : "noimg"} style={{ width: "100%", height: "100%" }}
-                alt={item.displayName}
-                onError={(e) => (e.target as HTMLImageElement).src = getAltTwitterIcon(item, false, "normal") || alternativeImg(item.displayName)} />
-            </Avatar>
+        <ListItem
+          button
+          alignItems="flex-start"
+          onClick={() => this.props.open(item.displayName)}
+        >
+          <ListItemAvatar onClick={() => this.props.open(item.displayName)}>
+            <UserIcon
+              _legacy
+              disableZoom
+              defaultURL={item.photoURL}
+              text={item.displayName}
+              altURL={getAltTwitterIcon(item, false, "normal")}
+            />
           </ListItemAvatar>
           <ListItemText
-            primary={<React.Fragment>{item.displayName}&nbsp;<small>{updatedTime(item.serverTime.toDate())}</small></React.Fragment>}
-            secondary={<React.Fragment>
-              <Tooltip title={"アリーナランク"}>
-                <Chip component="span" size="small" style={{ backgroundColor: arenaRankColor(item.arenaRank), color: "#fff", margin: "5px 0" }} label={item.arenaRank || "-"} />
-              </Tooltip>
-              {(!isNaN(item.totalBPI)) && (
-                <Tooltip title={"総合BPI"}>
-                  <Chip component="span" size="small" style={{ backgroundColor: bgColorByBPI(item.totalBPI), color: "#fff", margin: "0 0 0 5px" }} label={item.totalBPIs ? item.totalBPIs[_currentStore()] : item.totalBPI} />
+            primary={
+              <React.Fragment>
+                {item.displayName}&nbsp;
+                <small>{updatedTime(item.serverTime.toDate())}</small>
+              </React.Fragment>
+            }
+            secondary={
+              <React.Fragment>
+                <Tooltip title={"アリーナランク"}>
+                  <Chip
+                    component="span"
+                    size="small"
+                    style={{
+                      backgroundColor: arenaRankColor(item.arenaRank),
+                      color: "#fff",
+                      margin: "5px 0",
+                    }}
+                    label={item.arenaRank || "-"}
+                  />
                 </Tooltip>
-              )}
-              {item.profile && <span style={{ margin: "0", display: "block" }}> {item.profile}</span>}
-            </React.Fragment>}
+                {!isNaN(item.totalBPI) && (
+                  <Tooltip title={"総合BPI"}>
+                    <Chip
+                      component="span"
+                      size="small"
+                      style={{
+                        backgroundColor: bgColorByBPI(item.totalBPI),
+                        color: "#fff",
+                        margin: "0 0 0 5px",
+                      }}
+                      label={
+                        item.totalBPIs
+                          ? item.totalBPIs[_currentStore()]
+                          : item.totalBPI
+                      }
+                    />
+                  </Tooltip>
+                )}
+                {item.profile && (
+                  <span style={{ margin: "0", display: "block" }}>
+                    {" "}
+                    {item.profile}
+                  </span>
+                )}
+              </React.Fragment>
+            }
           />
           <ListItemSecondaryAction>
             <Tooltip title={isAdded ? "すでにライバルです" : "ライバル登録"}>
@@ -90,16 +131,16 @@ export default class UserCard extends React.Component<{
                 edge="end"
                 disabled={isAdded}
                 onClick={() => !isAdded && this.props.addUser(item)}
-                size="large">
-                {(myId !== item.uid && !isAdded) ? <AddIcon /> : <CheckIcon />}
+                size="large"
+              >
+                {myId !== item.uid && !isAdded ? <AddIcon /> : <CheckIcon />}
               </IconButton>
-            </Tooltip >
+            </Tooltip>
           </ListItemSecondaryAction>
         </ListItem>
-        {(radar && radar.length > 0) && (
+        {radar && radar.length > 0 && (
           <Grid container onClick={() => this.props.open(item.displayName)}>
-            <Grid item xs={false} sm={7}>
-            </Grid>
+            <Grid item xs={false} sm={7}></Grid>
             <Grid item xs={12} sm={5}>
               <div style={{ display: "block", width: "100%", height: "200px" }}>
                 <Radar withoutLegend outerRadius={60} radar={radar} />
