@@ -13,6 +13,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import { verNameArr } from "./common";
+import { UserIcon } from "../common/icon";
 
 interface P {
   song: songData | null;
@@ -213,20 +214,18 @@ class SongDetails extends React.Component<P> {
               <TableRow>
                 <TableCell>Plot</TableCell>
                 <TableCell>
-                  <img
-                    src={
+                  <UserIcon
+                    defaultURL={
                       `https://files.poyashi.me/bpim/plots/27_end/` +
                       song.title.replace(/:|"|\*|†$/g, "") +
                       "[" +
                       _prefixFullNum(song.difficulty) +
                       "].jpeg"
                     }
-                    alt="plot"
-                    style={{ maxWidth: "100%" }}
-                    onError={(e) =>
-                      ((e.target as HTMLImageElement).src =
-                        "https://files.poyashi.me/noimg.png")
-                    }
+                    disableZoom
+                    style={{ borderRadius: 0 }}
+                    text={"plot"}
+                    altURL={"https://files.poyashi.me/noimg.png"}
                   />
                 </TableCell>
               </TableRow>

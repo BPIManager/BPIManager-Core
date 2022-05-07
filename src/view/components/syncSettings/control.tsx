@@ -14,7 +14,6 @@ import TextField from "@mui/material/TextField";
 import {
   Switch,
   FormControlLabel,
-  Avatar,
   Card,
   CardContent,
   Theme,
@@ -27,7 +26,6 @@ import withStyles from "@mui/styles/withStyles";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import Alert from "@mui/material/Alert";
 import Loader from "../common/loader";
-import { alternativeImg } from "@/components/common";
 import { getAltTwitterIcon, getTwitterName } from "@/components/rivals";
 import SaveIcon from "@mui/icons-material/Save";
 import { red } from "@mui/material/colors";

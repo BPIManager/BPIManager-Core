@@ -5,12 +5,11 @@ import fbActions from "@/components/firebase/actions";
 import Snackbar from "@mui/material/Snackbar";
 import SnackbarContent from "@mui/material/SnackbarContent";
 import Grid from "@mui/material/Grid";
-import Avatar from "@mui/material/Avatar";
-import { alternativeImg } from "@/components/common";
 import { getAltTwitterIcon } from "@/components/rivals";
 import { _foregroundNotification } from "@/components/settings";
 
 import { QuerySnapshot, DocumentData, Unsubscribe } from "firebase/firestore";
+import { UserIcon } from "../../common/icon";
 
 class ArenaMatchWatcher extends React.Component<
   RouteComponentProps,
@@ -102,20 +101,13 @@ class ArenaMatchWatcher extends React.Component<
               <React.Fragment>
                 <Grid container>
                   <Grid item xs={2}>
-                    <Avatar>
-                      <img
-                        src={
-                          newMessage.photoURL ? newMessage.photoURL : "noimg"
-                        }
-                        style={{ width: "100%", height: "100%" }}
-                        alt={newMessage.displayName}
-                        onError={(e) =>
-                          ((e.target as HTMLImageElement).src =
-                            getAltTwitterIcon(newMessage, false, "normal") ||
-                            alternativeImg(newMessage.displayName))
-                        }
-                      />
-                    </Avatar>
+                    <UserIcon
+                      _legacy
+                      disableZoom
+                      defaultURL={newMessage.photoURL}
+                      text={newMessage.displayName}
+                      altURL={getAltTwitterIcon(newMessage, false, "normal")}
+                    />
                   </Grid>
                   <Grid item xs={10}>
                     <span style={{ opacity: 0.6 }}>

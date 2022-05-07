@@ -1,11 +1,9 @@
-import { alternativeImg } from "@/components/common";
 import { updatedTime } from "@/components/common/timeFormatter";
 import fbArenaMatch from "@/components/firebase/arenaMatch";
 import { getAltTwitterIcon } from "@/components/rivals";
 import {
   Button,
   Container,
-  Avatar,
   List,
   ListItem,
   ListItemAvatar,
@@ -16,6 +14,7 @@ import { FormattedMessage } from "react-intl";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import SubHeader from "./subHeader";
+import { UserIcon } from "../common/icon";
 
 export default class ArenaMatch extends React.Component<
   { history: any },
@@ -78,22 +77,13 @@ export default class ArenaMatch extends React.Component<
                     style={{ padding: "5px 0" }}
                   >
                     <ListItemAvatar>
-                      <Avatar>
-                        <img
-                          src={
-                            item.admin.photoURL
-                              ? item.admin.photoURL.replace("_normal", "")
-                              : "noimage"
-                          }
-                          style={{ width: "100%", height: "100%" }}
-                          alt={item.admin.displayName}
-                          onError={(e) => {
-                            return ((e.target as HTMLImageElement).src =
-                              getAltTwitterIcon(item.admin) ||
-                              alternativeImg(item.admin.displayName));
-                          }}
-                        />
-                      </Avatar>
+                      <UserIcon
+                        _legacy
+                        disableZoom
+                        defaultURL={item.admin.photoURL}
+                        text={item.admin.displayName}
+                        altURL={getAltTwitterIcon(item.admin, false, "normal")}
+                      />
                     </ListItemAvatar>
                     <ListItemText
                       primary={item.admin.displayName}

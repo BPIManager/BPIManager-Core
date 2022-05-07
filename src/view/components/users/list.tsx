@@ -14,14 +14,13 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import Avatar from "@mui/material/Avatar";
 import { getAltTwitterIcon } from "@/components/rivals";
-import { alternativeImg } from "@/components/common";
 import Alert from "@mui/material/Alert/Alert";
 import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Button from "@mui/material/Button";
 import { httpsCallable } from "@/components/firebase";
+import { UserIcon } from "../common/icon";
 
 interface P {
   ids: string[];
@@ -113,18 +112,13 @@ const FolloweeList: React.FC<P> = ({ ids, text, handleClose, userName }) => {
                   onClick={() => openModal(item.displayName)}
                 >
                   <ListItemIcon>
-                    <Avatar>
-                      <img
-                        src={item.photoURL ? item.photoURL : "noimg"}
-                        style={{ width: "100%", height: "100%" }}
-                        alt={item.displayName}
-                        onError={(e) =>
-                          ((e.target as HTMLImageElement).src =
-                            getAltTwitterIcon(item, false, "normal") ||
-                            alternativeImg(item.displayName))
-                        }
-                      />
-                    </Avatar>
+                    <UserIcon
+                      _legacy
+                      disableZoom
+                      defaultURL={item.photoURL}
+                      text={item.displayName}
+                      altURL={getAltTwitterIcon(item, false, "normal")}
+                    />
                   </ListItemIcon>
                   <ListItemText
                     primary={item.displayName}

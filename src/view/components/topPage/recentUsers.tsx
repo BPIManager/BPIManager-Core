@@ -1,7 +1,5 @@
-import { alternativeImg } from "@/components/common";
 import { getAltTwitterIcon } from "@/components/rivals";
 import {
-  Avatar,
   Button,
   Container,
   List,
@@ -20,6 +18,7 @@ import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import fbActions from "@/components/firebase/actions";
 import totalBPI from "@/components/bpi/totalBPI";
 import { _apiFetch } from "@/components/common/rankApi";
+import { UserIcon } from "../common/icon";
 
 export default class RecentUsers extends React.Component<
   { history: any },
@@ -111,22 +110,13 @@ export default class RecentUsers extends React.Component<
                     style={{ padding: "5px 0" }}
                   >
                     <ListItemAvatar>
-                      <Avatar>
-                        <img
-                          src={
-                            item.photoURL
-                              ? item.photoURL.replace("_normal", "")
-                              : "noimage"
-                          }
-                          style={{ width: "100%", height: "100%" }}
-                          alt={item.displayName}
-                          onError={(e) =>
-                            ((e.target as HTMLImageElement).src =
-                              getAltTwitterIcon(item) ||
-                              alternativeImg(item.displayName))
-                          }
-                        />
-                      </Avatar>
+                      <UserIcon
+                        _legacy
+                        disableZoom
+                        defaultURL={item.photoURL}
+                        text={item.displayName}
+                        altURL={getAltTwitterIcon(item, false, "normal")}
+                      />
                     </ListItemAvatar>
                     <ListItemText
                       primary={item.displayName}

@@ -3,9 +3,7 @@ import Input from "@mui/material/Input";
 import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
-import { alternativeImg } from "@/components/common";
 import { getAltTwitterIcon } from "@/components/rivals";
-import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import SendIcon from "@mui/icons-material/Send";
 import fbArenaMatch from "@/components/firebase/arenaMatch";
@@ -141,22 +139,13 @@ class Chat extends React.Component<
                     }}
                     badgeContent={item.arenaRank}
                   >
-                    <Avatar>
-                      <img
-                        src={
-                          item.photoURL
-                            ? item.photoURL.replace("_normal", "")
-                            : "noimg"
-                        }
-                        style={{ width: "100%", height: "100%" }}
-                        alt={item.displayName}
-                        onError={(e) =>
-                          ((e.target as HTMLImageElement).src =
-                            getAltTwitterIcon(item, false, "normal") ||
-                            alternativeImg(item.displayName))
-                        }
-                      />
-                    </Avatar>
+                    <UserIcon
+                      _legacy
+                      disableZoom
+                      defaultURL={item.photoURL}
+                      text={item.displayName}
+                      altURL={getAltTwitterIcon(item, false, "normal")}
+                    />
                   </Badge>
                 </ListItemAvatar>
               );

@@ -16,7 +16,6 @@ import {
 import Loader from "@/view/components/common/loader";
 import { Helmet } from "react-helmet";
 import { getAltTwitterIcon } from "@/components/rivals";
-import { alternativeImg } from "@/components/common";
 import TimelineIcon from "@mui/icons-material/Timeline";
 import LibraryMusicIcon from "@mui/icons-material/LibraryMusic";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
@@ -35,6 +34,7 @@ import ArenaMatch from "@/view/components/topPage/arenaMatch";
 import RecentUsers from "../components/topPage/recentUsers";
 import { BeginnerAlert, InstallAlert } from "../components/topPage/alerts";
 import UpdateDef from "../components/topPage/updateDef";
+import { UserIcon } from "../components/common/icon";
 
 class Index extends React.Component<
   { global: any } & RouteComponentProps,
@@ -215,29 +215,18 @@ class Index extends React.Component<
                       justifyContent: "center",
                       flexDirection: "column",
                     }}
+                    onClick={() =>
+                      this.props.history.push("/u/" + user.displayName)
+                    }
                   >
-                    <Avatar
-                      style={{ border: "1px solid #222", margin: "15px auto" }}
+                    <UserIcon
+                      _legacy
+                      disableZoom
                       className="toppageIcon"
-                    >
-                      <img
-                        src={
-                          user.photoURL
-                            ? user.photoURL.replace("_normal", "")
-                            : "noimage"
-                        }
-                        style={{ width: "100%", height: "100%" }}
-                        alt={user.displayName}
-                        onClick={() =>
-                          this.props.history.push("/u/" + user.displayName)
-                        }
-                        onError={(e) =>
-                          ((e.target as HTMLImageElement).src =
-                            getAltTwitterIcon(user) ||
-                            alternativeImg(user.displayName))
-                        }
-                      />
-                    </Avatar>
+                      defaultURL={user.photoURL}
+                      text={user.displayName}
+                      altURL={getAltTwitterIcon(user, false, "normal")}
+                    />
                   </Grid>
                   <Grid item xs={8} lg={8} style={{ paddingLeft: "30px" }}>
                     <Typography variant="body1">{user.displayName}</Typography>

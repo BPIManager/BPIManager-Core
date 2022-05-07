@@ -6,7 +6,7 @@ import { _currentStore } from "@/components/settings";
 import Loader from "../common/loader";
 import { Avatar, AvatarGroup, Grid, Tooltip } from "@mui/material";
 import { getAltTwitterIcon } from "@/components/rivals";
-import { alternativeImg } from "@/components/common";
+import { UserIcon } from "../common/icon";
 
 interface P {
   ids: any[];
@@ -160,19 +160,17 @@ const FolloweeCounter: React.FC<P> = ({
         }}
       >
         {body.slice(0, 3).map((item: any) => (
-          <Tooltip title={item.displayName}>
-            <Avatar>
-              <img
-                alt={item.displayName}
-                src={item.photoURL}
-                style={{ width: "100%", height: "100%" }}
-                onClick={() => changeUser(item.displayName)}
-                onError={(e) =>
-                  ((e.target as HTMLImageElement).src =
-                    getAltTwitterIcon(item) || alternativeImg(item.displayName))
-                }
-              />
-            </Avatar>
+          <Tooltip
+            title={item.displayName}
+            onClick={() => changeUser(item.displayName)}
+          >
+            <UserIcon
+              _legacy
+              disableZoom
+              defaultURL={item.photoURL}
+              text={item.displayName}
+              altURL={getAltTwitterIcon(item, false, "normal")}
+            />
           </Tooltip>
         ))}
         {body.length > 3 && (
