@@ -160,17 +160,16 @@ const FolloweeCounter: React.FC<P> = ({
         }}
       >
         {body.slice(0, 3).map((item: any) => (
-          <Tooltip
-            title={item.displayName}
-            onClick={() => changeUser(item.displayName)}
-          >
-            <UserIcon
-              _legacy
-              disableZoom
-              defaultURL={item.photoURL}
-              text={item.displayName}
-              altURL={getAltTwitterIcon(item, false, "normal")}
-            />
+          <Tooltip title={item.displayName}>
+            <div onClick={() => changeUser(item.displayName)}>
+              <UserIcon
+                _legacy
+                disableZoom
+                defaultURL={item.photoURL}
+                text={item.displayName}
+                altURL={getAltTwitterIcon(item, false, "normal")}
+              />
+            </div>
           </Tooltip>
         ))}
         {body.length > 3 && (
