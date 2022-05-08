@@ -1,12 +1,12 @@
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import ErrorIcon from '@mui/icons-material/Error';
-import InfoIcon from '@mui/icons-material/Info';
-import { amber, green } from '@mui/material/colors';
-import Snackbar from '@mui/material/Snackbar';
-import WarningIcon from '@mui/icons-material/Warning';
-import { Theme } from '@mui/material/styles';
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ErrorIcon from "@mui/icons-material/Error";
+import InfoIcon from "@mui/icons-material/Info";
+import { amber, green } from "@mui/material/colors";
+import Snackbar from "@mui/material/Snackbar";
+import WarningIcon from "@mui/icons-material/Warning";
+import { Theme } from "@mui/material/styles";
 
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 
 const variantIcon = {
   success: CheckCircleIcon,
@@ -36,8 +36,8 @@ const styles = makeStyles((theme: Theme) => ({
     marginRight: theme.spacing(1),
   },
   message: {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
   },
 }));
 
@@ -46,22 +46,22 @@ export interface Props {
   message?: any;
   onClose?: () => void;
   variant: keyof typeof variantIcon;
-  autoHideDuration?: number
-  open?: boolean,
-  handleClose?: () => void
+  autoHideDuration?: number;
+  open?: boolean;
+  handleClose?: () => void;
 }
 
-const ShowSnackBar:React.FC<Props> = (props) => {
+const ShowSnackBar: React.FC<Props> = (props) => {
   const classes = styles();
   if (!props.open) {
-    return (null);
+    return null;
   }
   return (
     <Snackbar
       className={classes.message}
       anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'center',
+        vertical: "bottom",
+        horizontal: "center",
       }}
       open={props.open}
       autoHideDuration={props.autoHideDuration ? props.autoHideDuration : 2000}
@@ -69,6 +69,6 @@ const ShowSnackBar:React.FC<Props> = (props) => {
       message={props.message}
     />
   );
-}
+};
 
 export default ShowSnackBar;

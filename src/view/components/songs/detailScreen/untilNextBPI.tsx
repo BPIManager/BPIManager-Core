@@ -23,7 +23,6 @@ const UntilNextBPI: React.FC<{
     : score
     ? score.exScore
     : 0;
-
   const nextBPIBody = (nextBPI: number, currentScore: number) => {
     if (nextBPI < 0) nextBPI = 0;
     return (
@@ -42,7 +41,7 @@ const UntilNextBPI: React.FC<{
   }, []);
 
   useEffect(() => {
-    setNextScore(calc.calcFromBPI(nextBPI, true));
+    setNextScore(calc.calcFromBPI(nextBPI < 0 ? 0 : nextBPI, true));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newData, score]);
 

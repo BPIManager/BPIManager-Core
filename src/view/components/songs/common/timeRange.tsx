@@ -1,38 +1,36 @@
-import React from 'react';
+import React from "react";
 
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
-import { toDate } from '@/components/common/timeFormatter';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import MobileDatePicker from '@mui/lab/MobileDatePicker';
-import Alert from '@mui/material/Alert';
-import { TextField } from '@mui/material';
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import { toDate } from "@/components/common/timeFormatter";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import MobileDatePicker from "@mui/lab/MobileDatePicker";
+import Alert from "@mui/material/Alert";
+import { TextField } from "@mui/material";
 
 interface P {
-  handleToggle: () => void,
-  applyTimeFilter: (state: S) => void,
-  dateRange: S
+  handleToggle: () => void;
+  applyTimeFilter: (state: S) => void;
+  dateRange: S;
 }
 
 interface S {
-  from: string,
-  to: string
+  from: string;
+  to: string;
 }
 
-
 class TimeRangeDialog extends React.Component<P, S> {
-
   constructor(props: P) {
     super(props);
     this.state = {
       from: toDate(props.dateRange.from),
       to: toDate(props.dateRange.to),
-    }
+    };
   }
 
   componentDidMount() {
@@ -49,7 +47,7 @@ class TimeRangeDialog extends React.Component<P, S> {
   applyAndClose = () => {
     this.props.applyTimeFilter({ from: this.state.from, to: this.state.to });
     return this.props.handleToggle();
-  }
+  };
 
   handleFromInput = (date: any) => {
     this.setState({ from: toDate(date || new Date()) });
@@ -73,9 +71,7 @@ class TimeRangeDialog extends React.Component<P, S> {
                   label="始点日付"
                   inputFormat="yyyy/MM/dd"
                   value={from}
-                  renderInput={(props) => (
-                    <TextField {...props} fullWidth />
-                  )}
+                  renderInput={(props) => <TextField {...props} fullWidth />}
                   onChange={this.handleFromInput}
                 />
               </Grid>
@@ -84,16 +80,17 @@ class TimeRangeDialog extends React.Component<P, S> {
                   label="終点日付"
                   inputFormat="yyyy/MM/dd"
                   value={to}
-                  renderInput={(props) => (
-                    <TextField {...props} fullWidth />
-                  )}
+                  renderInput={(props) => <TextField {...props} fullWidth />}
                   onChange={this.handleToInput}
                 />
               </Grid>
             </Grid>
           </LocalizationProvider>
-          <Alert severity="info" style={{ marginTop: "15px" }}>「始点日付」と「終点日付」の間の期間中にデータを更新した楽曲を表示します。<br />
-            その期間以降にスコアやクリアランプを更新している場合はリストに表示されません。</Alert>
+          <Alert severity="info" style={{ marginTop: "15px" }}>
+            「始点日付」と「終点日付」の間の期間中にデータを更新した楽曲を表示します。
+            <br />
+            その期間以降にスコアやクリアランプを更新している場合はリストに表示されません。
+          </Alert>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleToggle} color="primary">
