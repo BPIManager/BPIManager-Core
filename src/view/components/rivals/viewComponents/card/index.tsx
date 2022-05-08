@@ -64,7 +64,6 @@ export default class UserCard extends React.Component<
     return (
       <React.Fragment>
         <ListItem
-          button
           alignItems="flex-start"
           onClick={() => this.props.open(item.displayName)}
         >

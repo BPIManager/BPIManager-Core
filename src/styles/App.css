@@ -1016,3 +1016,7 @@ text.react-calendar-heatmap-weekday-label {
 .MuiAvatarGroup-root .MuiAvatar-root:last-child {
   margin-left: -8px !important;
 }
+
+.MuiListItem-container {
+  list-style-type: none;
+}
