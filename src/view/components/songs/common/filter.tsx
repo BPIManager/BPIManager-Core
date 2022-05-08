@@ -1,64 +1,70 @@
-import React from 'react';
+import React from "react";
 
 import { verArr, verNameArr, clearArr } from "./";
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Grid from '@mui/material/Grid';
-import Divider from '@mui/material/Divider';
-import TextField from '@mui/material/TextField';
-import { buttonTextColor } from '@/components/settings';
-import { lampCSVArray } from '@/components/songs/filter';
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import Grid from "@mui/material/Grid";
+import Divider from "@mui/material/Divider";
+import TextField from "@mui/material/TextField";
+import { buttonTextColor } from "@/components/settings";
+import { lampCSVArray } from "@/components/songs/filter";
 
 interface P {
-  handleToggle: () => void,
-  applyFilter: (state: { bpm: B, versions: number[], memo: boolean | null, showLatestOnly: boolean | null, clearType: number[] }) => void,
-  bpm: B,
-  bpi?: BPIR,
-  memo?: boolean,
-  versions: number[],
-  showLatestOnly?: boolean,
-  clearType?: number[]
+  handleToggle: () => void;
+  applyFilter: (state: {
+    bpm: B;
+    versions: number[];
+    memo: boolean | null;
+    showLatestOnly: boolean | null;
+    clearType: number[];
+  }) => void;
+  bpm: B;
+  bpi?: BPIR;
+  memo?: boolean;
+  versions: number[];
+  showLatestOnly?: boolean;
+  clearType?: number[];
 }
 
 interface S {
-  bpm: B,
-  bpi: BPIR | null,
-  versions: number[],
-  memo: boolean | null,
-  showLatestOnly: boolean | null,
-  clearType: number[]
+  bpm: B;
+  bpi: BPIR | null;
+  versions: number[];
+  memo: boolean | null;
+  showLatestOnly: boolean | null;
+  clearType: number[];
 }
 
 export interface B {
-  noSoflan: boolean,
-  min: number | "",
-  max: number | "",
-  soflan: boolean
+  noSoflan: boolean;
+  min: number | "";
+  max: number | "";
+  soflan: boolean;
 }
 
 export interface BPIR {
-  min: number | "",
-  max: number | "",
+  min: number | "";
+  max: number | "";
 }
 
 class SongsFilter extends React.Component<P, S> {
-
   constructor(props: P) {
     super(props);
     this.state = {
       memo: typeof props.memo !== "boolean" ? null : props.memo,
-      showLatestOnly: typeof props.showLatestOnly !== "boolean" ? null : props.showLatestOnly,
+      showLatestOnly:
+        typeof props.showLatestOnly !== "boolean" ? null : props.showLatestOnly,
       bpm: props.bpm,
       versions: props.versions,
       clearType: props.clearType || [],
-      bpi: props.bpi || null
-    }
+      bpi: props.bpi || null,
+    };
   }
 
   componentDidMount() {
@@ -75,74 +81,88 @@ class SongsFilter extends React.Component<P, S> {
   applyAndClose = () => {
     this.props.applyFilter(this.state);
     return this.props.handleToggle();
-  }
+  };
 
   cloneState = (target: "bpm" | "bpi" = "bpm") => {
     return this.state[target];
-  }
+  };
 
-  handleChkBox = (name: "soflan" | "noSoflan" = "soflan") => (event: React.ChangeEvent<HTMLInputElement>) => {
-    let bpm: B = this.cloneState() as B;
-    if (!bpm) { return; }
-    bpm[name] = event.target.checked;
-    return this.setState({
-      bpm: bpm
-    })
-  }
+  handleChkBox =
+    (name: "soflan" | "noSoflan" = "soflan") =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      let bpm: B = this.cloneState() as B;
+      if (!bpm) {
+        return;
+      }
+      bpm[name] = event.target.checked;
+      return this.setState({
+        bpm: bpm,
+      });
+    };
 
   handleMemoChkBox = () => (event: React.ChangeEvent<HTMLInputElement>) => {
     return this.setState({
-      memo: event.target.checked
-    })
-  }
+      memo: event.target.checked,
+    });
+  };
 
   handleLatestChkBox = () => (event: React.ChangeEvent<HTMLInputElement>) => {
     return this.setState({
-      showLatestOnly: event.target.checked
-    })
-  }
+      showLatestOnly: event.target.checked,
+    });
+  };
 
-  handleVerChkBox = (ver: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    let { versions } = this.state;
-    versions = versions.filter(v => v !== ver);
-    if (event.target.checked) {
-      versions.push(ver);
-    }
-    return this.setState({
-      versions: versions
-    })
-  }
+  handleVerChkBox =
+    (ver: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      let { versions } = this.state;
+      versions = versions.filter((v) => v !== ver);
+      if (event.target.checked) {
+        versions.push(ver);
+      }
+      return this.setState({
+        versions: versions,
+      });
+    };
 
-  handleClearTypeChkBox = (type: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    let { clearType } = this.state;
-    clearType = clearType.filter(v => v !== type);
-    if (event.target.checked) {
-      clearType.push(type);
-    }
-    return this.setState({
-      clearType: clearType
-    })
-  }
+  handleClearTypeChkBox =
+    (type: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      let { clearType } = this.state;
+      clearType = clearType.filter((v) => v !== type);
+      if (event.target.checked) {
+        clearType.push(type);
+      }
+      return this.setState({
+        clearType: clearType,
+      });
+    };
 
-  handleInput = (name: "min" | "max" = "min") => (event: React.ChangeEvent<HTMLInputElement>) => {
-    let bpm: B = this.cloneState() as B;
-    if (!bpm) { return; }
-    const val = Number(event.target.value);
-    bpm[name] = val <= 0 ? "" : val;
-    return this.setState({
-      bpm: bpm
-    })
-  }
+  handleInput =
+    (name: "min" | "max" = "min") =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      let bpm: B = this.cloneState() as B;
+      if (!bpm) {
+        return;
+      }
+      const val = Number(event.target.value);
+      bpm[name] = val <= 0 ? "" : val;
+      return this.setState({
+        bpm: bpm,
+      });
+    };
 
-  handleBPIInput = (name: "min" | "max" = "min") => (event: React.ChangeEvent<HTMLInputElement>) => {
-    let bpi: BPIR = this.cloneState("bpi") as BPIR;
-    if (!bpi) { return; }
-    const val = Number(event.target.value);
-    bpi[name] = val;
-    return this.setState({
-      bpi: bpi
-    })
-  }
+  handleBPIInput =
+    (name: "min" | "max" = "min") =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      let bpi: BPIR = this.cloneState("bpi") as BPIR;
+      if (!bpi) {
+        return;
+      }
+      const val = Number(event.target.value);
+      bpi[name] = val;
+      return this.setState({
+        bpi: bpi,
+      });
+    };
 
   allSelect = () => this.setState({ versions: verArr() });
   allUnselect = () => this.setState({ versions: [] });
@@ -157,22 +177,28 @@ class SongsFilter extends React.Component<P, S> {
       <Dialog open={true} onClose={handleToggle}>
         <DialogTitle>詳細フィルタ</DialogTitle>
         <DialogContent>
-          {memo !== null && (<div>
-            <Typography component="h6" variant="h6" style={{ marginTop: "5px" }}>
-              メモ
-            </Typography>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={memo}
-                  onChange={this.handleMemoChkBox()}
-                  value={1.5}
-                  color="primary"
-                />
-              }
-              label="メモが記入済みの楽曲のみ表示"
-            />
-          </div>)}
+          {memo !== null && (
+            <div>
+              <Typography
+                component="h6"
+                variant="h6"
+                style={{ marginTop: "5px" }}
+              >
+                メモ
+              </Typography>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={memo}
+                    onChange={this.handleMemoChkBox()}
+                    value={1.5}
+                    color="primary"
+                  />
+                }
+                label="メモが記入済みの楽曲のみ表示"
+              />
+            </div>
+          )}
           <Typography component="h6" variant="h6">
             BPM
           </Typography>
@@ -189,7 +215,11 @@ class SongsFilter extends React.Component<P, S> {
           />
           <Grid container>
             <Grid item xs={6}>
-              <form noValidate autoComplete="off" style={{ margin: "10px 6px 0" }}>
+              <form
+                noValidate
+                autoComplete="off"
+                style={{ margin: "10px 6px 0" }}
+              >
                 <TextField
                   type="number"
                   style={{ width: "100%" }}
@@ -204,7 +234,11 @@ class SongsFilter extends React.Component<P, S> {
               </form>
             </Grid>
             <Grid item xs={6}>
-              <form noValidate autoComplete="off" style={{ margin: "10px 6px 0" }}>
+              <form
+                noValidate
+                autoComplete="off"
+                style={{ margin: "10px 6px 0" }}
+              >
                 <TextField
                   type="number"
                   style={{ width: "100%" }}
@@ -230,61 +264,84 @@ class SongsFilter extends React.Component<P, S> {
             }
             label="ソフランあり"
           />
-          {bpi && <div>
-            <Typography component="h6" variant="h6" style={{ marginTop: "5px" }}>
-              BPI
-          </Typography>
-            {showLatestOnly !== null && (<div>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={showLatestOnly}
-                    onChange={this.handleLatestChkBox()}
-                    color="primary"
+          {bpi && (
+            <div>
+              <Typography
+                component="h6"
+                variant="h6"
+                style={{ marginTop: "5px" }}
+              >
+                BPI
+              </Typography>
+              {showLatestOnly !== null && (
+                <div>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={showLatestOnly}
+                        onChange={this.handleLatestChkBox()}
+                        color="primary"
+                      />
+                    }
+                    label="BPI表記非対応の楽曲のみを表示"
                   />
-                }
-                label="BPI表記非対応の楽曲のみを表示"
-              />
-            </div>)}
-            <Grid container>
-              <Grid item xs={6}>
-                <form noValidate autoComplete="off" style={{ margin: "10px 6px 0" }}>
-                  <TextField
-                    type="number"
-                    style={{ width: "100%" }}
-                    label="BPI下限"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    value={bpi.min}
-                    onChange={this.handleBPIInput("min")}
-                  />
-                </form>
+                </div>
+              )}
+              <Grid container>
+                <Grid item xs={6}>
+                  <form
+                    noValidate
+                    autoComplete="off"
+                    style={{ margin: "10px 6px 0" }}
+                  >
+                    <TextField
+                      type="number"
+                      style={{ width: "100%" }}
+                      label="BPI下限"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      value={bpi.min}
+                      onChange={this.handleBPIInput("min")}
+                    />
+                  </form>
+                </Grid>
+                <Grid item xs={6}>
+                  <form
+                    noValidate
+                    autoComplete="off"
+                    style={{ margin: "10px 6px 0" }}
+                  >
+                    <TextField
+                      type="number"
+                      style={{ width: "100%" }}
+                      label="BPI上限"
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      value={bpi.max}
+                      onChange={this.handleBPIInput("max")}
+                    />
+                  </form>
+                </Grid>
               </Grid>
-              <Grid item xs={6}>
-                <form noValidate autoComplete="off" style={{ margin: "10px 6px 0" }}>
-                  <TextField
-                    type="number"
-                    style={{ width: "100%" }}
-                    label="BPI上限"
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    value={bpi.max}
-                    onChange={this.handleBPIInput("max")}
-                  />
-                </form>
-              </Grid>
-            </Grid>
-          </div>
-          }
+            </div>
+          )}
           <Typography component="h6" variant="h6" style={{ marginTop: "5px" }}>
             Versions
           </Typography>
-          <Button onClick={this.allUnselect} color="primary" style={{ color: buttonTextColor() }}>
+          <Button
+            onClick={this.allUnselect}
+            color="primary"
+            style={{ color: buttonTextColor() }}
+          >
             すべて選択解除
           </Button>
-          <Button onClick={this.allSelect} color="primary" style={{ color: buttonTextColor() }}>
+          <Button
+            onClick={this.allSelect}
+            color="primary"
+            style={{ color: buttonTextColor() }}
+          >
             すべて選択
           </Button>
           <Divider />
@@ -299,7 +356,7 @@ class SongsFilter extends React.Component<P, S> {
             }
             label="substream"
           />
-          {verArr(false).map(item => {
+          {verArr(false).map((item) => {
             return (
               <FormControlLabel
                 control={
@@ -313,21 +370,33 @@ class SongsFilter extends React.Component<P, S> {
                 key={item}
                 label={verNameArr[item]}
               />
-            )
+            );
           })}
           {this.props.clearType && (
             <React.Fragment>
-              <Typography component="h6" variant="h6" style={{ marginTop: "5px" }}>
+              <Typography
+                component="h6"
+                variant="h6"
+                style={{ marginTop: "5px" }}
+              >
                 クリアタイプ
               </Typography>
-              <Button onClick={this.allClearTypeUnselect} color="primary" style={{ color: buttonTextColor() }}>
+              <Button
+                onClick={this.allClearTypeUnselect}
+                color="primary"
+                style={{ color: buttonTextColor() }}
+              >
                 すべて選択解除
               </Button>
-              <Button onClick={this.allClearTypeSelect} color="primary" style={{ color: buttonTextColor() }}>
+              <Button
+                onClick={this.allClearTypeSelect}
+                color="primary"
+                style={{ color: buttonTextColor() }}
+              >
                 すべて選択
               </Button>
               <Divider />
-              {clearArr().map(item => {
+              {clearArr().map((item) => {
                 if (!this.props.clearType) return <React.Fragment />;
                 return (
                   <FormControlLabel
@@ -342,7 +411,7 @@ class SongsFilter extends React.Component<P, S> {
                     key={item}
                     label={lampCSVArray[item]}
                   />
-                )
+                );
               })}
             </React.Fragment>
           )}

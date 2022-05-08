@@ -2,7 +2,6 @@ import { favsDB } from "@/components/indexedDB";
 import { DBLists } from "@/types/lists";
 
 export default class favLists {
-
   async loadLists(): Promise<DBLists[]> {
     return await new favsDB().getAllLists();
   }
@@ -11,7 +10,12 @@ export default class favLists {
     return await new favsDB().getListsFromSong(title, difficulty);
   }
 
-  async toggleLists(title: string, difficulty: string, target: number, willAdd: boolean): Promise<boolean> {
+  async toggleLists(
+    title: string,
+    difficulty: string,
+    target: number,
+    willAdd: boolean
+  ): Promise<boolean> {
     try {
       if (willAdd) {
         await new favsDB().addItemToList(title, difficulty, target);
@@ -25,6 +29,4 @@ export default class favLists {
       return false;
     }
   }
-
-
 }

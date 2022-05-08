@@ -7,7 +7,6 @@ import {
   Cell,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   ReferenceLine,
   ResponsiveContainer,
@@ -49,7 +48,7 @@ const BPIChart: React.FC<P> = ({
         (!Number.isNaN(newScore) ? newScore : score.exScore) - p["EX SCORE"];
       return (
         <div className="custom-tooltip">
-          {p.name !== "YOU" && p.name !== "RIVAL" && (
+          {p.name !== "YOU" ? (
             <div>
               <p>
                 <b>BPI{p.name}</b>
@@ -58,17 +57,7 @@ const BPIChart: React.FC<P> = ({
               <p>PER:{per}%</p>
               <p>GAP:{gap}</p>
             </div>
-          )}
-          {p.name === "RIVAL" && (
-            <div>
-              <p>
-                <b>RIVAL SCORE</b>
-              </p>
-              <p>EX:{p["EX SCORE"]}</p>
-              <p>PER:{per}%</p>
-            </div>
-          )}
-          {p.name === "YOU" && (
+          ) : (
             <div>
               <p>
                 <b>YOUR SCORE</b>
@@ -129,7 +118,6 @@ const BPIChart: React.FC<P> = ({
       )}
       <ResponsiveContainer width="100%">
         <BarChart data={chartData} key={graphLastUpdated}>
-          <CartesianGrid strokeDasharray="3 3" />
           <XAxis stroke={chartColor} dataKey="name" />
           <YAxis
             stroke={chartColor}
@@ -149,41 +137,27 @@ const BPIChart: React.FC<P> = ({
             position={{ y: 155 }}
           />
           <Bar dataKey="EX SCORE" isAnimationActive={false}>
-            {chartData.map((item) => {
-              const color = _chartBarColor(item.name);
-              return <Cell key={item.name} fill={color} />;
-            })}
+            {chartData.map((item) => (
+              <Cell key={item.name} fill={_chartBarColor(item.name)} />
+            ))}
           </Bar>
-          <ReferenceLine
-            y={max * (8 / 9)}
-            label={
-              <Label position="insideTopRight" style={{ fill: chartColor }}>
-                AAA
-              </Label>
-            }
-            stroke={chartColor}
-            isFront={true}
-          />
-          <ReferenceLine
-            y={max * (7 / 9)}
-            label={
-              <Label position="insideTopRight" style={{ fill: chartColor }}>
-                AA
-              </Label>
-            }
-            stroke={chartColor}
-            isFront
-          />
-          <ReferenceLine
-            y={max * (2 / 3)}
-            label={
-              <Label position="insideTopRight" style={{ fill: chartColor }}>
-                A
-              </Label>
-            }
-            stroke={chartColor}
-            isFront
-          />
+          {[
+            { y: max * (8 / 9), label: "AAA" },
+            { y: max * (7 / 9), label: "AA" },
+            { y: max * (2 / 3), label: "A" },
+          ].map((item) => (
+            <ReferenceLine
+              key={item.label}
+              y={item.y}
+              label={
+                <Label position="insideTopRight" style={{ fill: chartColor }}>
+                  {item.label}
+                </Label>
+              }
+              stroke={chartColor}
+              isFront
+            />
+          ))}
         </BarChart>
       </ResponsiveContainer>
     </div>
