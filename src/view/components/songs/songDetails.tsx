@@ -223,7 +223,7 @@ class SongDetails extends React.Component<P> {
                       "].jpeg"
                     }
                     disableZoom
-                    style={{ borderRadius: 0 }}
+                    style={{ maxWidth: "400px", borderRadius: 0 }}
                     text={"plot"}
                     altURL={"https://files.poyashi.me/noimg.png"}
                   />
