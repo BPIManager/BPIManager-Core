@@ -2,11 +2,7 @@ import { B } from "@/components/bpi";
 import timeFormatter from "@/components/common/timeFormatter";
 import { _currentStore, _isSingle } from "@/components/settings";
 import { _pText } from "@/components/settings/updateDef";
-import {
-  difficultyDiscriminator,
-  difficultyParser,
-  _prefixFromNum,
-} from "@/components/songs/filter";
+import { difficultyDiscriminator, difficultyParser, _prefixFromNum } from "@/components/songs/filter";
 import { scoreData } from "@/types/data";
 import storageWrapper from "./wrapper";
 
@@ -99,16 +95,8 @@ export default class db extends storageWrapper {
     return await this.scores.clear();
   }
 
-  getItem(
-    title: string,
-    difficulty: string,
-    storedAt: string,
-    isSingle: number
-  ): Promise<scoreData[]> {
-    return this.scores
-      .where("[title+difficulty+storedAt+isSingle]")
-      .equals([title, difficulty, storedAt, isSingle])
-      .toArray();
+  getItem(title: string, difficulty: string, storedAt: string, isSingle: number): Promise<scoreData[]> {
+    return this.scores.where("[title+difficulty+storedAt+isSingle]").equals([title, difficulty, storedAt, isSingle]).toArray();
   }
 
   //for statistics
@@ -124,10 +112,7 @@ export default class db extends storageWrapper {
     }
   }
 
-  async getItemsBySongDifficultyWithSpecificVersion(
-    diff: string = "12",
-    store: string
-  ): Promise<any> {
+  async getItemsBySongDifficultyWithSpecificVersion(diff: string = "12", store: string): Promise<any> {
     try {
       return await this.scores
         .where({
@@ -154,21 +139,14 @@ export default class db extends storageWrapper {
   }
 
   async removeNaNItems(): Promise<number> {
-    return await this.scores
-      .where({ storedAt: _currentStore(), currentBPI: NaN })
-      .delete();
+    return await this.scores.where({ storedAt: _currentStore(), currentBPI: NaN }).delete();
   }
 
   async setItem(item: any): Promise<any> {
     try {
       return await this.scores
         .where("[title+difficulty+storedAt+isSingle]")
-        .equals([
-          item["title"],
-          item["difficulty"],
-          this.storedAt,
-          this.isSingle,
-        ])
+        .equals([item["title"], item["difficulty"], this.storedAt, this.isSingle])
         .modify({
           title: item["title"],
           difficulty: item["difficulty"],
@@ -232,25 +210,15 @@ export default class db extends storageWrapper {
         //update
         if (Number.isNaN(data.currentBPI)) delete data.currentBPI;
         if (Number.isNaN(data.exScore)) delete data.exScore;
-        if (data.clearState === -1 || data.clearState === score.clearState)
-          delete data.clearState;
-        if (data.missCount === -1 || data.missCount === score.missCount)
-          delete data.missCount;
+        if (data.clearState === -1 || data.clearState === score.clearState) delete data.clearState;
+        if (data.missCount === -1 || data.missCount === score.missCount) delete data.missCount;
 
         const newData = Object.assign(data, {
           updatedAt: timeFormatter(0),
           lastScore: score.exScore,
         });
 
-        await this.scores
-          .where("[title+difficulty+storedAt+isSingle]")
-          .equals([
-            score.title,
-            score.difficulty,
-            score.storedAt,
-            score.isSingle,
-          ])
-          .modify(newData);
+        await this.scores.where("[title+difficulty+storedAt+isSingle]").equals([score.title, score.difficulty, score.storedAt, score.isSingle]).modify(newData);
       }
       return true;
     } catch (e: any) {
@@ -260,36 +228,19 @@ export default class db extends storageWrapper {
   }
 
   async removeItem(title: string, storedAt: string): Promise<number> {
-    return await this.scores
-      .where({ title: title, storedAt: storedAt })
-      .delete();
+    return await this.scores.where({ title: title, storedAt: storedAt }).delete();
   }
 
-  async removeSpecificItemAtAllStores(
-    title: string,
-    diff?: string
-  ): Promise<number> {
+  async removeSpecificItemAtAllStores(title: string, diff?: string): Promise<number> {
     if (diff) {
-      return await this.scores
-        .where({ title: title, difficulty: difficultyDiscriminator(diff) })
-        .delete();
+      return await this.scores.where({ title: title, difficulty: difficultyDiscriminator(diff) }).delete();
     }
     return await this.scores.where({ title: title }).delete();
   }
 
-  getSpecificSong = (songTitle: string) =>
-    this.scores.where("title").equals(songTitle).toArray();
+  getSpecificSong = (songTitle: string) => this.scores.where("title").equals(songTitle).toArray();
 
-  _getSpecificSong = async (
-    songTitle: string,
-    diff: string,
-    isSingle: number
-  ) =>
-    (
-      await this.scores
-        .where({ title: songTitle, isSingle: isSingle })
-        .toArray()
-    ).filter((item) => item.difficulty === diff);
+  _getSpecificSong = async (songTitle: string, diff: string, isSingle: number) => (await this.scores.where({ title: songTitle, isSingle: isSingle }).toArray()).filter((item) => item.difficulty === diff);
 
   modifyBPI = (t: scoreData, currentBPI: B) =>
     this.scores
@@ -297,11 +248,7 @@ export default class db extends storageWrapper {
       .equals([t.title, t.difficulty, t.storedAt, t.isSingle])
       .modify({ currentBPI: !currentBPI.error ? currentBPI.bpi : -15 });
 
-  async recalculateBPI(
-    updatedSongs: string[] = [],
-    force: boolean = false,
-    ref: React.MutableRefObject<any> | null = null
-  ) {
+  async recalculateBPI(updatedSongs: string[] = [], force: boolean = false, ref: React.MutableRefObject<any> | null = null) {
     try {
       const self = this;
       this.setCalcClass();
@@ -314,23 +261,11 @@ export default class db extends storageWrapper {
         if (updatedSongs.length === 0 && force === false) {
           continue;
         }
-        if (
-          updatedSongs.length > 0 &&
-          updatedSongs.indexOf(
-            t["title"] +
-              difficultyParser(t["difficulty"], Number(t["isSingle"])) +
-              t["isSingle"]
-          ) === -1
-        ) {
+        if (updatedSongs.length > 0 && updatedSongs.indexOf(t["title"] + difficultyParser(t["difficulty"], Number(t["isSingle"])) + t["isSingle"]) === -1) {
           continue;
         }
-        const bpi = await self.calculator
-          .setIsSingle(t.isSingle)
-          .calc(t.title, difficultyParser(t.difficulty, t.isSingle), t.exScore);
-        _pText(
-          ref,
-          "Scores:BPI更新中 " + t["title"] + _prefixFromNum(t["difficulty"])
-        );
+        const bpi = await self.calculator.setIsSingle(t.isSingle).calc(t.title, difficultyParser(t.difficulty, t.isSingle), t.exScore);
+        _pText(ref, "Scores:BPI更新中 " + t["title"] + _prefixFromNum(t["difficulty"]));
         this.modifyBPI(t, bpi);
       }
     } catch (e: any) {
@@ -340,14 +275,9 @@ export default class db extends storageWrapper {
   }
 
   //置き換え予定
-  async setDataWithTransaction(
-    scores: scoreData[],
-    ref: React.MutableRefObject<any> | null = null
-  ) {
+  async setDataWithTransaction(scores: scoreData[], ref: React.MutableRefObject<any> | null = null) {
     await this.transaction("rw", this.scores, async () => {
-      await this.scores
-        .where({ storedAt: _currentStore(), isSingle: _isSingle() })
-        .delete();
+      await this.scores.where({ storedAt: _currentStore(), isSingle: _isSingle() }).delete();
       return Promise.all(
         scores.map((item) => {
           _pText(ref, "Saving : " + item["title"]);
