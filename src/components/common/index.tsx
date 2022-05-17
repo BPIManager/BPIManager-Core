@@ -9,7 +9,6 @@ export const commonFunc = class {
     this.s = s;
     return this;
   };
-
   clone = () => JSON.parse(JSON.stringify(this.s));
 };
 

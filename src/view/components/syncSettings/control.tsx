@@ -11,17 +11,7 @@ import InputLabel from "@mui/material/InputLabel";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
-import {
-  Switch,
-  FormControlLabel,
-  Card,
-  CardContent,
-  Theme,
-  Grid,
-  Link,
-  Typography,
-  ButtonGroup,
-} from "@mui/material/";
+import { Switch, FormControlLabel, Card, CardContent, Theme, Grid, Link, Typography, ButtonGroup } from "@mui/material/";
 import withStyles from "@mui/styles/withStyles";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import Alert from "@mui/material/Alert";
@@ -37,6 +27,7 @@ import SyncControlScreen from "../sync/control";
 import Divider from "@mui/material/Divider";
 import { areaSelect } from "@/config";
 import { UserIcon } from "../common/icon";
+import * as H from "history";
 
 const defaultData = (photoURL: string) => ({
   isPublic: false,
@@ -51,9 +42,7 @@ const defaultData = (photoURL: string) => ({
   },
 });
 
-export const SyncMainScreen: React.FC<
-  { userData: any } & RouteComponentProps
-> = ({ userData }) => {
+export const SyncMainScreen: React.FC<{ userData: any } & RouteComponentProps> = ({ userData, history }) => {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [scoreData, setScoreData] = useState<any | null>(null);
@@ -62,18 +51,14 @@ export const SyncMainScreen: React.FC<
   const [userInfoModal, setUserInfoModal] = useState(false);
   const [nameErrorMessage, setNameErrorMessage] = useState<string[]>([]);
   const toggleUserDetail = () => setUserInfoModal(!userInfoModal);
-  const handlePublic = () =>
-    setNextData({ ...nextData, isPublic: !nextData.isPublic });
-  const editProfile = (target: string, newState: any) =>
-    setNextData({ ...nextData, [target]: newState });
+  const handlePublic = () => setNextData({ ...nextData, isPublic: !nextData.isPublic });
+  const editProfile = (target: string, newState: any) => setNextData({ ...nextData, [target]: newState });
 
   const fbA: fbActions = useMemo(() => new fbActions(), []);
   const fbLoader: fbActions = useMemo(() => new fbActions(), []);
 
   const load = async () => {
-    fbLoader
-      .setColName(`${_currentStore()}_${_isSingle()}`)
-      .setDocName(userData.uid);
+    fbLoader.setColName(`${_currentStore()}_${_isSingle()}`).setDocName(userData.uid);
     fbA.v2SetUserCollection().setDocName(userData.uid);
     return fbA.auth().onAuthStateChanged(async (user: any) => {
       const t = await fbA.load();
@@ -84,9 +69,7 @@ export const SyncMainScreen: React.FC<
       fbLoader.updateProfileIcon();
       setScoreData(await fbLoader.load());
       setAuthData(user);
-      setNextData(
-        t && t.displayName ? { ...t, twitter: tw } : defaultData(user.photoURL)
-      );
+      setNextData(t && t.displayName ? { ...t, twitter: tw } : defaultData(user.photoURL));
       setLoading(false);
     });
   };
@@ -96,18 +79,13 @@ export const SyncMainScreen: React.FC<
     setNameErrorMessage([]);
     try {
       if (nextData.displayName && scoreData === null) {
-        setNameErrorMessage([
-          "エラーが発生しました。次のような理由が挙げられます:",
-        ]);
+        setNameErrorMessage(["エラーが発生しました。次のような理由が挙げられます:"]);
         setSending(false);
         return;
       }
       const res = await fbA.saveUserData(nextData);
       if (res.error) {
-        setNameErrorMessage([
-          "エラーが発生しました。次のような理由が挙げられます:",
-          "名前に使用できない文字列が含まれている、すでに使用されている名前である、アクセス権限がない",
-        ]);
+        setNameErrorMessage(["エラーが発生しました。次のような理由が挙げられます:", "名前に使用できない文字列が含まれている、すでに使用されている名前である、アクセス権限がない"]);
         setSending(false);
         return;
       }
@@ -133,32 +111,20 @@ export const SyncMainScreen: React.FC<
     return null;
   }
 
-  const nameError: boolean =
-    nextData.displayName.length !== 0 &&
-    (!/^[a-zA-Z0-9]+$/g.test(nextData.displayName) ||
-      nextData.displayName.length > 16);
+  const nameError: boolean = nextData.displayName.length !== 0 && (!/^[a-zA-Z0-9]+$/g.test(nextData.displayName) || nextData.displayName.length > 16);
   const profError: boolean = nextData.profile.length > 140;
 
   return (
     <React.Fragment>
       <Grid container alignItems="center">
         <Grid item xs={3}>
-          <UserIcon
-            size={64}
-            disableZoom
-            defaultURL={
-              nextData.photoURL ? nextData.photoURL.replace("_normal", "") : ""
-            }
-            text={nextData.displayName || "Private-mode User"}
-            altURL={getAltTwitterIcon(nextData)}
-          />
+          <UserIcon size={64} disableZoom defaultURL={nextData.photoURL ? nextData.photoURL.replace("_normal", "") : ""} text={nextData.displayName || "Private-mode User"} altURL={getAltTwitterIcon(nextData)} />
         </Grid>
         <Grid item xs={9} style={{ justifyContent: "start", display: "flex" }}>
           <p>
             Welcome back, {nextData.displayName || ""}
             <br />
-            Signed in via{" "}
-            {authData.providerData[0].providerId || "Unknown Provider"}
+            Signed in via {authData.providerData[0].providerId || "Unknown Provider"}
           </p>
         </Grid>
       </Grid>
@@ -167,11 +133,7 @@ export const SyncMainScreen: React.FC<
         <Grid item xs={10}>
           <Typography variant="body1">ユーザー情報</Typography>
         </Grid>
-        <Grid
-          item
-          xs={2}
-          style={{ justifyContent: "flex-end", display: "flex" }}
-        >
+        <Grid item xs={2} style={{ justifyContent: "flex-end", display: "flex" }}>
           <FormControl component="fieldset" variant="standard">
             <Button onClick={toggleUserDetail}>確認</Button>
           </FormControl>
@@ -181,43 +143,20 @@ export const SyncMainScreen: React.FC<
         <Grid item xs={10}>
           <Typography variant="body1">一般公開</Typography>
         </Grid>
-        <Grid
-          item
-          xs={2}
-          style={{ justifyContent: "flex-end", display: "flex" }}
-        >
+        <Grid item xs={2} style={{ justifyContent: "flex-end", display: "flex" }}>
           <FormControl component="fieldset" variant="standard">
-            <FormControlLabel
-              control={
-                <Switch
-                  size="small"
-                  checked={nextData.isPublic}
-                  onChange={handlePublic}
-                  name="isPublic"
-                />
-              }
-              label=""
-              className="syncPublicSwitch"
-            />
+            <FormControlLabel control={<Switch size="small" checked={nextData.isPublic} onChange={handlePublic} name="isPublic" />} label="" className="syncPublicSwitch" />
           </FormControl>
         </Grid>
       </Grid>
       {!nextData.isPublic && (
-        <Alert
-          variant="outlined"
-          severity="warning"
-          style={{ borderColor: "#663c0045", margin: "8px 0" }}
-        >
+        <Alert variant="outlined" severity="warning" style={{ borderColor: "#663c0045", margin: "8px 0" }}>
           <AlertTitle>アカウントが非公開です</AlertTitle>
           <p>
             スコアデータを公開してライバルを増やしましょう。
             <br />
             アカウントの公開およびライバル機能に関する詳細は
-            <Link
-              href="https://docs2.poyashi.me/docs/social/rivals/"
-              color="secondary"
-              target="_blank"
-            >
+            <Link href="https://docs2.poyashi.me/docs/social/rivals/" color="secondary" target="_blank">
               こちら
             </Link>
             をご確認ください。
@@ -239,9 +178,7 @@ export const SyncMainScreen: React.FC<
                 shrink: true,
               }}
               error={nameError}
-              helperText={
-                nameError && "使用できない文字が含まれているか、長すぎます"
-              }
+              helperText={nameError && "使用できない文字が含まれているか、長すぎます"}
               value={nextData.displayName}
               onChange={(e) => editProfile("displayName", e.target.value)}
               style={{ width: "100%", margin: "0px 0px 8px 0" }}
@@ -258,19 +195,7 @@ export const SyncMainScreen: React.FC<
                       setNextData({ ...nextData, arenaRank: e.target.value });
                     }}
                   >
-                    {[
-                      "-",
-                      "A1",
-                      "A2",
-                      "A3",
-                      "A4",
-                      "A5",
-                      "B1",
-                      "B2",
-                      "B3",
-                      "B4",
-                      "B5",
-                    ].map((item) => (
+                    {["-", "A1", "A2", "A3", "A4", "A5", "B1", "B2", "B3", "B4", "B5"].map((item) => (
                       <MenuItem value={item} key={item}>
                         {item}
                       </MenuItem>
@@ -330,8 +255,7 @@ export const SyncMainScreen: React.FC<
               }}
               value={nextData.twitter}
               onChange={(e) => {
-                if (e.target.value && !e.target.value.match(/^[a-zA-Z_0-9]+$/g))
-                  return;
+                if (e.target.value && !e.target.value.match(/^[a-zA-Z_0-9]+$/g)) return;
                 editProfile("twitter", e.target.value);
               }}
               style={{ width: "100%", margin: "0px 0px 8px 0" }}
@@ -339,57 +263,27 @@ export const SyncMainScreen: React.FC<
           </CardContent>
         </Card>
       )}
-      <SyncControlScreen
-        toggleSending={() => setSending(!sending)}
-        userData={userData}
-      />
-      {(nameErrorMessage.length > 0 ||
-        (scoreData === null && nextData.displayName)) && (
-        <Alert
-          style={{ borderColor: "#4fc3f745", margin: "8px 0" }}
-          severity="warning"
-        >
+      <SyncControlScreen toggleSending={() => setSending(!sending)} userData={userData} />
+      {(nameErrorMessage.length > 0 || (scoreData === null && nextData.displayName)) && (
+        <Alert style={{ borderColor: "#4fc3f745", margin: "8px 0" }} severity="warning">
           {nameErrorMessage.map((item: string) => (
             <span key={item}>
               {item}
               <br />
             </span>
           ))}
-          {scoreData === null && nextData.displayName && (
-            <span style={{ color: "#ff0000" }}>
-              スコアデータが送信されていません。スコアデータを送信してください。
-            </span>
-          )}
+          {scoreData === null && nextData.displayName && <span style={{ color: "#ff0000" }}>スコアデータが送信されていません。スコアデータを送信してください。</span>}
         </Alert>
       )}
       <ButtonGroup variant="contained" fullWidth style={{ marginTop: "8px" }}>
-        <Button
-          fullWidth
-          variant="outlined"
-          color="secondary"
-          onClick={sendName}
-          startIcon={<SaveIcon />}
-          disabled={sending}
-        >
+        <Button fullWidth variant="outlined" color="secondary" onClick={sendName} startIcon={<SaveIcon />} disabled={sending}>
           変更を保存
         </Button>
-        <ColorButton
-          color="secondary"
-          disabled={sending}
-          fullWidth
-          onClick={() => fbA.logout()}
-          startIcon={<MeetingRoomIcon />}
-        >
+        <ColorButton color="secondary" disabled={sending} fullWidth onClick={() => fbA.logout()} startIcon={<MeetingRoomIcon />}>
           サインアウト
         </ColorButton>
       </ButtonGroup>
-      {userInfoModal && (
-        <UserDetail
-          rawUserData={userData}
-          userInfo={nextData}
-          handleClose={toggleUserDetail}
-        />
-      )}
+      {userInfoModal && <UserDetail rawUserData={userData} userInfo={nextData} handleClose={toggleUserDetail} history={history} />}
     </React.Fragment>
   );
 };
@@ -411,19 +305,15 @@ class UserDetail extends React.Component<
     handleClose: () => void;
     userInfo: any;
     rawUserData: any;
+    history: H.History;
   },
   {}
 > {
   render() {
     const { userInfo, rawUserData } = this.props;
-    console.log(userInfo, rawUserData);
     return (
-      <Dialog
-        open={true}
-        onClose={this.props.handleClose}
-        style={{ margin: "0 8px" }}
-      >
-        <DialogContent>
+      <Dialog open={true} onClose={this.props.handleClose} style={{ margin: "0 8px" }}>
+        <DialogContent style={{ paddingBottom: 0 }}>
           <List>
             {[
               {
@@ -443,20 +333,24 @@ class UserDetail extends React.Component<
                 secondary: "アカウントの認証状態",
               },
               {
-                primary:
-                  rawUserData.providerData.length > 0
-                    ? rawUserData.providerData[0].providerId
-                    : "unknown",
+                primary: rawUserData.providerData.length > 0 ? rawUserData.providerData[0].providerId : "unknown",
                 secondary: "アカウント プロバイダ",
               },
             ].map((item) => (
               <ListItem style={{ padding: "0 16px" }}>
-                <ListItemText
-                  primary={item.primary}
-                  secondary={item.secondary}
-                />
+                <ListItemText primary={item.primary} secondary={item.secondary} />
               </ListItem>
             ))}
+            <ListItem style={{ padding: "0 16px" }}>
+              <ListItemText
+                primary={<></>}
+                secondary={
+                  <span onClick={() => this.props.history.push("/sync/delete")} style={{ textAlign: "center", display: "block" }}>
+                    アカウント削除
+                  </span>
+                }
+              />
+            </ListItem>
           </List>
         </DialogContent>
         <DialogActions>
