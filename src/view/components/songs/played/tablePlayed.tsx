@@ -12,13 +12,11 @@ import { _prefix, genTitle } from "@/components/songs/filter";
 import DetailedSongInformation from "../detailsScreen";
 import { diffColor, behindScore, bp } from "../common";
 import _djRank from "@/components/common/djRank";
-import {
-  _currentViewComponents,
-  _traditionalMode,
-} from "@/components/settings";
+import { _currentViewComponents, _traditionalMode, _useActionMenu } from "@/components/settings";
 import bpiCalcuator from "@/components/bpi";
 import { scoresDB } from "@/components/indexedDB";
 import { defaultBackground } from "@/themes/ifColor";
+import Menu from "../common/longTapMenu";
 
 const columns = [
   { id: "difficultyLevel", label: "" },
@@ -36,10 +34,7 @@ interface P {
   allSongsData: Map<String, songData>;
   updateScoreData: (row: songData) => void;
   page: number;
-  handleChangePage: (
-    _e: React.MouseEvent<HTMLButtonElement, MouseEvent> | null,
-    newPage: number
-  ) => void;
+  handleChangePage: (_e: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number) => void;
 }
 
 interface S {
@@ -49,9 +44,12 @@ interface S {
   currentSongData: songData | null;
   currentScoreData: scoreData | null;
   components: string[];
+  isMenuOpen: boolean;
 }
 
 export default class SongsTable extends React.Component<Readonly<P>, S> {
+  private buttonPressTimer: number = 0;
+
   constructor(props: Readonly<P>) {
     super(props);
     this.state = {
@@ -61,32 +59,45 @@ export default class SongsTable extends React.Component<Readonly<P>, S> {
       currentSongData: null,
       currentScoreData: null,
       components: _currentViewComponents().split(","),
+      isMenuOpen: false,
     };
   }
 
   handleOpen = (updateFlag: boolean, row: songData | scoreData): void => {
+    if (this.state.isMenuOpen) return;
     if (updateFlag) {
       this.props.updateScoreData(row as songData);
     }
     return this.setState({
       isOpen: !this.state.isOpen,
       FV: 0,
-      currentSongData: (row
-        ? this.props.allSongsData.get(genTitle(row.title, row.difficulty))
-        : null) as songData,
+      currentSongData: (row ? this.props.allSongsData.get(genTitle(row.title, row.difficulty)) : null) as songData,
       currentScoreData: (row ? row : null) as scoreData,
     });
   };
 
-  handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
+  handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>): void => {
     this.props.handleChangePage(null, 0);
     this.setState({ rowsPerPage: +event.target.value });
   };
 
-  willBeRendered = (component: string): boolean =>
-    this.state.components.indexOf(component) > -1;
+  willBeRendered = (component: string): boolean => this.state.components.indexOf(component) > -1;
+
+  handleButtonPress = (row: songData | scoreData) => {
+    this.buttonPressTimer = window.setTimeout(() => {
+      if (!_useActionMenu()) return;
+      return this.setState({
+        isOpen: false,
+        isMenuOpen: true,
+        currentSongData: (row ? this.props.allSongsData.get(genTitle(row.title, row.difficulty)) : null) as songData,
+      });
+    }, 1000);
+    return;
+  };
+
+  handleButtonRelease = () => window.clearTimeout(this.buttonPressTimer);
+
+  menuClose = () => this.setState({ isMenuOpen: false });
 
   render() {
     const bpiCalc = new bpiCalcuator();
@@ -95,8 +106,7 @@ export default class SongsTable extends React.Component<Readonly<P>, S> {
       estRank = this.willBeRendered("estRank"),
       djLevel = this.willBeRendered("djLevel"),
       percentage = this.willBeRendered("percentage");
-    const { rowsPerPage, isOpen, currentSongData, currentScoreData, FV } =
-      this.state;
+    const { rowsPerPage, isOpen, currentSongData, currentScoreData, FV, isMenuOpen } = this.state;
     const { page, data, mode } = this.props;
     return (
       <Paper
@@ -122,152 +132,89 @@ export default class SongsTable extends React.Component<Readonly<P>, S> {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row: scoreData, i: number) => {
-                  const prefix = _prefix(row.difficulty);
-                  const f = this.props.allSongsData.get(row.title + prefix);
-                  if (!f) {
-                    return null;
-                  }
-                  const max = f["notes"] * 2;
-                  return (
-                    <TableRow
-                      onClick={() => this.handleOpen(false, row)}
-                      key={row.title + row.prefix + i}
-                      className={i % 2 ? "songCell isOdd" : "songCell isEven"}
-                    >
-                      {columns.map((column, j) => {
-                        if (Number.isNaN(row.currentBPI)) return null;
-                        const fontSize = () => {
-                          if (column.id !== "title") return "";
-                          if (row.title.length < 20) return "";
-                          if (window.innerWidth < 500) return " smallFont";
-                        };
-                        const left =
-                          column.id === "difficultyLevel"
-                            ? "9px solid " + diffColor(j, row.clearState)
-                            : "0px";
-                        return (
-                          <TableCell
-                            className={
-                              row.currentBPI === Infinity ? "isInfiniteBPI" : ""
-                            }
-                            key={column.id + row.title + row.prefix + prefix}
-                            style={{
-                              boxSizing: "border-box",
-                              borderLeft: left,
-                              position: "relative",
-                            }}
-                          >
-                            {mode < 6 && column.id === "currentBPI" && (
-                              <span className={j >= 2 ? "bodyNumber" : ""}>
-                                {Number(row[column.id]) === Infinity
-                                  ? "-"
-                                  : Number(row[column.id]).toFixed(2)}
+              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row: scoreData, i: number) => {
+                const prefix = _prefix(row.difficulty);
+                const f = this.props.allSongsData.get(row.title + prefix);
+                if (!f) {
+                  return null;
+                }
+                const max = f["notes"] * 2;
+                return (
+                  <TableRow
+                    onTouchStart={() => this.handleButtonPress(row)}
+                    onTouchEnd={() => this.handleButtonRelease()}
+                    onMouseDown={() => this.handleButtonPress(row)}
+                    onMouseUp={() => this.handleButtonRelease()}
+                    onMouseLeave={() => this.handleButtonRelease()}
+                    onClick={() => this.handleOpen(false, row)}
+                    key={row.title + row.prefix + i}
+                    className={i % 2 ? "songCell isOdd" : "songCell isEven"}
+                  >
+                    {columns.map((column, j) => {
+                      if (Number.isNaN(row.currentBPI)) return null;
+                      const fontSize = () => {
+                        if (column.id !== "title") return "";
+                        if (row.title.length < 20) return "";
+                        if (window.innerWidth < 500) return " smallFont";
+                      };
+                      const left = column.id === "difficultyLevel" ? "9px solid " + diffColor(j, row.clearState) : "0px";
+                      return (
+                        <TableCell
+                          className={row.currentBPI === Infinity ? "isInfiniteBPI" : ""}
+                          key={column.id + row.title + row.prefix + prefix}
+                          style={{
+                            boxSizing: "border-box",
+                            borderLeft: left,
+                            position: "relative",
+                          }}
+                        >
+                          {mode < 6 && column.id === "currentBPI" && <span className={j >= 2 ? "bodyNumber" : ""}>{Number(row[column.id]) === Infinity ? "-" : Number(row[column.id]).toFixed(2)}</span>}
+                          {column.id !== "currentBPI" && column.id !== "title" && <span className={j >= 2 ? "bodyNumber" : ""}>{row[column.id]}</span>}
+                          {column.id === "title" && <span className={(j >= 2 ? "bodyNumber" : "") + fontSize()}>{row[column.id]}</span>}
+                          {column.id === "title" && <span>{prefix}</span>}
+                          {mode > 5 && column.id === "currentBPI" && bp(row.missCount || NaN)}
+                          <span className={i % 2 ? "plusOverlayScore isOddOverLayed" : "plusOverlayScore isEvenOverLayed"}>
+                            {j === 3 && (
+                              <span>
+                                {lastVer && <LastVerComparison row={row} lastVer={lastVer} last={last} mode={mode} />}
+                                {last && row.lastScore > -1 && mode === 0 && (
+                                  <span>
+                                    {row.exScore - row.lastScore >= 0 && <span>+</span>}
+                                    {Number(row.exScore - row.lastScore)}
+                                  </span>
+                                )}
+                                {mode > 0 && mode < 6 && <span>-{behindScore(row, f, mode)}</span>}
                               </span>
                             )}
-                            {column.id !== "currentBPI" &&
-                              column.id !== "title" && (
-                                <span className={j >= 2 ? "bodyNumber" : ""}>
-                                  {row[column.id]}
+                          </span>
+                          {j === 3 && (
+                            <span className={i % 2 ? "plusOverlayScoreBottom isOddOverLayed" : "plusOverlayScoreBottom isEvenOverLayed"}>
+                              {percentage && <span>{Math.round((row.exScore / (f.notes * 2)) * 10000) / 100}%</span>}
+                              {percentage && (estRank || djLevel) && <span>&nbsp;/&nbsp;</span>}
+                              {estRank && (
+                                <span>
+                                  {row.currentBPI === Infinity && <span>-</span>}
+                                  {row.currentBPI !== Infinity && <span>{bpiCalc.rank(row.currentBPI)}位</span>}
                                 </span>
                               )}
-                            {column.id === "title" && (
-                              <span
-                                className={
-                                  (j >= 2 ? "bodyNumber" : "") + fontSize()
-                                }
-                              >
-                                {row[column.id]}
-                              </span>
-                            )}
-                            {column.id === "title" && <span>{prefix}</span>}
-                            {mode > 5 &&
-                              column.id === "currentBPI" &&
-                              bp(row.missCount || NaN)}
-                            <span
-                              className={
-                                i % 2
-                                  ? "plusOverlayScore isOddOverLayed"
-                                  : "plusOverlayScore isEvenOverLayed"
-                              }
-                            >
-                              {j === 3 && (
+                              {estRank && djLevel && <span>&nbsp;/&nbsp;</span>}
+                              {djLevel && (
                                 <span>
-                                  {lastVer && (
-                                    <LastVerComparison
-                                      row={row}
-                                      lastVer={lastVer}
-                                      last={last}
-                                      mode={mode}
-                                    />
-                                  )}
-                                  {last && row.lastScore > -1 && mode === 0 && (
-                                    <span>
-                                      {row.exScore - row.lastScore >= 0 && (
-                                        <span>+</span>
-                                      )}
-                                      {Number(row.exScore - row.lastScore)}
-                                    </span>
-                                  )}
-                                  {mode > 0 && mode < 6 && (
-                                    <span>-{behindScore(row, f, mode)}</span>
-                                  )}
+                                  {_djRank(false, false, max, row.exScore)}
+                                  {_djRank(false, true, max, row.exScore)}
+                                  &nbsp;/&nbsp;
+                                  {_djRank(true, false, max, row.exScore)}
+                                  {_djRank(true, true, max, row.exScore)}
                                 </span>
                               )}
                             </span>
-                            {j === 3 && (
-                              <span
-                                className={
-                                  i % 2
-                                    ? "plusOverlayScoreBottom isOddOverLayed"
-                                    : "plusOverlayScoreBottom isEvenOverLayed"
-                                }
-                              >
-                                {percentage && (
-                                  <span>
-                                    {Math.round(
-                                      (row.exScore / (f.notes * 2)) * 10000
-                                    ) / 100}
-                                    %
-                                  </span>
-                                )}
-                                {percentage && (estRank || djLevel) && (
-                                  <span>&nbsp;/&nbsp;</span>
-                                )}
-                                {estRank && (
-                                  <span>
-                                    {row.currentBPI === Infinity && (
-                                      <span>-</span>
-                                    )}
-                                    {row.currentBPI !== Infinity && (
-                                      <span>
-                                        {bpiCalc.rank(row.currentBPI)}位
-                                      </span>
-                                    )}
-                                  </span>
-                                )}
-                                {estRank && djLevel && (
-                                  <span>&nbsp;/&nbsp;</span>
-                                )}
-                                {djLevel && (
-                                  <span>
-                                    {_djRank(false, false, max, row.exScore)}
-                                    {_djRank(false, true, max, row.exScore)}
-                                    &nbsp;/&nbsp;
-                                    {_djRank(true, false, max, row.exScore)}
-                                    {_djRank(true, true, max, row.exScore)}
-                                  </span>
-                                )}
-                              </span>
-                            )}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
+                          )}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </React.Fragment>
@@ -287,15 +234,8 @@ export default class SongsTable extends React.Component<Readonly<P>, S> {
           onPageChange={this.props.handleChangePage}
           onRowsPerPageChange={this.handleChangeRowsPerPage}
         />
-        {isOpen && (
-          <DetailedSongInformation
-            isOpen={isOpen}
-            song={currentSongData}
-            score={currentScoreData}
-            handleOpen={this.handleOpen}
-            firstView={FV}
-          />
-        )}
+        <Menu close={this.menuClose} open={isMenuOpen} song={currentSongData} />
+        {isOpen && <DetailedSongInformation isOpen={isOpen} song={currentSongData} score={currentScoreData} handleOpen={this.handleOpen} firstView={FV} />}
       </Paper>
     );
   }
@@ -322,12 +262,7 @@ class LastVerComparison extends React.Component<LP, { diff: number }> {
   async componentDidMount() {
     this._isMounted = true;
     const { row } = this.props;
-    const t = await this.scoresDB.getItem(
-      row.title,
-      row.difficulty,
-      String(Number(row.storedAt) - 1),
-      row.isSingle
-    );
+    const t = await this.scoresDB.getItem(row.title, row.difficulty, String(Number(row.storedAt) - 1), row.isSingle);
     if (!this._isMounted || !t || t.length === 0) return;
     return this.setState({ diff: row.exScore - t[0]["exScore"] });
   }

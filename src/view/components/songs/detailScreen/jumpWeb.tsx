@@ -19,7 +19,8 @@ import { difficultyDiscriminator } from "@/components/songs/filter";
 
 const JumpWeb: React.FC<{
   song: songData;
-}> = ({ song }) => {
+  onlyList?: boolean;
+}> = ({ song, onlyList }) => {
   const [openMenu, setOpenMenu] = useState(false);
   const jumpWeb = async (type: number): Promise<void> => {
     if (!song) return;
@@ -28,22 +29,61 @@ const JumpWeb: React.FC<{
         window.open("http://textage.cc/score/" + song.textage);
         break;
       case 1:
-        window.open(
-          "https://www.youtube.com/results?search_query=" +
-            song.title.replace(/-/g, "") +
-            "+IIDX"
-        );
+        window.open("https://www.youtube.com/results?search_query=" + song.title.replace(/-/g, "") + "+IIDX");
         break;
       case 2:
-        window.open(
-          `https://rank.poyashi.me/songDetail/${encodeURIComponent(
-            song.title
-          )}/${difficultyDiscriminator(song.difficulty)}/${_currentStore()}`
-        );
+        window.open(`https://rank.poyashi.me/songDetail/${encodeURIComponent(song.title)}/${difficultyDiscriminator(song.difficulty)}/${_currentStore()}`);
         break;
     }
     return setOpenMenu(!openMenu);
   };
+
+  const list = (
+    <List>
+      {[
+        {
+          title: "TexTage",
+          icon: <FormatListBulletedIcon />,
+          func: () => jumpWeb(0),
+          text: "TexTageでこの楽曲の譜面を確認します",
+        },
+        {
+          title: "YouTube",
+          icon: <YouTubeIcon />,
+          func: () => jumpWeb(1),
+          text: "YouTubeでこの楽曲の動画を検索します",
+        },
+        {
+          title: "BPIMRanks",
+          icon: <StarHalfIcon />,
+          func: () => jumpWeb(2),
+          text: "この楽曲のランキングをBPIMRanksで確認します",
+        },
+      ].map((item, key: number) => (
+        <ListItem button onClick={item.func} key={key}>
+          <ListItemIcon>{item.icon}</ListItemIcon>
+          <ListItemText primary={item.title} secondary={item.text} />
+        </ListItem>
+      ))}
+      <form method="post" name="rivalSearch" action={"https://p.eagate.573.jp/game/2dx/" + _currentStore() + "/ranking/topranker.html#musiclist"}>
+        <input type="hidden" name="pref_id" value={_area()} />
+        <input type="hidden" name="play_style" value={_isSingle() === 1 ? "0" : "1"} />
+        <input type="hidden" name="series_id" value={Number(song["textage"].replace(/\/.*?$/, "")) - 1} />
+        <input type="hidden" name="s" value="1" />
+        <input type="hidden" name="rival" value="" />
+        <Button color="inherit" type="submit" fullWidth disableRipple style={{ padding: 0 }}>
+          <ListItem button>
+            <ListItemIcon>
+              <Filter1Icon />
+            </ListItemIcon>
+            <ListItemText primary="TOP RANKER" secondary="所属地域のTOP RANKERページのうち、この楽曲が含まれるシリーズを表示します" />
+          </ListItem>
+        </Button>
+      </form>
+    </List>
+  );
+
+  if (onlyList) return list;
 
   return (
     <Grid
@@ -56,88 +96,12 @@ const JumpWeb: React.FC<{
       }}
     >
       <Tooltip title="外部サイト連携">
-        <IconButton
-          style={{ margin: "0 6px 0", position: "relative", top: "5px" }}
-          aria-haspopup="true"
-          onClick={() => setOpenMenu(true)}
-          size="large"
-        >
+        <IconButton style={{ margin: "0 6px 0", position: "relative", top: "5px" }} aria-haspopup="true" onClick={() => setOpenMenu(true)} size="large">
           <MoreVertIcon />
         </IconButton>
       </Tooltip>
-      <SwipeableDrawer
-        anchor="bottom"
-        className="overlayDrawer"
-        open={openMenu}
-        onClose={() => setOpenMenu(false)}
-        onOpen={() => setOpenMenu(true)}
-      >
-        <List>
-          {[
-            {
-              title: "TexTage",
-              icon: <FormatListBulletedIcon />,
-              func: () => jumpWeb(0),
-              text: "TexTageでこの楽曲の譜面を確認します",
-            },
-            {
-              title: "YouTube",
-              icon: <YouTubeIcon />,
-              func: () => jumpWeb(1),
-              text: "YouTubeでこの楽曲の動画を検索します",
-            },
-            {
-              title: "BPIMRanks",
-              icon: <StarHalfIcon />,
-              func: () => jumpWeb(2),
-              text: "この楽曲のランキングをBPIMRanksで確認します",
-            },
-          ].map((item, key: number) => (
-            <ListItem button onClick={item.func} key={key}>
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.title} secondary={item.text} />
-            </ListItem>
-          ))}
-          <form
-            method="post"
-            name="rivalSearch"
-            action={
-              "https://p.eagate.573.jp/game/2dx/" +
-              _currentStore() +
-              "/ranking/topranker.html#musiclist"
-            }
-          >
-            <input type="hidden" name="pref_id" value={_area()} />
-            <input
-              type="hidden"
-              name="play_style"
-              value={_isSingle() === 1 ? "0" : "1"}
-            />
-            <input
-              type="hidden"
-              name="series_id"
-              value={Number(song["textage"].replace(/\/.*?$/, "")) - 1}
-            />
-            <input type="hidden" name="s" value="1" />
-            <input type="hidden" name="rival" value="" />
-            <Button
-              type="submit"
-              fullWidth
-              disableRipple
-              style={{ padding: 0 }}
-            >
-              <ListItem button>
-                <ListItemIcon>
-                  <Filter1Icon />
-                </ListItemIcon>
-                <ListItemText
-                  primary="TOP RANKER"
-                  secondary="所属地域のTOP RANKERページのうち、この楽曲が含まれるシリーズを表示します"
-                />
-              </ListItem>
-            </Button>
-          </form>
-        </List>
+      <SwipeableDrawer anchor="bottom" className="overlayDrawer" open={openMenu} onClose={() => setOpenMenu(false)} onOpen={() => setOpenMenu(true)}>
+        {list}
       </SwipeableDrawer>
     </Grid>
   );

@@ -10,8 +10,9 @@ import TableRow from "@mui/material/TableRow";
 import { scoreData, songData } from "@/types/data";
 import DetailedSongInformation from "../detailsScreen";
 import { difficultyDiscriminator, _prefix } from "@/components/songs/filter";
-import { _isSingle, _currentStore } from "@/components/settings";
+import { _isSingle, _currentStore, _useActionMenu } from "@/components/settings";
 import { defaultBackground } from "@/themes/ifColor";
+import Menu from "../common/longTapMenu";
 
 const columns = [
   { id: "difficultyLevel", label: "☆" },
@@ -23,15 +24,9 @@ interface P {
   sort: number;
   isDesc: boolean;
   changeSort: (newNum: number) => void;
-  updateScoreData: (
-    willDelete?: boolean,
-    willDeleteItems?: { title: string; difficulty: string }
-  ) => void;
+  updateScoreData: (willDelete?: boolean, willDeleteItems?: { title: string; difficulty: string }) => void;
   page: number;
-  handleChangePage: (
-    _e: React.MouseEvent<HTMLButtonElement, MouseEvent> | null,
-    newPage: number
-  ) => void;
+  handleChangePage: (_e: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number) => void;
 }
 
 interface S {
@@ -40,9 +35,11 @@ interface S {
   FV: number;
   currentSongData: songData | null;
   currentScoreData: scoreData | null;
+  isMenuOpen: boolean;
 }
 
 export default class SongsTable extends React.Component<Readonly<P>, S> {
+  private buttonPressTimer: number = 0;
   constructor(props: Readonly<P>) {
     super(props);
     this.state = {
@@ -51,6 +48,7 @@ export default class SongsTable extends React.Component<Readonly<P>, S> {
       FV: 0,
       currentSongData: null,
       currentScoreData: null,
+      isMenuOpen: false,
     };
   }
 
@@ -70,19 +68,9 @@ export default class SongsTable extends React.Component<Readonly<P>, S> {
     return t;
   };
 
-  handleOpen = (
-    updateFlag: boolean = false,
-    row: songData | null,
-    willDeleteItems:
-      | { title: string; difficulty: string }
-      | null
-      | undefined = { title: "", difficulty: "" }
-  ): void => {
+  handleOpen = (updateFlag: boolean = false, row: songData | null, willDeleteItems: { title: string; difficulty: string } | null | undefined = { title: "", difficulty: "" }): void => {
     if (updateFlag) {
-      this.props.updateScoreData(
-        true,
-        willDeleteItems || { title: "", difficulty: "" }
-      );
+      this.props.updateScoreData(true, willDeleteItems || { title: "", difficulty: "" });
     }
     const t = row ? this.default(row) : null;
     return this.setState({
@@ -93,16 +81,29 @@ export default class SongsTable extends React.Component<Readonly<P>, S> {
     });
   };
 
-  handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
+  handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>): void => {
     this.props.handleChangePage(null, 0);
     this.setState({ rowsPerPage: +event.target.value });
   };
 
+  handleButtonPress = (row: songData) => {
+    this.buttonPressTimer = window.setTimeout(() => {
+      if (!_useActionMenu()) return;
+      return this.setState({
+        isOpen: false,
+        isMenuOpen: true,
+        currentSongData: row,
+      });
+    }, 1000);
+    return;
+  };
+
+  handleButtonRelease = () => window.clearTimeout(this.buttonPressTimer);
+
+  menuClose = () => this.setState({ isMenuOpen: false });
+
   render() {
-    const { rowsPerPage, isOpen, currentSongData, currentScoreData, FV } =
-      this.state;
+    const { rowsPerPage, isOpen, currentSongData, currentScoreData, FV, isMenuOpen } = this.state;
     const { page, data, changeSort, sort, isDesc } = this.props;
     return (
       <Paper
@@ -132,34 +133,37 @@ export default class SongsTable extends React.Component<Readonly<P>, S> {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row: songData, i: number) => {
-                  return (
-                    <TableRow
-                      onClick={() => this.handleOpen(false, row)}
-                      onContextMenu={(e) => {
-                        e.preventDefault();
-                      }}
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={row.title + row.difficulty + i}
-                      className={i % 2 ? "songCell isOdd" : "songCell isEven"}
-                    >
-                      {columns.map((column) => {
-                        const d = difficultyDiscriminator(row.difficulty);
-                        const prefix = _prefix(d);
-                        return (
-                          <TableCell key={column.id + prefix}>
-                            {row[column.id]}
-                            {column.id === "title" && prefix}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
+              {data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row: songData, i: number) => {
+                return (
+                  <TableRow
+                    onTouchStart={() => this.handleButtonPress(row)}
+                    onTouchEnd={() => this.handleButtonRelease()}
+                    onMouseDown={() => this.handleButtonPress(row)}
+                    onMouseUp={() => this.handleButtonRelease()}
+                    onMouseLeave={() => this.handleButtonRelease()}
+                    onClick={() => this.handleOpen(false, row)}
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                    }}
+                    hover
+                    role="checkbox"
+                    tabIndex={-1}
+                    key={row.title + row.difficulty + i}
+                    className={i % 2 ? "songCell isOdd" : "songCell isEven"}
+                  >
+                    {columns.map((column) => {
+                      const d = difficultyDiscriminator(row.difficulty);
+                      const prefix = _prefix(d);
+                      return (
+                        <TableCell key={column.id + prefix}>
+                          {row[column.id]}
+                          {column.id === "title" && prefix}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </div>
@@ -179,16 +183,8 @@ export default class SongsTable extends React.Component<Readonly<P>, S> {
           onPageChange={this.props.handleChangePage}
           onRowsPerPageChange={this.handleChangeRowsPerPage}
         />
-        {isOpen && (
-          <DetailedSongInformation
-            isOpen={isOpen}
-            song={currentSongData}
-            score={currentScoreData}
-            handleOpen={this.handleOpen}
-            willDelete={true}
-            firstView={FV}
-          />
-        )}
+        <Menu close={this.menuClose} open={isMenuOpen} song={currentSongData} />
+        {isOpen && <DetailedSongInformation isOpen={isOpen} song={currentSongData} score={currentScoreData} handleOpen={this.handleOpen} willDelete={true} firstView={FV} />}
       </Paper>
     );
   }
