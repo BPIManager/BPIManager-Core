@@ -35,10 +35,7 @@ class ArenaMatchWatcher extends React.Component<
     const auth = new fbActions().authInfo();
     if (auth && auth.uid) {
       const myId = auth.uid;
-      this.unsubscribe = f.realtime(
-        await f.getSelfMatches(myId),
-        this.watchList
-      );
+      this.unsubscribe = f.realtime(await f.getSelfMatches(myId), this.watchList);
     }
   }
 
@@ -57,9 +54,7 @@ class ArenaMatchWatcher extends React.Component<
       }
       self.setState({ list: list });
       for (let i = 0; i < list.length; ++i) {
-        self.unsubscribeMessages.push(
-          f.realtime(f.getMessages(list[i].matchId), this.watchMessage)
-        );
+        self.unsubscribeMessages.push(f.realtime(f.getMessages(list[i].matchId), this.watchMessage));
       }
       return;
     });
@@ -87,36 +82,19 @@ class ArenaMatchWatcher extends React.Component<
     const { newMessage, open } = this.state;
     if (newMessage && window.location.href.indexOf(newMessage.matchId) === -1) {
       return (
-        <Snackbar
-          style={{ width: "100%", bottom: 0, left: 0 }}
-          open={open}
-          onClick={() =>
-            this.props.history.push("/arena/" + newMessage.matchId)
-          }
-          onClose={this.handleClose}
-        >
+        <Snackbar className="arenaMatchSnackBar" style={{ width: "100%", bottom: 0, left: 0 }} open={open} onClick={() => this.props.history.push("/arena/" + newMessage.matchId)} onClose={this.handleClose}>
           <SnackbarContent
             style={{ borderRadius: 0 }}
             message={
               <React.Fragment>
                 <Grid container>
                   <Grid item xs={2}>
-                    <UserIcon
-                      _legacy
-                      disableZoom
-                      defaultURL={newMessage.photoURL}
-                      text={newMessage.displayName}
-                      altURL={getAltTwitterIcon(newMessage, false, "normal")}
-                    />
+                    <UserIcon _legacy disableZoom defaultURL={newMessage.photoURL} text={newMessage.displayName} altURL={getAltTwitterIcon(newMessage, false, "normal")} />
                   </Grid>
                   <Grid item xs={10}>
-                    <span style={{ opacity: 0.6 }}>
-                      {newMessage.displayName}
-                    </span>
+                    <span style={{ opacity: 0.6 }}>{newMessage.displayName}</span>
                     <br />
-                    {newMessage.body.length > 20
-                      ? newMessage.body.substr(0, 19) + "..."
-                      : newMessage.body}
+                    {newMessage.body.length > 20 ? newMessage.body.substr(0, 19) + "..." : newMessage.body}
                   </Grid>
                 </Grid>
               </React.Fragment>

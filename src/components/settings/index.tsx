@@ -144,6 +144,14 @@ export const _foregroundNotification = () => {
   return localStorage.getItem("foregroundNotification") === "true";
 };
 
+export const _lastSyncDate = () => {
+  return localStorage.getItem("lastSyncDate_" + _currentStore() + "." + _isSingle()) || "";
+};
+
+export const _setLastSyncDate = (date: string) => {
+  return localStorage.setItem("lastSyncDate_" + +_currentStore() + "." + _isSingle(), date);
+};
+
 export const _chartColor = () => {
   const c = _currentTheme();
   if (c === "dark" || c === "deepsea") {

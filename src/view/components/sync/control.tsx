@@ -3,12 +3,7 @@ import { FormattedMessage } from "react-intl";
 import Button from "@mui/material/Button";
 import fbActions from "@/components/firebase/actions";
 import Typography from "@mui/material/Typography";
-import {
-  _currentStore,
-  _isSingle,
-  _autoSync,
-  _setAutoSync,
-} from "@/components/settings";
+import { _currentStore, _isSingle, _autoSync, _setAutoSync } from "@/components/settings";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { scoresDB, scoreHistoryDB } from "@/components/indexedDB";
 import { CircularProgress } from "@mui/material/";
@@ -54,9 +49,7 @@ class SyncControlScreen extends React.Component<
 
   constructor(props: { userData: any; toggleSending: () => void }) {
     super(props);
-    this.fbLoader
-      .setColName(`${_currentStore()}_${_isSingle()}`)
-      .setDocName(props.userData.uid);
+    this.fbLoader.setColName(`${_currentStore()}_${_isSingle()}`).setDocName(props.userData.uid);
     this.fbA.v2SetUserCollection().setDocName(props.userData.uid);
     this.state = {
       isLoading: true,
@@ -102,6 +95,8 @@ class SyncControlScreen extends React.Component<
       this.toggleErrorSnack(res.reason);
       return this.setState({ isLoading: false });
     }
+    this.fbLoader.setSaveMeta(this.props.userData.uid, _currentStore(), _isSingle());
+
     this.setState({ isLoading: false, scoreData: await this.fbLoader.load() });
   };
 
@@ -120,6 +115,7 @@ class SyncControlScreen extends React.Component<
     await new scoresDB().recalculateBPI([], true, this.ref);
     await new scoreHistoryDB().recalculateBPI([], true, this.ref);
     this.props.toggleSending();
+    this.fbLoader.setSaveMeta(this.props.userData.uid, _currentStore(), _isSingle(), true);
     this.setState({ isLoading: false });
   };
 
@@ -131,12 +127,11 @@ class SyncControlScreen extends React.Component<
     this.setState({
       snack: { open: !this.state.snack.open, message: mes || null },
     });
-  cancelDialog = () =>
-    this.setState({ uploadConfirm: false, downloadConfirm: false });
+  cancelDialog = () => this.setState({ uploadConfirm: false, downloadConfirm: false });
 
   render() {
-    const { isLoading, scoreData, snack, uploadConfirm, downloadConfirm } =
-      this.state;
+    const { isLoading, scoreData, snack, uploadConfirm, downloadConfirm } = this.state;
+
     const isOlderVersionNotification = () => {
       if (!isOlderVersion()) return null;
       return (
@@ -178,9 +173,7 @@ class SyncControlScreen extends React.Component<
               }}
             >
               <AlertTitle>Auto-syncが無効です</AlertTitle>
-              <p>
-                サーバー上のスコアデータを最新のまま維持するために、Auto-syncを有効にしてください。
-              </p>
+              <p>サーバー上のスコアデータを最新のまま維持するために、Auto-syncを有効にしてください。</p>
               <Button
                 fullWidth
                 variant="outlined"
@@ -201,11 +194,7 @@ class SyncControlScreen extends React.Component<
         return (
           <React.Fragment>
             <Divider style={{ marginTop: 15 }} />
-            <Alert
-              severity="success"
-              variant="outlined"
-              style={{ border: "none", margin: 0, padding: 0 }}
-            >
+            <Alert severity="success" variant="outlined" style={{ border: "none", margin: 0, padding: 0 }}>
               <AlertTitle>Auto-syncを有効にしました</AlertTitle>
               <p>設定→Auto-syncより、いつでもこの機能を無効にできます。</p>
             </Alert>
@@ -222,16 +211,10 @@ class SyncControlScreen extends React.Component<
           </Grid>
           <Grid item xs={6}>
             <ButtonGroup fullWidth color="secondary">
-              <Button
-                onClick={() => this.setState({ uploadConfirm: true })}
-                disabled={isLoading || isOlderVersion()}
-              >
+              <Button onClick={() => this.setState({ uploadConfirm: true })} disabled={isLoading || isOlderVersion()}>
                 Upload
               </Button>
-              <Button
-                onClick={() => this.setState({ downloadConfirm: true })}
-                disabled={isLoading}
-              >
+              <Button onClick={() => this.setState({ downloadConfirm: true })} disabled={isLoading}>
                 Download
               </Button>
             </ButtonGroup>
@@ -239,35 +222,20 @@ class SyncControlScreen extends React.Component<
         </Grid>
         <div style={{ margin: "15px 0" }}>
           {isLoading && (
-            <Alert
-              variant="outlined"
-              severity="warning"
-              style={{ borderColor: "#663c0045" }}
-              icon={<CircularProgress color="secondary" />}
-            >
+            <Alert variant="outlined" severity="warning" style={{ borderColor: "#663c0045" }} icon={<CircularProgress color="secondary" />}>
               <FormattedMessage id="Sync.Control.processing" />
               <br />
               <span ref={this.ref} id="_progressText" />
             </Alert>
           )}
           {!isLoading && scoreData === null && (
-            <Alert
-              variant="outlined"
-              severity="warning"
-              style={{ borderColor: "#663c0045" }}
-              icon={false}
-            >
+            <Alert variant="outlined" severity="warning" style={{ borderColor: "#663c0045" }} icon={false}>
               <FormattedMessage id="Sync.Control.nodata" />
               {isOlderVersionNotification()}
             </Alert>
           )}
           {!isLoading && scoreData !== null && (
-            <Alert
-              variant="outlined"
-              severity="warning"
-              style={{ borderColor: "#663c0045" }}
-              icon={false}
-            >
+            <Alert variant="outlined" severity="warning" style={{ borderColor: "#663c0045" }} icon={false}>
               <span id="_progressText" style={{ display: "none" }} />
               最終同期 : {scoreData.timeStamp}
               <br />
@@ -277,19 +245,9 @@ class SyncControlScreen extends React.Component<
             </Alert>
           )}
         </div>
-        <ShowSnackBar
-          message={snack.message}
-          variant="warning"
-          handleClose={this.toggleErrorSnack}
-          open={snack.open}
-          autoHideDuration={3000}
-        />
-        {downloadConfirm && (
-          <ConfirmDialog next={this.download} cancel={this.cancelDialog} />
-        )}
-        {uploadConfirm && (
-          <ConfirmDialog next={this.upload} cancel={this.cancelDialog} />
-        )}
+        <ShowSnackBar message={snack.message} variant="warning" handleClose={this.toggleErrorSnack} open={snack.open} autoHideDuration={3000} />
+        {downloadConfirm && <ConfirmDialog next={this.download} cancel={this.cancelDialog} />}
+        {uploadConfirm && <ConfirmDialog next={this.upload} cancel={this.cancelDialog} />}
       </React.Fragment>
     );
   }
@@ -297,10 +255,7 @@ class SyncControlScreen extends React.Component<
 
 export default SyncControlScreen;
 
-const ConfirmDialog: React.FC<{ next: () => void; cancel: () => void }> = ({
-  next,
-  cancel,
-}) => (
+const ConfirmDialog: React.FC<{ next: () => void; cancel: () => void }> = ({ next, cancel }) => (
   <Dialog open={true} onClose={cancel}>
     <DialogTitle>確認</DialogTitle>
     <DialogContent>

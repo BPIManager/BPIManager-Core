@@ -50,6 +50,7 @@ import { getMessaging, onMessage } from "firebase/messaging";
 import fb from "@/components/firebase";
 import ArenaMatchWatcher from "@/view/components/arenaMatch/watchDog";
 import { UserIcon } from "../common/icon";
+import SyncStatus from "./syncStatus";
 
 interface navBars {
   to: string;
@@ -190,10 +191,7 @@ interface HideOnScrollProps {
   window?: () => Window;
 }
 
-const GlobalHeader: React.FC<
-  { global: any; classes: any; theme: any; children: any } & HideOnScrollProps &
-    RouteComponentProps
-> = (props) => {
+const GlobalHeader: React.FC<{ global: any; classes: any; theme: any; children: any } & HideOnScrollProps & RouteComponentProps> = (props) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isOpenSongs, setIsOpenSongs] = useState<boolean>(true);
   const [isOpenMyStat, setIsOpenMyStat] = useState<boolean>(false);
@@ -389,14 +387,7 @@ const GlobalHeader: React.FC<
           @BPIManagerから最新情報を受け取る
         </RefLink>
         <div style={{ marginTop: 10 }} />
-        <Button
-          color="secondary"
-          size="small"
-          target="_blank"
-          href="https://github.com/BPIManager"
-          variant="outlined"
-          startIcon={<GitHubIcon />}
-        >
+        <Button color="secondary" size="small" target="_blank" href="https://github.com/BPIManager" variant="outlined" startIcon={<GitHubIcon />}>
           Available on GitHub
         </Button>
       </Typography>
@@ -406,32 +397,11 @@ const GlobalHeader: React.FC<
   return (
     <div className={classes.root}>
       <ArenaRankCheck />
-      <AppBar
-        className={
-          window.location.href.split("/").pop() === ""
-            ? "appBarIndex " + classes.appBar + " apbar"
-            : classes.appBar + " apbar"
-        }
-      >
+      <AppBar className={window.location.href.split("/").pop() === "" ? "appBarIndex " + classes.appBar + " apbar" : classes.appBar + " apbar"}>
         <Toolbar>
           <Typography variant="h6" style={{ flexGrow: 1 }}>
-            {(page.length === 2 ||
-              page[1] === "lists" ||
-              page[1] === "notes" ||
-              page[1] === "songs" ||
-              page[1] === "sync" ||
-              page[1] === "arena" ||
-              page[1] === "history" ||
-              page[1] === "data") && <FormattedMessage id={currentPage()} />}
-            {page.length > 2 &&
-              page[1] !== "lists" &&
-              page[1] !== "notes" &&
-              page[1] !== "songs" &&
-              page[1] !== "sync" &&
-              page[1] !== "arena" &&
-              page[1] !== "history" &&
-              page[1] !== "data" &&
-              currentPage()}
+            {(page.length === 2 || page[1] === "lists" || page[1] === "notes" || page[1] === "songs" || page[1] === "sync" || page[1] === "arena" || page[1] === "history" || page[1] === "data") && <FormattedMessage id={currentPage()} />}
+            {page.length > 2 && page[1] !== "lists" && page[1] !== "notes" && page[1] !== "songs" && page[1] !== "sync" && page[1] !== "arena" && page[1] !== "history" && page[1] !== "data" && currentPage()}
           </Typography>
           {user && (
             <IconButton
@@ -441,15 +411,7 @@ const GlobalHeader: React.FC<
               color="inherit"
               size="large"
             >
-              <UserIcon
-                size={32}
-                disableZoom
-                defaultURL={
-                  user.photoURL ? user.photoURL.replace("_normal", "") : ""
-                }
-                text={user.displayName || "Private-mode User"}
-                altURL={getAltTwitterIcon(user)}
-              />
+              <UserIcon size={32} disableZoom defaultURL={user.photoURL ? user.photoURL.replace("_normal", "") : ""} text={user.displayName || "Private-mode User"} altURL={getAltTwitterIcon(user)} />
             </IconButton>
           )}
           {!user && (
@@ -509,30 +471,17 @@ const GlobalHeader: React.FC<
           </Drawer>
         </Hidden>
       </nav>
-      <main
-        className={
-          classes.content +
-          (window.location.href.match("arena/") ? " arenaDetail" : "")
-        }
-        style={{ width: "100%", marginBottom: "15px" }}
-      >
+      <main className={classes.content + (window.location.href.match("arena/") ? " arenaDetail" : "")} style={{ width: "100%", marginBottom: "15px" }}>
         {props.children}
       </main>
+      <SyncStatus />
       <ArenaMatchWatcher />
-      <ShowSnackBar
-        message={"実行中の処理があるため続行できません"}
-        variant="warning"
-        handleClose={() => setErrorSnack(!errorSnack)}
-        open={errorSnack}
-        autoHideDuration={3000}
-      />
+      <ShowSnackBar message={"実行中の処理があるため続行できません"} variant="warning" handleClose={() => setErrorSnack(!errorSnack)} open={errorSnack} autoHideDuration={3000} />
     </div>
   );
 };
 
-export default withRouter(
-  withStyles(styles, { withTheme: true })(GlobalHeader)
-);
+export default withRouter(withStyles(styles, { withTheme: true })(GlobalHeader));
 
 const InnerList: React.FC<{
   parent: {
@@ -547,22 +496,9 @@ const InnerList: React.FC<{
   toggleNav: () => void;
   isPerment: boolean;
 }> = (props) => {
-  const {
-    child,
-    handleClick,
-    isOpen,
-    history,
-    classes,
-    parent,
-    toggleNav,
-    isPerment,
-  } = props;
+  const { child, handleClick, isOpen, history, classes, parent, toggleNav, isPerment } = props;
   return (
-    <List
-      style={{ width: Number(drawerWidth - 1) + "px" }}
-      disablePadding
-      key={parent.id}
-    >
+    <List style={{ width: Number(drawerWidth - 1) + "px" }} disablePadding key={parent.id}>
       <ListItem button onClick={handleClick}>
         <ListItemIcon>{parent.icon}</ListItemIcon>
         <ListItemText primary={<FormattedMessage id={parent.id} />} />

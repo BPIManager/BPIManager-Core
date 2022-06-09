@@ -1,5 +1,5 @@
 import fb, { auth, twitter, google } from ".";
-import { Auth, User, UserCredential, getAdditionalUserInfo, signOut, updateProfile, getRedirectResult, signInWithRedirect, reauthenticateWithCredential } from "firebase/auth";
+import { Auth, User, UserCredential, getAdditionalUserInfo, signOut, updateProfile, getRedirectResult, signInWithRedirect } from "firebase/auth";
 import {
   getFirestore,
   FieldValue,
@@ -35,7 +35,7 @@ import { scoresDB, scoreHistoryDB } from "../indexedDB";
 import platform from "platform";
 import { rivalStoreData, DBRivalStoreData, songData } from "../../types/data";
 import bpiCalcuator from "../bpi";
-import { _currentStore } from "../settings";
+import { _currentStore, _setLastSyncDate } from "../settings";
 import { messanger } from "./message";
 import { difficultyDiscriminator } from "../songs/filter";
 import totalBPI from "../bpi/totalBPI";
@@ -768,7 +768,28 @@ export default class fbActions {
     }
   }
 
-  // Dangerous Zone
-
   deleteAll() {}
+
+  async setSaveMeta(uid: string, store: string, isSingle: number, whenDownload: boolean = false) {
+    if (!whenDownload) {
+      const targetDoc = doc(db, "savedataMeta", uid);
+      await setDoc(
+        targetDoc,
+        {
+          [store + "_" + isSingle]: serverTimestamp(),
+        },
+        { merge: true }
+      );
+    }
+    const x = await this.loadSaveMeta(uid);
+    if (x && x[store + "_" + isSingle]) {
+      _setLastSyncDate(x[store + "_" + isSingle].toDate());
+    }
+    return;
+  }
+
+  async loadSaveMeta(uid: string) {
+    const targetDoc = doc(db, "savedataMeta", uid);
+    return await (await getDoc(targetDoc)).data();
+  }
 }
