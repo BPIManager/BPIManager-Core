@@ -58,10 +58,7 @@ interface stateInt {
   clearType: number[];
 }
 
-class RivalChallengeLetters extends React.Component<
-  P & RouteComponentProps,
-  stateInt
-> {
+class RivalChallengeLetters extends React.Component<P & RouteComponentProps, stateInt> {
   constructor(props: P & RouteComponentProps) {
     super(props);
     this.state = {
@@ -95,9 +92,7 @@ class RivalChallengeLetters extends React.Component<
     const l = await loader();
     const allSongsRawData = await new songsDB().getAll(_isSingle());
     for (let i = 0; i < allSongsRawData.length; ++i) {
-      const prefix: string = difficultyDiscriminator(
-        allSongsRawData[i]["difficulty"]
-      );
+      const prefix: string = difficultyDiscriminator(allSongsRawData[i]["difficulty"]);
       allSongs[allSongsRawData[i]["title"] + prefix] = allSongsRawData[i];
     }
     this.setState({
@@ -108,20 +103,16 @@ class RivalChallengeLetters extends React.Component<
     });
   }
 
-  handleChange =
-    (name: string, target: string) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      this.handleExec(name, e.target.checked, target);
-    };
+  handleChange = (name: string, target: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    this.handleExec(name, e.target.checked, target);
+  };
 
   handleExec = (name: string, checked: boolean, target: string) => {
     let newState = this.state;
     if (checked) {
       newState["options"][target].push(name);
     } else {
-      newState["options"][target] = newState["options"][target].filter(
-        (t: string) => t !== name
-      );
+      newState["options"][target] = newState["options"][target].filter((t: string) => t !== name);
     }
     return this.setState({
       scoreData: this.songFilter(newState),
@@ -159,18 +150,14 @@ class RivalChallengeLetters extends React.Component<
         newState["options"]["difficulty"].some((item: string) => {
           return diffs[Number(item)] === data.difficulty;
         }) &&
-        data.title
-          .toLowerCase()
-          .indexOf(newState["filterByName"].toLowerCase()) > -1
+        data.title.toLowerCase().indexOf(newState["filterByName"].toLowerCase()) > -1
       );
     });
   };
 
-  handleToggleFilterScreen = () =>
-    this.setState({ filterOpen: !this.state.filterOpen });
+  handleToggleFilterScreen = () => this.setState({ filterOpen: !this.state.filterOpen });
 
-  handleChangePage = (newPage: number): void =>
-    this.setState({ page: newPage });
+  handleChangePage = (newPage: number): void => this.setState({ page: newPage });
 
   applyFilter = (state: { bpm: B; versions: number[] }): void => {
     let newState = this.clone();
@@ -188,9 +175,7 @@ class RivalChallengeLetters extends React.Component<
     return new commonFunc().set(this.state).clone();
   };
 
-  handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | null
-  ) => {
+  handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | null) => {
     let newState = this.clone();
     newState.filterByName = e ? e.target.value : "";
     return this.setState({
@@ -244,35 +229,12 @@ class RivalChallengeLetters extends React.Component<
   };
 
   render() {
-    const {
-      isLoading,
-      scoreData,
-      options,
-      page,
-      full,
-      filterOpen,
-      versions,
-      filterByName,
-      orderMode,
-      orderTitle,
-      clearType,
-    } = this.state;
-    const orders = [
-      "勝率",
-      "勝利数",
-      "敗北数",
-      "曲名",
-      "レベル",
-      "最終更新日時",
-    ];
+    const { isLoading, scoreData, options, page, full, filterOpen, versions, filterByName, orderMode, orderTitle, clearType } = this.state;
+    const orders = ["勝率", "勝利数", "敗北数", "曲名", "レベル", "最終更新日時"];
     if (isLoading) {
       return <Loader />;
     }
-    if (
-      !isLoading &&
-      (!scoreData || scoreData.length === 0) &&
-      filterByName === ""
-    ) {
+    if (!isLoading && (!scoreData || scoreData.length === 0) && filterByName === "") {
       return (
         <Container fixed className="commonLayout">
           <div
@@ -336,11 +298,7 @@ class RivalChallengeLetters extends React.Component<
       <Container fixed className="commonLayout">
         <Grid container style={{ margin: "5px 0" }}>
           <Grid item xs={10}>
-            <FormControl
-              component="fieldset"
-              style={{ width: "100%" }}
-              variant="standard"
-            >
+            <FormControl component="fieldset" style={{ width: "100%" }} variant="standard">
               <InputLabel>
                 <FormattedMessage id="Songs.filterByName" />
               </InputLabel>
@@ -379,34 +337,11 @@ class RivalChallengeLetters extends React.Component<
             </Button>
           </Grid>
         </Grid>
-        <OrderControl
-          orderTitles={orders}
-          orderMode={orderMode}
-          orderTitle={orderTitle}
-          handleOrderModeChange={this.handleOrderModeChange}
-          handleOrderTitleChange={this.handleOrderTitleChange}
-        />
-        <FilterByLevelAndDiff
-          options={options}
-          handleChange={this.handleChange}
-        />
+        <OrderControl orderTitles={orders} orderMode={orderMode} orderTitle={orderTitle} handleOrderModeChange={this.handleOrderModeChange} handleOrderTitleChange={this.handleOrderTitleChange} />
+        <FilterByLevelAndDiff options={options} handleChange={this.handleChange} />
 
-        <LettersTable
-          full={full}
-          page={page}
-          handleChangePage={this.handleChangePage}
-          data={this.sortedData()}
-          isLoading={isLoading}
-        />
-        {filterOpen && (
-          <SongsFilter
-            versions={versions}
-            clearType={clearType}
-            handleToggle={this.handleToggleFilterScreen}
-            applyFilter={this.applyFilter}
-            bpm={this.state.bpm}
-          />
-        )}
+        <LettersTable full={full} page={page} handleChangePage={this.handleChangePage} data={this.sortedData()} isLoading={isLoading} />
+        {filterOpen && <SongsFilter versions={versions} clearType={clearType} handleToggle={this.handleToggleFilterScreen} applyFilter={this.applyFilter} bpm={this.state.bpm} />}
       </Container>
     );
   }

@@ -66,12 +66,8 @@ td.auto {
   width: auto !important;
 }
 
-.MuiTableBody-root.rival
-  .MuiTableRow-root:not(.rivalBody)
-  th.MuiTableCell-root.MuiTableCell-head:first-child,
-.MuiTableBody-root.rival
-  .MuiTableRow-root:not(.rivalBody)
-  td.MuiTableCell-root.MuiTableCell-body:first-child {
+.MuiTableBody-root.rival .MuiTableRow-root:not(.rivalBody) th.MuiTableCell-root.MuiTableCell-head:first-child,
+.MuiTableBody-root.rival .MuiTableRow-root:not(.rivalBody) td.MuiTableCell-root.MuiTableCell-body:first-child {
   padding: 20px 8px !important;
 }
 
@@ -136,8 +132,7 @@ a.link:hover {
   text-decoration: underline;
 }
 
-#songsVil
-  span.MuiButtonBase-root.MuiIconButton-root.MuiCheckbox-root.MuiCheckbox-colorSecondary.MuiIconButton-colorSecondary {
+#songsVil span.MuiButtonBase-root.MuiIconButton-root.MuiCheckbox-root.MuiCheckbox-colorSecondary.MuiIconButton-colorSecondary {
   padding: 6px !important;
 }
 
@@ -304,19 +299,11 @@ legend.MuiFormLabel-root {
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
-#__light
-  #songsVil
-  .traditionalMode
-  .MuiTableBody-root
-  .MuiTableCell-root:nth-child(3) {
+#__light #songsVil .traditionalMode .MuiTableBody-root .MuiTableCell-root:nth-child(3) {
   color: #c50000;
 }
 
-#__dark
-  #songsVil
-  .traditionalMode
-  .MuiTableBody-root
-  .MuiTableCell-root:nth-child(3) {
+#__dark #songsVil .traditionalMode .MuiTableBody-root .MuiTableCell-root:nth-child(3) {
   color: #ffdbdb;
 }
 
@@ -1009,7 +996,7 @@ text.react-calendar-heatmap-weekday-label {
   margin-bottom: 0 !important;
 }
 
-.MuiSnackbarContent-message {
+.arenaMatchSnackBar .MuiSnackbarContent-message {
   width: 100%;
 }
 

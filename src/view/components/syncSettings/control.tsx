@@ -337,20 +337,10 @@ class UserDetail extends React.Component<
                 secondary: "アカウント プロバイダ",
               },
             ].map((item) => (
-              <ListItem style={{ padding: "0 16px" }}>
+              <ListItem style={{ padding: "0 16px" }} key={item.primary}>
                 <ListItemText primary={item.primary} secondary={item.secondary} />
               </ListItem>
             ))}
-            <ListItem style={{ padding: "0 16px" }}>
-              <ListItemText
-                primary={<></>}
-                secondary={
-                  <span onClick={() => this.props.history.push("/sync/delete")} style={{ textAlign: "center", display: "block" }}>
-                    アカウント削除
-                  </span>
-                }
-              />
-            </ListItem>
           </List>
         </DialogContent>
         <DialogActions>
