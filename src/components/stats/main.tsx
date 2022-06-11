@@ -162,7 +162,7 @@ export default class statMain {
   async eachDaySum(period: number, last?: string | Date, propdata?: any, range: number = 10): Promise<perDate[]> {
     const data = propdata || (await new scoreHistoryDB().getAll(String(this.targetLevel)));
     let eachDaySum: perDate[] = [];
-    let eachDayShift: { [key: string]: { [key: string]: number } } = {};
+    let eachDayShift: { [key: string]: shiftType[] } = {};
 
     const sortByDate = (data: historyData[]): { [key: string]: historyData[] } => {
       return data.reduce((groups: { [key: string]: historyData[] }, item: historyData) => {
@@ -197,13 +197,17 @@ export default class statMain {
     let lastDay: string;
 
     const songsLen = await new songsDB().getSongsNum(String(this.targetLevel));
-    Object.keys(allDiffs).map((item, i) => {
+    Object.keys(allDiffs).map((item) => {
       if (!last || dayjs(item).isBefore(last)) {
-        eachDayShift[item] = lastDay ? Object.assign({}, eachDayShift[lastDay]) : {};
+        eachDayShift[item] = lastDay ? eachDayShift[lastDay].concat() : [];
         const p = allDiffs[item].reduce((a: number[], val: historyData) => {
-          const songName = val.title + val.difficulty;
-          eachDayShift[item][songName] = val.BPI;
-
+          eachDayShift[item] = eachDayShift[item].filter((elm) => {
+            return elm.title !== String(val.title + val.difficulty);
+          }); //重複削除
+          eachDayShift[item].push({
+            title: val.title + val.difficulty,
+            bpi: val.BPI,
+          }); //改めて追加
           if (val.BPI) {
             a.push(val.BPI);
           }
@@ -225,12 +229,13 @@ export default class statMain {
       }
       return 0;
     });
+    console.log(eachDaySum);
     return eachDaySum.sort((a, b) => timeCompare(a.name, b.name)).slice(-1 * range);
   }
 
-  getBPIShifts = (object: { [key: string]: number }) => {
-    return Object.keys(object).reduce((groups: number[], val: string) => {
-      groups.push(object[val]);
+  getBPIShifts = (array: shiftType[]) => {
+    return array.reduce((groups: number[], val: shiftType) => {
+      groups.push(val.bpi);
       return groups;
     }, []);
   };

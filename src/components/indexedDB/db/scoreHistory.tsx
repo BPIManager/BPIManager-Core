@@ -237,8 +237,8 @@ export default class db extends storageWrapper {
   getSpecificSong = (songTitle: string) => this.scoreHistory.where("title").equals(songTitle).toArray();
   modifyBPI = (t: historyData, currentBPI: B) =>
     this.scoreHistory
-      .where("[title+storedAt+difficulty+isSingle]")
-      .equals([t.title, t.storedAt, t.difficulty, t.isSingle])
+      .where("[title+storedAt+difficulty+isSingle+updatedAt]")
+      .equals([t.title, t.storedAt, t.difficulty, t.isSingle, t.updatedAt])
       .modify({ BPI: !currentBPI.error ? currentBPI.bpi : -15 });
 
   async recalculateBPI(updatedSongs: string[] = [], force: boolean = false, ref: React.MutableRefObject<any> | null = null) {
