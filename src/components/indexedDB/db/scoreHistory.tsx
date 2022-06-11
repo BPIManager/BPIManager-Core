@@ -2,12 +2,7 @@ import { B } from "@/components/bpi";
 import timeFormatter, { timeCompare } from "@/components/common/timeFormatter";
 import { _currentStore, _isSingle } from "@/components/settings";
 import { _pText } from "@/components/settings/updateDef";
-import {
-  difficultyDiscriminator,
-  difficultyParser,
-  diffsUpperCase,
-  _prefixFromNum,
-} from "@/components/songs/filter";
+import { difficultyDiscriminator, difficultyParser, diffsUpperCase, _prefixFromNum } from "@/components/songs/filter";
 import { historyData, scoreData, songData } from "@/types/data";
 import storageWrapper from "./wrapper";
 
@@ -50,15 +45,9 @@ export default class db extends storageWrapper {
   }
 
   //legacy
-  add(
-    score: scoreData | null,
-    data: { currentBPI: number; exScore: number },
-    forceUpdateTime: boolean = false
-  ): boolean {
+  add(score: scoreData | null, data: { currentBPI: number; exScore: number }, forceUpdateTime: boolean = false): boolean {
     try {
-      console.warn(
-        "scoreHistoryDB.add is deprecated method. Use scoreHistoryDB._add instead."
-      );
+      console.warn("scoreHistoryDB.add is deprecated method. Use scoreHistoryDB._add instead.");
       if (!score) {
         return false;
       }
@@ -80,42 +69,25 @@ export default class db extends storageWrapper {
   }
 
   async removeNaNItems(): Promise<number> {
-    return await this.scoreHistory
-      .where({ storedAt: _currentStore(), BPI: NaN })
-      .delete();
+    return await this.scoreHistory.where({ storedAt: _currentStore(), BPI: NaN }).delete();
   }
 
-  async removeSpecificItemAtAllStores(
-    title: string,
-    diff?: string
-  ): Promise<number> {
+  async removeSpecificItemAtAllStores(title: string, diff?: string): Promise<number> {
     if (diff) {
-      return await this.scores
-        .where({ title: title, difficulty: difficultyDiscriminator(diff) })
-        .delete();
+      return await this.scores.where({ title: title, difficulty: difficultyDiscriminator(diff) }).delete();
     }
     return await this.scoreHistory.where({ title: title }).delete();
   }
 
-  async check(
-    item: scoreData
-  ): Promise<{ willUpdate: boolean; lastScore: number }> {
+  async check(item: scoreData): Promise<{ willUpdate: boolean; lastScore: number }> {
     try {
       const t = await this.scoreHistory
         .where("[title+storedAt+difficulty+isSingle]")
-        .equals([
-          item["title"],
-          item["storedAt"],
-          item["difficulty"],
-          item["isSingle"],
-        ])
+        .equals([item["title"], item["storedAt"], item["difficulty"], item["isSingle"]])
         .toArray()
         .then((t) => t.sort((a, b) => timeCompare(b.updatedAt, a.updatedAt)));
       return {
-        willUpdate:
-          t.length === 0
-            ? true
-            : Number(item.exScore) > Number(t[t.length - 1].exScore),
+        willUpdate: t.length === 0 ? true : Number(item.exScore) > Number(t[t.length - 1].exScore),
         lastScore: t.length === 0 ? -1 : t[t.length - 1].exScore,
       };
     } catch (e: any) {
@@ -143,9 +115,7 @@ export default class db extends storageWrapper {
 
   async getAllInSpecificVersion(): Promise<any[]> {
     try {
-      return await this.scoreHistory
-        .where({ storedAt: this.currentStore, isSingle: this.isSingle })
-        .toArray();
+      return await this.scoreHistory.where({ storedAt: this.currentStore, isSingle: this.isSingle }).toArray();
     } catch (e: any) {
       console.error(e);
       return [];
@@ -264,26 +234,18 @@ export default class db extends storageWrapper {
     return await this.getAcrossVersion(m);
   }
 
-  getSpecificSong = (songTitle: string) =>
-    this.scoreHistory.where("title").equals(songTitle).toArray();
+  getSpecificSong = (songTitle: string) => this.scoreHistory.where("title").equals(songTitle).toArray();
   modifyBPI = (t: historyData, currentBPI: B) =>
     this.scoreHistory
-      .where("num")
-      .equals([t.title, t.difficulty, t.storedAt, t.isSingle])
-      .modify({ currentBPI: !currentBPI.error ? currentBPI.bpi : -15 });
+      .where("[title+storedAt+difficulty+isSingle]")
+      .equals([t.title, t.storedAt, t.difficulty, t.isSingle])
+      .modify({ BPI: !currentBPI.error ? currentBPI.bpi : -15 });
 
-  async recalculateBPI(
-    updatedSongs: string[] = [],
-    force: boolean = false,
-    ref: React.MutableRefObject<any> | null = null
-  ) {
+  async recalculateBPI(updatedSongs: string[] = [], force: boolean = false, ref: React.MutableRefObject<any> | null = null) {
     try {
       const self = this;
       this.setCalcClass();
-      const array = await this.scoreHistory
-        .where("title")
-        .notEqual("")
-        .toArray();
+      const array = await this.scoreHistory.where("title").notEqual("").toArray();
       //modify使って書き直したい
       for (let i = 0; i < array.length; ++i) {
         const t = array[i];
@@ -293,25 +255,11 @@ export default class db extends storageWrapper {
         if (updatedSongs.length === 0 && force === false) {
           continue;
         }
-        if (
-          updatedSongs.length > 0 &&
-          updatedSongs.indexOf(
-            t["title"] +
-              difficultyParser(t["difficulty"], Number(t["isSingle"])) +
-              t["isSingle"]
-          ) === -1
-        ) {
+        if (updatedSongs.length > 0 && updatedSongs.indexOf(t["title"] + difficultyParser(t["difficulty"], Number(t["isSingle"])) + t["isSingle"]) === -1) {
           continue;
         }
-        const bpi = await self.calculator
-          .setIsSingle(t.isSingle)
-          .calc(t.title, difficultyParser(t.difficulty, t.isSingle), t.exScore);
-        _pText(
-          ref,
-          "ScoreHistory:BPI更新中 " +
-            t["title"] +
-            _prefixFromNum(t["difficulty"])
-        );
+        const bpi = await self.calculator.setIsSingle(t.isSingle).calc(t.title, difficultyParser(t.difficulty, t.isSingle), t.exScore);
+        _pText(ref, "ScoreHistory:BPI更新中 " + t["title"] + _prefixFromNum(t["difficulty"]));
         this.modifyBPI(t, bpi);
       }
     } catch (e: any) {
@@ -324,9 +272,7 @@ export default class db extends storageWrapper {
 
   async setDataWithTransaction(history: any[]) {
     await this.transaction("rw", this.scoreHistory, async () => {
-      await this.scoreHistory
-        .where({ storedAt: _currentStore(), isSingle: _isSingle() })
-        .delete();
+      await this.scoreHistory.where({ storedAt: _currentStore(), isSingle: _isSingle() }).delete();
       this.scoreHistory.bulkPut(history);
     }).catch((e) => {
       console.log(e);
