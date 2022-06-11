@@ -1,11 +1,6 @@
 import { groupedArray, perDate } from "../../types/stats";
 import { songsDB, scoresDB, scoreHistoryDB } from "../indexedDB";
-import {
-  songData,
-  scoreData,
-  historyData,
-  rivalScoreData,
-} from "../../types/data";
+import { songData, scoreData, historyData, rivalScoreData } from "../../types/data";
 import { _isSingle, _currentStore } from "../settings";
 import { _DiscriminateRanksByNumber } from "../common/djRank";
 import { difficultyDiscriminator, difficultyParser } from "../songs/filter";
@@ -42,10 +37,7 @@ export default class statMain {
 
   isLast: boolean = false;
 
-  getData = (
-    targetLevel: number = this.targetLevel,
-    isLast: boolean = this.isLast
-  ) => {
+  getData = (targetLevel: number = this.targetLevel, isLast: boolean = this.isLast) => {
     if (targetLevel === 12) {
       return isLast ? this.twelvesLast : this.twelves;
     }
@@ -55,20 +47,13 @@ export default class statMain {
     return this.elevens;
   };
 
-  reduceData = (data: scoreData[]) =>
-    data.filter((item) => item.currentBPI !== Infinity);
+  reduceData = (data: scoreData[]) => data.filter((item) => item.currentBPI !== Infinity);
 
   async load(_derived?: rivalScoreData[]): Promise<this> {
     await this.db.loadStore();
-    this.songs = (await new songsDB().getAll(isSingle)).filter(
-      (item: songData) => item.wr !== -1
-    );
-    this.twelves = this.reduceData(
-      await this.db.getItemsBySongDifficulty("12")
-    );
-    this.elevens = this.reduceData(
-      await this.db.getItemsBySongDifficulty("11")
-    );
+    this.songs = (await new songsDB().getAll(isSingle)).filter((item: songData) => item.wr !== -1);
+    this.twelves = this.reduceData(await this.db.getItemsBySongDifficulty("12"));
+    this.elevens = this.reduceData(await this.db.getItemsBySongDifficulty("11"));
     return this;
   }
 
@@ -80,20 +65,14 @@ export default class statMain {
   }
 
   setPropData(_derived: any) {
-    this.twelves = _derived.filter(
-      (item: any) => item.difficultyLevel === "12"
-    );
-    this.elevens = _derived.filter(
-      (item: any) => item.difficultyLevel === "11"
-    );
+    this.twelves = _derived.filter((item: any) => item.difficultyLevel === "12");
+    this.elevens = _derived.filter((item: any) => item.difficultyLevel === "11");
     return this;
   }
 
   async updatedAtToday() {
     const scores = await new scoresDB(isSingle, _currentStore()).getAll();
-    return scores.filter((item: scoreData) =>
-      isSameDay(item.updatedAt, new Date())
-    );
+    return scores.filter((item: scoreData) => isSameDay(item.updatedAt, new Date()));
   }
 
   async songsByClearState() {
@@ -107,11 +86,7 @@ export default class statMain {
       { name: "FC", "☆11": 0, "☆12": 0 },
     ];
     this.songs.reduce((groups: groupedArray[], item: songData) => {
-      const score = this.songFinder(
-        item["difficultyLevel"],
-        item["title"],
-        item["difficulty"]
-      );
+      const score = this.songFinder(item["difficultyLevel"], item["title"], item["difficulty"]);
       if (score) {
         const lev = ("☆" + item["difficultyLevel"]) as "☆11" | "☆12";
         if (score.clearState > 0) {
@@ -149,11 +124,7 @@ export default class statMain {
     ];
 
     this.songs.reduce((groups: groupedArray[], item: songData) => {
-      const score = this.songFinder(
-        item["difficultyLevel"],
-        item["title"],
-        item["difficulty"]
-      );
+      const score = this.songFinder(item["difficultyLevel"], item["title"], item["difficulty"]);
       if (score) {
         const p = score.exScore / (item["notes"] * 2);
         const lev = ("☆" + item["difficultyLevel"]) as "☆11" | "☆12";
@@ -168,8 +139,7 @@ export default class statMain {
   async groupedByLevel() {
     let bpis = BPITicker;
     let groupedByLevel = [];
-    const exec = (diff: number, isLast: boolean) =>
-      this.groupBy(this.bpiMapper(this.getData(diff, isLast)));
+    const exec = (diff: number, isLast: boolean) => this.groupBy(this.bpiMapper(this.getData(diff, isLast)));
 
     for (let i = 0; i < bpis.length; ++i) {
       let obj: {
@@ -189,34 +159,23 @@ export default class statMain {
     return groupedByLevel;
   }
 
-  async eachDaySum(
-    period: number,
-    last?: string | Date,
-    propdata?: any,
-    range: number = 10
-  ): Promise<perDate[]> {
-    const data =
-      propdata || (await new scoreHistoryDB().getAll(String(this.targetLevel)));
+  async eachDaySum(period: number, last?: string | Date, propdata?: any, range: number = 10): Promise<perDate[]> {
+    const data = propdata || (await new scoreHistoryDB().getAll(String(this.targetLevel)));
     let eachDaySum: perDate[] = [];
     let eachDayShift: { [key: string]: shiftType[] } = {};
 
-    const sortByDate = (
-      data: historyData[]
-    ): { [key: string]: historyData[] } => {
-      return data.reduce(
-        (groups: { [key: string]: historyData[] }, item: historyData) => {
-          if (item.BPI === Infinity) {
-            return groups;
-          }
-          const date = timeFormatter(period, item.updatedAt);
-          if (!groups[date]) {
-            groups[date] = [];
-          }
-          groups[date].push(item);
+    const sortByDate = (data: historyData[]): { [key: string]: historyData[] } => {
+      return data.reduce((groups: { [key: string]: historyData[] }, item: historyData) => {
+        if (item.BPI === Infinity) {
           return groups;
-        },
-        {}
-      );
+        }
+        const date = timeFormatter(period, item.updatedAt);
+        if (!groups[date]) {
+          groups[date] = [];
+        }
+        groups[date].push(item);
+        return groups;
+      }, {});
     };
 
     const allDiffs = this.objectSort(sortByDate(data));
@@ -265,17 +224,12 @@ export default class statMain {
           max: Math.max(...BPIsArray),
           min: Math.min(...BPIsArray),
           med: this.getMedian(BPIsArray),
-          avg:
-            _bpi.setBPIs(p).setLength(p.length).totalBPI() ||
-            Math.round((total(allDiffs[item]) / allDiffs[item].length) * 100) /
-              100,
+          avg: _bpi.setBPIs(p).setLength(p.length).totalBPI() || Math.round((total(allDiffs[item]) / allDiffs[item].length) * 100) / 100,
         });
       }
       return 0;
     });
-    return eachDaySum
-      .sort((a, b) => timeCompare(a.name, b.name))
-      .slice(-1 * range);
+    return eachDaySum.sort((a, b) => timeCompare(a.name, b.name)).slice(-1 * range);
   }
 
   getBPIShifts = (array: shiftType[]) => {
@@ -288,36 +242,19 @@ export default class statMain {
   getMedian = (array: number[]) => {
     const mid = Math.floor(array.length / 2),
       nums = [...array].sort((a, b) => a - b);
-    return (
-      Math.round(
-        (array.length % 2 !== 0 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2) *
-          100
-      ) / 100
-    );
+    return Math.round((array.length % 2 !== 0 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2) * 100) / 100;
   };
 
   at = (isLast: boolean = false) => {
     if (isLast) {
-      return this.bpiMapper(
-        this.targetLevel === 12 ? this.twelvesLast : this.elevensLast
-      );
+      return this.bpiMapper(this.targetLevel === 12 ? this.twelvesLast : this.elevensLast);
     }
-    return this.bpiMapper(
-      this.targetLevel === 12 ? this.twelves : this.elevens
-    );
+    return this.bpiMapper(this.targetLevel === 12 ? this.twelves : this.elevens);
   };
 
-  songFinder = (level: string, title: string, difficulty: string) =>
-    this.getData(Number(level)).find(
-      (elm: scoreData) =>
-        elm.title === title &&
-        elm.difficulty === difficultyDiscriminator(difficulty)
-    );
+  songFinder = (level: string, title: string, difficulty: string) => this.getData(Number(level)).find((elm: scoreData) => elm.title === title && elm.difficulty === difficultyDiscriminator(difficulty));
 
-  bpiMapper = (t: scoreData[]) =>
-    t
-      .map((item: scoreData) => item.currentBPI)
-      .filter((item) => !isNaN(item) && item !== Infinity);
+  bpiMapper = (t: scoreData[]) => t.map((item: scoreData) => item.currentBPI).filter((item) => !isNaN(item) && item !== Infinity);
 
   groupBy = (array: number[]) => {
     return array.reduce((groups: { [key: number]: number }, item: number) => {
@@ -374,31 +311,19 @@ export default class statMain {
     };
     const sdb = new songsDB();
     const allSongs: distSongs = (await sdb.getAll())
-      .filter(
-        (item: songData) =>
-          item.difficultyLevel === difficulty && item.wr !== -1
-      )
+      .filter((item: songData) => item.difficultyLevel === difficulty && item.wr !== -1)
       .reduce((groups: distSongs, item: songData) => {
         const b = bpmFilter(item.bpm);
         groups[item.title + item.difficulty] = b;
         numDistByBPM[b]++;
         return groups;
       }, {});
-    this.getData(Number(difficulty)).reduce(
-      (groups: distScores, item: scoreData) => {
-        if (
-          !isNaN(item.currentBPI) &&
-          isFinite(item.currentBPI) &&
-          allSongs[item.title + difficultyParser(item.difficulty, isSingle)]
-        ) {
-          distByBPM[
-            allSongs[item.title + difficultyParser(item.difficulty, isSingle)]
-          ].push(item.currentBPI);
-        }
-        return groups;
-      },
-      {}
-    );
+    this.getData(Number(difficulty)).reduce((groups: distScores, item: scoreData) => {
+      if (!isNaN(item.currentBPI) && isFinite(item.currentBPI) && allSongs[item.title + difficultyParser(item.difficulty, isSingle)]) {
+        distByBPM[allSongs[item.title + difficultyParser(item.difficulty, isSingle)]].push(item.currentBPI);
+      }
+      return groups;
+    }, {});
     const bpi = new bpiCalcuator();
     const keys = Object.keys(distByBPM) as BPMDIST[];
     for (let i = 0; i < keys.length; ++i) {
