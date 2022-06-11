@@ -229,7 +229,6 @@ export default class statMain {
       }
       return 0;
     });
-    console.log(eachDaySum);
     return eachDaySum.sort((a, b) => timeCompare(a.name, b.name)).slice(-1 * range);
   }
 

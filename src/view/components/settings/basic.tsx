@@ -12,14 +12,7 @@ import { Subscribe } from "unstated";
 import GlobalContainer from "@/components/context/global";
 import Button from "@mui/material/Button";
 import UpdateIcon from "@mui/icons-material/Update";
-import {
-  _currentVersion,
-  _currentDefinitionURL,
-  _setCurrentDefinitionURL,
-  _setAutoSync,
-  _autoSync,
-  _weeklyRanking,
-} from "@/components/settings";
+import { _currentVersion, _currentDefinitionURL, _setCurrentDefinitionURL, _setAutoSync, _autoSync, _weeklyRanking } from "@/components/settings";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -73,8 +66,7 @@ class Settings extends React.Component<P, S> {
     };
   }
 
-  toggleURLDialog = () =>
-    this.setState({ isURLDialogOpen: !this.state.isURLDialogOpen });
+  toggleURLDialog = () => this.setState({ isURLDialogOpen: !this.state.isURLDialogOpen });
 
   changeDefinitionURL = (url: string): void => {
     return _setCurrentDefinitionURL(url);
@@ -87,7 +79,7 @@ class Settings extends React.Component<P, S> {
     try {
       this.props.global.setMove(true);
       this.setState({ disableUpdateBtn: true, message: "" });
-      const updater = await updateDefFile(this.ref);
+      const updater = await updateDefFile(this.ref, true);
       end();
       this.setState({
         currentVersion: updater.newVersion,
@@ -106,29 +98,13 @@ class Settings extends React.Component<P, S> {
   };
 
   render() {
-    const {
-      isLoading,
-      isURLDialogOpen,
-      disableUpdateBtn,
-      message,
-      autoSync,
-      weeklyRanking,
-    } = this.state;
+    const { isLoading, isURLDialogOpen, disableUpdateBtn, message, autoSync, weeklyRanking } = this.state;
     if (isLoading) {
       return <Loader />;
     }
     return (
       <Subscribe to={[GlobalContainer]}>
-        {({
-          state,
-          setLang,
-          setStore,
-          setTheme,
-          setIsSingle,
-          setGoalBPI,
-          setGoalPercentage,
-          setArea,
-        }: GlobalContainer) => (
+        {({ state, setLang, setStore, setTheme, setIsSingle, setGoalBPI, setGoalPercentage, setArea }: GlobalContainer) => (
           <Container fixed style={{ padding: 0 }}>
             <Paper style={{ padding: "15px" }}>
               <FormControl>
@@ -198,11 +174,7 @@ class Settings extends React.Component<P, S> {
                 <FormattedMessage id="Settings.inaccurateMes" />
               </Typography>
               <Divider style={{ margin: "10px 0" }} />
-              <Typography
-                variant="caption"
-                display="block"
-                className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink"
-              >
+              <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
                 Auto-sync
               </Typography>
               <Switch
@@ -225,11 +197,7 @@ class Settings extends React.Component<P, S> {
                 <FormattedMessage id="Settings.AutoSync3" />
               </Typography>
               <Divider style={{ margin: "10px 0" }} />
-              <Typography
-                variant="caption"
-                display="block"
-                className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink"
-              >
+              <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
                 <FormattedMessage id="Settings.DPMode" />
                 (beta)
               </Typography>
@@ -254,11 +222,7 @@ class Settings extends React.Component<P, S> {
                 }}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   if (typeof e.target.value === "string") {
-                    setGoalBPI(
-                      Number(e.target.value) > 100
-                        ? 100
-                        : Number(e.target.value)
-                    );
+                    setGoalBPI(Number(e.target.value) > 100 ? 100 : Number(e.target.value));
                   }
                 }}
                 style={{ margin: "0 0 5px 0", width: "100%" }}
@@ -272,11 +236,7 @@ class Settings extends React.Component<P, S> {
                 }}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   if (typeof e.target.value === "string") {
-                    setGoalPercentage(
-                      Number(e.target.value) > 100
-                        ? 100
-                        : Number(e.target.value)
-                    );
+                    setGoalPercentage(Number(e.target.value) > 100 ? 100 : Number(e.target.value));
                   }
                 }}
                 style={{ margin: "0 0 5px 0", width: "100%" }}
@@ -286,23 +246,11 @@ class Settings extends React.Component<P, S> {
               </Typography>
               <Divider style={{ margin: "10px 0" }} />
               <FormControl>
-                <Typography
-                  variant="caption"
-                  display="block"
-                  className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink"
-                >
+                <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
                   <FormattedMessage id="Settings.Update" />
                 </Typography>
                 <div style={{ position: "relative" }}>
-                  <LoadingButton
-                    variant="contained"
-                    color="secondary"
-                    onClick={this.updateDef}
-                    loading={disableUpdateBtn}
-                    loadingPosition="start"
-                    disabled={disableUpdateBtn}
-                    startIcon={<UpdateIcon />}
-                  >
+                  <LoadingButton variant="contained" color="secondary" onClick={this.updateDef} loading={disableUpdateBtn} loadingPosition="start" disabled={disableUpdateBtn} startIcon={<UpdateIcon />}>
                     <FormattedMessage id="Settings.UpdateResourcePacks" />
                   </LoadingButton>
                 </div>
@@ -318,29 +266,16 @@ class Settings extends React.Component<P, S> {
               <Typography variant="caption" display="block">
                 <FormattedMessage id="Settings.updateWarning" />
                 <br />
-                <RefLink
-                  component="a"
-                  onClick={this.toggleURLDialog}
-                  color="secondary"
-                >
+                <RefLink component="a" onClick={this.toggleURLDialog} color="secondary">
                   <FormattedMessage id="Settings.defFileURLButton" />
                 </RefLink>
               </Typography>
               <Typography variant="caption" display="block">
-                <RefLink
-                  color="secondary"
-                  href="https://github.com/BPIManager/BPIM-Scores/issues/"
-                >
+                <RefLink color="secondary" href="https://github.com/BPIManager/BPIM-Scores/issues/">
                   定義ファイルに誤りを発見した場合、こちらからお知らせください。
                 </RefLink>
               </Typography>
-              {isURLDialogOpen && (
-                <URLDialog
-                  isDialogOpen={isURLDialogOpen}
-                  exec={this.changeDefinitionURL}
-                  close={this.toggleURLDialog}
-                />
-              )}
+              {isURLDialogOpen && <URLDialog isDialogOpen={isURLDialogOpen} exec={this.changeDefinitionURL} close={this.toggleURLDialog} />}
               <Divider style={{ margin: "10px 0" }} />
               <FormControl>
                 <InputLabel>
@@ -366,11 +301,7 @@ class Settings extends React.Component<P, S> {
               </Typography>
               <Divider style={{ margin: "10px 0" }} />
               <FormControl>
-                <Typography
-                  variant="caption"
-                  display="block"
-                  className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink"
-                >
+                <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
                   キャッシュクリア
                 </Typography>
                 <Button
@@ -378,18 +309,14 @@ class Settings extends React.Component<P, S> {
                   color="secondary"
                   onClick={() => {
                     if (navigator) {
-                      navigator.serviceWorker
-                        .getRegistration()
-                        .then((registration) => {
-                          if (registration) {
-                            registration.unregister();
-                            alert(
-                              "キャッシュを削除しました。一度アプリを終了し、再度起動してください。"
-                            );
-                          } else {
-                            alert("削除するデータが見つかりませんでした");
-                          }
-                        });
+                      navigator.serviceWorker.getRegistration().then((registration) => {
+                        if (registration) {
+                          registration.unregister();
+                          alert("キャッシュを削除しました。一度アプリを終了し、再度起動してください。");
+                        } else {
+                          alert("削除するデータが見つかりませんでした");
+                        }
+                      });
                     }
                   }}
                   disabled={disableUpdateBtn}
@@ -443,30 +370,14 @@ class URLDialog extends React.Component<UP, { url: string }> {
           <DialogContent>
             <DialogContentText>
               <FormattedMessage id="Settings.ChangeDefinitionURL" />
-              <RefLink
-                color="secondary"
-                href="https://docs2.poyashi.me/other/def/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <RefLink color="secondary" href="https://docs2.poyashi.me/other/def/" target="_blank" rel="noopener noreferrer">
                 <FormattedMessage id="Settings.ChangeDefinitionURL2" />
               </RefLink>
               <FormattedMessage id="Settings.ChangeDefinitionURL3" />
               <br />
               <FormattedMessage id="Settings.ChangeDefinitionURL4" />
             </DialogContentText>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="name"
-              label="定義データURL"
-              type="text"
-              value={this.state.url}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                this.setState({ url: e.target.value })
-              }
-              fullWidth
-            />
+            <TextField autoFocus margin="dense" id="name" label="定義データURL" type="text" value={this.state.url} onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.setState({ url: e.target.value })} fullWidth />
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="secondary">

@@ -18,7 +18,7 @@ export const _pText = (ref: React.MutableRefObject<any> | null, newText: string)
   }
 };
 
-export const updateDefFile = async (progressRef: React.MutableRefObject<any> | null) => {
+export const updateDefFile = async (progressRef: React.MutableRefObject<any> | null, forceUpdate: boolean = false) => {
   let res = { version: "unknown", requireVersion: "unknown", body: [] };
   const response = (mes: string) => {
     return { message: mes, newVersion: res.version };
@@ -93,8 +93,8 @@ export const updateDefFile = async (progressRef: React.MutableRefObject<any> | n
   };
   await Promise.all(promiseProducer(res.body));
   scDB.setNewSongsDBRawData(reducer(res.body));
-  await scDB.recalculateBPI(updatedSongs, true);
-  await schDB.recalculateBPI(updatedSongs, true);
+  await scDB.recalculateBPI(updatedSongs, forceUpdate);
+  await schDB.recalculateBPI(updatedSongs, forceUpdate);
   localStorage.setItem("lastDefFileVer", res.version);
   _pText(progressRef, "");
   return response("更新完了");
