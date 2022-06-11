@@ -81,6 +81,10 @@ export default class Initialize extends React.Component<
       const songsAvailable: string[] = await this.songsDB.getAll();
       this.scoresDB.removeNaNItems();
       this.scoreHistoryDB.removeNaNItems();
+      if (!localStorage.getItem("20220611_recalculateScoreHistoryDB")) {
+        this.scoreHistoryDB.recalculateBPI([], true);
+        localStorage.setItem("20220611_recalculateScoreHistoryDB", "true");
+      }
 
       if (songsAvailable.length > 0) {
         return this.setState({ show: false });
