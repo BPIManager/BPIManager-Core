@@ -14,8 +14,7 @@ class historyExec {
   private result: historyDataWithLastScore[] = [];
 
   async load(propdata: historyData[] | null = null) {
-    this.data =
-      propdata || (await new scoreHistoryDB().getAllInSpecificVersion());
+    this.data = propdata || (await new scoreHistoryDB().getAllInSpecificVersion());
     return this;
   }
 
@@ -24,14 +23,11 @@ class historyExec {
   generate(): historyDataWithLastScore[] {
     if (!this.data) return [];
     this.classifyBySongs().addLastScore();
-    this.result = this.sort(
-      this.result
-    ).reverse() as historyDataWithLastScore[];
+    this.result = this.sort(this.result).reverse() as historyDataWithLastScore[];
     return this.result;
   }
 
-  sort = (obj: historyData[] | historyDataWithLastScore[]) =>
-    obj.sort((a, b) => toUnixTime(a.updatedAt) - toUnixTime(b.updatedAt));
+  sort = (obj: historyData[] | historyDataWithLastScore[]) => obj.sort((a, b) => toUnixTime(a.updatedAt) - toUnixTime(b.updatedAt));
 
   classifyBySongs() {
     this.sort(this.data).map((item: historyData) => {
@@ -70,12 +66,14 @@ class historyExec {
     return this;
   }
 
-  getUpdateDays(): IDays[] {
+  getUpdateDays(specificLevel?: string): IDays[] {
     // {key:2021-01-01,number:1}
-    const d = this.days();
+    const d = this.days(specificLevel);
     return Object.keys(d)
       .reduce((result: IDays[], item: string) => {
-        result.push({ key: item, num: d[item] });
+        if (d[item] > 0) {
+          result.push({ key: item, num: d[item] });
+        }
         return result;
       }, [])
       .sort((a: IDays, b: IDays) => {
@@ -83,10 +81,13 @@ class historyExec {
       });
   }
 
-  days = () =>
+  days = (specificLevel?: string) =>
     this.result.reduce((groups: daysGrp, item: historyDataWithLastScore) => {
       const day = timeFormatter(7, item["updatedAt"]);
       if (!groups[day]) groups[day] = 0;
+      if (specificLevel && item.difficultyLevel !== specificLevel) {
+        return groups;
+      }
       groups[day]++;
       return groups;
     }, {});

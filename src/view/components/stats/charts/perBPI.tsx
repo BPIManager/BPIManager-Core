@@ -1,15 +1,6 @@
 import React from "react";
 import { _chartBarColor, _chartColor } from "@/components/settings";
-import {
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  ReferenceLine,
-  Line,
-  LineChart,
-} from "recharts";
+import { Tooltip, ResponsiveContainer, CartesianGrid, XAxis, YAxis, ReferenceLine, Line, LineChart } from "recharts";
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import { groupedByLevel } from "@/types/stats";
@@ -25,18 +16,14 @@ const Chart: React.FC<{
   const barColor = _chartBarColor("bar");
   const linePrev = _chartBarColor("YOU");
 
-  const xAxisTicker = (): number[] =>
-    [...BPITicker, totalBPI].sort((a, b) => a - b);
+  const xAxisTicker = (): number[] => [...BPITicker, totalBPI].sort((a, b) => a - b);
 
   return (
     <div style={{ padding: "15px", height: 270 }}>
       <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
         <FormattedMessage id="Stats.Distribution" />
       </Typography>
-      <div
-        style={{ width: "95%", height: "100%", margin: "5px auto" }}
-        className="bpilinechart"
-      >
+      <div style={{ width: "95%", height: "100%", margin: "5px auto" }} className="bpilinechart">
         {data.length > 0 && (
           <ResponsiveContainer width="100%">
             <LineChart
@@ -49,28 +36,12 @@ const Chart: React.FC<{
               }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                type={"number"}
-                dataKey="name"
-                stroke={chartColor}
-                ticks={xAxisTicker()}
-                domain={[-20, 100]}
-              />
+              <XAxis type={"number"} dataKey="name" stroke={chartColor} ticks={xAxisTicker()} domain={[-20, 100]} />
               <YAxis stroke={chartColor} />
               <Tooltip contentStyle={{ color: "#333" }} />
               <ReferenceLine x={totalBPI} stroke={barColor} isFront={true} />
-              <Line
-                type="monotone"
-                dataKey={"☆" + targetLevel}
-                stroke={lineColor}
-                activeDot={{ r: 8 }}
-              />
-              <Line
-                type="monotone"
-                dataKey={"☆" + targetLevel + "(前作)"}
-                stroke={linePrev}
-                activeDot={{ r: 8 }}
-              />
+              <Line type="monotone" dataKey={"☆" + targetLevel} stroke={lineColor} activeDot={{ r: 8 }} />
+              <Line type="monotone" dataKey={"☆" + targetLevel + "(比較対象)"} stroke={linePrev} activeDot={{ r: 8 }} />
             </LineChart>
           </ResponsiveContainer>
         )}

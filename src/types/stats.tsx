@@ -33,6 +33,8 @@ export interface S {
   targetLevel: number;
   lastWeek: any;
   lastMonth: any;
+  compareDate: string;
+  compareDateList: string[];
 }
 
 export interface ShiftType {
