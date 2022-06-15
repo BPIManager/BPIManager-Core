@@ -11,11 +11,10 @@ import { distBPMI, BPMDIST, bpmFilter, distSongs, distScores } from "./bpmDist";
 const isSingle = _isSingle();
 
 export const BPITicker = [-20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-
-interface shiftType {
+interface P {
   title: string;
-  bpi: number;
 }
+type shiftType = P & scoreData;
 
 export default class statMain {
   private twelves: scoreData[] = [];
@@ -63,6 +62,9 @@ export default class statMain {
     this.elevensLast = this.reduceData(await db.getItemsBySongDifficulty("11"));
     return this;
   }
+
+  getTwelvesLast = () => this.twelvesLast;
+  getElevensLast = () => this.elevensLast;
 
   setPropData(_derived: any) {
     this.twelves = _derived.filter((item: any) => item.difficultyLevel === "12");
@@ -136,33 +138,39 @@ export default class statMain {
     return songsByDJRank.reverse();
   }
 
-  async groupedByLevel() {
+  async groupedByLevel(derivedData: any = null) {
     let bpis = BPITicker;
     let groupedByLevel = [];
-    const exec = (diff: number, isLast: boolean) => this.groupBy(this.bpiMapper(this.getData(diff, isLast)));
+    const exec = (diff: number, isLast: boolean) => this.groupBy(this.bpiMapper(derivedData && isLast ? derivedData : this.getData(diff, isLast)));
 
     for (let i = 0; i < bpis.length; ++i) {
       let obj: {
         name: number;
         "☆11": number;
         "☆12": number;
-        "☆11(前作)": number;
-        "☆12(前作)": number;
-      } = { name: bpis[i], "☆11": 0, "☆12": 0, "☆11(前作)": 0, "☆12(前作)": 0 };
+        "☆11(比較対象)": number;
+        "☆12(比較対象)": number;
+      } = { name: bpis[i], "☆11": 0, "☆12": 0, "☆11(比較対象)": 0, "☆12(比較対象)": 0 };
       obj["☆11"] = exec(11, false)[bpis[i]] || 0;
       obj["☆12"] = exec(12, false)[bpis[i]] || 0;
-      obj["☆11(前作)"] = exec(12, true)[bpis[i]] || 0;
-      obj["☆12(前作)"] = exec(11, true)[bpis[i]] || 0;
+      obj["☆11(比較対象)"] = exec(12, true)[bpis[i]] || 0;
+      obj["☆12(比較対象)"] = exec(11, true)[bpis[i]] || 0;
       groupedByLevel.push(obj);
     }
 
     return groupedByLevel;
   }
 
+  eachDayShift: { [key: string]: shiftType[] } = {};
+
+  async eachDaySumRawData(period: number, last?: string | Date, propdata?: any, range: number = 10): Promise<{ [key: string]: shiftType[] }> {
+    await this.eachDaySum(period, last, propdata, range);
+    return this.eachDayShift;
+  }
+
   async eachDaySum(period: number, last?: string | Date, propdata?: any, range: number = 10): Promise<perDate[]> {
     const data = propdata || (await new scoreHistoryDB().getAll(String(this.targetLevel)));
     let eachDaySum: perDate[] = [];
-    let eachDayShift: { [key: string]: shiftType[] } = {};
 
     const sortByDate = (data: historyData[]): { [key: string]: historyData[] } => {
       return data.reduce((groups: { [key: string]: historyData[] }, item: historyData) => {
@@ -199,14 +207,17 @@ export default class statMain {
     const songsLen = await new songsDB().getSongsNum(String(this.targetLevel));
     Object.keys(allDiffs).map((item) => {
       if (!last || dayjs(item).isBefore(last)) {
-        eachDayShift[item] = lastDay ? eachDayShift[lastDay].concat() : [];
+        this.eachDayShift[item] = lastDay ? this.eachDayShift[lastDay].concat() : [];
         const p = allDiffs[item].reduce((a: number[], val: historyData) => {
-          eachDayShift[item] = eachDayShift[item].filter((elm) => {
-            return elm.title !== String(val.title + val.difficulty);
+          this.eachDayShift[item] = this.eachDayShift[item].filter((elm) => {
+            return elm.mergedTitle !== String(val.title + val.difficulty);
           }); //重複削除
-          eachDayShift[item].push({
-            title: val.title + val.difficulty,
-            bpi: val.BPI,
+          this.eachDayShift[item].push({
+            ...val,
+            mergedTitle: val.title + val.difficulty,
+            currentBPI: val.BPI,
+            lastScore: 0,
+            clearState: 0,
           }); //改めて追加
           if (val.BPI) {
             a.push(val.BPI);
@@ -215,7 +226,7 @@ export default class statMain {
           return a;
         }, []);
 
-        const shift = this.getBPIShifts(eachDayShift[item]);
+        const shift = this.getBPIShifts(this.eachDayShift[item]);
         const BPIsArray = getBPIArray(allDiffs[item]);
         eachDaySum.push({
           name: item,
@@ -234,7 +245,7 @@ export default class statMain {
 
   getBPIShifts = (array: shiftType[]) => {
     return array.reduce((groups: number[], val: shiftType) => {
-      groups.push(val.bpi);
+      groups.push(val.BPI);
       return groups;
     }, []);
   };
@@ -284,7 +295,7 @@ export default class statMain {
     return sorted;
   };
 
-  bpmDist = async (difficulty: "11" | "12" = "12"): Promise<distBPMI[]> => {
+  bpmDist = async (difficulty: "11" | "12" = "12", derived?: any): Promise<distBPMI[]> => {
     let distByBPM: { [key in BPMDIST]: number[] } = {
       "~139": [],
       "~159": [],
@@ -318,7 +329,7 @@ export default class statMain {
         numDistByBPM[b]++;
         return groups;
       }, {});
-    this.getData(Number(difficulty)).reduce((groups: distScores, item: scoreData) => {
+    (derived || this.getData(Number(difficulty))).reduce((groups: distScores, item: scoreData) => {
       if (!isNaN(item.currentBPI) && isFinite(item.currentBPI) && allSongs[item.title + difficultyParser(item.difficulty, isSingle)]) {
         distByBPM[allSongs[item.title + difficultyParser(item.difficulty, isSingle)]].push(item.currentBPI);
       }

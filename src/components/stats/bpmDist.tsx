@@ -9,7 +9,7 @@ export interface distScores {
   [key: string]: scoreData;
 }
 
-export type distBPMI = { name: BPMDIST; BPI: number };
+export type distBPMI = { name: BPMDIST; BPI: number; BPIPrev?: number | null };
 
 export const bpmFilter = (bpm: string): BPMDIST => {
   if (bpm.indexOf("-") > -1) {

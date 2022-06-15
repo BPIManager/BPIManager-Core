@@ -1,26 +1,28 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import Container from '@mui/material/Container';
-import { historyDataWithLastScore } from '@/types/history';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import Loader from '@/view/components/common/loader';
-import Pagination from '@mui/lab/Pagination/Pagination';
-import { _prefix } from '@/components/songs/filter';
-import HistoryDataReceiver from '@/components/history';
-import TableContainer from '@mui/material/TableContainer';
-import { Table, TableRow, TableCell, TableBody, Dialog, DialogTitle, DialogContent, TableHead } from '@mui/material';
-import { historyBgColor } from '@/components/common';
-import { historyData } from '@/types/data';
-import { scoreHistoryDB } from '@/components/indexedDB';
-import timeFormatter from '@/components/common/timeFormatter';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import Container from "@mui/material/Container";
+import { historyDataWithLastScore } from "@/types/history";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Loader from "@/view/components/common/loader";
+import Pagination from "@mui/lab/Pagination/Pagination";
+import { _prefix } from "@/components/songs/filter";
+import HistoryDataReceiver from "@/components/history";
+import TableContainer from "@mui/material/TableContainer";
+import { Table, TableRow, TableCell, TableBody, Dialog, DialogTitle, DialogContent, TableHead } from "@mui/material";
+import { historyBgColor } from "@/components/common";
+import { historyData } from "@/types/data";
+import { scoreHistoryDB } from "@/components/indexedDB";
+import timeFormatter from "@/components/common/timeFormatter";
+import { RouteComponentProps, withRouter } from "react-router-dom";
 
-export interface IDays { key: string, num: number }
+export interface IDays {
+  key: string;
+  num: number;
+}
 
-const History: React.FC<RouteComponentProps> = props => {
-
+const History: React.FC<RouteComponentProps> = (props) => {
   const hist: HistoryDataReceiver = useMemo(() => new HistoryDataReceiver(), []);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [filtered, setFiltered] = useState<historyDataWithLastScore[]>([]);
@@ -52,7 +54,7 @@ const History: React.FC<RouteComponentProps> = props => {
     setPage(1);
     setFiltered(hist.setDate(date).getData());
     return;
-  }
+  };
 
   const changePage = (_e: Object, p: number) => setPage(p);
   const showNumber = 10;
@@ -62,7 +64,7 @@ const History: React.FC<RouteComponentProps> = props => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (isLoading) return (<Loader />)
+  if (isLoading) return <Loader />;
   return (
     <Container fixed className="commonLayout" id="stat">
       <DateSelector days={days} currentDate={currentDate} handleChange={changeDate} />
@@ -73,33 +75,32 @@ const History: React.FC<RouteComponentProps> = props => {
       <Pagination count={Math.ceil(filtered.length / showNumber)} page={page} color="secondary" onChange={changePage} />
     </Container>
   );
+};
+
+interface IDateSelector {
+  days: IDays[];
+  currentDate: string;
+  handleChange: (input: SelectChangeEvent<string>) => void;
 }
 
-
-interface IDateSelector { days: IDays[], currentDate: string, handleChange: (input: SelectChangeEvent<string>) => void }
-
-const DateSelector: React.FC<IDateSelector> = props => {
-
-  const getAllCount = () => props.days.reduce((sum: number, item: IDays) => sum += item.num, 0);
+const DateSelector: React.FC<IDateSelector> = (props) => {
+  const getAllCount = () => props.days.reduce((sum: number, item: IDays) => (sum += item.num), 0);
   return (
     <FormControl fullWidth style={{ marginBottom: "15px" }}>
-      <InputLabel>
-        更新日
-      </InputLabel>
-      <Select
-        value={props.currentDate}
-        onChange={props.handleChange}
-        displayEmpty
-      >
+      <InputLabel>更新日</InputLabel>
+      <Select value={props.currentDate} onChange={props.handleChange} displayEmpty>
         <MenuItem value={"すべて"}>すべて({getAllCount()})</MenuItem>
-        {props.days.map((item) => <MenuItem value={item.key} key={item.key}>{item.key}({item.num})</MenuItem>)}
+        {props.days.map((item) => (
+          <MenuItem value={item.key} key={item.key}>
+            {item.key}({item.num})
+          </MenuItem>
+        ))}
       </Select>
     </FormControl>
-  )
-}
+  );
+};
 
 const HistoryView: React.FC<{ item: historyDataWithLastScore }> = ({ item }) => {
-
   const [open, setOpen] = useState<boolean>(false);
   return (
     <React.Fragment>
@@ -108,7 +109,8 @@ const HistoryView: React.FC<{ item: historyDataWithLastScore }> = ({ item }) => 
           <TableBody>
             <TableRow>
               <TableCell component="th" scope="row" className="tableTopDiff" style={{ fontWeight: "bold", background: historyBgColor() }}>
-                ☆{item.difficultyLevel} {item.title}{_prefix(item.difficulty)}
+                ☆{item.difficultyLevel} {item.title}
+                {_prefix(item.difficulty)}
               </TableCell>
             </TableRow>
           </TableBody>
@@ -117,43 +119,25 @@ const HistoryView: React.FC<{ item: historyDataWithLastScore }> = ({ item }) => 
           <TableBody>
             <TableRow>
               <TableCell component="th" scope="row" className="dense tableTopDiff" />
-              <TableCell className="denseCont">
-                前回
-              </TableCell>
-              <TableCell className="denseCont">
-                更新後
-              </TableCell>
-              <TableCell className="denseCont">
-                差分
-              </TableCell>
+              <TableCell className="denseCont">前回</TableCell>
+              <TableCell className="denseCont">更新後</TableCell>
+              <TableCell className="denseCont">差分</TableCell>
             </TableRow>
             <TableRow>
               <TableCell component="th" scope="row" className="dense tableTopDiff">
                 EX
               </TableCell>
-              <TableCell className="denseCont">
-                {item.lastScore}
-              </TableCell>
-              <TableCell className="denseCont">
-                {item.exScore}
-              </TableCell>
-              <TableCell className="denseCont">
-                +{item.exScore - item.lastScore}
-              </TableCell>
+              <TableCell className="denseCont">{item.lastScore}</TableCell>
+              <TableCell className="denseCont">{item.exScore}</TableCell>
+              <TableCell className="denseCont">+{item.exScore - item.lastScore}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell component="th" scope="row" className="dense">
                 BPI
               </TableCell>
-              <TableCell className="denseCont">
-                {item.lastBPI.toFixed(2)}
-              </TableCell>
-              <TableCell className="denseCont">
-                {item.BPI.toFixed(2)}
-              </TableCell>
-              <TableCell className="denseCont">
-                +{(item.BPI - item.lastBPI).toFixed(2)}
-              </TableCell>
+              <TableCell className="denseCont">{item.lastBPI.toFixed(2)}</TableCell>
+              <TableCell className="denseCont">{item.BPI.toFixed(2)}</TableCell>
+              <TableCell className="denseCont">+{(item.BPI - item.lastBPI).toFixed(2)}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -170,25 +154,26 @@ const HistoryView: React.FC<{ item: historyDataWithLastScore }> = ({ item }) => 
       {open && <HistoryPopper handleOpen={() => setOpen(!open)} title={item.title} diff={item.difficulty} />}
     </React.Fragment>
   );
-}
+};
 
 const HistoryPopper: React.FC<{
-  handleOpen: () => void,
-  title: string,
-  diff: string
-}> = props => {
-
+  handleOpen: () => void;
+  title: string;
+  diff: string;
+}> = (props) => {
   const [dataset, setDataset] = useState<historyData[]>([]);
 
   const load = useCallback(async () => {
     const { title, diff } = props;
     const s = new scoreHistoryDB();
     let set = await s._getWithinVersion(title, diff);
-    return setDataset(set.reduce((groups, item) => {
-      item.currentBPI = item.BPI === Infinity ? "-" : item.BPI;
-      groups.push(item);
-      return groups;
-    }, []));
+    return setDataset(
+      set.reduce((groups, item) => {
+        item.currentBPI = item.BPI === Infinity ? "-" : item.BPI;
+        groups.push(item);
+        return groups;
+      }, [])
+    );
   }, [props]);
 
   const columns = [
@@ -203,16 +188,16 @@ const HistoryPopper: React.FC<{
 
   return (
     <Dialog open={true} onClick={props.handleOpen}>
-      <DialogTitle className="narrowDialogTitle">{props.title}{_prefix(props.diff)}</DialogTitle>
+      <DialogTitle className="narrowDialogTitle">
+        {props.title}
+        {_prefix(props.diff)}
+      </DialogTitle>
       <DialogContent className="narrowDialogContent">
         <Table size="small" className="detailedDiffs">
           <TableHead>
             <TableRow>
               {columns.map((column, i) => (
-                <TableCell className="dense"
-                  key={column.id}
-                  style={i === 0 ? { minWidth: "150px" } : undefined}
-                >
+                <TableCell className="dense" key={column.id} style={i === 0 ? { minWidth: "150px" } : undefined}>
                   {column.label}
                 </TableCell>
               ))}
@@ -221,13 +206,12 @@ const HistoryPopper: React.FC<{
           <TableBody>
             {dataset.map((row: historyData, i: number) => {
               return (
-                <TableRow
-                  hover role="checkbox" tabIndex={-1} key={row.title + row.difficulty + i} className={i % 2 ? "isOdd" : "isEven"}>
+                <TableRow hover role="checkbox" tabIndex={-1} key={row.title + row.difficulty + i} className={i % 2 ? "isOdd" : "isEven"}>
                   {columns.map((column, _j) => {
                     return (
                       <TableCell key={column.id}>
-                        {(_j === 0) && timeFormatter(0, row[column.id])}
-                        {(_j !== 0) && row[column.id]}
+                        {_j === 0 && timeFormatter(0, row[column.id])}
+                        {_j !== 0 && row[column.id]}
                       </TableCell>
                     );
                   })}
@@ -238,7 +222,7 @@ const HistoryPopper: React.FC<{
         </Table>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
 export default withRouter(History);

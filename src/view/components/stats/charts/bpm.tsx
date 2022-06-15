@@ -1,14 +1,6 @@
 import React from "react";
 import { _chartBarColor, _chartColor } from "@/components/settings";
-import {
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Bar,
-} from "recharts";
+import { Tooltip, ResponsiveContainer, BarChart, CartesianGrid, XAxis, YAxis, Bar } from "recharts";
 import Typography from "@mui/material/Typography";
 import { FormattedMessage } from "react-intl";
 import { distBPMI } from "@/components/stats/bpmDist";
@@ -16,6 +8,7 @@ import { distBPMI } from "@/components/stats/bpmDist";
 const Chart: React.FC<{ groupedByBPM: distBPMI[] }> = ({ groupedByBPM }) => {
   const chartColor = _chartColor();
   const lineColor = _chartBarColor("line");
+  const linePrev = _chartBarColor("YOU");
   return (
     <div style={{ padding: "15px", height: 270 }}>
       <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
@@ -39,6 +32,7 @@ const Chart: React.FC<{ groupedByBPM: distBPMI[] }> = ({ groupedByBPM }) => {
               <YAxis stroke={chartColor} type="category" dataKey="name" />
               <Tooltip contentStyle={{ color: "#333" }} />
               <Bar dataKey="BPI" fill={lineColor} />
+              <Bar type="monotone" dataKey="BPIPrev" fill={linePrev} />
             </BarChart>
           </ResponsiveContainer>
         )}

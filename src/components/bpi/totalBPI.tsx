@@ -27,18 +27,17 @@ export default class totalBPI {
   }
 
   async currentVersion() {
-    return (
-      (await this.bpiCalc.setSongs(
-        this._currentVersion,
-        String(this.targetLevel) as "11" | "12"
-      )) || -15
-    );
+    return (await this.bpiCalc.setSongs(this._currentVersion, String(this.targetLevel) as "11" | "12")) || -15;
   }
 
   async lastVersion() {
+    return (await this.bpiCalc.setSongs(this._lastVersion, String(this.targetLevel) as "11" | "12")) || -15;
+  }
+
+  async specificData(data: any) {
     return (
       (await this.bpiCalc.setSongs(
-        this._lastVersion,
+        data.map((item: any) => item.currentBPI).filter((item: any) => !isNaN(item) && item !== Infinity),
         String(this.targetLevel) as "11" | "12"
       )) || -15
     );
