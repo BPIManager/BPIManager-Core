@@ -63,18 +63,9 @@ export default class UserCard extends React.Component<
     const { radar } = this.state;
     return (
       <React.Fragment>
-        <ListItem
-          alignItems="flex-start"
-          onClick={() => this.props.open(item.displayName)}
-        >
+        <ListItem alignItems="flex-start" onClick={() => this.props.open(item.displayName)}>
           <ListItemAvatar onClick={() => this.props.open(item.displayName)}>
-            <UserIcon
-              _legacy
-              disableZoom
-              defaultURL={item.photoURL}
-              text={item.displayName}
-              altURL={getAltTwitterIcon(item, false, "normal")}
-            />
+            <UserIcon _legacy disableZoom defaultURL={item.photoURL} text={item.displayName} altURL={getAltTwitterIcon(item, false, "normal")} />
           </ListItemAvatar>
           <ListItemText
             primary={
@@ -107,31 +98,17 @@ export default class UserCard extends React.Component<
                         color: "#fff",
                         margin: "0 0 0 5px",
                       }}
-                      label={
-                        item.totalBPIs
-                          ? item.totalBPIs[_currentStore()]
-                          : item.totalBPI
-                      }
+                      label={item.totalBPIs ? item.totalBPIs[_currentStore()].toFixed(2) : item.totalBPI.toFixed(2)}
                     />
                   </Tooltip>
                 )}
-                {item.profile && (
-                  <span style={{ margin: "0", display: "block" }}>
-                    {" "}
-                    {item.profile}
-                  </span>
-                )}
+                {item.profile && <span style={{ margin: "0", display: "block" }}> {item.profile}</span>}
               </React.Fragment>
             }
           />
           <ListItemSecondaryAction>
             <Tooltip title={isAdded ? "すでにライバルです" : "ライバル登録"}>
-              <IconButton
-                edge="end"
-                disabled={isAdded}
-                onClick={() => !isAdded && this.props.addUser(item)}
-                size="large"
-              >
+              <IconButton edge="end" disabled={isAdded} onClick={() => !isAdded && this.props.addUser(item)} size="large">
                 {myId !== item.uid && !isAdded ? <AddIcon /> : <CheckIcon />}
               </IconButton>
             </Tooltip>

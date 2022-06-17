@@ -26,13 +26,7 @@ import { getRadar, radarData } from "@/components/stats/radar";
 const sortNames = ["最近更新", "総合BPIが高い順"];
 
 interface P {
-  compareUser: (
-    rivalMeta: rivalStoreData,
-    rivalBody: rivalScoreData[],
-    last: rivalStoreData,
-    arenaRank: string,
-    currentPage: number
-  ) => void;
+  compareUser: (rivalMeta: rivalStoreData, rivalBody: rivalScoreData[], last: rivalStoreData, arenaRank: string, currentPage: number) => void;
   last: rivalStoreData | null;
   arenaRank: string;
   mode: number;
@@ -118,13 +112,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps, S> {
     });
   }
 
-  search = async (
-    last: rivalStoreData | null = null,
-    endAt: rivalStoreData | null = null,
-    arenaRank = this.state.arenaRank,
-    sortStyle = this.state.sortStyle,
-    willConcat: boolean = true
-  ): Promise<void> => {
+  search = async (last: rivalStoreData | null = null, endAt: rivalStoreData | null = null, arenaRank = this.state.arenaRank, sortStyle = this.state.sortStyle, willConcat: boolean = true): Promise<void> => {
     const { mode } = this.props;
     const { myId, searchInput } = this.state;
     this.setState({ processing: true, isLoading: true });
@@ -132,19 +120,14 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps, S> {
     if (mode === 0) {
       //おすすめユーザー
       res = (await this.fbA.recommendedByBPI()).filter((item) => {
-        return (
-          item.uid !== myId &&
-          timeCompare(new Date(), item.timeStamp, "day") < 15
-        );
+        return item.uid !== myId && timeCompare(new Date(), item.timeStamp, "day") < 15;
       });
     } else if (mode === 2) {
       //最近更新
       res = await this.fbA.recentUpdated(last, endAt, arenaRank, sortStyle);
     } else if (mode === 1) {
       //逆ライバル
-      res = (await this.fbA.addedAsRivals()).filter(
-        (item) => item !== undefined
-      );
+      res = (await this.fbA.addedAsRivals()).filter((item) => item !== undefined);
     }
     if (!res || res.length === 0) {
       this.setState({ isLast: true, activated: true });
@@ -164,9 +147,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps, S> {
     const { myId, defaultRadarNode } = this.state;
     let res: rivalStoreData[] = [];
     res = (await this.fbA.recommendedByBPI(null, searchBy)).filter((item) => {
-      return (
-        item.uid !== myId && timeCompare(new Date(), item.timeStamp, "day") < 15
-      );
+      return item.uid !== myId && timeCompare(new Date(), item.timeStamp, "day") < 15;
     });
     if (!res || res.length === 0) {
       this.setState({ isLast: true });
@@ -178,10 +159,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps, S> {
         const myBPI = m.TotalBPI;
         res = res.sort((a, b) => {
           if (!a.radar || !b.radar) return -1;
-          return (
-            Math.abs(myBPI - (Number(a.radar[searchBy]) || -15)) -
-            Math.abs(myBPI - (Number(b.radar[searchBy]) || -15))
-          );
+          return Math.abs(myBPI - (Number(a.radar[searchBy]) || -15)) - Math.abs(myBPI - (Number(b.radar[searchBy]) || -15));
         });
       }
     }
@@ -198,17 +176,11 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps, S> {
     this.setState({ processing: true });
     const rivalLen = await this.rivalListsDB.getRivalLength();
     if (rivalLen >= 10) {
-      return this.toggleSnack(
-        `ライバル登録数が上限を超えています。`,
-        "warning"
-      );
+      return this.toggleSnack(`ライバル登録数が上限を超えています。`, "warning");
     }
     const data = await this.fbStores.setDocName(meta.uid).load();
     if (!data) {
-      return this.toggleSnack(
-        "該当ユーザーは当該バージョン/モードにおけるスコアを登録していません。",
-        "warning"
-      );
+      return this.toggleSnack("該当ユーザーは当該バージョン/モードにおけるスコアを登録していません。", "warning");
     }
     const putResult = await this.rivalListsDB.addUser(
       {
@@ -238,10 +210,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps, S> {
     return this.search(res ? res[res.length - 1] : null, null);
   };
 
-  toggleSnack = (
-    message: string = "ライバルを追加しました",
-    variant: "info" | "error" | "success" | "warning" = "info"
-  ) => {
+  toggleSnack = (message: string = "ライバルを追加しました", variant: "info" | "error" | "success" | "warning" = "info") => {
     return this.setState({
       message: message,
       showSnackBar: !this.state.showSnackBar,
@@ -251,11 +220,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps, S> {
     });
   };
 
-  incrementalSearch = async (
-    val: string,
-    arenaRank: string,
-    sortStyle: number = this.state.sortStyle
-  ): Promise<void> => {
+  incrementalSearch = async (val: string, arenaRank: string, sortStyle: number = this.state.sortStyle): Promise<void> => {
     const searchExec = async () => {
       if (!val) {
         return await this.search(null, null, arenaRank, sortStyle, false);
@@ -294,9 +259,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps, S> {
               }
               return timeCompare(b.timeStamp, a.timeStamp);
             }) || [],
-        errorMessage: !res
-          ? "条件に合致するユーザーが見つかりませんでした。"
-          : "",
+        errorMessage: !res ? "条件に合致するユーザーが見つかりませんでした。" : "",
         processing: false,
         isLoading: false,
       });
@@ -315,29 +278,10 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps, S> {
   };
 
   handleModalOpen = (flag: boolean) => this.setState({ isModalOpen: flag });
-  open = (uid: string) =>
-    this.setState({ isModalOpen: true, currentUserName: uid });
+  open = (uid: string) => this.setState({ isModalOpen: true, currentUserName: uid });
 
   render() {
-    const {
-      defaultRadarNode,
-      isLoading,
-      isModalOpen,
-      showSnackBar,
-      activated,
-      res,
-      rivals,
-      processing,
-      message,
-      variant,
-      arenaRank,
-      currentUserName,
-      searchInput,
-      myId,
-      isLast,
-      recommendedBy,
-      sortStyle,
-    } = this.state;
+    const { defaultRadarNode, isLoading, isModalOpen, showSnackBar, activated, res, rivals, processing, message, variant, arenaRank, currentUserName, searchInput, myId, isLast, recommendedBy, sortStyle } = this.state;
     const { mode } = this.props;
     return (
       <React.Fragment>
@@ -358,18 +302,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps, S> {
                     return this.refreshRecommend(e.target.value);
                   }}
                 >
-                  {[
-                    "総合BPI",
-                    "NOTES",
-                    "CHARGE",
-                    "PEAK",
-                    "CHORD",
-                    "GACHIOSHI",
-                    "SCRATCH",
-                    "SOFLAN",
-                    "DELAY",
-                    "RENDA",
-                  ].map((item) => (
+                  {["総合BPI", "NOTES", "CHARGE", "PEAK", "CHORD", "GACHIOSHI", "SCRATCH", "SOFLAN", "DELAY", "RENDA"].map((item) => (
                     <MenuItem value={item} key={item}>
                       {item}
                     </MenuItem>
@@ -395,9 +328,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps, S> {
                         res: [],
                         activated: false,
                       });
-                      return searchInput
-                        ? this.incrementalSearch(searchInput, arenaRank, st)
-                        : this.search(null, null, arenaRank, st);
+                      return searchInput ? this.incrementalSearch(searchInput, arenaRank, st) : this.search(null, null, arenaRank, st);
                     }}
                   >
                     {sortNames.map((item) => (
@@ -420,24 +351,10 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps, S> {
                         res: [],
                         activated: false,
                       });
-                      return searchInput
-                        ? this.incrementalSearch(searchInput, e.target.value)
-                        : this.search(null, null, e.target.value, sortStyle);
+                      return searchInput ? this.incrementalSearch(searchInput, e.target.value) : this.search(null, null, e.target.value, sortStyle);
                     }}
                   >
-                    {[
-                      "すべて",
-                      "A1",
-                      "A2",
-                      "A3",
-                      "A4",
-                      "A5",
-                      "B1",
-                      "B2",
-                      "B3",
-                      "B4",
-                      "B5",
-                    ].map((item) => (
+                    {["すべて", "A1", "A2", "A3", "A4", "A5", "B1", "B2", "B3", "B4", "B5"].map((item) => (
                       <MenuItem value={item} key={item}>
                         {item}
                       </MenuItem>
@@ -447,15 +364,11 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps, S> {
               </Grid>
             </Grid>
             <FormControl fullWidth>
-              <InputLabel htmlFor="searchForm">
-                ユーザー名・IIDX ID・Twitter IDで検索
-              </InputLabel>
+              <InputLabel htmlFor="searchForm">ユーザー名・IIDX ID・Twitter IDで検索</InputLabel>
               <Input
                 id="searchForm"
                 value={searchInput}
-                onChange={(e) =>
-                  this.incrementalSearch(e.target.value, arenaRank)
-                }
+                onChange={(e) => this.incrementalSearch(e.target.value, arenaRank)}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton size="large">
@@ -470,9 +383,7 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps, S> {
         {activated && res.length === 0 && (
           <div>
             <Alert severity="error" style={{ margin: "10px 0" }}>
-              <AlertTitle style={{ marginTop: "0px", fontWeight: "bold" }}>
-                Error
-              </AlertTitle>
+              <AlertTitle style={{ marginTop: "0px", fontWeight: "bold" }}>Error</AlertTitle>
               <p>
                 条件に合致するユーザーが見つかりませんでした。
                 <br />
@@ -481,29 +392,14 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps, S> {
             </Alert>
           </div>
         )}
-        <InfiniteScroll
-          pageStart={0}
-          loadMore={this.next}
-          hasMore={!isLast}
-          initialLoad={false}
-        >
+        <InfiniteScroll pageStart={0} loadMore={this.next} hasMore={!isLast} initialLoad={false}>
           <Grid container>
             {res.map((item: rivalStoreData) => {
               const isAdded = rivals.indexOf(item.uid) > -1;
               return (
                 activated && (
-                  <Grid item xs={12} sm={12} md={6}>
-                    <UserCard
-                      key={item.uid}
-                      radarNode={defaultRadarNode}
-                      mode={mode}
-                      open={this.open}
-                      myId={myId}
-                      item={item}
-                      processing={processing}
-                      isAdded={isAdded}
-                      addUser={this.addUser}
-                    />
+                  <Grid item xs={12} sm={12} md={6} key={item.uid}>
+                    <UserCard key={item.uid} radarNode={defaultRadarNode} mode={mode} open={this.open} myId={myId} item={item} processing={processing} isAdded={isAdded} addUser={this.addUser} />
                   </Grid>
                 )
               );
@@ -513,33 +409,15 @@ class RecentlyAdded extends React.Component<P & RouteComponentProps, S> {
           {mode === 2 && searchInput === "" && (
             <Grid container>
               <Grid item xs={12}>
-                <Button
-                  disabled={processing || isLast}
-                  onClick={this.next}
-                  variant="outlined"
-                  color="secondary"
-                  fullWidth
-                >
+                <Button disabled={processing || isLast} onClick={this.next} variant="outlined" color="secondary" fullWidth>
                   次の10件を表示
                 </Button>
               </Grid>
             </Grid>
           )}
         </InfiniteScroll>
-        {isModalOpen && (
-          <ModalUser
-            isOpen={isModalOpen}
-            currentUserName={currentUserName}
-            handleOpen={(flag: boolean) => this.handleModalOpen(flag)}
-          />
-        )}
-        <ShowSnackBar
-          message={message}
-          variant={variant}
-          handleClose={this.toggleSnack}
-          open={showSnackBar}
-          autoHideDuration={3000}
-        />
+        {isModalOpen && <ModalUser isOpen={isModalOpen} currentUserName={currentUserName} handleOpen={(flag: boolean) => this.handleModalOpen(flag)} />}
+        <ShowSnackBar message={message} variant={variant} handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000} />
       </React.Fragment>
     );
   }

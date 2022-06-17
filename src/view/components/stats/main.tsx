@@ -173,7 +173,7 @@ class Main extends React.Component<{ intl: any; derived?: rivalScoreData[] } & R
                 <FormattedMessage id="Stats.TotalBPI" />
               </Typography>
               <Typography component="h2" variant="h2" color="textPrimary">
-                {totalBPI}
+                {totalBPI.toFixed(2)}
               </Typography>
               <Typography component="h5" variant="h5" color="textPrimary">
                 推定順位 : {_withOrd(totalRank)}

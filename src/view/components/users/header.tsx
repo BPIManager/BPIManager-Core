@@ -65,7 +65,7 @@ const UserHeader: React.FC<{
           >
             <UserIcon defaultURL={meta.photoURL ? meta.photoURL.replace("_normal", "") : "noimage"} text={meta.displayName} altURL={getAltTwitterIcon(meta)} style={{ margin: "15px 0" }} className="userpageIcon" />
           </Grid>
-          <SubHeader title="総合BPI" body={String(Number.isNaN(meta.totalBPI) ? "-" : meta.totalBPI)} />
+          <SubHeader title="総合BPI" body={String(Number.isNaN(meta.totalBPI) ? "-" : meta.totalBPI.toFixed(2))} />
         </Grid>
         <Typography variant="h4" style={{ overflow: "hidden", textAlign: "center" }}>
           {meta.displayName}

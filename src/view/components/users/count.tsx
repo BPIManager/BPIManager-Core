@@ -29,10 +29,7 @@ export const FollowList: React.FC<{
 
   const counts = async (type: number = 0, id: string): Promise<any> => {
     try {
-      return await httpsCfGet(
-        type === 0 ? `getFollowersCnt` : `getFollowingsCnt`,
-        `targetId=${id}&version=${_currentStore()}`
-      );
+      return await httpsCfGet(type === 0 ? `getFollowersCnt` : `getFollowingsCnt`, `targetId=${id}&version=${_currentStore()}`);
     } catch (e: any) {
       console.log(e);
       return null;
@@ -111,45 +108,22 @@ export const FollowList: React.FC<{
   return (
     <Grid container style={{ marginTop: "12px" }}>
       <Grid item xs={6} md={6}>
-        <FolloweeCounter
-          body={followings}
-          ids={followingIds}
-          text="ライバル"
-          userName={meta.displayName}
-          changeUser={changeUser}
-        />
+        <FolloweeCounter body={followings} ids={followingIds} text="ライバル" userName={meta.displayName} changeUser={changeUser} />
       </Grid>
       <Grid item xs={6} md={6}>
-        <FolloweeCounter
-          body={followers}
-          ids={followerIds}
-          text="逆ライバル"
-          userName={meta.displayName}
-          changeUser={changeUser}
-        />
+        <FolloweeCounter body={followers} ids={followerIds} text="逆ライバル" userName={meta.displayName} changeUser={changeUser} />
       </Grid>
     </Grid>
   );
 };
 
-const FolloweeCounter: React.FC<P> = ({
-  body,
-  ids,
-  text,
-  userName,
-  changeUser,
-}) => {
+const FolloweeCounter: React.FC<P> = ({ body, ids, text, userName, changeUser }) => {
   const [showList, setShowList] = useState(false);
   const toggle = () => setShowList(!showList);
 
   return (
     <React.Fragment>
-      <Typography
-        component="p"
-        variant="caption"
-        color="textSecondary"
-        style={{ fontWeight: "bold", textAlign: "center" }}
-      >
+      <Typography component="p" variant="caption" color="textSecondary" style={{ fontWeight: "bold", textAlign: "center" }}>
         {ids.length}&nbsp;{text}
       </Typography>
       <AvatarGroup
@@ -160,15 +134,9 @@ const FolloweeCounter: React.FC<P> = ({
         }}
       >
         {body.slice(0, 3).map((item: any) => (
-          <Tooltip title={item.displayName}>
+          <Tooltip title={item.displayName} key={item.displayName}>
             <div onClick={() => changeUser(item.displayName)}>
-              <UserIcon
-                _legacy
-                disableZoom
-                defaultURL={item.photoURL}
-                text={item.displayName}
-                altURL={getAltTwitterIcon(item, false, "normal")}
-              />
+              <UserIcon _legacy disableZoom defaultURL={item.photoURL} text={item.displayName} altURL={getAltTwitterIcon(item, false, "normal")} />
             </div>
           </Tooltip>
         ))}
@@ -178,14 +146,7 @@ const FolloweeCounter: React.FC<P> = ({
           </Tooltip>
         )}
       </AvatarGroup>
-      {showList && (
-        <FolloweeList
-          handleClose={toggle}
-          ids={ids}
-          text={text}
-          userName={userName}
-        />
-      )}
+      {showList && <FolloweeList handleClose={toggle} ids={ids} text={text} userName={userName} />}
     </React.Fragment>
   );
 };
