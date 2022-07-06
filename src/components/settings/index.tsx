@@ -166,17 +166,19 @@ export const _chartBarColor = (name: string) => {
   const c = _currentTheme();
   if (c === "light") {
     if (name === "YOU" || name === "RIVAL") {
-      return "#BF4C0A";
+      return "#B8906D";
     } else if (name === "line") {
-      return "#943300";
+      return "#967e62";
     } else if (name === "line2") {
       return "#8095ff";
     } else if (name === "line3") {
       return "#ff7979";
     } else if (name === "line4") {
       return "#7ee7ff";
+    } else if (name === "bar") {
+      return "#B8906D";
     } else {
-      return "#D9AFA0";
+      return "#E0D9D0";
     }
   }
   if (c === "dark") {

@@ -144,7 +144,7 @@ export default class Initialize extends React.Component<
     }
 
     return (
-      <Backdrop open={this.state.show} style={{ flexDirection: "column" }}>
+      <Backdrop open={this.state.show} style={{ flexDirection: "column", zIndex: 99999 }}>
         <div>
           <Loader />
         </div>
