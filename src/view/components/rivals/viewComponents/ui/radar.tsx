@@ -15,7 +15,7 @@ class RadarBox extends React.Component<
 > {
   render() {
     const { radar, outerRadius, withoutLegend } = this.props;
-    const op = this.props.withOpacity ? "cc" : "";
+    const op = this.props.withOpacity ? "ff" : "";
     const chartColor = _chartColor() + op;
     return (
       <div style={{ width: "100%", height: "100%" }} className="rivalChart">

@@ -1002,3 +1002,8 @@ text.react-calendar-heatmap-weekday-label {
 .MuiListItem-container {
   list-style-type: none;
 }
+
+.noTextButton .MuiButton-startIcon {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}

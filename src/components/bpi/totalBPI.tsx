@@ -22,7 +22,6 @@ export default class totalBPI {
       await this.statMain.setLastData(String(Number(_currentStore()) - 1));
       this._lastVersion = this.statMain.at(true);
     }
-
     return this;
   }
 

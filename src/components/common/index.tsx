@@ -98,10 +98,10 @@ export const rivalBgColor = (d: number) => {
     if (d === 3) return "#ff9333";
   }
   if (theme === "dark") {
-    if (d === 0) return "#c56c16";
-    if (d === 1) return "#524232";
-    if (d === 2) return "#653200";
-    if (d === 3) return "#2d1600";
+    if (d === 0) return "#44E3D3";
+    if (d === 1) return "#009688";
+    if (d === 2) return "#32A89C";
+    if (d === 3) return "#00635A";
   }
   if (theme === "deepsea") {
     if (d === 0) return "#4057ff";
