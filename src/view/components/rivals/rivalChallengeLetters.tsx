@@ -20,7 +20,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import { _isSingle } from "@/components/settings";
 import OrderControl from "../songs/common/orders";
-import Container from "@mui/material/Container/Container";
+import Container from "@mui/material/Container";
 import { timeCompare } from "@/components/common/timeFormatter";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";

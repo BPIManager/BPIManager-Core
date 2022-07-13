@@ -9,15 +9,10 @@ import SongsUI from "./viewComponents/ui";
 import Settings from "./viewComponents/settings";
 import { scoresDB, rivalListsDB } from "@/components/indexedDB";
 import RivalStats from "./viewComponents/stats";
-import {
-  scoreData,
-  rivalScoreData,
-  rivalStoreData,
-  DBRivalStoreData,
-} from "@/types/data";
+import { scoreData, rivalScoreData, rivalStoreData, DBRivalStoreData } from "@/types/data";
 import { withRivalData } from "@/components/stats/radar";
 import Loader from "../common/loader";
-import Container from "@mui/material/Container/Container";
+import Container from "@mui/material/Container";
 
 interface S {
   isLoading: boolean;
@@ -66,10 +61,7 @@ class RivalView extends React.Component<P, S> {
     this.setState({ currentTab: newValue });
   };
 
-  rivalName = () =>
-    this.props.isNotRival
-      ? (this.props.rivalMeta as rivalStoreData).displayName
-      : (this.props.rivalMeta as DBRivalStoreData).rivalName;
+  rivalName = () => (this.props.isNotRival ? (this.props.rivalMeta as rivalStoreData).displayName : (this.props.rivalMeta as DBRivalStoreData).rivalName);
 
   render() {
     const { isLoading, currentTab, full, rivalRawData } = this.state;
@@ -79,59 +71,23 @@ class RivalView extends React.Component<P, S> {
     }
     return (
       <Container fixed className="commonLayout">
-        <Typography
-          component="h5"
-          variant="h5"
-          color="textPrimary"
-          gutterBottom
-        >
-          <Button
-            onClick={backToMainPage}
-            style={{ minWidth: "auto", padding: "6px 0px" }}
-          >
+        <Typography component="h5" variant="h5" color="textPrimary" gutterBottom>
+          <Button onClick={backToMainPage} style={{ minWidth: "auto", padding: "6px 0px" }}>
             <ArrowBackIcon />
           </Button>
           &nbsp;{rivalMeta && this.rivalName()}
         </Typography>
-        {(!rivalMeta || isNotRival) && (
-          <SongsUI
-            rivalName={this.rivalName}
-            showAllScore={showAllScore}
-            type={0}
-            full={full}
-          />
-        )}
+        {(!rivalMeta || isNotRival) && <SongsUI rivalName={this.rivalName} showAllScore={showAllScore} type={0} full={full} />}
         {rivalMeta && !isNotRival && (
           <div>
-            <Tabs
-              value={this.state.currentTab}
-              onChange={this.handleChange}
-              indicatorColor="primary"
-              textColor="secondary"
-              style={{ margin: "5px 0" }}
-            >
+            <Tabs value={this.state.currentTab} onChange={this.handleChange} indicatorColor="primary" textColor="secondary" style={{ margin: "5px 0" }}>
               <Tab label="比較" />
               <Tab label="統計" />
               {!isNotRival && <Tab label="設定" />}
             </Tabs>
-            {currentTab === 0 && (
-              <SongsUI
-                rivalName={this.rivalName}
-                showAllScore={showAllScore}
-                type={0}
-                full={full}
-              />
-            )}
-            {currentTab === 1 && (
-              <RivalStats full={full} rivalRawData={rivalRawData} />
-            )}
-            {currentTab === 2 && (
-              <Settings
-                backToMainPage={this.props.backToMainPage}
-                toggleSnack={this.props.toggleSnack}
-                rivalMeta={rivalMeta as DBRivalStoreData}
-              />
-            )}
+            {currentTab === 0 && <SongsUI rivalName={this.rivalName} showAllScore={showAllScore} type={0} full={full} />}
+            {currentTab === 1 && <RivalStats full={full} rivalRawData={rivalRawData} />}
+            {currentTab === 2 && <Settings backToMainPage={this.props.backToMainPage} toggleSnack={this.props.toggleSnack} rivalMeta={rivalMeta as DBRivalStoreData} />}
           </div>
         )}
       </Container>
@@ -141,57 +97,42 @@ class RivalView extends React.Component<P, S> {
 
 export default RivalView;
 
-export const makeRivalStat = async (
-  full: rivalScoreData[],
-  _showAllScore: boolean = false
-) => {
-  const allScores = (await new scoresDB().getAll()).reduce(
-    (groups: { [key: string]: scoreData }, item: scoreData) => {
-      groups[item.title + item.difficulty] = item;
-      return groups;
-    },
-    {}
-  );
+export const makeRivalStat = async (full: rivalScoreData[], _showAllScore: boolean = false) => {
+  const allScores = (await new scoresDB().getAll()).reduce((groups: { [key: string]: scoreData }, item: scoreData) => {
+    groups[item.title + item.difficulty] = item;
+    return groups;
+  }, {});
   const rivalRawData = full;
-  const allRivalScores = rivalRawData.reduce(
-    (groups: { [key: string]: rivalScoreData }, item: rivalScoreData) => {
-      groups[item.title + item.difficulty] = item;
-      return groups;
-    },
-    {}
-  );
-  return Object.keys(allRivalScores).reduce(
-    (groups: withRivalData[], key: string) => {
-      const mine = allScores[key] || {
-        exScore: 0,
-        missCount: NaN,
-        clearState: 7,
-        updatedAt: "-",
-      };
-      const rival = allRivalScores[key];
-      groups.push({
-        title: rival.title,
-        difficulty: rival.difficulty,
-        difficultyLevel: rival.difficultyLevel,
-        myEx: mine.exScore || 0,
-        rivalEx: rival.exScore,
-        myMissCount: mine.missCount || 0,
-        rivalMissCount: rival.missCount,
-        myClearState: mine.clearState || 7,
-        rivalClearState: rival.clearState,
-        myLastUpdate: mine.updatedAt,
-        rivalLastUpdate: rival.updatedAt,
-      });
-      return groups;
-    },
-    []
-  );
+  const allRivalScores = rivalRawData.reduce((groups: { [key: string]: rivalScoreData }, item: rivalScoreData) => {
+    groups[item.title + item.difficulty] = item;
+    return groups;
+  }, {});
+  return Object.keys(allRivalScores).reduce((groups: withRivalData[], key: string) => {
+    const mine = allScores[key] || {
+      exScore: 0,
+      missCount: NaN,
+      clearState: 7,
+      updatedAt: "-",
+    };
+    const rival = allRivalScores[key];
+    groups.push({
+      title: rival.title,
+      difficulty: rival.difficulty,
+      difficultyLevel: rival.difficultyLevel,
+      myEx: mine.exScore || 0,
+      rivalEx: rival.exScore,
+      myMissCount: mine.missCount || 0,
+      rivalMissCount: rival.missCount,
+      myClearState: mine.clearState || 7,
+      rivalClearState: rival.clearState,
+      myLastUpdate: mine.updatedAt,
+      rivalLastUpdate: rival.updatedAt,
+    });
+    return groups;
+  }, []);
 };
 
-export const fullData = async (
-  descendingRivalData: rivalScoreData[] | undefined,
-  rivalData: string = ""
-): Promise<rivalScoreData[]> => {
+export const fullData = async (descendingRivalData: rivalScoreData[] | undefined, rivalData: string = ""): Promise<rivalScoreData[]> => {
   if (descendingRivalData) {
     return descendingRivalData;
   }

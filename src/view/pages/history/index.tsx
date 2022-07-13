@@ -6,7 +6,7 @@ import InputLabel from "@mui/material/InputLabel";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Loader from "@/view/components/common/loader";
-import Pagination from "@mui/lab/Pagination/Pagination";
+import Pagination from "@mui/lab/Pagination";
 import { _prefix } from "@/components/songs/filter";
 import HistoryDataReceiver from "@/components/history";
 import TableContainer from "@mui/material/TableContainer";

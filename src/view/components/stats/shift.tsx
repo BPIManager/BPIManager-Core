@@ -7,7 +7,7 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import Loader from "../common/loader";
 import { ShiftType } from "@/types/stats";
 import statMain from "@/components/stats/main";
-import Alert from "@mui/material/Alert/Alert";
+import Alert from "@mui/material/Alert";
 import { ChangeLevel } from "./main";
 import { injectIntl } from "react-intl";
 import AdsCard from "@/components/ad";

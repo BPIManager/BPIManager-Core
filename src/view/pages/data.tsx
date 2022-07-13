@@ -4,19 +4,11 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { FormattedMessage } from "react-intl";
 import TextField from "@mui/material/TextField";
-import {
-  _currentStore,
-  _isSingle,
-  _currentStoreWithFullName,
-} from "@/components/settings";
+import { _currentStore, _isSingle, _currentStoreWithFullName } from "@/components/settings";
 import { _autoSync } from "../../components/settings";
 import Link from "@mui/material/Link";
-import {
-  Link as RLink,
-  withRouter,
-  RouteComponentProps,
-} from "react-router-dom";
-import Alert, { AlertColor } from "@mui/material/Alert/Alert";
+import { Link as RLink, withRouter, RouteComponentProps } from "react-router-dom";
+import Alert, { AlertColor } from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import { config } from "@/config";
 import timeFormatter from "@/components/common/timeFormatter";
@@ -35,11 +27,7 @@ interface P {
   updateGlobal: (uid: string) => void;
 }
 
-const ImportScreen: React.FC<P & RouteComponentProps> = ({
-  updateGlobal,
-  match,
-  history,
-}) => {
+const ImportScreen: React.FC<P & RouteComponentProps> = ({ updateGlobal, match, history }) => {
   const [loading, setLoading] = useState(true);
   const [uid, setUid] = useState<string>("");
   const [saving, setSaving] = useState(false);
@@ -70,11 +58,7 @@ const ImportScreen: React.FC<P & RouteComponentProps> = ({
 
   const loadTempItems = async () => {
     const tempId = (match.params as any).docId || "";
-    const res = await (
-      await fetch(
-        "https://proxy.poyashi.me/bpim/api/v1/bookmarklet/get?tempId=" + tempId
-      )
-    ).json();
+    const res = await (await fetch("https://proxy.poyashi.me/bpim/api/v1/bookmarklet/get?tempId=" + tempId)).json();
     if (res.body) {
       const text = JSON.stringify(res.body);
       setRaw(text);
@@ -126,17 +110,7 @@ const ImportScreen: React.FC<P & RouteComponentProps> = ({
           </StepLabel>
           <StepContent>
             <Typography variant="caption">
-              <Link
-                color="secondary"
-                href={
-                  "https://p.eagate.573.jp/game/2dx/" +
-                  currentStore +
-                  "/djdata/score_download.html?style=" +
-                  spdp
-                }
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link color="secondary" href={"https://p.eagate.573.jp/game/2dx/" + currentStore + "/djdata/score_download.html?style=" + spdp} target="_blank" rel="noopener noreferrer">
                 <FormattedMessage id="Data.ClickHere" />
                 <LinkIcon style={{ fontSize: 15 }} />
               </Link>
@@ -154,33 +128,12 @@ const ImportScreen: React.FC<P & RouteComponentProps> = ({
               <FormattedMessage id="Data.ImportText" />
             </Typography>
             <React.Fragment>
-              <Typography
-                variant="caption"
-                style={{ margin: "8px 0 0 0", display: "block" }}
-              >
+              <Typography variant="caption" style={{ margin: "8px 0 0 0", display: "block" }}>
                 <FormattedMessage id="Data.ImportFails" />
               </Typography>
-              <TextField
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setRaw(e.target.value)
-                }
-                disabled={saving}
-                value={raw}
-                style={{ width: "100%" }}
-                margin="dense"
-                variant="outlined"
-                multiline
-                maxRows="4"
-              />
+              <TextField onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRaw(e.target.value)} disabled={saving} value={raw} style={{ width: "100%" }} margin="dense" variant="outlined" multiline maxRows="4" />
             </React.Fragment>
-            <LoadingButton
-              variant="outlined"
-              color="secondary"
-              onClick={() => execute()}
-              disabled={saving}
-              loading={saving}
-              style={{ margin: "5px 0" }}
-            >
+            <LoadingButton variant="outlined" color="secondary" onClick={() => execute()} disabled={saving} loading={saving} style={{ margin: "5px 0" }}>
               <FormattedMessage id="Data.Execute" />
               <br />
               (-{">"}
@@ -201,29 +154,12 @@ const ImportScreen: React.FC<P & RouteComponentProps> = ({
         </Step>
       </Stepper>
       {result.errors.length > 0 && result.stateText !== "Data.Failed" && (
-        <MakeAlert
-          severity="success"
-          title={<FormattedMessage id="Data.End" />}
-        >
+        <MakeAlert severity="success" title={<FormattedMessage id="Data.End" />}>
           <div style={{ width: "100%" }}>
-            <Button
-              fullWidth
-              variant="outlined"
-              color="secondary"
-              onClick={() => history.push("/songs/today")}
-              style={{ margin: "5px 0" }}
-            >
+            <Button fullWidth variant="outlined" color="secondary" onClick={() => history.push("/songs/today")} style={{ margin: "5px 0" }}>
               <FormattedMessage id="Data.ShowUpdated" />
             </Button>
-            <Button
-              fullWidth
-              variant="outlined"
-              color="secondary"
-              onClick={() =>
-                history.push("/history/" + timeFormatter(7, new Date()))
-              }
-              style={{ margin: "5px 0" }}
-            >
+            <Button fullWidth variant="outlined" color="secondary" onClick={() => history.push("/history/" + timeFormatter(7, new Date()))} style={{ margin: "5px 0" }}>
               <FormattedMessage id="Data.ShowUpdatedHistory" />
             </Button>
           </div>
@@ -305,23 +241,13 @@ const Navigation: React.FC = () => {
           </pre>
           <Typography variant="caption" component="p">
             1.ブラウザに上記ブックマークレットを登録します。
-            <Link
-              color="secondary"
-              href="http://yomahigoto.blogspot.com/2017/10/androidchrome.html"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <Link color="secondary" href="http://yomahigoto.blogspot.com/2017/10/androidchrome.html" target="_blank" rel="noopener noreferrer">
               登録方法はこちらのサイトを参照してください。
             </Link>
           </Typography>
           <Typography variant="caption" component="p">
             2.
-            <Link
-              color="secondary"
-              href="https://p.eagate.573.jp/game/2dx/27/top/index.html"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <Link color="secondary" href="https://p.eagate.573.jp/game/2dx/27/top/index.html" target="_blank" rel="noopener noreferrer">
               IIDX公式サイト
             </Link>
             を開きます。
@@ -330,8 +256,7 @@ const Navigation: React.FC = () => {
             3.登録したブックマークレットを実行します。
           </Typography>
           <Typography variant="caption" component="p">
-            4.処理が完了したら自動的に BPIManager
-            へ遷移しデータがインポートされます。
+            4.処理が完了したら自動的に BPIManager へ遷移しデータがインポートされます。
           </Typography>
           <MakeAlert title="注意事項" severity="warning">
             <Typography variant="caption" component="p">
