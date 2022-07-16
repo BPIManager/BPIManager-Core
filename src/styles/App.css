@@ -685,7 +685,7 @@ text.react-calendar-heatmap-weekday-label {
 
 .darkDetailedScreen .TypographywithIconAndLines,
 #__dark .TypographywithIconAndLines {
-  background-color: #0a0a0a;
+  background-color: rgb(18, 18, 18);
 }
 .deepSeaDetailedScreen .TypographywithIconAndLines,
 #__deepsea .TypographywithIconAndLines {
