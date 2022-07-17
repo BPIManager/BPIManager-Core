@@ -76,7 +76,7 @@ export default class Initialize extends React.Component<
       if (!localStorage.getItem("foregroundNotification")) {
         localStorage.setItem("foregroundNotification", "true");
       }
-      //this.sinusIridum();
+      this.modify_Chronos();
       this.removeDeletedSongs();
       const songsAvailable: string[] = await this.songsDB.getAll();
       this.scoresDB.removeNaNItems();
@@ -116,6 +116,12 @@ export default class Initialize extends React.Component<
       });
     }
   }
+
+  modify_Chronos = async () => {
+    const Chronos_Leggendaria = { title: "Chronos", difficulty: "leggendaria" };
+    await this.scoresDB.customModify(Chronos_Leggendaria, { difficultyLevel: "11" });
+    await this.scoreHistoryDB.customModify(Chronos_Leggendaria, { difficultyLevel: "11" });
+  };
 
   removeDeletedSongs = async () => {
     const ax = await (await fetch("https://proxy.poyashi.me/?type=bpi_metadata")).json();
