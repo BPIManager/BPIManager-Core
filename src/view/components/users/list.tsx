@@ -15,7 +15,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { getAltTwitterIcon } from "@/components/rivals";
-import Alert from "@mui/material/Alert/Alert";
+import Alert from "@mui/material/Alert";
 import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Button from "@mui/material/Button";
@@ -53,13 +53,11 @@ const FolloweeList: React.FC<P> = ({ ids, text, handleClose, userName }) => {
     if (!initialLoaded) loadMore();
     window.history.pushState(null, "UserList", null);
     window.addEventListener("popstate", overridePopstate, false);
-    return () =>
-      window.removeEventListener("popstate", overridePopstate, false);
+    return () => window.removeEventListener("popstate", overridePopstate, false);
   });
 
   const openModal = (uName: string) => setModal({ open: true, uName: uName });
-  const handleModal = (newState: boolean) =>
-    setModal({ ...modal, open: newState });
+  const handleModal = (newState: boolean) => setModal({ ...modal, open: newState });
 
   const loadMore = async (forceArray: string[] | null = null) => {
     if (loading) return;
@@ -80,21 +78,10 @@ const FolloweeList: React.FC<P> = ({ ids, text, handleClose, userName }) => {
 
   return (
     <React.Fragment>
-      <Dialog
-        fullScreen
-        open={true}
-        onClose={handleClose}
-        TransitionComponent={Transition}
-      >
+      <Dialog fullScreen open={true} onClose={handleClose} TransitionComponent={Transition}>
         <AppBar style={{ position: "relative" }}>
           <Toolbar>
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={handleClose}
-              aria-label="close"
-              size="large"
-            >
+            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close" size="large">
               <ArrowBackIosIcon />
             </IconButton>
             <Typography variant="h6">
@@ -106,28 +93,11 @@ const FolloweeList: React.FC<P> = ({ ids, text, handleClose, userName }) => {
           <List>
             {users.map((item) => {
               return (
-                <ListItem
-                  key={item.uid}
-                  button
-                  onClick={() => openModal(item.displayName)}
-                >
+                <ListItem key={item.uid} button onClick={() => openModal(item.displayName)}>
                   <ListItemIcon>
-                    <UserIcon
-                      _legacy
-                      disableZoom
-                      defaultURL={item.photoURL}
-                      text={item.displayName}
-                      altURL={getAltTwitterIcon(item, false, "normal")}
-                    />
+                    <UserIcon _legacy disableZoom defaultURL={item.photoURL} text={item.displayName} altURL={getAltTwitterIcon(item, false, "normal")} />
                   </ListItemIcon>
-                  <ListItemText
-                    primary={item.displayName}
-                    secondary={
-                      (item.arenaRank || "-") +
-                      " / 総合BPI:" +
-                      (item.totalBPI || "- ")
-                    }
-                  />
+                  <ListItemText primary={item.displayName} secondary={(item.arenaRank || "-") + " / 総合BPI:" + (item.totalBPI || "- ")} />
                   <ListItemSecondaryAction>
                     <IconButton edge="end" aria-label="delete" size="large">
                       <ChevronRightIcon />
@@ -152,13 +122,7 @@ const FolloweeList: React.FC<P> = ({ ids, text, handleClose, userName }) => {
           </Button>
         )}
       </Dialog>
-      {modal.open && (
-        <ModalUser
-          isOpen={modal.open}
-          currentUserName={modal.uName}
-          handleOpen={(flag: boolean) => handleModal(flag)}
-        />
-      )}
+      {modal.open && <ModalUser isOpen={modal.open} currentUserName={modal.uName} handleOpen={(flag: boolean) => handleModal(flag)} />}
     </React.Fragment>
   );
 };

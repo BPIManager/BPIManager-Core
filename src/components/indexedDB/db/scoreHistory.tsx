@@ -279,4 +279,13 @@ export default class db extends storageWrapper {
     });
     return;
   }
+
+  async customModify(conditions: { [key: string]: any }, modifiedData: { [key: string]: any }): Promise<number> {
+    try {
+      return await this.scoreHistory.where(conditions).modify(modifiedData);
+    } catch (e: any) {
+      console.error(e);
+      return -1;
+    }
+  }
 }

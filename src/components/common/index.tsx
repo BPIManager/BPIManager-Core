@@ -77,8 +77,7 @@ export const alternativeImg = (input: string) => {
 };
 
 const themeColor = _currentTheme();
-export const avatarBgColor =
-  themeColor === "light" ? "#efefef" : "rgba(255, 255, 255, 0.05)";
+export const avatarBgColor = themeColor === "light" ? "#efefef" : "rgba(255, 255, 255, 0.05)";
 export const avatarFontColor = themeColor === "light" ? "#222" : "#efefef";
 
 export const timeDiff = (seconds: number) => {
@@ -93,16 +92,16 @@ export const rivalBgColor = (d: number) => {
   //d = 0:rival , 2:you
   const theme = _currentTheme();
   if (theme === "light") {
-    if (d === 0) return "#ff1212";
-    if (d === 1) return "#fdcaca";
-    if (d === 2) return "#ff9191";
-    if (d === 3) return "#880000";
+    if (d === 0) return "#B8906D";
+    if (d === 1) return "#D8CCBE";
+    if (d === 2) return "#855021";
+    if (d === 3) return "#ff9333";
   }
   if (theme === "dark") {
-    if (d === 0) return "#c56c16";
-    if (d === 1) return "#524232";
-    if (d === 2) return "#653200";
-    if (d === 3) return "#2d1600";
+    if (d === 0) return "#44E3D3";
+    if (d === 1) return "#009688";
+    if (d === 2) return "#32A89C";
+    if (d === 3) return "#00635A";
   }
   if (theme === "deepsea") {
     if (d === 0) return "#4057ff";
@@ -136,9 +135,4 @@ export const blurredBackGround = () => ({
   backgroundColor: "transparent",
 });
 
-export const historyBgColor = () =>
-  _currentTheme() === "light"
-    ? "#e2e2e2"
-    : _currentTheme() === "dark"
-    ? "#2f2f2f"
-    : "#003961";
+export const historyBgColor = () => (_currentTheme() === "light" ? "#e2e2e2" : _currentTheme() === "dark" ? "#2f2f2f" : "#003961");

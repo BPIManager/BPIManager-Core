@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import Container from '@mui/material/Container';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import NotesRecent from '../components/notes/recent';
-import NotesLiked from '../components/notes/liked';
-import MyNotes from '../components/notes/mynotes';
-import WriteNotes from '../components/notes/writeNotes';
-import { AppBar } from '@mui/material';
+import React, { useState } from "react";
+import Container from "@mui/material/Container";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import NotesRecent from "../components/notes/recent";
+import NotesLiked from "../components/notes/liked";
+import MyNotes from "../components/notes/mynotes";
+import WriteNotes from "../components/notes/writeNotes";
+import AppBar from "@mui/material/AppBar";
 
 const Notes: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<number>(0);
@@ -14,14 +14,7 @@ const Notes: React.FC = () => {
   return (
     <React.Fragment>
       <AppBar position="static" className="subAppBar">
-        <Tabs
-          value={currentTab}
-          onChange={(_event: React.ChangeEvent<{}>, newValue: number) => setCurrentTab(newValue)}
-          indicatorColor="secondary"
-          variant="scrollable"
-          scrollButtons
-          textColor="secondary"
-          allowScrollButtonsMobile>
+        <Tabs value={currentTab} onChange={(_event: React.ChangeEvent<{}>, newValue: number) => setCurrentTab(newValue)} indicatorColor="secondary" variant="scrollable" scrollButtons textColor="secondary" allowScrollButtonsMobile>
           <Tab label="最新の投稿" />
           <Tab label="書き込む・探す" />
           <Tab label="いいねした投稿" />
@@ -36,7 +29,6 @@ const Notes: React.FC = () => {
       </Container>
     </React.Fragment>
   );
-
-}
+};
 
 export default Notes;

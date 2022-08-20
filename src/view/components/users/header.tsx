@@ -14,7 +14,7 @@ const background = () => {
   const themeColor = _currentTheme();
   if (themeColor === "deepsea") return "linear-gradient(0, rgba(0,13,25,1) 0%, rgba(0,42,82,1) 100%)";
   if (themeColor === "dark") return "linear-gradient(0, rgba(10,10,10,1) 0%, rgba(37,37,37,1) 100%)";
-  return "linear-gradient(0, rgba(255,255,255,1) 0%, rgba(210,210,210,1) 100%)";
+  return "linear-gradient(0, rgba(255,255,255,1) 0%, #D8CCBE 100%)";
 };
 
 const SubHeader: React.FC<{
@@ -65,7 +65,7 @@ const UserHeader: React.FC<{
           >
             <UserIcon defaultURL={meta.photoURL ? meta.photoURL.replace("_normal", "") : "noimage"} text={meta.displayName} altURL={getAltTwitterIcon(meta)} style={{ margin: "15px 0" }} className="userpageIcon" />
           </Grid>
-          <SubHeader title="総合BPI" body={String(Number.isNaN(meta.totalBPI) ? "-" : meta.totalBPI)} />
+          <SubHeader title="総合BPI" body={String(Number.isNaN(meta.totalBPI) ? "-" : meta.totalBPI.toFixed(2))} />
         </Grid>
         <Typography variant="h4" style={{ overflow: "hidden", textAlign: "center" }}>
           {meta.displayName}

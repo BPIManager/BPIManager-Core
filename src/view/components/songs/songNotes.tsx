@@ -4,54 +4,52 @@ import { scoreData, songData } from "@/types/data";
 import Container from "@mui/material/Container";
 import Loader from "../common/loader";
 import fbActions from "@/components/firebase/actions";
-import Alert from "@mui/material/Alert/Alert";
-import AlertTitle from "@mui/material/AlertTitle/AlertTitle";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 import Fab from "@mui/material/Fab";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
 import { Link } from "react-router-dom";
-import {
-  Link as RLink,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  TextField,
-  DialogActions,
-  Button,
-  Divider,
-  InputLabel,
-  FormControl,
-  Select,
-  MenuItem,
-  Grid,
-  IconButton,
-  Theme,
-  Badge,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  SelectChangeEvent,
-} from "@mui/material/";
-import withStyles from '@mui/styles/withStyles';
-import createStyles from '@mui/styles/createStyles';
+import RLink from "@mui/material/Link";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import TextField from "@mui/material/TextField";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import Badge from "@mui/material/Badge";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
+import { SelectChangeEvent } from "@mui/material/Select";
+import withStyles from "@mui/styles/withStyles";
+import createStyles from "@mui/styles/createStyles";
 import timeFormatter, { updatedTime } from "@/components/common/timeFormatter";
 import ReCAPTCHA from "react-google-recaptcha";
 import { difficultyDiscriminator, _prefixWithPS } from "@/components/songs/filter";
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import LinkIcon from '@mui/icons-material/Link';
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import LinkIcon from "@mui/icons-material/Link";
+import { Theme } from "@mui/material/styles";
 
 interface P {
-  song: songData | null,
-  score: scoreData | null,
-  isIndv?: boolean
+  song: songData | null;
+  score: scoreData | null;
+  isIndv?: boolean;
 }
 
 interface S {
-  isLoading: boolean,
-  lastLoaded: any,
-  isOpen: boolean,
-  notes: any[],
-  currentSort: number,
+  isLoading: boolean;
+  lastLoaded: any;
+  isOpen: boolean;
+  notes: any[];
+  currentSort: number;
 }
 
 class SongNotes extends React.Component<P, S> {
@@ -65,7 +63,7 @@ class SongNotes extends React.Component<P, S> {
       lastLoaded: null,
       currentSort: 0,
       notes: [],
-    }
+    };
   }
 
   componentDidMount() {
@@ -77,53 +75,48 @@ class SongNotes extends React.Component<P, S> {
   handleToggle = () => this.setState({ isOpen: !this.state.isOpen });
 
   handleChange = (event: SelectChangeEvent<number>) => {
-    if (typeof event.target.value !== "number") { return; }
+    if (typeof event.target.value !== "number") {
+      return;
+    }
     this.setState({ currentSort: event.target.value, isLoading: true });
     this.load(true, event.target.value);
-  }
+  };
 
   async load(forceReload: boolean = false, newSort = -1) {
     const { song } = this.props;
-    if (!song) { return this.setState({ isLoading: false, notes: [] }) }
+    if (!song) {
+      return this.setState({ isLoading: false, notes: [] });
+    }
     const notes = await this.fbActions.loadNotes(song, forceReload ? null : this.state.lastLoaded, newSort === -1 ? this.state.currentSort : newSort);
-    return this.setState(notes.docs.length > 0 ? { notes: notes.docs, lastLoaded: notes.docs[notes.docs.length - 1], isLoading: false } : { notes: [], lastLoaded: null, isLoading: false })
+    return this.setState(notes.docs.length > 0 ? { notes: notes.docs, lastLoaded: notes.docs[notes.docs.length - 1], isLoading: false } : { notes: [], lastLoaded: null, isLoading: false });
   }
 
   render() {
     const { isLoading, notes, isOpen, currentSort } = this.state;
     const { isIndv, song } = this.props;
-    if (!song) { return (null); }
+    if (!song) {
+      return null;
+    }
     return (
       <div style={{ margin: "15px 0" }}>
         <Container fixed>
           {!isIndv && (
             <div style={{ marginBottom: "8px" }}>
-              <Button
-                fullWidth
-                variant="outlined"
-                color="secondary"
-                startIcon={<LinkIcon />}
-                onClick={() => window.open(`/notes/${song.title}/${difficultyDiscriminator(song.difficulty)}/${song.dpLevel === "0" ? "sp" : "dp"}`)}
-              >
+              <Button fullWidth variant="outlined" color="secondary" startIcon={<LinkIcon />} onClick={() => window.open(`/notes/${song.title}/${difficultyDiscriminator(song.difficulty)}/${song.dpLevel === "0" ? "sp" : "dp"}`)}>
                 新しいタブで開く
               </Button>
             </div>
           )}
           <FormControl style={{ width: "100%" }}>
-            <InputLabel shrink>
-              並べ替え
-            </InputLabel>
-            <Select
-              value={currentSort}
-              onChange={this.handleChange}
-              displayEmpty>
+            <InputLabel shrink>並べ替え</InputLabel>
+            <Select value={currentSort} onChange={this.handleChange} displayEmpty>
               <MenuItem value={0}>書き込み日時が新しい順</MenuItem>
               <MenuItem value={1}>書き込み者の単曲BPIが高い順</MenuItem>
               <MenuItem value={2}>いいねが多い順</MenuItem>
             </Select>
           </FormControl>
-          {(!isLoading && notes.length === 0) && <NoNotes song={this.props.song} />}
-          {(!isLoading && notes.length > 0) && <NotesList list={notes} />}
+          {!isLoading && notes.length === 0 && <NoNotes song={this.props.song} />}
+          {!isLoading && notes.length > 0 && <NotesList list={notes} />}
           {isLoading && <Loader />}
           <Fab color="secondary" onClick={this.handleToggle} aria-label="edit" style={{ position: "fixed", bottom: "15px", right: "15px" }}>
             <EditIcon />
@@ -137,17 +130,25 @@ class SongNotes extends React.Component<P, S> {
 
 export default SongNotes;
 
-class NoNotes extends React.Component<{ song: songData | null }, {}>{
+class NoNotes extends React.Component<{ song: songData | null }, {}> {
   render() {
     const song = this.props.song;
-    if (!song) return (null);
+    if (!song) return null;
     return (
       <Alert severity="info" style={{ margin: "10px 0" }}>
         <AlertTitle>投稿がありません</AlertTitle>
-        <p>一番乗りで投稿しましょう！<br />
-          右下のボタンをタップして、{song.title}に関する情報（例：譜面傾向、練習に向いている曲、ギアチェンや当たり判別の方法）などを自由に書き込んでください。<br />
-          <RLink color="secondary" href="https://docs2.poyashi.me/tos/" component="a">免責事項・ご利用に関する注意</RLink><br />
-          <RLink color="secondary" href="https://docs2.poyashi.me/docs/social/notes/">この機能について</RLink>
+        <p>
+          一番乗りで投稿しましょう！
+          <br />
+          右下のボタンをタップして、{song.title}に関する情報（例：譜面傾向、練習に向いている曲、ギアチェンや当たり判別の方法）などを自由に書き込んでください。
+          <br />
+          <RLink color="secondary" href="https://docs2.poyashi.me/tos/" component="a">
+            免責事項・ご利用に関する注意
+          </RLink>
+          <br />
+          <RLink color="secondary" href="https://docs2.poyashi.me/docs/social/notes/">
+            この機能について
+          </RLink>
         </p>
       </Alert>
     );
@@ -155,29 +156,31 @@ class NoNotes extends React.Component<{ song: songData | null }, {}>{
 }
 
 interface WP {
-  close: () => void,
-  saveAndReload: () => void,
-  score: scoreData | null,
-  song: songData | null
+  close: () => void;
+  saveAndReload: () => void;
+  score: scoreData | null;
+  song: songData | null;
 }
 
-class WriteDialog extends React.Component<WP, {
-  text: string,
-  isLoading: boolean,
-}>{
-
+class WriteDialog extends React.Component<
+  WP,
+  {
+    text: string;
+    isLoading: boolean;
+  }
+> {
   constructor(props: WP) {
     super(props);
     this.state = {
       text: "",
       isLoading: false,
-    }
+    };
   }
 
   changeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (this.state.isLoading) return;
     this.setState({ text: e.target.value });
-  }
+  };
 
   exec = async () => {
     if (this.ref.current) {
@@ -196,16 +199,16 @@ class WriteDialog extends React.Component<WP, {
           uid: authInfo ? authInfo.uid : null,
           isSingle: this.props.song.dpLevel === "0",
           token: token,
-        })
+        }),
       });
-      if (response.status === 200 && ((await response.json()) || { "error": true })["error"] === false) {
+      if (response.status === 200 && ((await response.json()) || { error: true })["error"] === false) {
         this.props.saveAndReload();
         this.props.close();
       }
     } else {
       alert("No reCAPTCHA Signature returned. Please reload this page and try again.");
     }
-  }
+  };
 
   ref = React.createRef<ReCAPTCHA>();
 
@@ -219,77 +222,88 @@ class WriteDialog extends React.Component<WP, {
           <DialogTitle>投稿を作成</DialogTitle>
           <DialogContent>
             {isLoading && <Loader />}
-            {!isLoading && <div>
-              {(!score || (score && Number.isNaN(score.currentBPI))) && (
-                <span>プレイログがない楽曲に対してコメントを投稿することはできません。<br />
-                  BPIManagerをはじめて使う場合、まずは<Link to="/data" style={{ textDecoration: "none" }}><RLink color="secondary" component="span">データ取り込み</RLink></Link>からプレイデータをインポートしてください。
-                </span>)}
-              {(score && !Number.isNaN(score.currentBPI)) && <div>
-                <TextField
-                  multiline
-                  fullWidth
-                  rows={4}
-                  error={tooLong}
-                  helperText={tooLong ? "500文字を超えています！" : ""}
-                  placeholder={"一度に500文字まで入力できます"}
-                  onChange={this.changeValue}
-                  value={this.state.text}
-                  variant="outlined"
-                />
-                <ReCAPTCHA
-                  ref={this.ref}
-                  sitekey="6LeGJsIZAAAAAJFm0m2bM-EPBe-Zfg7R2MniB1B8"
-                  size="invisible"
-                />
-                <DialogContentText>
-                  <small><RLink href="https://docs2.poyashi.me/tos/" color="secondary">免責事項・ご利用に関する注意</RLink> | <RLink color="secondary" target="_blank" href="https://docs2.poyashi.me/docs/social/notes/">この機能について</RLink><br />
-                    Protected by reCAPTCHA | 記録されるBPI:{score.currentBPI}</small>
-                </DialogContentText>
-              </div>}
-            </div>}
+            {!isLoading && (
+              <div>
+                {(!score || (score && Number.isNaN(score.currentBPI))) && (
+                  <span>
+                    プレイログがない楽曲に対してコメントを投稿することはできません。
+                    <br />
+                    BPIManagerをはじめて使う場合、まずは
+                    <Link to="/data" style={{ textDecoration: "none" }}>
+                      <RLink color="secondary" component="span">
+                        データ取り込み
+                      </RLink>
+                    </Link>
+                    からプレイデータをインポートしてください。
+                  </span>
+                )}
+                {score && !Number.isNaN(score.currentBPI) && (
+                  <div>
+                    <TextField multiline fullWidth rows={4} error={tooLong} helperText={tooLong ? "500文字を超えています！" : ""} placeholder={"一度に500文字まで入力できます"} onChange={this.changeValue} value={this.state.text} variant="outlined" />
+                    <ReCAPTCHA ref={this.ref} sitekey="6LeGJsIZAAAAAJFm0m2bM-EPBe-Zfg7R2MniB1B8" size="invisible" />
+                    <DialogContentText>
+                      <small>
+                        <RLink href="https://docs2.poyashi.me/tos/" color="secondary">
+                          免責事項・ご利用に関する注意
+                        </RLink>{" "}
+                        |{" "}
+                        <RLink color="secondary" target="_blank" href="https://docs2.poyashi.me/docs/social/notes/">
+                          この機能について
+                        </RLink>
+                        <br />
+                        Protected by reCAPTCHA | 記録されるBPI:{score.currentBPI}
+                      </small>
+                    </DialogContentText>
+                  </div>
+                )}
+              </div>
+            )}
           </DialogContent>
           {!isLoading && (
             <DialogActions>
               <Button onClick={this.props.close} color="primary">
                 閉じる
-            </Button>
-              {(score && !Number.isNaN(score.currentBPI)) && (
+              </Button>
+              {score && !Number.isNaN(score.currentBPI) && (
                 <Button onClick={this.exec} disabled={tooLong} color="primary">
                   投稿
-            </Button>)
-              }
-            </DialogActions>)}
+                </Button>
+              )}
+            </DialogActions>
+          )}
         </Dialog>
       </React.Fragment>
     );
   }
 }
 
-class NotesList extends React.Component<{
-  list: any[]
-}, {}>{
-
+class NotesList extends React.Component<
+  {
+    list: any[];
+  },
+  {}
+> {
   render() {
-    return (
-      this.props.list.map((data: any) => {
-        return (<EachMemo item={data} key={data.id} />);
-      })
-    );
+    return this.props.list.map((data: any) => {
+      return <EachMemo item={data} key={data.id} />;
+    });
   }
 }
 
-export class EachMemo extends React.Component<{
-  item: any,
-  listType?: boolean,
-  noEllipsis?: boolean,
-  onClick?: (val: any) => void
-}, {
-    memo: string,
-    likeCount: number,
-    wroteAt: any,
-    userBPI: number,
-  }>{
-
+export class EachMemo extends React.Component<
+  {
+    item: any;
+    listType?: boolean;
+    noEllipsis?: boolean;
+    onClick?: (val: any) => void;
+  },
+  {
+    memo: string;
+    likeCount: number;
+    wroteAt: any;
+    userBPI: number;
+  }
+> {
   constructor(props: { item: any }) {
     super(props);
     const item = props.item.data();
@@ -297,8 +311,8 @@ export class EachMemo extends React.Component<{
       memo: item.memo,
       likeCount: item.likeCount || 0,
       wroteAt: item.wroteAt,
-      userBPI: item.userBPI
-    }
+      userBPI: item.userBPI,
+    };
   }
 
   favButton = async () => {
@@ -312,16 +326,18 @@ export class EachMemo extends React.Component<{
       return;
     } else {
       return this.setState({
-        likeCount: this.state.likeCount + res
-      })
+        likeCount: this.state.likeCount + res,
+      });
     }
-  }
+  };
 
   render() {
     const { memo, likeCount, wroteAt, userBPI } = this.state;
     if (this.props.listType) {
       const { onClick, noEllipsis } = this.props;
-      if (!onClick) { return (null); }
+      if (!onClick) {
+        return null;
+      }
       let note = memo;
       const it = this.props.item.data();
       if (note.length > 40 && !noEllipsis) {
@@ -329,7 +345,14 @@ export class EachMemo extends React.Component<{
       }
       return (
         <ListItem button onClick={() => onClick(it)}>
-          <ListItemText primary={<span>{it.songName + _prefixWithPS(it.songDiff, it.isSingle)}&nbsp;<small>{updatedTime(wroteAt.toDate())}</small></span>} secondary={note} />
+          <ListItemText
+            primary={
+              <span>
+                {it.songName + _prefixWithPS(it.songDiff, it.isSingle)}&nbsp;<small>{updatedTime(wroteAt.toDate())}</small>
+              </span>
+            }
+            secondary={note}
+          />
           <ListItemSecondaryAction>
             <IconButton aria-label="likeButton" onClick={this.favButton} size="large">
               <StyledBadge badgeContent={likeCount || 0} color="secondary">
@@ -352,7 +375,11 @@ export class EachMemo extends React.Component<{
             </IconButton>
           </Grid>
           <Grid item>
-            <small style={{ display: "flex", justifyContent: "flex-end" }}>投稿者の単曲BPI:{userBPI}<br />投稿日:{wroteAt ? timeFormatter(3, wroteAt.toDate()) : "たった今"}</small>
+            <small style={{ display: "flex", justifyContent: "flex-end" }}>
+              投稿者の単曲BPI:{userBPI}
+              <br />
+              投稿日:{wroteAt ? timeFormatter(3, wroteAt.toDate()) : "たった今"}
+            </small>
           </Grid>
         </Grid>
         <Divider style={{ margin: "10px 0" }} />
@@ -367,7 +394,7 @@ export const StyledBadge = withStyles((theme: Theme) =>
       right: -3,
       top: 13,
       border: `2px solid ${theme.palette.background.paper}`,
-      padding: '0 4px',
+      padding: "0 4px",
     },
-  }),
+  })
 )(Badge);

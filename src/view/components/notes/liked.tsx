@@ -1,19 +1,19 @@
-import React from 'react';
-import Container from '@mui/material/Container';
-import fbActions from '@/components/firebase/actions';
-import Loader from '@/view/components/common/loader';
-import List from '@mui/material/List';
-import ModalNotes from './modal';
-import Alert from '@mui/material/Alert/Alert';
-import AlertTitle from '@mui/material/AlertTitle/AlertTitle';
-import { EachMemo } from '../songs/songNotes';
+import React from "react";
+import Container from "@mui/material/Container";
+import fbActions from "@/components/firebase/actions";
+import Loader from "@/view/components/common/loader";
+import List from "@mui/material/List";
+import ModalNotes from "./modal";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import { EachMemo } from "../songs/songNotes";
 import { getDoc } from "firebase/firestore";
 
 interface S {
-  isLoading: boolean,
-  likedNotes: any[],
-  isModalOpen: boolean,
-  data: any
+  isLoading: boolean;
+  likedNotes: any[];
+  isModalOpen: boolean;
+  data: any;
 }
 
 class NotesLiked extends React.Component<{}, S> {
@@ -26,7 +26,7 @@ class NotesLiked extends React.Component<{}, S> {
       isModalOpen: false,
       likedNotes: [],
       data: null,
-    }
+    };
   }
 
   async componentDidMount() {
@@ -35,7 +35,7 @@ class NotesLiked extends React.Component<{}, S> {
       return this.setState({
         likedNotes: [],
         isLoading: false,
-      })
+      });
     }
     const docs = likedNotes.docs;
     const res = [];
@@ -49,42 +49,41 @@ class NotesLiked extends React.Component<{}, S> {
     return this.setState({
       likedNotes: res,
       isLoading: false,
-    })
+    });
   }
 
-  handleModalOpen = (flag: boolean) => this.setState({ isModalOpen: flag, data: null })
+  handleModalOpen = (flag: boolean) => this.setState({ isModalOpen: flag, data: null });
 
   onClick = (data: any) => {
     this.setState({
       isModalOpen: true,
-      data: data
-    })
-  }
+      data: data,
+    });
+  };
 
   render() {
     const { isLoading, likedNotes, isModalOpen, data } = this.state;
     if (isLoading) {
-      return (<Loader />);
+      return <Loader />;
     }
     return (
       <Container fixed>
         {likedNotes.length === 0 && (
           <Alert severity="error">
             <AlertTitle>いいねをした投稿がありません</AlertTitle>
-            <p>投稿に「いいね」をつけると、この画面で一括確認することができます。<br />
-              役に立ちそうな投稿にはどんどん「いいね」を付けていきましょう！</p>
+            <p>
+              投稿に「いいね」をつけると、この画面で一括確認することができます。
+              <br />
+              役に立ちそうな投稿にはどんどん「いいね」を付けていきましょう！
+            </p>
           </Alert>
         )}
-        <List
-          component="nav"
-        >
+        <List component="nav">
           {likedNotes.map((item: any, i: number) => {
-            return (
-              <EachMemo item={item} listType noEllipsis onClick={this.onClick} key={i} />
-            )
+            return <EachMemo item={item} listType noEllipsis onClick={this.onClick} key={i} />;
           })}
         </List>
-        {(isModalOpen && data) && <ModalNotes derived={data} isOpen={isModalOpen} handleOpen={(flag: boolean) => this.handleModalOpen(flag)} />}
+        {isModalOpen && data && <ModalNotes derived={data} isOpen={isModalOpen} handleOpen={(flag: boolean) => this.handleModalOpen(flag)} />}
       </Container>
     );
   }

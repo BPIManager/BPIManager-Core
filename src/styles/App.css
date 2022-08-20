@@ -101,26 +101,16 @@ th.MuiTableCell-root.MuiTableCell-head {
   background: #00101e !important;
 }
 
-header.apbar {
-  box-shadow: 0 0 0 !important;
+header.apbar,
+.MuiPaper-root.MuiAppBar-root,
+.MuiButtonGroup-root {
+  box-shadow: none !important;
 }
 
 @media screen and (min-width: 600px) {
   .subAppBar {
     margin-top: 8px !important;
   }
-}
-
-#__dark header.MuiPaper-root {
-  background-color: #121212e1;
-}
-
-#__deepsea header.MuiPaper-root {
-  background-color: #001625e1;
-}
-
-#__light header.MuiPaper-root {
-  background-color: #591711e1;
 }
 
 a.link {
@@ -130,6 +120,11 @@ a.link {
 
 a.link:hover {
   text-decoration: underline;
+}
+
+#__light .MuiPaper-root#screenCaptureTarget {
+  border: 1px solid #dfdfdf;
+  box-shadow: none !important;
 }
 
 #songsVil span.MuiButtonBase-root.MuiIconButton-root.MuiCheckbox-root.MuiCheckbox-colorSecondary.MuiIconButton-colorSecondary {
@@ -690,7 +685,7 @@ text.react-calendar-heatmap-weekday-label {
 
 .darkDetailedScreen .TypographywithIconAndLines,
 #__dark .TypographywithIconAndLines {
-  background-color: #0a0a0a;
+  background-color: rgb(18, 18, 18);
 }
 .deepSeaDetailedScreen .TypographywithIconAndLines,
 #__deepsea .TypographywithIconAndLines {
@@ -1006,4 +1001,9 @@ text.react-calendar-heatmap-weekday-label {
 
 .MuiListItem-container {
   list-style-type: none;
+}
+
+.noTextButton .MuiButton-startIcon {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
