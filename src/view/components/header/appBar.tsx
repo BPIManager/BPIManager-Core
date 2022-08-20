@@ -4,7 +4,6 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
 import Hidden from "@mui/material/Hidden";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -45,12 +44,12 @@ import StarHalfIcon from "@mui/icons-material/StarHalf";
 import ArenaRankCheck from "../arenaRankCheck";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import Button from "@mui/material/Button";
-import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import { getMessaging, onMessage } from "firebase/messaging";
 import fb from "@/components/firebase";
 import ArenaMatchWatcher from "@/view/components/arenaMatch/watchDog";
 import { UserIcon } from "../common/icon";
 import SyncStatus from "./syncStatus";
+import MobileBottomNav from "./mobileNav";
 
 interface navBars {
   to: string;
@@ -94,24 +93,6 @@ const styles = (theme: any) => ({
     paddingLeft: theme.spacing(4),
   },
 });
-
-const songs: navBars[] = [
-  {
-    to: "/lists",
-    id: "GlobalNav.FavoriteSongs",
-    icon: <BookmarkIcon />,
-  },
-  {
-    to: "/songs",
-    id: "GlobalNav.SongList",
-    icon: <LibraryMusicIcon />,
-  },
-  {
-    to: "/notPlayed",
-    id: "GlobalNav.unregisteredSongs",
-    icon: <BorderColorIcon />,
-  },
-];
 const myStat: navBars[] = [
   {
     to: "/compare",
@@ -167,6 +148,11 @@ const navBarTop: navBars[] = [
     id: "GlobalNav.Data",
     icon: <SaveAltIcon />,
   },
+  {
+    to: "/songs",
+    id: "GlobalNav.Parent.Songs",
+    icon: <QueueMusicIcon />,
+  },
 ];
 const navBarBottom: navBars[] = [
   {
@@ -207,11 +193,11 @@ const GlobalHeader: React.FC<{ global: any; classes: any; theme: any; children: 
       case "data":
         return "GlobalNav.Data";
       case "lists":
-        return "GlobalNav.FavoriteSongs";
+        return "GlobalNav.SongList";
       case "songs":
         return "GlobalNav.SongList";
       case "notPlayed":
-        return "GlobalNav.unregisteredSongs";
+        return "GlobalNav.SongList";
       case "compare":
         return "GlobalNav.compare";
       case "stats":
@@ -319,16 +305,6 @@ const GlobalHeader: React.FC<{ global: any; classes: any; theme: any; children: 
         </ListItem>
       ))}
       <InnerList
-        child={songs}
-        handleClick={() => setIsOpenSongs(!isOpenSongs)}
-        classes={classes}
-        history={history}
-        toggleNav={toggleNav}
-        isPerment={isPerment}
-        parent={{ id: "GlobalNav.Parent.Songs", icon: <QueueMusicIcon /> }}
-        isOpen={isOpenSongs}
-      />
-      <InnerList
         child={myStat}
         handleClick={() => setIsOpenMyStat(!isOpenMyStat)}
         classes={classes}
@@ -397,7 +373,7 @@ const GlobalHeader: React.FC<{ global: any; classes: any; theme: any; children: 
   return (
     <div className={classes.root}>
       <ArenaRankCheck />
-      <AppBar className={window.location.href.split("/").pop() === "" ? "appBarIndex " + classes.appBar + " apbar" : classes.appBar + " apbar"}>
+      <AppBar position="absolute" className={window.location.href.split("/").pop() === "" ? "appBarIndex " + classes.appBar + " apbar" : classes.appBar + " apbar"}>
         <Toolbar>
           <Typography variant="h6" style={{ flexGrow: 1 }}>
             {(page.length === 2 || page[1] === "lists" || page[1] === "notes" || page[1] === "songs" || page[1] === "sync" || page[1] === "arena" || page[1] === "history" || page[1] === "data") && <FormattedMessage id={currentPage()} />}
@@ -427,38 +403,9 @@ const GlobalHeader: React.FC<{ global: any; classes: any; theme: any; children: 
               color="secondary"
             />
           )}
-          <IconButton
-            edge="end"
-            color="inherit"
-            aria-label="menu"
-            className={classes.menuButton}
-            onClick={() => {
-              if (!props.global.state.cannotMove) {
-                return toggleNav();
-              } else {
-                return setErrorSnack(!errorSnack);
-              }
-            }}
-            size="large"
-          >
-            <MenuIcon />
-          </IconButton>
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer}>
-        <Hidden smUp implementation="css">
-          <SwipeableDrawer
-            open={isOpen}
-            onClose={toggleNav}
-            onOpen={toggleNav}
-            anchor="right"
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-          >
-            {drawer(false)}
-          </SwipeableDrawer>
-        </Hidden>
         <Hidden smDown implementation="css">
           <Drawer
             classes={{
@@ -471,9 +418,12 @@ const GlobalHeader: React.FC<{ global: any; classes: any; theme: any; children: 
           </Drawer>
         </Hidden>
       </nav>
-      <main className={classes.content + (window.location.href.match("arena/") ? " arenaDetail" : "")} style={{ width: "100%", marginBottom: "15px" }}>
+      <main className={classes.content + (window.location.href.match("arena/") ? " arenaDetail" : "")} style={{ width: "100%", marginBottom: "65px" }}>
         {props.children}
       </main>
+      <Hidden smUp implementation="css">
+        <MobileBottomNav history={history} />
+      </Hidden>
       <SyncStatus />
       <ArenaMatchWatcher />
       <ShowSnackBar message={"実行中の処理があるため続行できません"} variant="warning" handleClose={() => setErrorSnack(!errorSnack)} open={errorSnack} autoHideDuration={3000} />

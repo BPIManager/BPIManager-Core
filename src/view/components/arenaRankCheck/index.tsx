@@ -74,10 +74,10 @@ export default class ArenaRankCheck extends Component<{}, { show: boolean; modal
     return (
       <React.Fragment>
         {modal && <ArenaRanKSelector complete={this.complete} uid={uid} currentArenaRank={currentArenaRank} toggleDialog={this.toggleDialog} />}
-        <Snackbar style={{ width: "100%", bottom: 0, left: 0 }} open={show}>
+        <Snackbar className="bottomStickedSnack" style={{ width: "100%", left: 0 }} open={show}>
           <SnackbarContent style={{ borderRadius: 0, width: "100%" }} message={<React.Fragment>現在のアリーナランクの収集にご協力お願いします。</React.Fragment>} action={action} />
         </Snackbar>
-        <Snackbar style={{ width: "100%", bottom: 0, left: 0 }} open={completed} autoHideDuration={3000} onClose={() => this.setState({ completed: false })}>
+        <Snackbar className="bottomStickedSnack" style={{ width: "100%", left: 0 }} open={completed} autoHideDuration={3000} onClose={() => this.setState({ completed: false })}>
           <SnackbarContent style={{ borderRadius: 0, width: "100%" }} message={<React.Fragment>ご協力ありがとうございます。</React.Fragment>} />
         </Snackbar>
       </React.Fragment>

@@ -3,22 +3,6 @@ import { createTheme } from "@mui/material";
 export const theme = createTheme({
   palette: {
     mode: "dark",
-    primary: {
-      50: "#e1e3e5",
-      100: "#b3b9be",
-      200: "#818a93",
-      300: "#4e5b67",
-      400: "#283847",
-      500: "#021526",
-      600: "#021222",
-      700: "#010f1c",
-      800: "#010c17",
-      900: "#01060d",
-      A100: "#517aff",
-      A200: "#1e53ff",
-      A400: "#0037ea",
-      A700: "#0031d0",
-    },
     secondary: {
       50: "#edf0f1",
       100: "#d3d9dd",

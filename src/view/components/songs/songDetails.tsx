@@ -29,17 +29,7 @@ interface P {
 
 class SongDetails extends React.Component<P> {
   render() {
-    const {
-      song,
-      score,
-      newMemo,
-      newMissCount,
-      newClearState,
-      handleClearState,
-      handleMissCount,
-      handleMemo,
-      memoModified,
-    } = this.props;
+    const { song, score, newMemo, newMissCount, newClearState, handleClearState, handleMissCount, handleMemo, memoModified } = this.props;
     if (!song || !score) {
       return null;
     }
@@ -50,9 +40,7 @@ class SongDetails extends React.Component<P> {
           <Table aria-label="Score Details">
             <TableHead>
               <TableRow>
-                <TableCell
-                  style={{ minWidth: "130px", maxWidth: "130px" }}
-                ></TableCell>
+                <TableCell style={{ minWidth: "130px", maxWidth: "130px" }}></TableCell>
                 <TableCell></TableCell>
               </TableRow>
             </TableHead>
@@ -68,9 +56,7 @@ class SongDetails extends React.Component<P> {
                     error={newMemo.length > 1000}
                     onChange={handleMemo}
                     value={!memoModified || !newMemo ? song.memo : newMemo}
-                    helperText={
-                      newMemo.length > 1000 ? "テキストが長すぎます." : ""
-                    }
+                    helperText={newMemo.length > 1000 ? "テキストが長すぎます." : ""}
                   />
                 </TableCell>
               </TableRow>
@@ -88,61 +74,45 @@ class SongDetails extends React.Component<P> {
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
-                <TableCell>
-                  <FormattedMessage id="SongDetail.Notes" />
-                </TableCell>
-                <TableCell>{song.notes}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <FormattedMessage id="SongDetail.WorldRecord" />
-                </TableCell>
-                <TableCell>
-                  {song.wr > -1 && (
-                    <span>
-                      {song.wr}({Math.floor((song.wr / max) * 10000) / 100}%)
-                    </span>
-                  )}
-                  {song.wr === -1 && <span>未登載</span>}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <FormattedMessage id="SongDetail.Average" />
-                </TableCell>
-                <TableCell>
-                  {song.avg > -1 && (
-                    <span>
-                      {song.avg}({Math.floor((song.avg / max) * 10000) / 100}%)
-                    </span>
-                  )}
-                  {song.avg === -1 && <span>未登載</span>}
-                </TableCell>
-              </TableRow>
+              <_TableBody titleId="SongDetail.Notes" body={song.notes} />
+              <_TableBody
+                titleId="SongDetail.WorldRecord"
+                body={
+                  <>
+                    {song.wr > -1 && (
+                      <span>
+                        {song.wr}({Math.floor((song.wr / max) * 10000) / 100}%)
+                      </span>
+                    )}
+                    {song.wr === -1 && <span>未登載</span>}
+                  </>
+                }
+              />
+              <_TableBody
+                titleId="SongDetail.Average"
+                body={
+                  <>
+                    {song.avg > -1 && (
+                      <span>
+                        {song.avg}({Math.floor((song.avg / max) * 10000) / 100}%)
+                      </span>
+                    )}
+                    {song.avg === -1 && <span>未登載</span>}
+                  </>
+                }
+              />
               {!Number.isNaN(score.exScore) && (
-                <TableRow>
-                  <TableCell>
-                    <FormattedMessage id="SongDetail.You" />
-                  </TableCell>
-                  <TableCell>
-                    {score.exScore}(
-                    {Math.floor((score.exScore / max) * 10000) / 100}%)
-                  </TableCell>
-                </TableRow>
+                <_TableBody
+                  titleId="SongDetail.You"
+                  body={
+                    <>
+                      {score.exScore}({Math.floor((score.exScore / max) * 10000) / 100}%)
+                    </>
+                  }
+                />
               )}
-              <TableRow>
-                <TableCell>BPM</TableCell>
-                <TableCell>{song.bpm}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <FormattedMessage id="SongDetail.Version" />
-                </TableCell>
-                <TableCell>
-                  {verNameArr[Number(song["textage"].replace(/\/.*?$/, ""))]}
-                </TableCell>
-              </TableRow>
+              <_TableBody titleId="SongDetail.BPM" body={song.bpm} />
+              <_TableBody titleId="SongDetail.Version" body={verNameArr[Number(song["textage"].replace(/\/.*?$/, ""))]} />
             </TableBody>
           </Table>
         </Paper>
@@ -157,40 +127,23 @@ class SongDetails extends React.Component<P> {
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
-                <TableCell>
-                  <FormattedMessage id="SongDetail.ClearState" />
-                </TableCell>
-                <TableCell>
-                  <Select
-                    value={
-                      newClearState === -1 ? score.clearState : newClearState
-                    }
-                    onChange={handleClearState}
-                    displayEmpty
-                  >
-                    {lampCSVArray.map((item: string, i: number) => {
-                      return (
-                        <MenuItem value={i} key={i}>
-                          {item}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <FormattedMessage id="SongDetail.MissCount" />
-                </TableCell>
-                <TableCell>
-                  <TextField
-                    type="number"
-                    onChange={handleMissCount}
-                    value={newMissCount === -1 ? score.missCount : newMissCount}
-                  />
-                </TableCell>
-              </TableRow>
+              <_TableBody
+                titleId="SongDetail.ClearState"
+                body={
+                  <>
+                    <Select value={newClearState === -1 ? score.clearState : newClearState} onChange={handleClearState} displayEmpty>
+                      {lampCSVArray.map((item: string, i: number) => {
+                        return (
+                          <MenuItem value={i} key={i}>
+                            {item}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </>
+                }
+              />
+              <_TableBody titleId="SongDetail.MissCount" body={<TextField type="number" onChange={handleMissCount} value={newMissCount === -1 ? score.missCount : newMissCount} />} />
             </TableBody>
           </Table>
         </Paper>
@@ -198,37 +151,24 @@ class SongDetails extends React.Component<P> {
           <Table aria-label="Score Details">
             <TableHead>
               <TableRow>
-                <TableCell style={{ minWidth: "130px", maxWidth: "130px" }}>
-                  Coefficient
-                </TableCell>
+                <TableCell style={{ minWidth: "130px", maxWidth: "130px" }}>Coefficient</TableCell>
                 <TableCell></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
-                <TableCell>
-                  <FormattedMessage id="SongDetail.Coef" />
-                </TableCell>
-                <TableCell>{song.coef || "設定されていません"}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Plot</TableCell>
-                <TableCell>
+              <_TableBody titleId="SongDetail.Coef" body={song.coef || "設定されていません"} />
+              <_TableBody
+                titleId="SongDetail.Plot"
+                body={
                   <UserIcon
-                    defaultURL={
-                      `https://files.poyashi.me/bpim/plots/27_end/` +
-                      song.title.replace(/:|"|\*|†$/g, "") +
-                      "[" +
-                      _prefixFullNum(song.difficulty) +
-                      "].jpeg"
-                    }
+                    defaultURL={`https://files.poyashi.me/bpim/plots/27_end/` + song.title.replace(/:|"|\*|†$/g, "") + "[" + _prefixFullNum(song.difficulty) + "].jpeg"}
                     disableZoom
                     style={{ maxWidth: "400px", borderRadius: 0 }}
                     text={"plot"}
                     altURL={"https://files.poyashi.me/noimg.png"}
                   />
-                </TableCell>
-              </TableRow>
+                }
+              />
             </TableBody>
           </Table>
         </Paper>
@@ -236,5 +176,14 @@ class SongDetails extends React.Component<P> {
     );
   }
 }
+
+const _TableBody: React.FC<{ titleId: string; body: any }> = ({ titleId, body }) => (
+  <TableRow>
+    <TableCell>
+      <FormattedMessage id={titleId} />
+    </TableCell>
+    <TableCell>{body}</TableCell>
+  </TableRow>
+);
 
 export default SongDetails;
