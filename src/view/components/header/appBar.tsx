@@ -418,14 +418,14 @@ const GlobalHeader: React.FC<{ global: any; classes: any; theme: any; children: 
           {!user && (
             <Chip
               avatar={
-                <Avatar style={{ width: "32px", height: "32px" }}>
+                <Avatar style={{ width: "32px", height: "32px", background: "transparent" }}>
                   <LockOpenIcon />
                 </Avatar>
               }
               onClick={() => history.push("/sync/settings")}
               label={<FormattedMessage id={"SignIn"} />}
               clickable
-              color="primary"
+              color="secondary"
             />
           )}
         </Toolbar>

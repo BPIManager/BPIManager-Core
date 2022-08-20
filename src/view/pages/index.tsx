@@ -271,8 +271,8 @@ class Index extends React.Component<
             Made with &hearts; by poyashi.me
             <br />
             Author :{" "}
-            <RefLink href="https://twitter.com/210120090722O19" target="_blank" color="secondary">
-              @210120090722O19
+            <RefLink href="https://twitter.com/xXK1r1t0Xx" target="_blank" color="secondary">
+              @xXK1r1t0Xx
             </RefLink>
           </small>
         </Container>

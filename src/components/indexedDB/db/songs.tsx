@@ -15,15 +15,9 @@ export default class db extends storageWrapper {
     this.songs = this.table("songs");
   }
 
-  async getAll(
-    isSingle: number = 1,
-    willCollection: boolean = false
-  ): Promise<any> {
+  async getAll(isSingle: number = 1, willCollection: boolean = false): Promise<any> {
     try {
-      const data =
-        isSingle === 1
-          ? this.songs.where("dpLevel").equals("0")
-          : this.songs.where("dpLevel").notEqual("0");
+      const data = isSingle === 1 ? this.songs.where("dpLevel").equals("0") : this.songs.where("dpLevel").notEqual("0");
       return willCollection ? data : await data.toArray();
     } catch (e: any) {
       return [];
@@ -35,13 +29,9 @@ export default class db extends storageWrapper {
       return this.getAll(_isSingle()).then((result) => {
         const m = result.filter((item: songData) => {
           if (_isSingle()) {
-            return (
-              item.difficultyLevel === level && item.wr !== -1 && !item.removed
-            );
+            return item.difficultyLevel === level && item.wr !== -1 && !item.removed && item.dpLevel === "0";
           } else {
-            return (
-              item.difficultyLevel === level && item.wr !== -1 && !item.removed
-            );
+            return item.difficultyLevel === level && item.wr !== -1 && !item.removed && item.dpLevel !== "0";
           }
         });
         return m.length;
@@ -72,11 +62,7 @@ export default class db extends storageWrapper {
     }
   }
 
-  async getOneItemIsSingle(
-    title: string,
-    difficulty: string,
-    forcePlayMode: number = -1
-  ): Promise<songData[]> {
+  async getOneItemIsSingle(title: string, difficulty: string, forcePlayMode: number = -1): Promise<songData[]> {
     const diffs = (): string => {
       const s = forcePlayMode !== -1 ? forcePlayMode : _isSingle();
       switch (difficulty) {
@@ -91,20 +77,14 @@ export default class db extends storageWrapper {
       }
     };
     try {
-      return await this.songs
-        .where("[title+difficulty]")
-        .equals([title, diffs()])
-        .toArray();
+      return await this.songs.where("[title+difficulty]").equals([title, diffs()]).toArray();
     } catch (e: any) {
       return [];
     }
   }
 
   //統合済み
-  async getOneItemIsDouble(
-    title: string,
-    difficulty: string
-  ): Promise<songData[]> {
+  async getOneItemIsDouble(title: string, difficulty: string): Promise<songData[]> {
     return this.getOneItemIsSingle(title, difficulty);
   }
 
@@ -171,36 +151,23 @@ export default class db extends storageWrapper {
     }
   }
 
-  async diffChange(
-    title: string,
-    difficulty: string,
-    newDifficultyLevel: string
-  ): Promise<any> {
+  async diffChange(title: string, difficulty: string, newDifficultyLevel: string): Promise<any> {
     try {
-      await this.songs
-        .where("[title+difficulty]")
-        .equals([title, difficulty])
-        .modify({
-          difficultyLevel: newDifficultyLevel,
-        });
+      await this.songs.where("[title+difficulty]").equals([title, difficulty]).modify({
+        difficultyLevel: newDifficultyLevel,
+      });
       const difficultyStr = difficultyDiscriminator(difficulty);
       const s = _isSingle();
       // Compound Index 検討
-      await this.rivals
-        .where({ title: title, difficulty: difficultyStr, isSingle: s })
-        .modify({
-          difficultyLevel: newDifficultyLevel,
-        });
-      await this.scoreHistory
-        .where({ title: title, difficulty: difficultyStr, isSingle: s })
-        .modify({
-          difficultyLevel: newDifficultyLevel,
-        });
-      await this.scores
-        .where({ title: title, difficulty: difficultyStr, isSingle: s })
-        .modify({
-          difficultyLevel: newDifficultyLevel,
-        });
+      await this.rivals.where({ title: title, difficulty: difficultyStr, isSingle: s }).modify({
+        difficultyLevel: newDifficultyLevel,
+      });
+      await this.scoreHistory.where({ title: title, difficulty: difficultyStr, isSingle: s }).modify({
+        difficultyLevel: newDifficultyLevel,
+      });
+      await this.scores.where({ title: title, difficulty: difficultyStr, isSingle: s }).modify({
+        difficultyLevel: newDifficultyLevel,
+      });
       return 0;
     } catch (e: any) {
       console.error(e);
@@ -209,9 +176,7 @@ export default class db extends storageWrapper {
   }
 
   async removeItemByDifficulty(title: string, diff: string): Promise<number> {
-    return await this.songs
-      .where({ title: title, difficultyLevel: diff })
-      .delete();
+    return await this.songs.where({ title: title, difficultyLevel: diff }).delete();
   }
 
   async _removeItemByDifficulty(title: string, diff: string): Promise<number> {

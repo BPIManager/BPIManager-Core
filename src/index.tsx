@@ -1,14 +1,14 @@
 //import './components/common/wdyr';
 
-import 'react-app-polyfill/ie11';
+import "react-app-polyfill/ie11";
 import * as ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
-import * as serviceWorker from "./serviceWorker";
-import ReloadModal from './view/components/update';
+//import * as serviceWorker from "./serviceWorker";
+//import ReloadModal from './view/components/update';
 
 ReactDOM.render(<App />, document.getElementById("root"));
-
+/*
 serviceWorker.register({
   onUpdate: (registration: ServiceWorkerRegistration) => {
     if (registration.waiting) {
@@ -16,3 +16,4 @@ serviceWorker.register({
     }
   },
 });
+*/

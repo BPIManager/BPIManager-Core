@@ -7,8 +7,8 @@ import { distBPMI } from "@/components/stats/bpmDist";
 
 const Chart: React.FC<{ groupedByBPM: distBPMI[] }> = ({ groupedByBPM }) => {
   const chartColor = _chartColor();
-  const lineColor = _chartBarColor("line");
-  const linePrev = _chartBarColor("YOU");
+  const lineColor = _chartBarColor("YOU");
+  const linePrev = _chartBarColor("line");
   return (
     <div style={{ padding: "15px", height: 270 }}>
       <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>

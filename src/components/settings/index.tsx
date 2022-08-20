@@ -166,32 +166,36 @@ export const _chartBarColor = (name: string) => {
   const c = _currentTheme();
   if (c === "light") {
     if (name === "YOU" || name === "RIVAL") {
-      return "#BF4C0A";
+      return "#B8906D";
     } else if (name === "line") {
-      return "#943300";
+      return "#967e62";
     } else if (name === "line2") {
       return "#8095ff";
     } else if (name === "line3") {
       return "#ff7979";
     } else if (name === "line4") {
       return "#7ee7ff";
+    } else if (name === "bar") {
+      return "#B8906D";
     } else {
-      return "#D9AFA0";
+      return "#E0D9D0";
     }
   }
   if (c === "dark") {
     if (name === "YOU" || name === "RIVAL") {
-      return "#BF4C0A";
+      return "#00E3CC";
     } else if (name === "line") {
-      return "#bbbbbb";
+      return "#00635A";
     } else if (name === "line2") {
       return "#8095ff";
     } else if (name === "line3") {
       return "#ff7979";
     } else if (name === "line4") {
       return "#7ee7ff";
+    } else if (name === "bar") {
+      return "#009688";
     } else {
-      return "#aaaaaa";
+      return "#015951";
     }
   }
   if (c === "deepsea") {
@@ -223,7 +227,7 @@ export const pieColor = (i: number) => {
   if (c === "deepsea") {
     def = [92, 115, 242, 1];
   }
-  const perf = (100 - (c === "light" ? i : 7 - i) * 10) / 100;
+  const perf = (100 - (c === "light" ? i : 5 - i) * 10) / 100;
   return `rgba(${def[0]},${def[1]},${def[2]},${def[3] * perf})`;
 };
 

@@ -10,7 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import { alternativeImg } from "@/components/common";
 import Loader from "../common/loader";
 import { datasets, rivalShow } from "@/components/rivals/letters";
-import Alert from "@mui/material/Alert/Alert";
+import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import { Link as RLink } from "react-router-dom";
 import Button from "@mui/material/Button";
@@ -72,10 +72,7 @@ class SongRivals extends React.Component<P, S> {
 
 export default SongRivals;
 
-export class DiffsTable extends React.Component<
-  { scoreTable: datasets[]; yourEx: number },
-  {}
-> {
+export class DiffsTable extends React.Component<{ scoreTable: datasets[]; yourEx: number }, {}> {
   render() {
     const columns: {
       id: "rivalName" | "exScore" | "BPI" | "icon";
@@ -90,23 +87,12 @@ export class DiffsTable extends React.Component<
       //自分以外いない場合
       return (
         <React.Fragment>
-          <Alert
-            severity="warning"
-            variant="outlined"
-            style={{ marginTop: "10px" }}
-          >
+          <Alert severity="warning" variant="outlined" style={{ marginTop: "10px" }}>
             <AlertTitle>ライバルがいません!</AlertTitle>
-            <p>
-              総合BPIやアリーナランクなどの条件から、あなたと実力が拮抗しているライバルを探しましょう。
-            </p>
+            <p>総合BPIやアリーナランクなどの条件から、あなたと実力が拮抗しているライバルを探しましょう。</p>
           </Alert>
           <RLink to="/rivals" style={{ textDecoration: "none" }}>
-            <Button
-              variant="outlined"
-              color="secondary"
-              fullWidth
-              style={{ margin: "10px 0" }}
-            >
+            <Button variant="outlined" color="secondary" fullWidth style={{ margin: "10px 0" }}>
               ライバルを探す
             </Button>
           </RLink>
@@ -125,13 +111,7 @@ export class DiffsTable extends React.Component<
         <TableBody>
           {this.props.scoreTable.map((row: datasets, i: number) => {
             return (
-              <TableRow
-                hover
-                role="checkbox"
-                tabIndex={-1}
-                key={i}
-                className={i % 2 ? "isOdd" : "isEven"}
-              >
+              <TableRow hover role="checkbox" tabIndex={-1} key={i} className={i % 2 ? "isOdd" : "isEven"}>
                 {columns.map((column, _j) => {
                   return (
                     <TableCell
@@ -142,25 +122,12 @@ export class DiffsTable extends React.Component<
                         position: "relative",
                       }}
                     >
-                      {column.id === "icon" && (
-                        <UserIcon
-                          _legacy
-                          disableZoom
-                          defaultURL={row.icon}
-                          text={row.rivalName}
-                          altURL={alternativeImg(row.rivalName)}
-                        />
-                      )}
-                      {column.id !== "icon" && (
-                        <span>
-                          {row[column.id] === Infinity ? "-" : row[column.id]}
-                        </span>
-                      )}
+                      {column.id === "icon" && <UserIcon _legacy disableZoom defaultURL={row.icon} text={row.rivalName} altURL={alternativeImg(row.rivalName)} />}
+                      {column.id !== "icon" && <span>{row[column.id] === Infinity ? "-" : row[column.id]}</span>}
                       {column.id === "exScore" && (
                         <span className={"plusOverlayScore"}>
                           {row["exScore"] - this.props.yourEx > 0 && "+"}
-                          {row["exScore"] - this.props.yourEx !== 0 &&
-                            row["exScore"] - this.props.yourEx}
+                          {row["exScore"] - this.props.yourEx !== 0 && row["exScore"] - this.props.yourEx}
                         </span>
                       )}
                     </TableCell>

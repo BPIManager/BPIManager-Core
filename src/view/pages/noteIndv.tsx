@@ -1,26 +1,29 @@
-import React from 'react';
-import { _currentStore, _currentTheme } from '@/components/settings';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
-import Typography from '@mui/material/Typography';
-import SongNotes from '../components/songs/songNotes';
-import { scoresDB } from '@/components/indexedDB';
-import { scoreData, songData } from '@/types/data';
-import Loader from '../components/common/loader';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import Button from '@mui/material/Button';
-import Alert from '@mui/material/Alert/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
-import timeFormatter from '@/components/common/timeFormatter';
-import { _prefixWithPS, difficultyParser } from '@/components/songs/filter';
-import { Helmet } from 'react-helmet';
-import ContactSupportIcon from '@mui/icons-material/ContactSupport';
-import ButtonGroup from '@mui/material/ButtonGroup';
+import React from "react";
+import { _currentStore, _currentTheme } from "@/components/settings";
+import { RouteComponentProps, withRouter } from "react-router-dom";
+import Typography from "@mui/material/Typography";
+import SongNotes from "../components/songs/songNotes";
+import { scoresDB } from "@/components/indexedDB";
+import { scoreData, songData } from "@/types/data";
+import Loader from "../components/common/loader";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import timeFormatter from "@/components/common/timeFormatter";
+import { _prefixWithPS, difficultyParser } from "@/components/songs/filter";
+import { Helmet } from "react-helmet";
+import ContactSupportIcon from "@mui/icons-material/ContactSupport";
+import ButtonGroup from "@mui/material/ButtonGroup";
 
-class NoteIndv extends React.Component<RouteComponentProps, {
-  song: songData | null,
-  score: scoreData | null,
-  isLoading: boolean,
-}> {
+class NoteIndv extends React.Component<
+  RouteComponentProps,
+  {
+    song: songData | null;
+    score: scoreData | null;
+    isLoading: boolean;
+  }
+> {
   private scoresDB = new scoresDB();
 
   constructor(props: RouteComponentProps) {
@@ -29,7 +32,7 @@ class NoteIndv extends React.Component<RouteComponentProps, {
       song: null,
       score: null,
       isLoading: true,
-    }
+    };
   }
 
   async componentDidMount() {
@@ -38,7 +41,7 @@ class NoteIndv extends React.Component<RouteComponentProps, {
     const songDiff = params.diff || "";
     const isSingle = params.single === "sp";
     const score = await this.scoreFinder(songName, songDiff, isSingle);
-    document.title = `${songName}${_prefixWithPS(params.diff, params.single === "sp")} - BPIManager Notes`
+    document.title = `${songName}${_prefixWithPS(params.diff, params.single === "sp")} - BPIManager Notes`;
     return this.setState({
       song: {
         title: songName,
@@ -50,8 +53,10 @@ class NoteIndv extends React.Component<RouteComponentProps, {
         dpLevel: isSingle ? "0" : "12",
         bpm: "0",
         textage: "0",
-        updatedAt: timeFormatter()
-      }, score: score, isLoading: false
+        updatedAt: timeFormatter(),
+      },
+      score: score,
+      isLoading: false,
     });
   }
 
@@ -61,12 +66,11 @@ class NoteIndv extends React.Component<RouteComponentProps, {
       return items[0];
     }
     return null;
-  }
+  };
 
   componentWillUnmount() {
     document.title = "BPI Manager";
   }
-
 
   render() {
     const themeColor = _currentTheme();
@@ -76,25 +80,34 @@ class NoteIndv extends React.Component<RouteComponentProps, {
     return (
       <div>
         <Helmet>
-          <meta name="description"
-            content={`beatmania IIDX・${params.title}${_prefixWithPS(params.diff, params.single === "sp")}に関する攻略情報一覧。当たり判別、譜面傾向、練習曲、ギアチェン方法などを自由に書き込んだり、閲覧することができます。`}
-          />
+          <meta name="description" content={`beatmania IIDX・${params.title}${_prefixWithPS(params.diff, params.single === "sp")}に関する攻略情報一覧。当たり判別、譜面傾向、練習曲、ギアチェン方法などを自由に書き込んだり、閲覧することができます。`} />
         </Helmet>
         <div style={{ background: `url("/images/background/${themeColor}.svg")`, backgroundSize: "cover" }}>
           <div style={{ background: themeColor === "light" ? "rgba(255,255,255,.1)" : "rgba(0,0,0,.4)", display: "flex", padding: "5vh 0", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
-            <Typography variant="h5" gutterBottom>{params.title}{_prefixWithPS(params.diff, params.single === "sp")}</Typography>
+            <Typography variant="h5" gutterBottom>
+              {params.title}
+              {_prefixWithPS(params.diff, params.single === "sp")}
+            </Typography>
             <ButtonGroup color="secondary" style={{ margin: "8px 0" }} variant="outlined">
-              <Button startIcon={<ArrowBackIosIcon />} onClick={() => this.props.history.push("/notes")}>楽曲一覧</Button>
-              <Button startIcon={<ContactSupportIcon />} onClick={() => window.open("https://docs2.poyashi.me/docs/social/notes/")}>Notesとは</Button>
+              <Button startIcon={<ArrowBackIosIcon />} onClick={() => this.props.history.push("/notes")}>
+                楽曲一覧
+              </Button>
+              <Button startIcon={<ContactSupportIcon />} onClick={() => window.open("https://docs2.poyashi.me/docs/social/notes/")}>
+                Notesとは
+              </Button>
             </ButtonGroup>
           </div>
         </div>
         {isLoading && <Loader />}
         {!isLoading && <SongNotes song={song} score={score} isIndv />}
-        {(!isLoading && !song) && (
+        {!isLoading && !song && (
           <Alert severity="warning">
             <AlertTitle>読み込みに失敗しました</AlertTitle>
-            <p>楽曲データの読み込みに失敗しました。<br />ページを再読込してください。</p>
+            <p>
+              楽曲データの読み込みに失敗しました。
+              <br />
+              ページを再読込してください。
+            </p>
           </Alert>
         )}
       </div>

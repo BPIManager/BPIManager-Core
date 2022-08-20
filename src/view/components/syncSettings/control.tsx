@@ -122,7 +122,10 @@ export const SyncMainScreen: React.FC<{ userData: any } & RouteComponentProps> =
         </Grid>
         <Grid item xs={9} style={{ justifyContent: "start", display: "flex" }}>
           <p>
-            Welcome back, {nextData.displayName || ""}
+            Welcome back,&nbsp;
+            <Link onClick={() => history.push("/u/" + (nextData.displayName || ""))} color="secondary">
+              {nextData.displayName || ""}
+            </Link>
             <br />
             Signed in via {authData.providerData[0].providerId || "Unknown Provider"}
           </p>

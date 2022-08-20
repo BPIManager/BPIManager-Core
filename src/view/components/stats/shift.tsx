@@ -7,7 +7,7 @@ import { withRouter, RouteComponentProps } from "react-router-dom";
 import Loader from "../common/loader";
 import { ShiftType } from "@/types/stats";
 import statMain from "@/components/stats/main";
-import Alert from "@mui/material/Alert/Alert";
+import Alert from "@mui/material/Alert";
 import { ChangeLevel } from "./main";
 import { injectIntl } from "react-intl";
 import AdsCard from "@/components/ad";
@@ -52,11 +52,12 @@ class Shift extends React.Component<{ intl: any; propdata?: any } & RouteCompone
 
   async updateScoreData(newState?: ShiftType) {
     const { currentPeriod, targetLevel, range } = newState || this.state;
-    const exec = this.props.propdata ? new statMain(targetLevel).setPropData(this.props.propdata) : await new statMain(targetLevel).load();
+    const derived = this.props.propdata ? this.props.propdata.filter((item: any) => item.difficultyLevel === String(targetLevel)) : null;
+    const exec = derived ? new statMain(targetLevel).setPropData(derived) : await new statMain(targetLevel).load();
     //BPI別集計
     this.setState({
       isLoading: false,
-      perDate: await exec.eachDaySum(currentPeriod, undefined, this.props.propdata, range),
+      perDate: await exec.eachDaySum(currentPeriod, undefined, derived, range),
     });
   }
 

@@ -4,7 +4,7 @@ import React from "react";
 //import Tab from '@mui/material/Tab';
 //import Main from "@/view/components/stats/main";
 import { rivalScoreData } from "@/types/data";
-import Container from "@mui/material/Container/Container";
+import Container from "@mui/material/Container";
 import RivalStats from "./stats";
 import { withRivalData } from "@/components/stats/radar";
 
