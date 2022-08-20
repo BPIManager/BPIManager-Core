@@ -879,10 +879,6 @@ text.react-calendar-heatmap-weekday-label {
   padding-left: 0 !important;
 }
 
-.MuiGrid-root {
-  width: 100% !important;
-}
-
 .sc3Items button {
   min-width: 0px !important;
 }
