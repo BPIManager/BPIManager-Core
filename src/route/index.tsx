@@ -36,7 +36,6 @@ import RedirectUserProfile from "@/view/pages/extra/user";
 import Index from "@/view/pages/index";
 import History from "@/view/pages/history";
 import { Container as UnstatedContainer } from "unstated";
-import SongsIndex from "@/view/pages/songs/index";
 
 export const Router: React.FC<{ global: UnstatedContainer<any> }> = (props) => {
   const globalUpdateScore = async (uName: string) => {
@@ -56,10 +55,10 @@ export const Router: React.FC<{ global: UnstatedContainer<any> }> = (props) => {
           <Switch>
             <Route path="/" exact render={(_props) => <Index global={global} />} />
             <Route path="/data/:docId?" exact render={(_props) => <Data updateGlobal={globalUpdateScore} />} />
-            <Route path="/songs/:today?" exact render={(_props) => <SongsIndex history={_props.history} def={0} />} />
-            <Route path="/lists" exact render={(_props) => <SongsIndex history={_props.history} def={2} />} />
+            <Route path="/songs/:today?" exact component={Songs} />
+            <Route path="/lists" exact component={Lists} />
             <Route path="/lists/:listTitle" exact component={ListsBody} />
-            <Route path="/notPlayed" exact render={(_props) => <SongsIndex history={_props.history} def={1} />} />
+            <Route path="/notPlayed" exact component={NotPlayed} />
             <Route path="/stats" exact component={Stats} />
             <Route path="/compare" exact component={Compare} />
             <Route path="/settings" exact render={(_props) => <Settings global={global} />} />

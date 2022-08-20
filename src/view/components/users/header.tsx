@@ -13,13 +13,8 @@ const getIIDXId = (input: string) => {
 const background = () => {
   const themeColor = _currentTheme();
   if (themeColor === "deepsea") return "linear-gradient(0, rgba(0,13,25,1) 0%, rgba(0,42,82,1) 100%)";
-<<<<<<< Updated upstream
   if (themeColor === "dark") return "linear-gradient(0, rgba(10,10,10,1) 0%, rgba(37,37,37,1) 100%)";
   return "linear-gradient(0, rgba(255,255,255,1) 0%, rgba(210,210,210,1) 100%)";
-=======
-  if (themeColor === "dark") return "linear-gradient(0, rgba(10,10,10,0) 0%, rgba(37,37,37,1) 100%)";
-  return "linear-gradient(0, rgba(255,255,255,1) 0%, #D8CCBE 100%)";
->>>>>>> Stashed changes
 };
 
 const SubHeader: React.FC<{
