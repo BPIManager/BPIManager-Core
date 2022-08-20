@@ -63,7 +63,7 @@ class SyncStatus extends React.Component<RouteComponentProps> {
   render() {
     const { open } = this.state;
     return (
-      <Snackbar style={{ width: "100%", bottom: 0, left: 0 }} open={open}>
+      <Snackbar className="bottomStickedSnack" style={{ width: "100%", left: 0 }} open={open}>
         <SnackbarContent
           style={{ borderRadius: 0, width: "100%" }}
           message={<React.Fragment>Sync に最新のスコアデータが保管されているようです。端末に同期しますか？</React.Fragment>}
