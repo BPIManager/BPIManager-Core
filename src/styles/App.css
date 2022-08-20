@@ -196,7 +196,6 @@ legend.MuiFormLabel-root {
   font-size: 10px;
   color: #ff0000;
   position: absolute;
-  z-index: 3;
   right: 5px;
   top: 5px;
   white-space: nowrap;
@@ -207,7 +206,6 @@ legend.MuiFormLabel-root {
   font-size: 10px;
   color: #909090;
   position: absolute;
-  z-index: 3;
   right: 5px;
   bottom: 0;
   white-space: nowrap;
@@ -696,6 +694,11 @@ text.react-calendar-heatmap-weekday-label {
 #__deepsea .TypographywithIconAndLines {
   background-color: #000d19;
 }
+
+#__deepsea .TypographywithIconAndLines.moderate {
+  background-color: #001625;
+}
+
 .lightDetailedScreen .TypographywithIconAndLines,
 #__light .TypographywithIconAndLines {
   background-color: #fff;
@@ -879,10 +882,6 @@ text.react-calendar-heatmap-weekday-label {
   padding-left: 0 !important;
 }
 
-.MuiGrid-root {
-  width: 100% !important;
-}
-
 .sc3Items button {
   min-width: 0px !important;
 }
@@ -1007,3 +1006,36 @@ text.react-calendar-heatmap-weekday-label {
 .MuiListItem-container {
   list-style-type: none;
 }
+<<<<<<< Updated upstream
+=======
+
+.noTextButton .MuiButton-startIcon {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.bottomStickedSnack {
+  bottom: 0;
+  z-index: 4;
+}
+
+@media screen and (max-width: 599px) {
+  .bottomStickedSnack {
+    bottom: 56px !important;
+  }
+}
+
+.MuiBottomNavigation-root .MuiBottomNavigationAction-label {
+  font-size: 0.6rem;
+}
+
+.globalDrawer .MuiDrawer-paperAnchorBottom {
+  bottom: 56px;
+}
+
+.globalDrawer .MuiDrawer-paper {
+  padding: 10px;
+  border-top-right-radius: 12px;
+  border-top-left-radius: 12px;
+}
+>>>>>>> Stashed changes
