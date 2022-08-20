@@ -4,7 +4,6 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
 import Hidden from "@mui/material/Hidden";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -45,7 +44,6 @@ import StarHalfIcon from "@mui/icons-material/StarHalf";
 import ArenaRankCheck from "../arenaRankCheck";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import Button from "@mui/material/Button";
-import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import { getMessaging, onMessage } from "firebase/messaging";
 import fb from "@/components/firebase";
 import ArenaMatchWatcher from "@/view/components/arenaMatch/watchDog";
@@ -431,19 +429,6 @@ const GlobalHeader: React.FC<{ global: any; classes: any; theme: any; children: 
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer}>
-        <Hidden smUp implementation="css">
-          <SwipeableDrawer
-            open={isOpen}
-            onClose={toggleNav}
-            onOpen={toggleNav}
-            anchor="right"
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-          >
-            {drawer(false)}
-          </SwipeableDrawer>
-        </Hidden>
         <Hidden smDown implementation="css">
           <Drawer
             classes={{

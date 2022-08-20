@@ -121,7 +121,7 @@ const AAATable: React.FC<P> = ({ data }) => {
             );
           })}
       <Divider style={{ margin: "15px 0" }} />
-      <SpeedDial ariaLabel="menu" style={{ position: "fixed", bottom: "8%", right: "8%" }} icon={<SpeedDialIcon icon={<MenuIcon />} openIcon={<CloseIcon />} />} onClose={handleDial} onOpen={handleDial} open={dialOpen} direction={"up"}>
+      <SpeedDial ariaLabel="menu" style={{ position: "fixed", bottom: "12%", right: "8%" }} icon={<SpeedDialIcon icon={<MenuIcon />} openIcon={<CloseIcon />} />} onClose={handleDial} onOpen={handleDial} open={dialOpen} direction={"up"}>
         {actions.map((action) => (
           <SpeedDialAction key={action.name} icon={action.icon} title={action.name} onClick={action.onClick} />
         ))}

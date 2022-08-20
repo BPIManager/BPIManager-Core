@@ -696,6 +696,10 @@ text.react-calendar-heatmap-weekday-label {
   background-color: #fff;
 }
 
+#__deepsea .TypographywithIconAndLines.moderate {
+  background-color: #001625;
+}
+
 .IndexGrids {
   text-align: right;
 }
@@ -1002,4 +1006,22 @@ text.react-calendar-heatmap-weekday-label {
 .noTextButton .MuiButton-startIcon {
   margin-left: 0 !important;
   margin-right: 0 !important;
+}
+
+.MuiBottomNavigationAction-label {
+  font-size: 0.5rem !important;
+}
+
+.globalDrawer .MuiPaper-root {
+  bottom: 56px;
+}
+
+.globalDrawer .MuiPaper-root {
+  padding: 15px 15px 0 15px;
+  border-top-right-radius: 12px;
+  border-top-left-radius: 12px;
+}
+
+.MuiContainer-root .MuiGrid-root {
+  width: 100% !important;
 }
