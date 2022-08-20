@@ -1017,11 +1017,20 @@ text.react-calendar-heatmap-weekday-label {
 }
 
 .globalDrawer .MuiPaper-root {
-  padding: 15px 15px 0 15px;
+  padding: 15px;
   border-top-right-radius: 12px;
   border-top-left-radius: 12px;
 }
 
 .MuiContainer-root .MuiGrid-root {
   width: 100% !important;
+}
+
+#__deepsea .bottomNavigation.MuiPaper-root,
+#__dark .bottomNavigation.MuiPaper-root {
+  border-top: 1px solid #333;
+}
+
+#__light .bottomNavigation.MuiPaper-root {
+  border-top: 1px solid #ccc;
 }

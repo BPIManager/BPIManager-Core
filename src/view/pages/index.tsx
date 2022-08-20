@@ -269,11 +269,6 @@ class Index extends React.Component<
             <br />
             <br />
             Made with &hearts; by poyashi.me
-            <br />
-            Author :{" "}
-            <RefLink href="https://twitter.com/xXK1r1t0Xx" target="_blank" color="secondary">
-              @xXK1r1t0Xx
-            </RefLink>
           </small>
         </Container>
       </div>

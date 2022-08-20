@@ -152,7 +152,7 @@ const MobileBottomNav: React.FC<{ history: any }> = ({ history }) => {
   };
   return (
     <>
-      <Paper sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }} elevation={3} style={{ zIndex: 1201 }}>
+      <Paper className="bottomNavigation" sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }} elevation={3} style={{ zIndex: 1201 }}>
         <BottomNavigation
           value={value}
           onChange={(_event, newValue) => {
