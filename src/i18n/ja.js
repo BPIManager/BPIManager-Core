@@ -1,6 +1,6 @@
 const ja = {
   "Top.Title": "BPIManager",
-  "GlobalNav.Parent.Songs": "楽曲",
+  "GlobalNav.Parent.Songs": "楽曲一覧",
   "GlobalNav.Parent.Stats": "実力管理",
   "GlobalNav.Parent.Social": "ソーシャル",
   "GlobalNav.Home": "ホーム",
@@ -86,6 +86,8 @@ const ja = {
   "SongDiffs.Target": "データセット",
   "SongDiffs.WithinSameVersion": "同一バージョン内",
   "SongDiffs.EachVersion": "バージョン間",
+  "SongDetail.BPM": "BPM",
+  "SongDetail.Plot": "Plot",
   "Favorites.Title": "お気に入り",
   "NotPlayed.Title": "未プレイ楽曲",
   "Stats.title": "統計",
@@ -211,7 +213,7 @@ const ja = {
   "Index.EditProfile": "プロフィールを編集",
   "Index.OngoingWR": "現在開催中のランキング",
   "Index.RecentlyUpdated": "最近スコアを更新したユーザー",
-  "ShowMore": "もっと見る",
+  ShowMore: "もっと見る",
 
   "Data.Copy": "公式サイトからCSVをコピー",
   "Data.ClickHere": "ここをクリック",
@@ -224,7 +226,7 @@ const ja = {
   "Data.End": "処理が終了しました",
   "Data.ShowUpdated": "本日更新した楽曲を表示",
   "Data.ShowUpdatedHistory": "更新差分を確認",
-  "SignIn": "ログイン",
+  SignIn: "ログイン",
   "Songs.Share": "共有",
   "Songs.Range0": "全期間",
   "Songs.Range1": "本日更新",
@@ -233,9 +235,9 @@ const ja = {
   "Songs.Range5": "期間指定",
   "Songs.Range4": "1ヶ月以上未更新",
 
-  "SignInWith": "連携サービスを選択",
-  "SignInWithPre": " ",
-  "SignInWithAfter": "でログイン",
+  SignInWith: "連携サービスを選択",
+  SignInWithPre: " ",
+  SignInWithAfter: "でログイン",
 
   "Signin.title": "ログインでできること",
   "Signin.list1": "スコアデータのクラウドへの永久保存",

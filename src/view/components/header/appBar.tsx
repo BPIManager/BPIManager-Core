@@ -93,24 +93,6 @@ const styles = (theme: any) => ({
     paddingLeft: theme.spacing(4),
   },
 });
-
-const songs: navBars[] = [
-  {
-    to: "/lists",
-    id: "GlobalNav.FavoriteSongs",
-    icon: <BookmarkIcon />,
-  },
-  {
-    to: "/songs",
-    id: "GlobalNav.SongList",
-    icon: <LibraryMusicIcon />,
-  },
-  {
-    to: "/notPlayed",
-    id: "GlobalNav.unregisteredSongs",
-    icon: <BorderColorIcon />,
-  },
-];
 const myStat: navBars[] = [
   {
     to: "/compare",
@@ -165,6 +147,11 @@ const navBarTop: navBars[] = [
     to: "/data",
     id: "GlobalNav.Data",
     icon: <SaveAltIcon />,
+  },
+  {
+    to: "/songs",
+    id: "GlobalNav.Parent.Songs",
+    icon: <QueueMusicIcon />,
   },
 ];
 const navBarBottom: navBars[] = [
@@ -317,16 +304,6 @@ const GlobalHeader: React.FC<{ global: any; classes: any; theme: any; children: 
           <ListItemText primary={<FormattedMessage id={item.id} />} />
         </ListItem>
       ))}
-      <InnerList
-        child={songs}
-        handleClick={() => setIsOpenSongs(!isOpenSongs)}
-        classes={classes}
-        history={history}
-        toggleNav={toggleNav}
-        isPerment={isPerment}
-        parent={{ id: "GlobalNav.Parent.Songs", icon: <QueueMusicIcon /> }}
-        isOpen={isOpenSongs}
-      />
       <InnerList
         child={myStat}
         handleClick={() => setIsOpenMyStat(!isOpenMyStat)}
