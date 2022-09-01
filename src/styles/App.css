@@ -107,9 +107,17 @@ header.apbar,
   box-shadow: none !important;
 }
 
+.bottomStickedSnack {
+  bottom: 57px;
+}
+
 @media screen and (min-width: 600px) {
   .subAppBar {
     margin-top: 8px !important;
+  }
+
+  .bottomStickedSnack {
+    bottom: 0px;
   }
 }
 

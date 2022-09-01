@@ -66,23 +66,19 @@ class MyBest extends React.Component<{}, S> {
       targetLevel: this.state.targetLevel,
     }
   ) {
-    const data = await myBest(
-      newData.targetLevel,
-      this.state.sort,
-      this.state.isDesc
-    );
+    const data = await myBest(newData.targetLevel, this.state.sort, this.state.isDesc);
     return this.setState({
       scoreData: data.scoreData,
       scoreByVersion: data.scoreByVersion,
       isLoading: false,
+      targetLevel: newData.targetLevel,
     });
   }
 
   apply = () => apply(this.state.sort, this.state.isDesc, this.state.scoreData);
 
-  handleLevelChange = async (
-    event: SelectChangeEvent<string>
-  ): Promise<void> => {
+  handleLevelChange = async (event: SelectChangeEvent<string>): Promise<void> => {
+    console.log(event.target.value);
     if (typeof event.target.value !== "string") return;
     this.setState({ isLoading: true });
     return this.updateScoreData({ targetLevel: event.target.value });
@@ -96,28 +92,15 @@ class MyBest extends React.Component<{}, S> {
     return this.setState({ sort: newNum, isDesc: true });
   };
 
-  handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
+  handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>): void => {
     this.handleChangePage(null, 0);
     this.setState({ rowsPerPage: +event.target.value });
   };
 
-  handleChangePage = (
-    _e: React.MouseEvent<HTMLButtonElement, MouseEvent> | null,
-    newPage: number
-  ): void => this.setState({ page: newPage });
+  handleChangePage = (_e: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number): void => this.setState({ page: newPage });
 
   render() {
-    const {
-      page,
-      sort,
-      isDesc,
-      rowsPerPage,
-      isLoading,
-      targetLevel,
-      scoreData,
-    } = this.state;
+    const { page, sort, isDesc, rowsPerPage, isLoading, targetLevel, scoreData } = this.state;
     return (
       <Container fixed style={{ padding: 0 }}>
         <Grid container>
@@ -136,9 +119,7 @@ class MyBest extends React.Component<{}, S> {
             {isLoading && <Loader />}
             {!isLoading && (
               <div>
-                {scoreData.length === 0 && (
-                  <p>表示するデータが見つかりません。</p>
-                )}
+                {scoreData.length === 0 && <p>表示するデータが見つかりません。</p>}
                 {scoreData.length > 0 && (
                   <div>
                     <Paper>
@@ -149,15 +130,9 @@ class MyBest extends React.Component<{}, S> {
                               <TableHead>
                                 <TableRow>
                                   {columns.map((column, i) => (
-                                    <TableCell
-                                      key={column.id}
-                                      onClick={() => this.changeSort(i)}
-                                      style={{ textAlign: "center" }}
-                                    >
+                                    <TableCell key={column.id} onClick={() => this.changeSort(i)} style={{ textAlign: "center" }}>
                                       {column.label}
-                                      {i === sort && (
-                                        <span>{isDesc ? "▼" : "▲"}</span>
-                                      )}
+                                      {i === sort && <span>{isDesc ? "▼" : "▲"}</span>}
                                       {i !== sort && <span>△</span>}
                                     </TableCell>
                                   ))}
@@ -165,39 +140,22 @@ class MyBest extends React.Component<{}, S> {
                               </TableHead>
                               <TableBody>
                                 {this.apply()
-                                  .slice(
-                                    page * rowsPerPage,
-                                    page * rowsPerPage + rowsPerPage
-                                  )
+                                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                   .map((row: scoreData, i: number) => {
                                     const prefix = _prefix(row.difficulty);
                                     return (
-                                      <TableRow
-                                        hover
-                                        role="checkbox"
-                                        tabIndex={-1}
-                                        key={row.title + row.prefix + i}
-                                        className={i % 2 ? "isOdd" : "isEven"}
-                                      >
+                                      <TableRow hover role="checkbox" tabIndex={-1} key={row.title + row.prefix + i} className={i % 2 ? "isOdd" : "isEven"}>
                                         {columns.map((column, j) => {
                                           return (
                                             <TableCell
                                               key={column.id + prefix}
                                               style={{
-                                                textAlign:
-                                                  j === 0 ? "left" : "center",
-                                                width:
-                                                  j === 0 ? "80%" : "initial",
+                                                textAlign: j === 0 ? "left" : "center",
+                                                width: j === 0 ? "80%" : "initial",
                                               }}
                                             >
-                                              {column.id !== "currentBPI" &&
-                                                row[column.id]}
-                                              {column.id === "currentBPI" &&
-                                                (row[column.id] !== Infinity
-                                                  ? Number(
-                                                      row[column.id]
-                                                    ).toFixed(2)
-                                                  : "-")}
+                                              {column.id !== "currentBPI" && row[column.id]}
+                                              {column.id === "currentBPI" && (row[column.id] !== Infinity ? Number(row[column.id]).toFixed(2) : "-")}
                                               {column.id === "title" && prefix}
                                             </TableCell>
                                           );
