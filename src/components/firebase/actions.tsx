@@ -1,4 +1,4 @@
-import fb, { auth, twitter, google, supabase } from ".";
+import fb, { auth, twitter, google } from ".";
 import {
   Auth,
   User,
@@ -55,11 +55,7 @@ const db = getFirestore(fb);
 
 export default class fbActions {
   async authWithTwitter(): Promise<void> {
-    const { user, session, error } = await supabase.auth.signIn({
-      provider: "twitter",
-    });
-    console.log(user, session, error);
-    return;
+    return signInWithRedirect(auth, twitter);
   }
 
   async authWithGoogle(): Promise<void> {
