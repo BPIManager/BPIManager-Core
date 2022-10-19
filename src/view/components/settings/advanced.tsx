@@ -1,52 +1,61 @@
-import React from 'react';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import { FormattedMessage, injectIntl } from 'react-intl';
-import Paper from '@mui/material/Paper';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import Button from '@mui/material/Button';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogActions from '@mui/material/DialogActions';
-import { _currentVersion, _setTraditionalMode, _traditionalMode, _currentStore, _isSingle } from '@/components/settings';
-import { scoresDB, scoreHistoryDB, songsDB, rivalListsDB } from '@/components/indexedDB';
-import Divider from '@mui/material/Divider';
-import { Switch, Backdrop } from '@mui/material';
-import CachedIcon from '@mui/icons-material/Cached';
-import Loader from '../common/loader';
-import fbActions from '@/components/firebase/actions';
-import ExportButton from '@/components/settings/exportButton';
+import React from "react";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import { FormattedMessage, injectIntl } from "react-intl";
+import Paper from "@mui/material/Paper";
+import { SelectChangeEvent } from "@mui/material/Select";
+import Button from "@mui/material/Button";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
+import {
+  _currentVersion,
+  _setTraditionalMode,
+  _traditionalMode,
+  _currentStore,
+  _isSingle,
+} from "@/components/settings";
+import {
+  scoresDB,
+  scoreHistoryDB,
+  songsDB,
+  rivalListsDB,
+} from "@/components/indexedDB";
+import Divider from "@mui/material/Divider";
+import { Switch, Backdrop } from "@mui/material";
+import CachedIcon from "@mui/icons-material/Cached";
+import Loader from "../common/loader";
+import fbActions from "@/components/firebase/actions";
+import ExportButton from "@/components/settings/exportButton";
+import { versionTitles } from "@/components/common/versions";
+import SSelector from "@/partial/select";
 
 interface S {
-  isLoading: boolean,
-  disableUpdateBtn: boolean,
-  disableDeleteBtn: boolean,
-  currentVersion: string,
-  message: string,
-  message2: string,
-  currentResetStore: string,
-  isDialogOpen: boolean,
-  isURLDialogOpen: boolean,
-  traditionalMode: number,
-  initialT: number,
-  recalculating: boolean,
-  quota: number,
-  usage: number,
+  isLoading: boolean;
+  disableUpdateBtn: boolean;
+  disableDeleteBtn: boolean;
+  currentVersion: string;
+  message: string;
+  message2: string;
+  currentResetStore: string;
+  isDialogOpen: boolean;
+  isURLDialogOpen: boolean;
+  traditionalMode: number;
+  initialT: number;
+  recalculating: boolean;
+  quota: number;
+  usage: number;
 }
 
 interface P {
-  intl: any,
-  global: any
+  intl: any;
+  global: any;
 }
 
 class Settings extends React.Component<P, S> {
-
   constructor(props: P) {
     super(props);
     this.state = {
@@ -64,18 +73,18 @@ class Settings extends React.Component<P, S> {
       recalculating: false,
       quota: 0,
       usage: 0,
-    }
+    };
   }
 
   componentDidMount() {
     const self = this;
     if (navigator.storage && navigator.storage.estimate) {
-      navigator.storage.estimate().then(function(estimate) {
+      navigator.storage.estimate().then(function (estimate) {
         if (estimate.quota && estimate.usage) {
           self.setState({
             quota: estimate.quota,
             usage: estimate.usage,
-          })
+          });
         }
       });
     }
@@ -85,7 +94,10 @@ class Settings extends React.Component<P, S> {
     try {
       this.props.global.setMove(true);
       this.setState({ disableDeleteBtn: true, message2: "" });
-      const sdb = new scoresDB(), shdb = new scoreHistoryDB(), sodb = new songsDB(), ridb = new rivalListsDB();
+      const sdb = new scoresDB(),
+        shdb = new scoreHistoryDB(),
+        sodb = new songsDB(),
+        ridb = new rivalListsDB();
       const target = this.state.currentResetStore;
       if (target === "Songs Database") {
         await sodb.deleteAll();
@@ -100,72 +112,99 @@ class Settings extends React.Component<P, S> {
         await sdb.resetItems(target);
         await shdb.reset(target);
       }
-      this.setState({ disableDeleteBtn: false, message2: "正常に削除しました" });
+      this.setState({
+        disableDeleteBtn: false,
+        message2: "正常に削除しました",
+      });
     } catch (e: any) {
       console.log(e);
-      this.setState({ disableDeleteBtn: false, message2: "更新に失敗しました" });
+      this.setState({
+        disableDeleteBtn: false,
+        message2: "更新に失敗しました",
+      });
     }
     this.props.global.setMove(false);
-  }
+  };
 
-  toggleDialog = () => this.setState({ isDialogOpen: !this.state.isDialogOpen })
+  toggleDialog = () =>
+    this.setState({ isDialogOpen: !this.state.isDialogOpen });
 
   recalc = async () => {
     try {
-      const scDB = new scoresDB(), schDB = new scoreHistoryDB();
+      const scDB = new scoresDB(),
+        schDB = new scoreHistoryDB();
       _setTraditionalMode(this.state.traditionalMode);
       this.setState({ recalculating: true });
       await scDB.recalculateBPI([], true);
       await schDB.recalculateBPI([], true);
-      this.setState({ recalculating: false, initialT: this.state.traditionalMode });
+      this.setState({
+        recalculating: false,
+        initialT: this.state.traditionalMode,
+      });
     } catch (e: any) {
       console.log(e);
       this.setState({ recalculating: false });
     }
-  }
+  };
 
   persistency = () => {
     if (navigator.storage && navigator.storage.persist) {
-      navigator.storage.persisted().then(persistent => {
+      navigator.storage.persisted().then((persistent) => {
         if (!persistent) {
-          navigator.storage.persist().then(granted => {
+          navigator.storage.persist().then((granted) => {
             if (granted) {
               alert("ストレージ永続化が許可されました");
             } else {
               alert("ストレージ永続化は許可されません。");
             }
-          })
+          });
         } else {
           alert("すでに永続化が許可されています");
         }
-      })
+      });
     } else {
       alert("お使いの端末では本機能をご利用いただけません。");
     }
-  }
+  };
 
   render() {
-    const { isLoading, isDialogOpen, message2, currentResetStore, disableDeleteBtn, traditionalMode, recalculating, initialT } = this.state;
+    const {
+      isLoading,
+      isDialogOpen,
+      message2,
+      currentResetStore,
+      disableDeleteBtn,
+      traditionalMode,
+      recalculating,
+      initialT,
+    } = this.state;
     if (isLoading) {
-      return (<Loader />);
+      return <Loader />;
     }
     return (
       <Container fixed style={{ padding: 0 }}>
         <Paper style={{ padding: "15px" }}>
-          <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
+          <Typography
+            variant="caption"
+            display="block"
+            className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink"
+          >
             <FormattedMessage id="Settings.UseTraditional" />
           </Typography>
           <Switch
             checked={traditionalMode === 1 ? true : false}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>, ) => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               if (typeof e.target.checked !== "boolean") {
                 return;
               }
-              this.setState({ traditionalMode: e.target.checked === true ? 1 : 0 });
+              this.setState({
+                traditionalMode: e.target.checked === true ? 1 : 0,
+              });
             }}
           />
           <Typography variant="caption" display="block">
-            <FormattedMessage id="Settings.UseTraditional1" /><br />
+            <FormattedMessage id="Settings.UseTraditional1" />
+            <br />
             <FormattedMessage id="Settings.UseTraditional2" />
           </Typography>
           <Button
@@ -173,25 +212,31 @@ class Settings extends React.Component<P, S> {
             color="primary"
             onClick={this.recalc}
             disabled={traditionalMode === initialT}
-            startIcon={<CachedIcon />}>
+            startIcon={<CachedIcon />}
+          >
             <FormattedMessage id="Common.Apply" />
           </Button>
           <Divider style={{ margin: "10px 0" }} />
-          <FormControl>
-            <InputLabel><FormattedMessage id="Settings.dataClear" /></InputLabel>
-            <Select value={currentResetStore} onChange={(e: SelectChangeEvent<string>, ) => {
-              if (typeof e.target.value !== "string") return;
-              this.setState({ currentResetStore: e.target.value });
-            }}>
-              <MenuItem value="26">26 Rootage</MenuItem>
-              <MenuItem value="27">27 HEROIC VERSE</MenuItem>
-              <MenuItem value="28">28 BISTROVER</MenuItem>
-              <MenuItem value="29">29 CastHour</MenuItem>
-              <MenuItem value="INF">INFINITAS</MenuItem>
-              <MenuItem value="Songs Database">Songs Database</MenuItem>
-              <MenuItem value="Rivals">Rivals</MenuItem>
-            </Select>
-          </FormControl>
+          <SSelector
+            title={<FormattedMessage id="Settings.dataClear" />}
+            currentState={currentResetStore}
+            func={(e: SelectChangeEvent<string>) => {
+              if (typeof e.target.value === "string") {
+                this.setState({ currentResetStore: e.target.value });
+              }
+            }}
+            items={versionTitles
+              .reduce((array: { key: string; value: any }[], item) => {
+                if (!array) array = [] as { key: string; value: any }[];
+                array.push({ key: item.num, value: item.title });
+                return array;
+              }, [])
+              .concat([
+                { key: "INF", value: "INFINITAS" },
+                { key: "Songs Database", value: "Songs Database" },
+                { key: "Rivals", value: "Rivals" },
+              ])}
+          />
           <Typography variant="caption" display="block">
             <FormattedMessage id="Settings.resetWarning" />
           </Typography>
@@ -202,36 +247,52 @@ class Settings extends React.Component<P, S> {
               style={{ background: "#dc004e" }}
               onClick={this.toggleDialog}
               disabled={disableDeleteBtn}
-              startIcon={<DeleteForeverIcon />}>
+              startIcon={<DeleteForeverIcon />}
+            >
               <FormattedMessage id="Settings.DeleteExec" />
             </Button>
             <Typography variant="caption" display="block">
               {message2}
             </Typography>
             <Divider style={{ margin: "10px 0" }} />
-            <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
+            <Typography
+              variant="caption"
+              display="block"
+              className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink"
+            >
               <FormattedMessage id="Settings.Export" />
             </Typography>
             <ExportButton />
             <Typography variant="caption" display="block">
-              <FormattedMessage id="Common.CurrentVer" />:({_currentStore()}/{_isSingle() ? "SP" : "DP"})<br />
+              <FormattedMessage id="Common.CurrentVer" />
+              :({_currentStore()}/{_isSingle() ? "SP" : "DP"})<br />
               <FormattedMessage id="Settings.ExportCaption" />
             </Typography>
-            <AlertDialog isDialogOpen={isDialogOpen} exec={this.deleteDef} close={this.toggleDialog} currentResetStore={currentResetStore} />
+            <AlertDialog
+              isDialogOpen={isDialogOpen}
+              exec={this.deleteDef}
+              close={this.toggleDialog}
+              currentResetStore={currentResetStore}
+            />
             {disableDeleteBtn && <Loader />}
           </div>
         </Paper>
-        {recalculating &&
+        {recalculating && (
           <Backdrop open style={{ flexDirection: "column" }}>
             <div>
               <Loader />
             </div>
             <div>
-              <p style={{ textAlign: "center" }}>再計算中です<br />画面を閉じないでください<br />
-                <span id="_progressText" /></p>
+              <p style={{ textAlign: "center" }}>
+                再計算中です
+                <br />
+                画面を閉じないでください
+                <br />
+                <span id="_progressText" />
+              </p>
             </div>
           </Backdrop>
-        }
+        )}
       </Container>
     );
   }
@@ -239,8 +300,15 @@ class Settings extends React.Component<P, S> {
 
 export default injectIntl(Settings);
 
-class AlertDialog extends React.Component<{ isDialogOpen: boolean, exec: () => void, close: () => void, currentResetStore: string }, {}> {
-
+class AlertDialog extends React.Component<
+  {
+    isDialogOpen: boolean;
+    exec: () => void;
+    close: () => void;
+    currentResetStore: string;
+  },
+  {}
+> {
   handleOk = () => {
     this.props.exec();
     this.props.close();
@@ -254,21 +322,27 @@ class AlertDialog extends React.Component<{ isDialogOpen: boolean, exec: () => v
     const { isDialogOpen, currentResetStore } = this.props;
     return (
       <div>
-        <Dialog
-          open={isDialogOpen}
-          onClose={this.handleClose}>
+        <Dialog open={isDialogOpen} onClose={this.handleClose}>
           <DialogTitle>Confirm</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              <FormattedMessage id="Settings.DeleteDialogBody" /><br />
-              <FormattedMessage id="Settings.DeleteDialogBody2" /><br />
-              {
-                currentResetStore === "26" ? "26 Rootage" :
-                  currentResetStore === "27" ? "27 HEROIC VERSE" :
-                    currentResetStore === "28" ? "28 BISTROVER" :
-                      currentResetStore === "29" ? "29 CastHour" :
-                        currentResetStore === "INF" ? "INFINITAS" :
-                          currentResetStore === "Songs Database" ? "Songs Database" : "Rivals"}
+              <FormattedMessage id="Settings.DeleteDialogBody" />
+              <br />
+              <FormattedMessage id="Settings.DeleteDialogBody2" />
+              <br />
+              {currentResetStore === "26"
+                ? "26 Rootage"
+                : currentResetStore === "27"
+                ? "27 HEROIC VERSE"
+                : currentResetStore === "28"
+                ? "28 BISTROVER"
+                : currentResetStore === "29"
+                ? "29 CastHour"
+                : currentResetStore === "INF"
+                ? "INFINITAS"
+                : currentResetStore === "Songs Database"
+                ? "Songs Database"
+                : "Rivals"}
             </DialogContentText>
           </DialogContent>
           <DialogActions>

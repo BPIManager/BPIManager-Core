@@ -4,15 +4,20 @@ import Typography from "@mui/material/Typography";
 import { FormattedMessage, injectIntl } from "react-intl";
 import Paper from "@mui/material/Paper";
 import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
+import { SelectChangeEvent } from "@mui/material/Select";
 import Divider from "@mui/material/Divider";
 import { Subscribe } from "unstated";
 import GlobalContainer from "@/components/context/global";
 import Button from "@mui/material/Button";
 import UpdateIcon from "@mui/icons-material/Update";
-import { _currentVersion, _currentDefinitionURL, _setCurrentDefinitionURL, _setAutoSync, _autoSync, _weeklyRanking } from "@/components/settings";
+import {
+  _currentVersion,
+  _currentDefinitionURL,
+  _setCurrentDefinitionURL,
+  _setAutoSync,
+  _autoSync,
+  _weeklyRanking,
+} from "@/components/settings";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -26,6 +31,8 @@ import Loader from "@/view/components/common/loader";
 import { updateDefFile } from "@/components/settings/updateDef";
 import AutorenewIcon from "@mui/icons-material/Autorenew";
 import LoadingButton from "@mui/lab/LoadingButton";
+import SSelector from "@/partial/select";
+import { versionTitles } from "@/components/common/versions";
 
 interface S {
   isLoading: boolean;
@@ -66,7 +73,8 @@ class Settings extends React.Component<P, S> {
     };
   }
 
-  toggleURLDialog = () => this.setState({ isURLDialogOpen: !this.state.isURLDialogOpen });
+  toggleURLDialog = () =>
+    this.setState({ isURLDialogOpen: !this.state.isURLDialogOpen });
 
   changeDefinitionURL = (url: string): void => {
     return _setCurrentDefinitionURL(url);
@@ -98,75 +106,83 @@ class Settings extends React.Component<P, S> {
   };
 
   render() {
-    const { isLoading, isURLDialogOpen, disableUpdateBtn, message, autoSync, weeklyRanking } = this.state;
+    const {
+      isLoading,
+      isURLDialogOpen,
+      disableUpdateBtn,
+      message,
+      autoSync,
+      weeklyRanking,
+    } = this.state;
     if (isLoading) {
       return <Loader />;
     }
     return (
       <Subscribe to={[GlobalContainer]}>
-        {({ state, setLang, setStore, setTheme, setIsSingle, setGoalBPI, setGoalPercentage, setArea }: GlobalContainer) => (
+        {({
+          state,
+          setLang,
+          setStore,
+          setTheme,
+          setIsSingle,
+          setGoalBPI,
+          setGoalPercentage,
+          setArea,
+        }: GlobalContainer) => (
           <Container fixed style={{ padding: 0 }}>
             <Paper style={{ padding: "15px" }}>
-              <FormControl>
-                <InputLabel>
-                  <FormattedMessage id="Settings.language" />
-                </InputLabel>
-                <Select
-                  value={state.lang}
-                  onChange={(e: SelectChangeEvent<string>) => {
-                    if (typeof e.target.value === "string") {
-                      setLang(e.target.value);
-                    }
-                  }}
-                >
-                  <MenuItem value="ja">日本語</MenuItem>
-                  <MenuItem value="en">English</MenuItem>
-                </Select>
-              </FormControl>
+              <SSelector
+                title={<FormattedMessage id="Settings.language" />}
+                currentState={state.lang}
+                func={(e: SelectChangeEvent<string>) => {
+                  if (typeof e.target.value === "string") {
+                    setLang(e.target.value);
+                  }
+                }}
+                items={[
+                  { key: "ja", value: "日本語" },
+                  { key: "en", value: "English" },
+                ]}
+              />
               <Typography variant="caption" display="block">
                 <FormattedMessage id="Settings.noteLang" />
               </Typography>
               <Divider style={{ margin: "10px 0" }} />
-              <FormControl>
-                <InputLabel>
-                  <FormattedMessage id="Settings.theme" />
-                </InputLabel>
-                <Select
-                  value={state.theme}
-                  onChange={(e: SelectChangeEvent<string>) => {
-                    if (typeof e.target.value === "string") {
-                      setTheme(e.target.value);
-                    }
-                  }}
-                >
-                  <MenuItem value="light">Light</MenuItem>
-                  <MenuItem value="dark">Dark</MenuItem>
-                  <MenuItem value="deepsea">Deep Sea</MenuItem>
-                </Select>
-              </FormControl>
+              <SSelector
+                title={<FormattedMessage id="Settings.theme" />}
+                currentState={state.theme}
+                func={(e: SelectChangeEvent<string>) => {
+                  if (typeof e.target.value === "string") {
+                    setTheme(e.target.value);
+                  }
+                }}
+                items={[
+                  { key: "light", value: "Light" },
+                  { key: "dark", value: "Dark" },
+                  { key: "deepsea", value: "DeepSea" },
+                ]}
+              />
               <Typography variant="caption" display="block">
                 <FormattedMessage id="Settings.Themes" />
               </Typography>
               <Divider style={{ margin: "10px 0" }} />
-              <FormControl>
-                <InputLabel>
-                  <FormattedMessage id="Settings.dataStore" />
-                </InputLabel>
-                <Select
-                  value={state.store}
-                  onChange={(e: SelectChangeEvent<string>) => {
-                    if (typeof e.target.value === "string") {
-                      setStore(e.target.value);
-                    }
-                  }}
-                >
-                  <MenuItem value="26">26 Rootage</MenuItem>
-                  <MenuItem value="27">27 HEROIC VERSE</MenuItem>
-                  <MenuItem value="28">28 BISTROVER</MenuItem>
-                  <MenuItem value="29">29 CastHour</MenuItem>
-                  <MenuItem value="INF">INFINITAS</MenuItem>
-                </Select>
-              </FormControl>
+              <SSelector
+                title={<FormattedMessage id="Settings.dataStore" />}
+                currentState={state.store}
+                func={(e: SelectChangeEvent<string>) => {
+                  if (typeof e.target.value === "string") {
+                    setStore(e.target.value);
+                  }
+                }}
+                items={versionTitles.reduce(
+                  (array: { key: string; value: any }[], item) => {
+                    if (!array) array = [] as { key: string; value: any }[];
+                    array.push({ key: item.num, value: item.title });
+                    return array;
+                  },
+                  []
+                )}
+              />
               <Typography variant="caption" display="block">
                 <FormattedMessage id="Settings.noteMes1" />
               </Typography>
@@ -174,7 +190,11 @@ class Settings extends React.Component<P, S> {
                 <FormattedMessage id="Settings.inaccurateMes" />
               </Typography>
               <Divider style={{ margin: "10px 0" }} />
-              <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
+              <Typography
+                variant="caption"
+                display="block"
+                className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink"
+              >
                 Auto-sync
               </Typography>
               <Switch
@@ -197,7 +217,11 @@ class Settings extends React.Component<P, S> {
                 <FormattedMessage id="Settings.AutoSync3" />
               </Typography>
               <Divider style={{ margin: "10px 0" }} />
-              <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
+              <Typography
+                variant="caption"
+                display="block"
+                className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink"
+              >
                 <FormattedMessage id="Settings.DPMode" />
                 (beta)
               </Typography>
@@ -222,7 +246,11 @@ class Settings extends React.Component<P, S> {
                 }}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   if (typeof e.target.value === "string") {
-                    setGoalBPI(Number(e.target.value) > 100 ? 100 : Number(e.target.value));
+                    setGoalBPI(
+                      Number(e.target.value) > 100
+                        ? 100
+                        : Number(e.target.value)
+                    );
                   }
                 }}
                 style={{ margin: "0 0 5px 0", width: "100%" }}
@@ -236,7 +264,11 @@ class Settings extends React.Component<P, S> {
                 }}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   if (typeof e.target.value === "string") {
-                    setGoalPercentage(Number(e.target.value) > 100 ? 100 : Number(e.target.value));
+                    setGoalPercentage(
+                      Number(e.target.value) > 100
+                        ? 100
+                        : Number(e.target.value)
+                    );
                   }
                 }}
                 style={{ margin: "0 0 5px 0", width: "100%" }}
@@ -246,11 +278,23 @@ class Settings extends React.Component<P, S> {
               </Typography>
               <Divider style={{ margin: "10px 0" }} />
               <FormControl>
-                <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
+                <Typography
+                  variant="caption"
+                  display="block"
+                  className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink"
+                >
                   <FormattedMessage id="Settings.Update" />
                 </Typography>
                 <div style={{ position: "relative" }}>
-                  <LoadingButton variant="contained" color="secondary" onClick={this.updateDef} loading={disableUpdateBtn} loadingPosition="start" disabled={disableUpdateBtn} startIcon={<UpdateIcon />}>
+                  <LoadingButton
+                    variant="contained"
+                    color="secondary"
+                    onClick={this.updateDef}
+                    loading={disableUpdateBtn}
+                    loadingPosition="start"
+                    disabled={disableUpdateBtn}
+                    startIcon={<UpdateIcon />}
+                  >
                     <FormattedMessage id="Settings.UpdateResourcePacks" />
                   </LoadingButton>
                 </div>
@@ -266,42 +310,57 @@ class Settings extends React.Component<P, S> {
               <Typography variant="caption" display="block">
                 <FormattedMessage id="Settings.updateWarning" />
                 <br />
-                <RefLink component="a" onClick={this.toggleURLDialog} color="secondary">
+                <RefLink
+                  component="a"
+                  onClick={this.toggleURLDialog}
+                  color="secondary"
+                >
                   <FormattedMessage id="Settings.defFileURLButton" />
                 </RefLink>
               </Typography>
               <Typography variant="caption" display="block">
-                <RefLink color="secondary" href="https://github.com/BPIManager/BPIM-Scores/issues/">
+                <RefLink
+                  color="secondary"
+                  href="https://github.com/BPIManager/BPIM-Scores/issues/"
+                >
                   定義ファイルに誤りを発見した場合、こちらからお知らせください。
                 </RefLink>
               </Typography>
-              {isURLDialogOpen && <URLDialog isDialogOpen={isURLDialogOpen} exec={this.changeDefinitionURL} close={this.toggleURLDialog} />}
+              {isURLDialogOpen && (
+                <URLDialog
+                  isDialogOpen={isURLDialogOpen}
+                  exec={this.changeDefinitionURL}
+                  close={this.toggleURLDialog}
+                />
+              )}
               <Divider style={{ margin: "10px 0" }} />
-              <FormControl>
-                <InputLabel>
-                  <FormattedMessage id="Settings.AreaTitle" />
-                </InputLabel>
-                <Select
-                  value={state.area}
-                  onChange={(e: SelectChangeEvent<number>) => {
-                    if (typeof e.target.value === "number") {
-                      setArea(e.target.value);
-                    }
-                  }}
-                >
-                  {area.map((item, i) => (
-                    <MenuItem key={item} value={i}>
-                      {item}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <SSelector
+                title={<FormattedMessage id="Settings.AreaTitle" />}
+                currentState={state.area}
+                func={(e: SelectChangeEvent<number>) => {
+                  if (typeof e.target.value === "number") {
+                    setArea(e.target.value);
+                  }
+                }}
+                items={area.reduce(
+                  (array: { key: number; value: any }[], item, i) => {
+                    if (!array) array = [] as { key: number; value: any }[];
+                    array.push({ key: i, value: item });
+                    return array;
+                  },
+                  []
+                )}
+              />
               <Typography variant="caption" display="block">
                 <FormattedMessage id="Settings.Area" />
               </Typography>
               <Divider style={{ margin: "10px 0" }} />
               <FormControl>
-                <Typography variant="caption" display="block" className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink">
+                <Typography
+                  variant="caption"
+                  display="block"
+                  className="MuiFormLabel-root MuiInputLabel-animated MuiInputLabel-shrink"
+                >
                   キャッシュクリア
                 </Typography>
                 <Button
@@ -309,14 +368,18 @@ class Settings extends React.Component<P, S> {
                   color="secondary"
                   onClick={() => {
                     if (navigator) {
-                      navigator.serviceWorker.getRegistration().then((registration) => {
-                        if (registration) {
-                          registration.unregister();
-                          alert("キャッシュを削除しました。一度アプリを終了し、再度起動してください。");
-                        } else {
-                          alert("削除するデータが見つかりませんでした");
-                        }
-                      });
+                      navigator.serviceWorker
+                        .getRegistration()
+                        .then((registration) => {
+                          if (registration) {
+                            registration.unregister();
+                            alert(
+                              "キャッシュを削除しました。一度アプリを終了し、再度起動してください。"
+                            );
+                          } else {
+                            alert("削除するデータが見つかりませんでした");
+                          }
+                        });
                     }
                   }}
                   disabled={disableUpdateBtn}
@@ -370,14 +433,30 @@ class URLDialog extends React.Component<UP, { url: string }> {
           <DialogContent>
             <DialogContentText>
               <FormattedMessage id="Settings.ChangeDefinitionURL" />
-              <RefLink color="secondary" href="https://docs2.poyashi.me/other/def/" target="_blank" rel="noopener noreferrer">
+              <RefLink
+                color="secondary"
+                href="https://docs2.poyashi.me/other/def/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <FormattedMessage id="Settings.ChangeDefinitionURL2" />
               </RefLink>
               <FormattedMessage id="Settings.ChangeDefinitionURL3" />
               <br />
               <FormattedMessage id="Settings.ChangeDefinitionURL4" />
             </DialogContentText>
-            <TextField autoFocus margin="dense" id="name" label="定義データURL" type="text" value={this.state.url} onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.setState({ url: e.target.value })} fullWidth />
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              label="定義データURL"
+              type="text"
+              value={this.state.url}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                this.setState({ url: e.target.value })
+              }
+              fullWidth
+            />
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleClose} color="secondary">
