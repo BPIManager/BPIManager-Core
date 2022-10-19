@@ -43,11 +43,3 @@ export const httpsCfGet = async (endpoint: string, query?: string) => {
       return null;
     });
 };
-
-import { createClient } from "@supabase/supabase-js";
-
-// Create a single supabase client for interacting with your database
-export const supabase = createClient(
-  "https://jxsyzykejxxbobyzrdai.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4c3l6eWtlanh4Ym9ieXpyZGFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjM3NjQ0MTYsImV4cCI6MTk3OTM0MDQxNn0.hzFZsr2KLzC67Le2kUZ1KDHP-_Rsm0Pudovs4eY6-yk"
-);
