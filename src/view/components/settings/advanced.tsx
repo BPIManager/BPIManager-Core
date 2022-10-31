@@ -232,7 +232,6 @@ class Settings extends React.Component<P, S> {
                 return array;
               }, [])
               .concat([
-                { key: "INF", value: "INFINITAS" },
                 { key: "Songs Database", value: "Songs Database" },
                 { key: "Rivals", value: "Rivals" },
               ])}
