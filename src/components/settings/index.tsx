@@ -1,3 +1,5 @@
+import { config } from "@/config";
+
 export const _isSingle = () => {
   return !localStorage.getItem("isSingle") ||
     localStorage.getItem("isSingle") === "1" ||
@@ -7,7 +9,7 @@ export const _isSingle = () => {
 };
 
 export const _currentStore = () => {
-  return localStorage.getItem("currentStore") || "30";
+  return localStorage.getItem("currentStore") || config.latestStore;
 };
 
 export const _lang = () => {
@@ -120,7 +122,7 @@ export const _setTraditionalMode = (newState: number = 0) => {
 };
 
 export const _currentStoreWithFullName = () => {
-  const t: string = localStorage.getItem("currentStore") || "30";
+  const t: string = localStorage.getItem("currentStore") || config.latestStore;
   return t === "26"
     ? "26 Rootage"
     : t === "27"
