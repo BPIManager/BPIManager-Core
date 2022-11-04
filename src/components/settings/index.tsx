@@ -1,9 +1,13 @@
 export const _isSingle = () => {
-  return !localStorage.getItem("isSingle") || localStorage.getItem("isSingle") === "1" || localStorage.getItem("isSingle") === "true" ? 1 : 0;
+  return !localStorage.getItem("isSingle") ||
+    localStorage.getItem("isSingle") === "1" ||
+    localStorage.getItem("isSingle") === "true"
+    ? 1
+    : 0;
 };
 
 export const _currentStore = () => {
-  return localStorage.getItem("currentStore") || "29";
+  return localStorage.getItem("currentStore") || "30";
 };
 
 export const _lang = () => {
@@ -49,7 +53,9 @@ export const _useActionMenu = () => {
 };
 
 export const _currentQuickAccessComponents = () => {
-  return localStorage.getItem("quickAccess") || "camera,import,songs,rival,sync";
+  return (
+    localStorage.getItem("quickAccess") || "camera,import,songs,rival,sync"
+  );
 };
 
 export const _currentBPIDefinition = () => {
@@ -104,7 +110,9 @@ export const _setAutoSync = (isEnable: boolean) => {
   if (!isEnable) {
     _setWeeklyRanking(false);
   }
-  return isEnable ? localStorage.setItem("autoSync", "true") : localStorage.removeItem("autoSync");
+  return isEnable
+    ? localStorage.setItem("autoSync", "true")
+    : localStorage.removeItem("autoSync");
 };
 
 export const _setTraditionalMode = (newState: number = 0) => {
@@ -112,8 +120,18 @@ export const _setTraditionalMode = (newState: number = 0) => {
 };
 
 export const _currentStoreWithFullName = () => {
-  const t: string = localStorage.getItem("currentStore") || "29";
-  return t === "26" ? "26 Rootage" : t === "27" ? "27 HEROIC VERSE" : t === "INF" ? "INFINITAS" : t === "28" ? "28 BISTROVER" : "29 CastHour";
+  const t: string = localStorage.getItem("currentStore") || "30";
+  return t === "26"
+    ? "26 Rootage"
+    : t === "27"
+    ? "27 HEROIC VERSE"
+    : t === "INF"
+    ? "INFINITAS"
+    : t === "28"
+    ? "28 BISTROVER"
+    : t === "29"
+    ? "29 CastHour"
+    : "30 RESIDENT";
 };
 
 export const _weeklyRanking = () => {
@@ -121,7 +139,9 @@ export const _weeklyRanking = () => {
 };
 
 export const _setWeeklyRanking = (isEnable: boolean) => {
-  return isEnable ? localStorage.setItem("weeklyRanking", "true") : localStorage.removeItem("weeklyRanking");
+  return isEnable
+    ? localStorage.setItem("weeklyRanking", "true")
+    : localStorage.removeItem("weeklyRanking");
 };
 
 export const _showRichView = () => {
@@ -145,11 +165,18 @@ export const _foregroundNotification = () => {
 };
 
 export const _lastSyncDate = () => {
-  return localStorage.getItem("lastSyncDate_" + _currentStore() + "." + _isSingle()) || "";
+  return (
+    localStorage.getItem(
+      "lastSyncDate_" + _currentStore() + "." + _isSingle()
+    ) || ""
+  );
 };
 
 export const _setLastSyncDate = (date: string) => {
-  return localStorage.setItem("lastSyncDate_" + +_currentStore() + "." + _isSingle(), date);
+  return localStorage.setItem(
+    "lastSyncDate_" + +_currentStore() + "." + _isSingle(),
+    date
+  );
 };
 
 export const _chartColor = () => {
