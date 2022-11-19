@@ -21,7 +21,11 @@ export interface ImportResult {
   updatedText: string;
 }
 
-const _ = async (raw: string, uid: string = "", updateGlobal: (u: string) => void): Promise<ImportResult> => {
+const _ = async (
+  raw: string,
+  uid: string = "",
+  updateGlobal: (u: string) => void
+): Promise<ImportResult> => {
   const detectJSON = (arg: string) => {
     try {
       arg = !JSON ? false : JSON.parse(arg);
@@ -56,7 +60,9 @@ const _ = async (raw: string, uid: string = "", updateGlobal: (u: string) => voi
         return raw;
       }
     } else {
-      throw new Error("クリップボードの内容を読み取れません。フィールドにデータをコピーし、再度取り込み実行してください。");
+      throw new Error(
+        "クリップボードの内容を読み取れません。フィールドにデータをコピーし、再度取り込み実行してください。"
+      );
     }
   };
 
@@ -66,7 +72,9 @@ const _ = async (raw: string, uid: string = "", updateGlobal: (u: string) => voi
     const currentStore: string = _currentStore();
     let text = await getText();
     const isJSON = detectJSON(text);
-    const executor: importJSON | importCSV = isJSON ? new importJSON(text, isSingle, currentStore) : new importCSV(text, isSingle, currentStore);
+    const executor: importJSON | importCSV = isJSON
+      ? new importJSON(text, isSingle, currentStore)
+      : new importCSV(text, isSingle, currentStore);
     const calc: bpiCalculator = new bpiCalculator();
     const exec: number = await executor.execute();
     const scores = [];
@@ -88,7 +96,11 @@ const _ = async (raw: string, uid: string = "", updateGlobal: (u: string) => voi
       }, {})
     );
     for (let i = 0; i < result.length; ++i) {
-      const calcData = await calc.calc(result[i]["title"], result[i]["difficulty"], result[i]["exScore"]);
+      const calcData = await calc.calc(
+        result[i]["title"],
+        result[i]["difficulty"],
+        result[i]["exScore"]
+      );
       if (calcData.error && calcData.reason) {
         const suffix = _prefix(result[i]["difficulty"], true);
         errors.push(result[i]["title"] + suffix + " - " + calcData.reason);
@@ -96,7 +108,14 @@ const _ = async (raw: string, uid: string = "", updateGlobal: (u: string) => voi
         continue;
       }
       const item = all[result[i]["title"] + result[i]["difficulty"]];
-      if (item && (item["exScore"] === 0 || Number.isNaN(item["exScore"]) || (item["exScore"] >= result[i]["exScore"] && item["clearState"] === result[i]["clearState"]) || timeCompare(result[i]["updatedAt"], item["updatedAt"]) <= 0)) {
+      if (
+        item &&
+        (item["exScore"] === 0 ||
+          Number.isNaN(item["exScore"]) ||
+          (item["exScore"] >= result[i]["exScore"] &&
+            item["clearState"] === result[i]["clearState"]) ||
+          timeCompare(result[i]["updatedAt"], item["updatedAt"]) <= 0)
+      ) {
         //データ更新がない場合、スキップ
         ++skipped;
         continue;
@@ -110,7 +129,13 @@ const _ = async (raw: string, uid: string = "", updateGlobal: (u: string) => voi
           willModified: item ? item["isSingle"] === isSingle : false,
         })
       );
-      histories.push(Object.assign(resultHistory[i], { difficultyLevel: calcData.difficultyLevel }, { currentBPI: calcData.bpi, exScore: resultHistory[i].exScore }));
+      histories.push(
+        Object.assign(
+          resultHistory[i],
+          { difficultyLevel: calcData.difficultyLevel },
+          { currentBPI: calcData.bpi, exScore: item["exScore"] }
+        )
+      );
       ++updated;
     }
     await new importer().setHistory(histories).setScores(scores).exec();
@@ -119,16 +144,38 @@ const _ = async (raw: string, uid: string = "", updateGlobal: (u: string) => voi
       new fbActions().setSaveMeta(uid, currentStore, isSingle);
       updateGlobal(uid);
     }
-    errors.unshift(result.length + "件処理しました," + updated + "件更新しました," + skipped + "件スキップされました," + errorOccured + "件追加できませんでした");
+    errors.unshift(
+      result.length +
+        "件処理しました," +
+        updated +
+        "件更新しました," +
+        skipped +
+        "件スキップされました," +
+        errorOccured +
+        "件追加できませんでした"
+    );
 
     const bpi = new bpiCalcuator();
     const statsAPI = await new statMain(12).load();
     const totalBPI = await bpi.setSongs(statsAPI.at());
-    const lastDay = await statsAPI.eachDaySum(4, dayjs().subtract(1, "day").format());
-    const lastWeek = await statsAPI.eachDaySum(4, dayjs().subtract(1, "week").format());
+    const lastDay = await statsAPI.eachDaySum(
+      4,
+      dayjs().subtract(1, "day").format()
+    );
+    const lastWeek = await statsAPI.eachDaySum(
+      4,
+      dayjs().subtract(1, "week").format()
+    );
     const rank = bpi.rank(totalBPI, false);
-    const rankPer = Math.round((rank / bpi.getTotalKaidens()) * 1000000) / 10000;
-    const updatedText = `BPIManagerでスコアを${updated}件更新しました%0a総合BPI:${totalBPI}(前日比:${showBpiDist(totalBPI, lastDay)},前週比:${showBpiDist(totalBPI, lastWeek)})%0a推定順位:${rank}位,皆伝上位${rankPer}％`;
+    const rankPer =
+      Math.round((rank / bpi.getTotalKaidens()) * 1000000) / 10000;
+    const updatedText = `BPIManagerでスコアを${updated}件更新しました%0a総合BPI:${totalBPI}(前日比:${showBpiDist(
+      totalBPI,
+      lastDay
+    )},前週比:${showBpiDist(
+      totalBPI,
+      lastWeek
+    )})%0a推定順位:${rank}位,皆伝上位${rankPer}％`;
 
     return {
       stateText: "Data.Success",
