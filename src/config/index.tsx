@@ -1,8 +1,8 @@
 export const config = {
-  versionNumber: "86",
+  versionNumber: "87",
   client: "ca-pub-1494631468121976",
   slot: "6952909012",
-  lastUpdate: "2022/07/07 JST",
+  lastUpdate: "2022/11/19 JST",
   latestStore: "30",
   baseUrl: "https://bpi.poyashi.me",
   apiUrl: "https://proxy.poyashi.me/bpim/api/v1/",

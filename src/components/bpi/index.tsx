@@ -22,7 +22,8 @@ export default class bpiCalculator {
   private z: number = 0;
   private traditionalMode = _traditionalMode();
   private powCoef: number = this.traditionalMode === 1 ? 1.5 : this.newcoef;
-  private pgf = (j: number): number => (j === this.m ? this.m * 0.8 : 1 + (j / this.m - 0.5) / (1 - j / this.m));
+  private pgf = (j: number): number =>
+    j === this.m ? this.m * 0.8 : 1 + (j / this.m - 0.5) / (1 - j / this.m);
 
   private _allTwelvesLength: number = 0;
   private _allTwelvesBPI: number[] = [];
@@ -39,7 +40,7 @@ export default class bpiCalculator {
 
   constructor() {
     this.isSingle = _isSingle();
-    this.totalKaidens = this.isSingle ? 2352 : 612;
+    this.totalKaidens = this.isSingle ? 2699 : 612; //5399
   }
 
   setTraditionalMode(s: number) {
@@ -75,7 +76,12 @@ export default class bpiCalculator {
       this.k = data["avg"];
       this.z = data["wr"];
       this.m = data["notes"] * 2;
-      if (data["coef"] && data["coef"] > 0 && data["difficultyLevel"] === "12" && data["dpLevel"] === "0") {
+      if (
+        data["coef"] &&
+        data["coef"] > 0 &&
+        data["difficultyLevel"] === "12" &&
+        data["dpLevel"] === "0"
+      ) {
         this.setCoef(data["coef"]);
       } else {
         this.setCoef(this.defaultCoef());
@@ -86,7 +92,13 @@ export default class bpiCalculator {
     }
   }
 
-  setManual(wr: number, avg: number, notes: number, ex: number, coef: number | undefined): number {
+  setManual(
+    wr: number,
+    avg: number,
+    notes: number,
+    ex: number,
+    coef: number | undefined
+  ): number {
     try {
       this.s = ex;
       this.k = avg;
@@ -108,9 +120,16 @@ export default class bpiCalculator {
     return this;
   }
 
-  async calc(songTitle: string, difficulty: string, exScore: number): Promise<B> {
+  async calc(
+    songTitle: string,
+    difficulty: string,
+    exScore: number
+  ): Promise<B> {
     try {
-      this.propData = await this.songsDB.getOneItemIsSingle(songTitle, difficulty);
+      this.propData = await this.songsDB.getOneItemIsSingle(
+        songTitle,
+        difficulty
+      );
       if (!this.propData || !this.propData[0]) {
         throw new Error("未対応楽曲です");
       }
@@ -118,7 +137,11 @@ export default class bpiCalculator {
       this.k = this.propData[0]["avg"];
       this.z = this.propData[0]["wr"];
       this.m = this.propData[0]["notes"] * 2;
-      if (this.propData[0]["coef"] && this.propData[0]["coef"] > 0 && this.propData[0]["dpLevel"] === "0") {
+      if (
+        this.propData[0]["coef"] &&
+        this.propData[0]["coef"] > 0 &&
+        this.propData[0]["dpLevel"] === "0"
+      ) {
         this.setCoef(this.propData[0]["coef"]);
       } else {
         this.setCoef();
@@ -148,7 +171,17 @@ export default class bpiCalculator {
     const _s_ = _s / _k,
       _z_ = _z / _k;
     const p = s >= k;
-    return Math.max(-15, Math.round((p ? 100 : -100) * Math.pow((p ? Math.log(_s_) : -Math.log(_s_)) / Math.log(_z_), this.powCoef) * 100) / 100);
+    return Math.max(
+      -15,
+      Math.round(
+        (p ? 100 : -100) *
+          Math.pow(
+            (p ? Math.log(_s_) : -Math.log(_s_)) / Math.log(_z_),
+            this.powCoef
+          ) *
+          100
+      ) / 100
+    );
   }
 
   getData = () => [this.m, this.k, this.z];
@@ -161,7 +194,14 @@ export default class bpiCalculator {
 
   calcFromBPI(bpi: number, ceiled: boolean = false): number {
     const k = this.pgf(this.k);
-    const N = Math.pow(Math.E, Math.pow((Math.pow(Math.log(this.pgf(this.z) / k), this.powCoef) * bpi) / 100, 1 / this.powCoef)) * k;
+    const N =
+      Math.pow(
+        Math.E,
+        Math.pow(
+          (Math.pow(Math.log(this.pgf(this.z) / k), this.powCoef) * bpi) / 100,
+          1 / this.powCoef
+        )
+      ) * k;
     const res = this.m * ((N - 0.5) / N);
     return ceiled ? Math.ceil(res) : res;
   }
@@ -205,9 +245,15 @@ export default class bpiCalculator {
     return sum > 0 ? res : -res;
   }
 
-  async setSongs(songs: number[], level: "11" | "12" | null = "12", forceSongLen?: number): Promise<number> {
+  async setSongs(
+    songs: number[],
+    level: "11" | "12" | null = "12",
+    forceSongLen?: number
+  ): Promise<number> {
     this._allTwelvesBPI = songs;
-    this._allTwelvesLength = forceSongLen || (await this.songsDB.getSongsNum(level ? (level as string) : "12"));
+    this._allTwelvesLength =
+      forceSongLen ||
+      (await this.songsDB.getSongsNum(level ? (level as string) : "12"));
     return this.totalBPI();
   }
 }
