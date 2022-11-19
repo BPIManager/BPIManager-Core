@@ -91,6 +91,7 @@ export const verNameArr = [
   "27 HEROIC VERSE",
   "28 BISTROVER",
   "29 CastHour",
+  "30 RESIDENT",
 ];
 
 export const bp = (bp: number): string => {
