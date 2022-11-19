@@ -133,7 +133,10 @@ const _ = async (
         Object.assign(
           resultHistory[i],
           { difficultyLevel: calcData.difficultyLevel },
-          { currentBPI: calcData.bpi, exScore: item ? item["exScore"] : 0 }
+          {
+            currentBPI: calcData.bpi,
+            exScore: result ? result[i]["exScore"] : 0,
+          }
         )
       );
       ++updated;
