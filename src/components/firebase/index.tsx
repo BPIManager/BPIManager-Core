@@ -6,7 +6,7 @@ import { getAuth } from "firebase/auth";
 import "firebase/functions";
 export const fb = initializeApp({
   apiKey: "AIzaSyAIlzzxI0kZtIe4vvjSIiRwfqSQVZtbluM",
-  authDomain: "bpimv2.firebaseapp.com",
+  authDomain: "bpi.poyashi.me",
   projectId: "bpimv2",
   storageBucket: "bpimv2.appspot.com",
   messagingSenderId: "199747072203",
