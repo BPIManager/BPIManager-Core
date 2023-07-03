@@ -29,10 +29,22 @@ class SyncLoginScreen extends React.Component<
     return (
       <React.Fragment>
         <Paper style={{ padding: "15px" }}>
-          <Avatar style={{ background: avatarBgColor, color: avatarFontColor, margin: "10px auto", padding: "35px", fontSize: "25px" }}>
+          <Avatar
+            style={{
+              background: avatarBgColor,
+              color: avatarFontColor,
+              margin: "10px auto",
+              padding: "35px",
+              fontSize: "25px",
+            }}
+          >
             <LockIcon fontSize="large" />
           </Avatar>
-          <Typography component="h5" variant="h5" style={{ textAlign: "center", marginTop: "10px" }}>
+          <Typography
+            component="h5"
+            variant="h5"
+            style={{ textAlign: "center", marginTop: "10px" }}
+          >
             <FormattedMessage id={"SignIn"} />
           </Typography>
           <Divider style={{ margin: "10px 0" }} />
@@ -44,8 +56,17 @@ class SyncLoginScreen extends React.Component<
             }
           >
             {[
-              { name: "Twitter", func: () => this.fbA.authWithTwitter(), desc: "" },
-              { name: "Google", func: () => this.fbA.authWithGoogle(), desc: "" },
+              {
+                name: "Twitter",
+                func: () => this.fbA.authWithTwitter(),
+                desc: "",
+              },
+              {
+                name: "Google",
+                func: () => this.fbA.authWithGoogle(),
+                desc: "",
+              },
+              { name: "LINE", func: () => this.fbA.authWithLINE(), desc: "" },
             ].map((item, i) => {
               return (
                 <ListItem key={i} button onClick={item.func}>

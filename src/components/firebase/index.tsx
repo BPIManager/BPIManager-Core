@@ -1,5 +1,7 @@
 import { initializeApp } from "firebase/app";
 import "firebase/firestore";
+import { getStorage } from "firebase/storage";
+
 import { getFunctions, httpsCallable as H } from "firebase/functions";
 import { GoogleAuthProvider, TwitterAuthProvider } from "firebase/auth";
 import { getAuth } from "firebase/auth";
@@ -15,6 +17,7 @@ export const fb = initializeApp({
 });
 
 export const auth = getAuth();
+export const storage = getStorage(fb);
 export const twitter = new TwitterAuthProvider();
 export const google = new GoogleAuthProvider();
 export default fb;

@@ -8,6 +8,7 @@ import {
   updateProfile,
   getRedirectResult,
   signInWithRedirect,
+  OAuthProvider,
 } from "firebase/auth";
 import {
   getFirestore,
@@ -62,6 +63,11 @@ export default class fbActions {
     return signInWithRedirect(auth, google);
   }
 
+  async authWithLINE(): Promise<void> {
+    const lineProvider = new OAuthProvider("oidc.line");
+    signInWithRedirect(auth, lineProvider);
+  }
+
   authInfo(): User | null {
     return (
       auth.currentUser || JSON.parse(localStorage.getItem("social") || "{}")
@@ -77,43 +83,22 @@ export default class fbActions {
     }
   }
 
-  async updateProfileIcon(): Promise<UserCredential | null> {
-    return getRedirectResult(auth)
-      .then(async function (_result) {
-        if (auth.currentUser) {
-          if (_result && _result.user) {
-            const d = getAdditionalUserInfo(_result);
-            if (d && d.profile) {
-              const pid = d.providerId;
-              let p = "";
-              if (pid === "google.com") {
-                p = (d.profile as { picture: string }).picture;
-              } else if (pid === "twitter.com") {
-                p = (d.profile as { profile_image_url_https: string })
-                  .profile_image_url_https;
-              }
-              await setDoc(
-                doc(db, "users", _result.user.uid),
-                {
-                  photoURL: p,
-                },
-                {
-                  merge: true,
-                }
-              );
-              await updateProfile(auth.currentUser, {
-                photoURL: p,
-              });
-            }
-          }
-        }
-        return _result;
-      })
-      .catch((error) => {
-        console.log(error);
-        alert(error.message ? error.message : error);
-        return null;
+  async updateProfileUrl(id: string, url: string) {
+    await setDoc(
+      doc(db, "users", id),
+      {
+        photoURL: url,
+      },
+      {
+        merge: true,
+      }
+    );
+    const auth = this.auth();
+    if (auth && auth.currentUser) {
+      await updateProfile(auth.currentUser, {
+        photoURL: url,
       });
+    }
   }
 
   auth(): Auth {
@@ -281,7 +266,7 @@ export default class fbActions {
       if (
         duplication !== null &&
         newData.displayName !== "" &&
-        duplication.uid !== this.docName
+        (duplication as any).uid !== this.docName
       ) {
         throw new Error("already used error");
       }
