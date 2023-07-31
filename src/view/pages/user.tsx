@@ -7,7 +7,17 @@ import { RouteComponentProps, withRouter } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import RivalView from "@/view/components/rivals/view";
-import { List, ListItem, ListItemAvatar, ListItemText, ListItemSecondaryAction, IconButton, Grid, Button, Typography } from "@mui/material/";
+import {
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  ListItemSecondaryAction,
+  IconButton,
+  Grid,
+  Button,
+  Typography,
+} from "@mui/material/";
 import ClearLampView from "@/view/components/table/fromUserPage";
 import WbIncandescentIcon from "@mui/icons-material/WbIncandescent";
 import { avatarBgColor, avatarFontColor } from "@/components/common";
@@ -38,9 +48,19 @@ const User: React.FC<
     updateName?: (name: string) => void;
     initialView?: number;
   } & RouteComponentProps
-> = ({ match, history, currentUserName, limited, exact, updateName, initialView }) => {
+> = ({
+  match,
+  history,
+  currentUserName,
+  limited,
+  exact,
+  updateName,
+  initialView,
+}) => {
   const fbA = new fbActions();
-  const [userName, setUserName] = useState<string>(currentUserName || (match.params as any).uid || "");
+  const [userName, setUserName] = useState<string>(
+    currentUserName || (match.params as any).uid || ""
+  );
   const [myDisplayName, setMyDisplayName] = useState<string>("");
   const [myId, setMyId] = useState<string>("");
   const [metaData, setMetaData] = useState<any>(null);
@@ -77,7 +97,12 @@ const User: React.FC<
     const exactId = (match.params as any).exactId || exact;
     const targetName = forceUserName ? forceUserName : userName;
     setProcessing(true);
-    const res = exactId && userName === "_" ? await fbA.searchByExactId(exactId) : exactId && !forceUserName ? await fbA.searchByExactId(targetName) : await fbA.searchRival(targetName);
+    const res =
+      exactId && userName === "_"
+        ? await fbA.searchByExactId(exactId)
+        : exactId && !forceUserName
+        ? await fbA.searchByExactId(targetName)
+        : await fbA.searchRival(targetName);
     if (res) {
       if (forceUserName) {
         history.replace("/u/" + targetName);
@@ -128,13 +153,27 @@ const User: React.FC<
 
   if (currentView === 1) {
     //スコア一覧
-    return <RivalView toggleSnack={() => null} backToMainPage={backToMainPage} showAllScore={true} rivalData={metaData.uid} rivalMeta={metaData} descendingRivalData={rivalData} isNotRival={true} />;
+    return (
+      <RivalView
+        toggleSnack={() => null}
+        backToMainPage={backToMainPage}
+        showAllScore={true}
+        rivalData={metaData.uid}
+        rivalMeta={metaData}
+        descendingRivalData={rivalData}
+        isNotRival={true}
+      />
+    );
   }
   if (currentView === 2) {
     //AAA達成表
     return (
       <Container fixed className="commonLayout">
-        <ClearLampView backToMainPage={backToMainPage} name={userName} data={rivalData} />
+        <ClearLampView
+          backToMainPage={backToMainPage}
+          name={userName}
+          data={rivalData}
+        />
       </Container>
     );
   }
@@ -149,14 +188,20 @@ const User: React.FC<
         {!shiftDetail && (
           <>
             <ShiftOverView rivalData={scoreHistory} />
-            <ShowMoreButton text="さらに表示" action={() => setShiftDetail(true)} />
+            <ShowMoreButton
+              text="さらに表示"
+              action={() => setShiftDetail(true)}
+            />
           </>
         )}
         {compareDetail && <CompareDetail rivalData={rivalData} />}
         {!compareDetail && (
           <>
             <CompareOverView rivalData={rivalData} />
-            <ShowMoreButton text="さらに表示" action={() => setCompareDetail(true)} />
+            <ShowMoreButton
+              text="さらに表示"
+              action={() => setCompareDetail(true)}
+            />
           </>
         )}
         <Menu open={changePage} uid={metaData.uid} />
@@ -166,10 +211,15 @@ const User: React.FC<
   );
 };
 
-const Menu: React.FC<{ open: (key: number) => void; uid: string }> = ({ open, uid }) => {
+const Menu: React.FC<{ open: (key: number) => void; uid: string }> = ({
+  open,
+  uid,
+}) => {
   const showBPIMRanks = () => {
     if (uid) {
-      window.open("https://rank.poyashi.me/user/" + uid + "/" + _currentStore());
+      window.open(
+        "https://rank.poyashi.me/user/" + uid + "/" + _currentStore()
+      );
     } else {
       return alert("UserID cannot be determined");
     }
@@ -198,14 +248,26 @@ const Menu: React.FC<{ open: (key: number) => void; uid: string }> = ({ open, ui
             onClick: () => showBPIMRanks(),
           },
         ].map((item, i) => {
-          return <DefListCard key={i} onAction={item.onClick} disabled={false} icon={item.icon} primaryText={item.primary} secondaryText={item.secondary} />;
+          return (
+            <DefListCard
+              key={i}
+              onAction={item.onClick}
+              disabled={false}
+              icon={item.icon}
+              primaryText={item.primary}
+              secondaryText={item.secondary}
+            />
+          );
         })}
       </List>
     </>
   );
 };
 
-const ShowMoreButton: React.FC<{ text: string; action: () => void }> = ({ text, action }) => (
+const ShowMoreButton: React.FC<{ text: string; action: () => void }> = ({
+  text,
+  action,
+}) => (
   <Grid container alignItems="center">
     <Grid item xs={6}></Grid>
     <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -216,18 +278,37 @@ const ShowMoreButton: React.FC<{ text: string; action: () => void }> = ({ text, 
   </Grid>
 );
 
-const Share: React.FC<{ userName: string; metaData: any }> = ({ userName, metaData }) => {
+const Share: React.FC<{ userName: string; metaData: any }> = ({
+  userName,
+  metaData,
+}) => {
   const url = config.baseUrl + "/u/" + encodeURI(userName);
 
-  const totalBPI = metaData.totalBPIs && metaData.totalBPIs[_currentStore()] ? metaData.totalBPIs[_currentStore()] : "-";
+  const totalBPI =
+    metaData.totalBPIs && metaData.totalBPIs[_currentStore()]
+      ? metaData.totalBPIs[_currentStore()]
+      : "-";
   const totalRank = new bpiCalculator().rank(totalBPI, false);
-  const rankPer = Math.round((totalRank / new bpiCalculator().getTotalKaidens()) * 1000000) / 10000;
+  const rankPer =
+    Math.round((totalRank / new bpiCalculator().getTotalKaidens()) * 1000000) /
+    10000;
 
   return (
     <>
       <SubHeader icon={<ShareIcon />} text={<>共有</>} />
       <div style={{ filter: "grayscale(100%)", opacity: 0.8 }}>
-        <ShareList disableSubHeader withTitle={true} dense url={url} text={metaData.displayName + " 総合BPI:" + String(Number.isNaN(totalBPI) ? "-" : totalBPI) + `(推定順位:${totalRank}位,皆伝上位${rankPer}%)`} />
+        <ShareList
+          disableSubHeader
+          withTitle={true}
+          dense
+          url={url}
+          text={
+            metaData.displayName +
+            " 総合BPI:" +
+            String(Number.isNaN(totalBPI) ? "-" : totalBPI) +
+            `(推定順位:${totalRank}位,皆伝上位${rankPer}%)`
+          }
+        />
       </div>
     </>
   );
@@ -250,7 +331,9 @@ export class DefListCard extends React.Component<
     return (
       <ListItem button onClick={onAction} disabled={disabled}>
         <ListItemAvatar>
-          <Avatar style={{ background: avatarBgColor, color: avatarFontColor }}>{icon}</Avatar>
+          <Avatar style={{ background: avatarBgColor, color: avatarFontColor }}>
+            {icon}
+          </Avatar>
         </ListItemAvatar>
         <ListItemText primary={primaryText} secondary={secondaryText} />
         <ListItemSecondaryAction onClick={onAction}>
@@ -263,16 +346,24 @@ export class DefListCard extends React.Component<
   }
 }
 
-export const NotFound: React.FC<{ isInUserPage: boolean }> = ({ isInUserPage }) => (
+export const NotFound: React.FC<{ isInUserPage: boolean }> = ({
+  isInUserPage,
+}) => (
   <Container style={{ marginTop: "25px" }}>
     <Typography variant="h5" sx={{ textAlign: "center", fontSize: "25vw" }}>
       404
     </Typography>
-    <Typography variant="h5" sx={{ textAlign: "center", fontSize: "8vw", marginBottom: "15px" }}>
+    <Typography
+      variant="h5"
+      sx={{ textAlign: "center", fontSize: "8vw", marginBottom: "15px" }}
+    >
       {!isInUserPage ? <>Page</> : <>User</>} not found
     </Typography>
     {isInUserPage && (
-      <Typography variant="body1" sx={{ textAlign: "center", fontSize: "15px", marginBottom: "15px" }}>
+      <Typography
+        variant="body1"
+        sx={{ textAlign: "center", fontSize: "15px", marginBottom: "15px" }}
+      >
         ユーザーが見つかりませんでした
       </Typography>
     )}

@@ -7,6 +7,7 @@ export const config = {
   baseUrl: "https://bpi.poyashi.me",
   apiUrl: "https://proxy.poyashi.me/bpim/api/v1/",
   cfVersion: "v2",
+  errorImg: "/images/noavatar.svg",
 };
 
 const areaCommon: string[] = [

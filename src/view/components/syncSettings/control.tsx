@@ -40,7 +40,7 @@ import { UserIcon } from "../common/icon";
 import * as H from "history";
 import { ImageUpload } from "../sync/iconSettings";
 
-const defaultData = (photoURL: string) => ({
+export const defaultData = (photoURL: string) => ({
   isPublic: false,
   iidxId: "",
   twitter: "",

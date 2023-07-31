@@ -1,11 +1,30 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Button from "@mui/material/Button";
-import { withRouter, RouteComponentProps, Link } from "react-router-dom";
-import { Link as RefLink, Avatar, Grid, Typography, Container, CircularProgress } from "@mui/material/";
-import { _currentTheme, _currentQuickAccessComponents } from "@/components/settings";
+import {
+  withRouter,
+  RouteComponentProps,
+  Link,
+  useHistory,
+} from "react-router-dom";
+import {
+  Link as RefLink,
+  Avatar,
+  Grid,
+  Typography,
+  Container,
+  CircularProgress,
+  Alert,
+  AlertTitle,
+} from "@mui/material/";
+import {
+  _currentTheme,
+  _currentQuickAccessComponents,
+  _currentStore,
+  _isSingle,
+} from "@/components/settings";
 import Loader from "@/view/components/common/loader";
 import { Helmet } from "react-helmet";
-import { getAltTwitterIcon } from "@/components/rivals";
+import { getAltTwitterIcon, getTwitterName } from "@/components/rivals";
 import TimelineIcon from "@mui/icons-material/Timeline";
 import LibraryMusicIcon from "@mui/icons-material/LibraryMusic";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
@@ -25,6 +44,10 @@ import RecentUsers from "../components/topPage/recentUsers";
 import { BeginnerAlert, InstallAlert } from "../components/topPage/alerts";
 import UpdateDef from "../components/topPage/updateDef";
 import { UserIcon } from "../components/common/icon";
+import { config } from "@/config";
+import { blurredBackGround } from "@/components/common";
+import { ImageUpload } from "../components/sync/iconSettings";
+import { defaultData } from "../components/syncSettings/control";
 
 class Index extends React.Component<
   { global: any } & RouteComponentProps,
@@ -36,39 +59,58 @@ class Index extends React.Component<
     auth: any;
     isLoading: boolean;
     userLoading: boolean;
+    imageError: boolean;
+    photoURL: string;
   }
 > {
   constructor(props: { global: any } & RouteComponentProps) {
     super(props);
+    const user = localStorage.getItem("social")
+      ? JSON.parse(localStorage.getItem("social") || "[]")
+      : null;
     this.state = {
       auth: null,
-      user: localStorage.getItem("social") ? JSON.parse(localStorage.getItem("social") || "[]") : null,
+      user: user,
+      photoURL: user ? user.photoURL : null,
       totalBPI: -15,
       lastWeekUpdates: 0,
       remains: 0,
       isLoading: true,
       userLoading: true,
+      imageError: false,
     };
   }
+
+  updateUserData = (data: any) => {
+    this.setState({ user: Object.assign({}, data), photoURL: data.photoURL });
+  };
 
   async componentDidMount() {
     const total = await (await new totalBPI().load()).currentVersion();
     let shift = await new scoresDB().getAll();
-    shift = shift.filter((data: scoreData) => isSameWeek(data.updatedAt, new Date()));
+    shift = shift.filter((data: scoreData) =>
+      isSameWeek(data.updatedAt, new Date())
+    );
     const _named = await named(12);
     const remains = await getTable(12, _named);
-    const concatted = Object.keys(remains).reduce((group: any, item: string) => {
-      if (!group) group = [];
-      group = group.concat(remains[item]);
-      return group;
-    }, []);
+    const concatted = Object.keys(remains).reduce(
+      (group: any, item: string) => {
+        if (!group) group = [];
+        group = group.concat(remains[item]);
+        return group;
+      },
+      []
+    );
     new fbActions().auth().onAuthStateChanged((user: any) => {
       this.setState({ auth: user, userLoading: false });
     });
     this.setState({
       totalBPI: total,
       lastWeekUpdates: shift.length || 0,
-      remains: concatted.filter((item: CLBody) => item.bpi > (Number.isNaN(item.currentBPI) ? -999 : item.currentBPI)).length,
+      remains: concatted.filter(
+        (item: CLBody) =>
+          item.bpi > (Number.isNaN(item.currentBPI) ? -999 : item.currentBPI)
+      ).length,
       isLoading: false,
     });
     return;
@@ -81,13 +123,18 @@ class Index extends React.Component<
 
   render() {
     const themeColor = _currentTheme();
-    const { user, auth, isLoading, userLoading } = this.state;
+    const { user, auth, isLoading, userLoading, photoURL } = this.state;
     const xs = 12,
       sm = 12,
       md = 3,
       lg = 3;
-
-    const ListItem = (icon: any, text: string, data: string | number, target: string, targetText: string) => (
+    const ListItem = (
+      icon: any,
+      text: string,
+      data: string | number,
+      target: string,
+      targetText: string
+    ) => (
       <Grid item xs={xs} sm={sm} md={md} lg={lg}>
         <SubHeader icon={icon} text={<FormattedMessage id={text} />} />
         {isLoading && <Loader />}
@@ -98,8 +145,15 @@ class Index extends React.Component<
                 {data}
               </Typography>
             </Grid>
-            <Grid item xs={6} style={{ display: "flex", justifyContent: "flex-end" }}>
-              <Button size="small" onClick={() => this.props.history.push(target)}>
+            <Grid
+              item
+              xs={6}
+              style={{ display: "flex", justifyContent: "flex-end" }}
+            >
+              <Button
+                size="small"
+                onClick={() => this.props.history.push(target)}
+              >
                 <FormattedMessage id={targetText} />
               </Button>
             </Grid>
@@ -107,11 +161,13 @@ class Index extends React.Component<
         )}
       </Grid>
     );
-
     return (
       <div>
         <Helmet>
-          <meta name="description" content="beatmania IIDXのスコアをBPIという指標を用いて管理したり、ライバルとスコアを競ったりできるツールです。" />
+          <meta
+            name="description"
+            content="beatmania IIDXのスコアをBPIという指標を用いて管理したり、ライバルとスコアを競ったりできるツールです。"
+          />
         </Helmet>
         <div
           style={{
@@ -121,7 +177,8 @@ class Index extends React.Component<
         >
           <div
             style={{
-              background: themeColor === "light" ? "transparent" : "rgba(0,0,0,0)",
+              background:
+                themeColor === "light" ? "transparent" : "rgba(0,0,0,0)",
               display: "flex",
               padding: ".5vh 0",
               width: "100%",
@@ -130,7 +187,12 @@ class Index extends React.Component<
           >
             {userLoading && (
               <Container className="topMenuContainer">
-                <Grid container alignContent="space-between" alignItems="center" style={{ padding: "20px" }}>
+                <Grid
+                  container
+                  alignContent="space-between"
+                  alignItems="center"
+                  style={{ padding: "20px" }}
+                >
                   <Grid
                     item
                     xs={3}
@@ -141,7 +203,11 @@ class Index extends React.Component<
                       flexDirection: "column",
                     }}
                   >
-                    <Container fixed className={"loaderCenteredOnly"} style={{ maxWidth: "100%" }}>
+                    <Container
+                      fixed
+                      className={"loaderCenteredOnly"}
+                      style={{ maxWidth: "100%" }}
+                    >
                       <CircularProgress color="secondary" size={64} />
                     </Container>
                   </Grid>
@@ -154,7 +220,12 @@ class Index extends React.Component<
             )}
             {!userLoading && auth && user && (
               <Container className="topMenuContainer">
-                <Grid container justifyContent="space-between" alignItems="center" style={{ padding: "20px" }}>
+                <Grid
+                  container
+                  justifyContent="space-between"
+                  alignItems="center"
+                  style={{ padding: "20px" }}
+                >
                   <Grid
                     item
                     xs={3}
@@ -164,9 +235,23 @@ class Index extends React.Component<
                       justifyContent: "center",
                       flexDirection: "column",
                     }}
-                    onClick={() => this.props.history.push("/u/" + user.displayName)}
+                    onClick={() =>
+                      this.props.history.push("/u/" + user.displayName)
+                    }
                   >
-                    <UserIcon _legacy disableZoom className="toppageIcon" defaultURL={user.photoURL.replace("_normal", "")} text={user.displayName} altURL={getAltTwitterIcon(user, false, "normal")} />
+                    <UserIcon
+                      _legacy
+                      disableZoom
+                      className="toppageIcon"
+                      text={user.displayName}
+                      defaultURL={photoURL.replace("_normal", "")}
+                      altURL={getAltTwitterIcon(user, false, "normal")}
+                      whenError={(e) => {
+                        this.setState({ imageError: true });
+                        (e.target as HTMLImageElement).onerror = null;
+                        (e.target as HTMLImageElement).src = config.errorImg;
+                      }}
+                    />
                   </Grid>
                   <Grid item xs={8} lg={8} style={{ paddingLeft: "30px" }}>
                     <Typography variant="body1">{user.displayName}</Typography>
@@ -183,7 +268,12 @@ class Index extends React.Component<
             )}
             {!userLoading && (!auth || !user) && (
               <Container className="topMenuContainer">
-                <Grid container justifyContent="space-between" alignItems="center" style={{ padding: "20px" }}>
+                <Grid
+                  container
+                  justifyContent="space-between"
+                  alignItems="center"
+                  style={{ padding: "20px" }}
+                >
                   <Grid
                     item
                     xs={3}
@@ -194,7 +284,10 @@ class Index extends React.Component<
                       flexDirection: "column",
                     }}
                   >
-                    <Avatar style={{ border: "1px solid #222", margin: "15px auto" }} className="toppageIcon"></Avatar>
+                    <Avatar
+                      style={{ border: "1px solid #222", margin: "15px auto" }}
+                      className="toppageIcon"
+                    ></Avatar>
                   </Grid>
                   <Grid item xs={8} lg={8} style={{ paddingLeft: "15px" }}>
                     <Typography variant="body1">
@@ -214,6 +307,11 @@ class Index extends React.Component<
           </div>
         </div>
         <Container className="topMenuContainer">
+          <ProfileImage
+            imageError={this.state.imageError}
+            user={user}
+            updateUserData={this.updateUserData}
+          />
           {!userLoading && (!auth || !user) && <BeginnerAlert />}
           <InstallAlert global={this.props.global} />
           <UpdateDef />
@@ -222,19 +320,39 @@ class Index extends React.Component<
           <Grid item xs={12} sm={12} md={12} lg={12}>
             <div className="TypographywithIconAndLinesContainer">
               <div className="TypographywithIconAndLinesInner">
-                <Typography color="textSecondary" gutterBottom className="TypographywithIconAndLines">
+                <Typography
+                  color="textSecondary"
+                  gutterBottom
+                  className="TypographywithIconAndLines"
+                >
                   <MenuOpenIcon />
                   &nbsp;
                   <FormattedMessage id="Index.QuickAccess" />
                 </Typography>
               </div>
             </div>
-            <div style={{ overflowX: "scroll" }} className="topMenuScrollableWrapper">
-              <Grid container direction="row" wrap="nowrap" alignItems="center" style={{ width: "100%", margin: "20px 0 0 0" }} className="topMenuContaienrGridWrapper">
+            <div
+              style={{ overflowX: "scroll" }}
+              className="topMenuScrollableWrapper"
+            >
+              <Grid
+                container
+                direction="row"
+                wrap="nowrap"
+                alignItems="center"
+                style={{ width: "100%", margin: "20px 0 0 0" }}
+                className="topMenuContaienrGridWrapper"
+              >
                 {quickAccessTable.map((item: any) => {
                   if (!this.QAindexOf(item.com)) return null;
                   return (
-                    <Grid container direction="column" alignItems="center" onClick={() => this.props.history.push(item.href)} key={item.name}>
+                    <Grid
+                      container
+                      direction="column"
+                      alignItems="center"
+                      onClick={() => this.props.history.push(item.href)}
+                      key={item.name}
+                    >
                       {item.icon}
                       <Typography color="textSecondary" variant="caption">
                         {item.name}
@@ -242,7 +360,12 @@ class Index extends React.Component<
                     </Grid>
                   );
                 })}
-                <Grid container direction="column" alignItems="center" onClick={() => this.props.history.push("/settings?tab=1")}>
+                <Grid
+                  container
+                  direction="column"
+                  alignItems="center"
+                  onClick={() => this.props.history.push("/settings?tab=1")}
+                >
                   <AppsIcon />
                   <Typography color="textSecondary" variant="caption">
                     <FormattedMessage id="Index.EditQA" />
@@ -251,10 +374,34 @@ class Index extends React.Component<
               </Grid>
             </div>
           </Grid>
-          <Grid container direction="row" justifyContent="space-between" spacing={3} className="narrowCards">
-            {ListItem(<TimelineIcon />, "Stats.TotalBPI", this.state.totalBPI, "/stats", "Index.ShowTotalBPI")}
-            {ListItem(<LibraryMusicIcon />, "Index.UpdatedInWeek", this.state.lastWeekUpdates, "/songs", "Index.ShowSongs")}
-            {ListItem(<WbIncandescentIcon />, "Index.AAARemain", this.state.remains, "/AAATable", "Index.ShowAAA")}
+          <Grid
+            container
+            direction="row"
+            justifyContent="space-between"
+            spacing={3}
+            className="narrowCards"
+          >
+            {ListItem(
+              <TimelineIcon />,
+              "Stats.TotalBPI",
+              this.state.totalBPI,
+              "/stats",
+              "Index.ShowTotalBPI"
+            )}
+            {ListItem(
+              <LibraryMusicIcon />,
+              "Index.UpdatedInWeek",
+              this.state.lastWeekUpdates,
+              "/songs",
+              "Index.ShowSongs"
+            )}
+            {ListItem(
+              <WbIncandescentIcon />,
+              "Index.AAARemain",
+              this.state.remains,
+              "/AAATable",
+              "Index.ShowAAA"
+            )}
           </Grid>
         </Container>
         <ArenaMatch history={this.props.history} />
@@ -275,5 +422,87 @@ class Index extends React.Component<
     );
   }
 }
+
+const ProfileImage: React.FC<{
+  user: any;
+  imageError: boolean;
+  updateUserData: (data: any) => void;
+}> = (props) => {
+  const user = props.user;
+  const [hide, setHide] = useState<boolean>(false);
+  const history = useHistory();
+  const bg = blurredBackGround();
+  const [imageUploadModal, setImageUploadModal] = useState(false);
+  const [nextData, setNextData] = useState<any>(defaultData(""));
+  const toggleUploadImage = (url?: string) => {
+    if (url) {
+      const obj = Object.assign({}, nextData);
+      obj.photoURL = url;
+      setNextData(obj);
+    }
+    setImageUploadModal(!imageUploadModal);
+  };
+  const fbLoader: fbActions = useMemo(() => new fbActions(), []);
+  const fbA: fbActions = useMemo(() => new fbActions(), []);
+
+  const load = async () => {
+    fbLoader
+      .setColName(`${_currentStore()}_${_isSingle()}`)
+      .setDocName(user.uid);
+    fbA.v2SetUserCollection().setDocName(user.uid);
+    return fbA.auth().onAuthStateChanged(async (user: any) => {
+      const t = await fbA.load();
+      let tw = t && t.twitter ? t.twitter : "";
+      if (!tw && t && t.profile) {
+        tw = getTwitterName(t.profile) || "";
+      }
+      setNextData(
+        t && t.displayName ? { ...t, twitter: tw } : defaultData(user.photoURL)
+      );
+    });
+  };
+
+  const whenCompleted = (binaryIcon: string) => {
+    const newData = Object.assign(user, { photoURL: binaryIcon });
+    localStorage.setItem("social", JSON.stringify(newData));
+    props.updateUserData(newData);
+    setHide(true);
+  };
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  if (!props.imageError || hide) return null;
+  return (
+    <>
+      <Alert className="MuiPaper-root" severity="info" style={bg}>
+        <AlertTitle>アイコンを設定</AlertTitle>
+        <p>
+          プロフィールアイコンが設定されていません。
+          <br />
+          好きな画像をアップロードしてプロフィールを完成させましょう！
+        </p>
+        <Button
+          fullWidth
+          color="secondary"
+          variant="outlined"
+          onClick={() => toggleUploadImage()}
+        >
+          アイコンを設定
+        </Button>
+      </Alert>
+      {imageUploadModal && (
+        <ImageUpload
+          whenCompleted={whenCompleted}
+          rawUserData={user}
+          userInfo={user}
+          handleClose={toggleUploadImage}
+          history={history}
+        />
+      )}
+    </>
+  );
+};
 
 export default withRouter(Index);

@@ -22,6 +22,7 @@ export const ImageUpload: React.FC<{
   userInfo: any;
   rawUserData: any;
   history: H.History;
+  whenCompleted?: (...args: any) => any;
 }> = (props) => {
   const uid = props.rawUserData.uid || "";
   const [loading, setLoading] = useState<boolean>(false);
@@ -126,6 +127,9 @@ export const ImageUpload: React.FC<{
           //Sync Profile Image Url
           const fbA = new fbActions();
           await fbA.updateProfileUrl(uid, url);
+          if (props.whenCompleted) {
+            props.whenCompleted(output);
+          }
           props.handleClose(url);
         }
       } catch (e) {
