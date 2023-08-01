@@ -103,7 +103,6 @@ class Index extends React.Component<
     );
     new fbActions().auth().onAuthStateChanged((user: any) => {
       this.setState({
-        user: user,
         photoURL: user.photoURL,
         auth: user,
         userLoading: false,
@@ -240,6 +239,9 @@ class Index extends React.Component<
                       justifyContent: "center",
                       flexDirection: "column",
                     }}
+                    onClick={() =>
+                      this.props.history.push("/u/" + user.displayName)
+                    }
                   >
                     <UserIcon
                       _legacy
