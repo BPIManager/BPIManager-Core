@@ -240,9 +240,6 @@ class Index extends React.Component<
                       justifyContent: "center",
                       flexDirection: "column",
                     }}
-                    onClick={() =>
-                      this.props.history.push("/u/" + user.displayName)
-                    }
                   >
                     <UserIcon
                       _legacy
