@@ -102,7 +102,12 @@ class Index extends React.Component<
       []
     );
     new fbActions().auth().onAuthStateChanged((user: any) => {
-      this.setState({ auth: user, userLoading: false });
+      this.setState({
+        user: user,
+        photoURL: user.photoURL,
+        auth: user,
+        userLoading: false,
+      });
     });
     this.setState({
       totalBPI: total,
@@ -433,33 +438,8 @@ const ProfileImage: React.FC<{
   const history = useHistory();
   const bg = blurredBackGround();
   const [imageUploadModal, setImageUploadModal] = useState(false);
-  const [nextData, setNextData] = useState<any>(defaultData(""));
-  const toggleUploadImage = (url?: string) => {
-    if (url) {
-      const obj = Object.assign({}, nextData);
-      obj.photoURL = url;
-      setNextData(obj);
-    }
+  const toggleUploadImage = () => {
     setImageUploadModal(!imageUploadModal);
-  };
-  const fbLoader: fbActions = useMemo(() => new fbActions(), []);
-  const fbA: fbActions = useMemo(() => new fbActions(), []);
-
-  const load = async () => {
-    fbLoader
-      .setColName(`${_currentStore()}_${_isSingle()}`)
-      .setDocName(user.uid);
-    fbA.v2SetUserCollection().setDocName(user.uid);
-    return fbA.auth().onAuthStateChanged(async (user: any) => {
-      const t = await fbA.load();
-      let tw = t && t.twitter ? t.twitter : "";
-      if (!tw && t && t.profile) {
-        tw = getTwitterName(t.profile) || "";
-      }
-      setNextData(
-        t && t.displayName ? { ...t, twitter: tw } : defaultData(user.photoURL)
-      );
-    });
   };
 
   const whenCompleted = (binaryIcon: string) => {
@@ -469,10 +449,6 @@ const ProfileImage: React.FC<{
     setHide(true);
   };
 
-  useEffect(() => {
-    load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   if (!props.imageError || hide) return null;
   return (
     <>
