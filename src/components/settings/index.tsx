@@ -133,7 +133,9 @@ export const _currentStoreWithFullName = () => {
     ? "28 BISTROVER"
     : t === "29"
     ? "29 CastHour"
-    : "30 RESIDENT";
+    : t === "30"
+    ? "30 RESIDENT"
+    : "31 EPOLIS";
 };
 
 export const _weeklyRanking = () => {
