@@ -6,6 +6,7 @@ export const versionTitles: { num: string; title: string }[] = [
   { num: "28", title: "28 BISTROVER" },
   { num: "29", title: "29 CastHour" },
   { num: "30", title: "30 RESIDENT" },
+  { num: "31", title: "31 EPOLIS" },
   { num: "INF", title: "INFINITAS" },
 ];
 
@@ -15,7 +16,8 @@ export const versionConverter: { [key: string]: string } = {
   "28": "28 BISTROVER",
   "29": "29 CastHour",
   "30": "30 RESIDENT",
-  "INF": "INFINITAS",
+  "31": "31 EPOLIS",
+  INF: "INFINITAS",
 };
 
 export const isOlderVersion = () =>
