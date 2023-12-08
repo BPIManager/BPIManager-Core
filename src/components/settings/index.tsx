@@ -94,7 +94,7 @@ export const _setCurrentViewComponents = (array: string[]): string[] => {
   return array;
 };
 
-const defaultURL = "https://proxy.poyashi.me/?type=bpi";
+const defaultURL = "https://bpim.msqkn310.workers.dev/release";
 
 export const _currentDefinitionURL = () => {
   return localStorage.getItem("defURL") || defaultURL;

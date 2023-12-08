@@ -1,6 +1,12 @@
 import React from "react";
 import timeFormatter from "../common/timeFormatter";
-import { songsDB, scoresDB, favsDB, scoreHistoryDB, rivalListsDB } from "../indexedDB";
+import {
+  songsDB,
+  scoresDB,
+  favsDB,
+  scoreHistoryDB,
+  rivalListsDB,
+} from "../indexedDB";
 import WarningIcon from "@mui/icons-material/Warning";
 import Backdrop from "@mui/material/Backdrop";
 import { _currentDefinitionURL } from "../settings";
@@ -44,25 +50,43 @@ export default class Initialize extends React.Component<
     try {
       //new fbActions().dBatch();
       new fbActions().auth().onAuthStateChanged(async (user: any) => {
-        if (user && user.providerData.length > 0 && user.providerData[0]["providerId"] === "twitter.com") {
+        if (
+          user &&
+          user.providerData.length > 0 &&
+          user.providerData[0]["providerId"] === "twitter.com"
+        ) {
           //const time = isSameDay(localStorage.getItem("lastTwitterSynced") || "1970/01/01 00:00:00",new Date());
           if (!localStorage.getItem("lastTwitterSynced")) {
             console.log("** Twitter Sync Start **");
             localStorage.setItem("lastTwitterSynced", new Date().toString());
-            const ax = await (await fetch("https://asia-northeast1-bpimv2.cloudfunctions.net/getTwitterInfo?targetId=" + user.providerData[0]["uid"])).json();
+            const ax = await (
+              await fetch(
+                "https://asia-northeast1-bpimv2.cloudfunctions.net/getTwitterInfo?targetId=" +
+                  user.providerData[0]["uid"]
+              )
+            ).json();
             const p = JSON.parse(ax.raw.body);
-            const u = new fbActions().v2SetUserCollection().setDocName(user.uid);
+            const u = new fbActions()
+              .v2SetUserCollection()
+              .setDocName(user.uid);
             u.setTwitterId(p.screen_name);
             console.log("** Twitter Sync Completed **");
           } else {
-            console.log("** Last Twitter Sync Date : " + localStorage.getItem("lastTwitterSynced") + " **");
+            console.log(
+              "** Last Twitter Sync Date : " +
+                localStorage.getItem("lastTwitterSynced") +
+                " **"
+            );
           }
         }
         if (!localStorage.getItem("isUploadedRivalData")) {
           const t = await this.rivalListsDB.getAll();
           if (t.length > 0 && user) {
             if ((await this.fbA.syncLoadRival()).length === 0) {
-              const u = await new fbActions().v2SetUserCollection().setDocName(user.uid).load();
+              const u = await new fbActions()
+                .v2SetUserCollection()
+                .setDocName(user.uid)
+                .load();
               this.fbA.setDocName(user.uid);
               this.fbA.syncUploadRival(t, true, u ? u.displayName : "");
             }
@@ -119,18 +143,33 @@ export default class Initialize extends React.Component<
 
   modify_Chronos = async () => {
     const Chronos_Leggendaria = { title: "Chronos", difficulty: "leggendaria" };
-    await this.scoresDB.customModify(Chronos_Leggendaria, { difficultyLevel: "11" });
-    await this.scoreHistoryDB.customModify(Chronos_Leggendaria, { difficultyLevel: "11" });
+    await this.scoresDB.customModify(Chronos_Leggendaria, {
+      difficultyLevel: "11",
+    });
+    await this.scoreHistoryDB.customModify(Chronos_Leggendaria, {
+      difficultyLevel: "11",
+    });
   };
 
   removeDeletedSongs = async () => {
-    const ax = await (await fetch("https://proxy.poyashi.me/?type=bpi_metadata")).json();
+    const ax = await (
+      await fetch("https://bpim.msqkn310.workers.dev/meta")
+    ).json();
     if (ax.removed) {
       for (let i = 0; i < ax.removed.length; ++i) {
         const t = ax.removed[i];
-        await this.songsDB._removeItemByDifficulty(t["title"], String(t["difficulty"]));
-        await this.scoresDB.removeSpecificItemAtAllStores(t["title"], t["difficulty"]);
-        await this.scoreHistoryDB.removeSpecificItemAtAllStores(t["title"], t["difficulty"]);
+        await this.songsDB._removeItemByDifficulty(
+          t["title"],
+          String(t["difficulty"])
+        );
+        await this.scoresDB.removeSpecificItemAtAllStores(
+          t["title"],
+          t["difficulty"]
+        );
+        await this.scoreHistoryDB.removeSpecificItemAtAllStores(
+          t["title"],
+          t["difficulty"]
+        );
       }
     }
   };
@@ -150,7 +189,10 @@ export default class Initialize extends React.Component<
     }
 
     return (
-      <Backdrop open={this.state.show} style={{ flexDirection: "column", zIndex: 99999 }}>
+      <Backdrop
+        open={this.state.show}
+        style={{ flexDirection: "column", zIndex: 99999 }}
+      >
         <div>
           <Loader />
         </div>

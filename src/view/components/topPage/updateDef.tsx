@@ -32,7 +32,7 @@ const UpdateDef: React.FC = () => {
 
   const initialize = async () => {
     try {
-      const versions = await fetch("https://proxy.poyashi.me/?type=bpiVersion");
+      const versions = await fetch("https://bpim.msqkn310.workers.dev/latest");
       const data = await versions.json();
       const currentVersion = _currentVersion();
       if (data.version !== currentVersion) {
@@ -153,17 +153,18 @@ const UpdateDef: React.FC = () => {
             <Typography variant="body1" component="p">
               {result}
             </Typography>
-            {result !== "定義データはすでに最新です" && result !== "更新完了" && (
-              <span>
-                <RefLink
-                  href="https://gist.github.com/potakusan/11b5322c732bfca4d41fc378dab9b992"
-                  color="secondary"
-                  target="_blank"
-                >
-                  トラブルシューティングを表示
-                </RefLink>
-              </span>
-            )}
+            {result !== "定義データはすでに最新です" &&
+              result !== "更新完了" && (
+                <span>
+                  <RefLink
+                    href="https://gist.github.com/potakusan/11b5322c732bfca4d41fc378dab9b992"
+                    color="secondary"
+                    target="_blank"
+                  >
+                    トラブルシューティングを表示
+                  </RefLink>
+                </span>
+              )}
             <RefLink onClick={handleToggle} color="secondary">
               閉じる
             </RefLink>
