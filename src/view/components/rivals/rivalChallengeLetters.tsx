@@ -8,7 +8,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import BackspaceIcon from "@mui/icons-material/Backspace";
 import { difficultyDiscriminator } from "@/components/songs/filter";
 import { songsDB } from "@/components/indexedDB";
-import { commonFunc } from "@/components/common";
+import { commonFunc, customCompare } from "@/components/common";
 import { songData } from "@/types/data";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
@@ -192,7 +192,7 @@ class RivalChallengeLetters extends React.Component<P & RouteComponentProps, sta
         case 4:
           return Number(a.difficultyLevel) - Number(b.difficultyLevel);
         case 3:
-          return a.title.localeCompare(b.title, "ja", { numeric: true });
+          return customCompare(a.title, b.title);
         case 1:
           return a.win - b.win;
         case 2:

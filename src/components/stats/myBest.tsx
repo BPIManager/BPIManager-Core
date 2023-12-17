@@ -2,6 +2,7 @@ import { scoresDB } from "@/components/indexedDB";
 import { _isSingle } from "@/components/settings";
 import { scoreData } from "@/types/data";
 import { versionConverter } from "@/components/common/versions";
+import { customCompare} from "@/components/common";
 export interface scoreByVersion {
   name: string;
   value: number;
@@ -16,7 +17,7 @@ export const apply = (
     const p = (): boolean => {
       switch (sort) {
         case 0:
-          return b.title.localeCompare(a.title, "ja", { numeric: true }) > -1;
+          return customCompare(a.title, b.title) > -1;
         case 1:
           return Number(b.storedAt) - Number(a.storedAt) > 0;
         default:
