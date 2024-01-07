@@ -20,7 +20,7 @@ import Button from "@mui/material/Button";
 import SongsFilter, { B } from "../common/filter";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { bpmFilter, verArr } from "../common";
-import { commonFunc } from "@/components/common";
+import { commonFunc , customCompare} from "@/components/common";
 import FilterByLevelAndDiff from "@/view/components/common/selector";
 
 interface stateInt {
@@ -182,7 +182,7 @@ export default class NotPlayList extends React.Component<P, stateInt> {
           return Number(b.difficultyLevel) - Number(a.difficultyLevel);
         case 1:
         default:
-          return b.title.localeCompare(a.title, "ja", { numeric: true });
+          return customCompare(a.title, b.title);
       }
     });
     return isDesc ? res : res.reverse();

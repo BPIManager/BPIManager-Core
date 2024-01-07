@@ -15,7 +15,7 @@ import InputLabel from "@mui/material/InputLabel";
 import { FormattedMessage, injectIntl } from "react-intl";
 import CompareTable from "@/view/components/compare/table";
 import bpiCalcuator from "@/components/bpi";
-import { commonFunc } from "@/components/common";
+import { commonFunc, customCompare } from "@/components/common";
 import FilterByLevelAndDiff from "@/view/components/common/selector";
 import { compareData } from "@/types/compare";
 import { scoreData } from "@/types/data";
@@ -458,7 +458,7 @@ class Compare extends React.Component<{ intl: any }, S> {
           default:
             return b.gap - a.gap;
           case 1:
-            return a.title.localeCompare(b.title, "ja", { numeric: true });
+            return customCompare(a.title, b.title);
           case 2:
             return Number(b.difficultyLevel) - Number(a.difficultyLevel);
           case 3:

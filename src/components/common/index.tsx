@@ -136,3 +136,33 @@ export const blurredBackGround = () => ({
 });
 
 export const historyBgColor = () => (_currentTheme() === "light" ? "#e2e2e2" : _currentTheme() === "dark" ? "#2f2f2f" : "#003961");
+
+// アルファベット、記号、数字、日本語の順にソートする(筐体の表示順)
+// 日本語のソート順はセグメントのアルファベットで再現が難しいので、言語のデフォルトに委ねている
+export const customCompare = (a: string, b:string):number => {
+  const typeA = getType(a)
+  const typeB = getType(b)
+  if (typeA !== typeB){
+    return typeB.localeCompare(typeA)
+  }
+  return b.localeCompare(a, "ja", { numeric: true });
+}
+
+const getType = (s: string): string => { 
+  const c = s.charCodeAt(0)
+  // アルファベット
+  if ((65 <= c && c <= 90)||(97 <= c && c <= 122)){
+    return "1";
+  }
+  // 数字
+  if (48 <= c && c <= 57 ){
+    return "3";
+  }
+  // 日本語
+  var japaneseRegex = /^[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]$/;
+  if (japaneseRegex.test(s.charAt(0))){
+    return "4";
+  }
+  // 記号
+  return "2";
+}

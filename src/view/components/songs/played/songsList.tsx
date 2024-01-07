@@ -24,7 +24,7 @@ import Button from "@mui/material/Button";
 import { bpmFilter, bpiFilter } from "../common";
 import SongsFilter, { B, BPIR } from "../common/filter";
 import OrderControl from "../common/orders";
-import { commonFunc } from "@/components/common";
+import { commonFunc, customCompare } from "@/components/common";
 import FilterByLevelAndDiff from "@/view/components/common/selector";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import Loader from "@/view/components/common/loader";
@@ -238,7 +238,7 @@ class SongsList extends React.Component<
       switch (orderTitle) {
         case 0:
         default:
-          return b.title.localeCompare(a.title, "ja", { numeric: true });
+          return customCompare(a.title, b.title);
         case 1:
           return Number(a.difficultyLevel) - Number(b.difficultyLevel);
         case 2:

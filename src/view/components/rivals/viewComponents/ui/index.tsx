@@ -14,7 +14,7 @@ import Button from '@mui/material/Button';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { verArr, bpmFilter, clearArr } from '@/view/components/songs/common';
 import SongsFilter, { B } from '@/view/components/songs/common/filter';
-import { commonFunc } from '@/components/common';
+import { commonFunc, customCompare } from '@/components/common';
 import FilterByLevelAndDiff from "@/view/components/common/selector";
 import { withRivalData } from '@/components/stats/radar';
 import { songData } from '@/types/data';
@@ -172,7 +172,7 @@ class SongsUI extends React.Component<P & RouteComponentProps, stateInt> {
         switch (orderTitle) {
           case 0:
           default:
-            return b.title.localeCompare(a.title, "ja", { numeric: true });
+            return customCompare(a.title, b.title);
           case 1:
             return Number(a.difficultyLevel) - Number(b.difficultyLevel);
           case 2:
