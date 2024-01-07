@@ -1,7 +1,7 @@
 {
   "name": "BPIManager",
   "short_name": "BPIM",
-  "theme_color": "#3a3a3a",
+  "theme_color": "#d8ccbe",
   "background_color": "#260606",
   "display": "standalone",
   "scope": "/",
