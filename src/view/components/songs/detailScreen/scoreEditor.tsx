@@ -42,6 +42,10 @@ const ScoreEditor: React.FC<{
             onKeyPress={(e) => {
               if (e.key === "Enter") e.preventDefault();
             }}
+            inputProps={{
+              pattern: "[0-9]*",
+              inputMode: "numeric"
+            }}
           />
         </form>
       </Grid>
