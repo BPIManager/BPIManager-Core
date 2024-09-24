@@ -227,7 +227,7 @@ export default class statMain {
         }, []);
 
         const shift = this.getBPIShifts(this.eachDayShift[item]);
-        const BPIsArray = getBPIArray(allDiffs[item]);
+        const BPIsArray = getBPIArray(allDiffs[item]).filter(e=>!Number.isNaN(e));
         eachDaySum.push({
           name: item,
           sum: allDiffs[item].length,

@@ -34,7 +34,7 @@ export default class bpiCalculator {
   }
 
   setBPIs(arr: number[]): this {
-    this._allTwelvesBPI = arr;
+    this._allTwelvesBPI = arr.filter(e=>!Number.isNaN(e));
     return this;
   }
 
