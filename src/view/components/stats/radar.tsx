@@ -1,29 +1,37 @@
-import React from 'react';
-import Container from '@mui/material/Container';
-import { injectIntl } from 'react-intl';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
+import React from "react";
+import Container from "@mui/material/Container";
+import { injectIntl } from "react-intl";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
 import { _isSingle, _chartColor, _chartBarColor } from "@/components/settings";
-import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
-import { Table, TableRow, TableCell, TableBody } from '@mui/material/';
-import { getRadar, Details, radarData } from '@/components/stats/radar';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
-import Loader from '@/view/components/common/loader';
-import AdsCard from '@/components/ad';
+import {
+  ResponsiveContainer,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+} from "recharts";
+import { Table, TableRow, TableCell, TableBody } from "@mui/material/";
+import { getRadar, Details, radarData } from "@/components/stats/radar";
+import { withRouter, RouteComponentProps } from "react-router-dom";
+import Loader from "@/view/components/common/loader";
 
-class Main extends React.Component<{ intl: any } & RouteComponentProps, {
-  isLoading: boolean,
-  radar: radarData[],
-  radarDetail: string
-}> {
-
+class Main extends React.Component<
+  { intl: any } & RouteComponentProps,
+  {
+    isLoading: boolean;
+    radar: radarData[];
+    radarDetail: string;
+  }
+> {
   constructor(props: { intl: any } & RouteComponentProps) {
     super(props);
     this.state = {
       isLoading: true,
       radar: [],
-      radarDetail: ""
-    }
+      radarDetail: "",
+    };
     this.updateScoreData = this.updateScoreData.bind(this);
   }
 
@@ -39,7 +47,8 @@ class Main extends React.Component<{ intl: any } & RouteComponentProps, {
     });
   }
 
-  toggleRadarDetail = (title: string = "") => this.setState({ radarDetail: title });
+  toggleRadarDetail = (title: string = "") =>
+    this.setState({ radarDetail: title });
 
   render() {
     const { isLoading, radar, radarDetail } = this.state;
@@ -55,7 +64,7 @@ class Main extends React.Component<{ intl: any } & RouteComponentProps, {
 
     return (
       <Container fixed style={{ padding: 0 }}>
-        {(_isSingle() === 1 && radar && radar.length > 0) &&
+        {_isSingle() === 1 && radar && radar.length > 0 && (
           <Grid container spacing={0}>
             <Grid item xs={12} md={12} lg={6} style={{ height: "350px" }}>
               <div style={{ width: "100%", height: "100%" }}>
@@ -64,7 +73,12 @@ class Main extends React.Component<{ intl: any } & RouteComponentProps, {
                     <PolarGrid />
                     <PolarAngleAxis dataKey="title" stroke={chartColor} />
                     <PolarRadiusAxis />
-                    <Radar name="TotalBPI" dataKey="TotalBPI" fill={barColor} fillOpacity={0.6} />
+                    <Radar
+                      name="TotalBPI"
+                      dataKey="TotalBPI"
+                      fill={barColor}
+                      fillOpacity={0.6}
+                    />
                   </RadarChart>
                 </ResponsiveContainer>
               </div>
@@ -73,22 +87,37 @@ class Main extends React.Component<{ intl: any } & RouteComponentProps, {
               <Paper style={{ padding: "5px" }}>
                 <Table size="small" style={{ minHeight: "350px" }}>
                   <TableBody>
-                    {radar.concat().sort((a, b) => b.TotalBPI - a.TotalBPI).map(row => (
-                      <TableRow key={row.title} onClick={() => this.toggleRadarDetail(row.title)}>
-                        <TableCell component="th">
-                          {row.title}
-                        </TableCell>
-                        <TableCell align="right">{row.TotalBPI.toFixed(2)}<span style={{ fontSize: "7px" }}>(上位{Math.floor(row.rank * 100) / 100}%)</span></TableCell>
-                      </TableRow>
-                    ))}
+                    {radar
+                      .concat()
+                      .sort((a, b) => b.TotalBPI - a.TotalBPI)
+                      .map((row) => (
+                        <TableRow
+                          key={row.title}
+                          onClick={() => this.toggleRadarDetail(row.title)}
+                        >
+                          <TableCell component="th">{row.title}</TableCell>
+                          <TableCell align="right">
+                            {row.TotalBPI.toFixed(2)}
+                            <span style={{ fontSize: "7px" }}>
+                              (上位{Math.floor(row.rank * 100) / 100}%)
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </Paper>
             </Grid>
           </Grid>
-        }
-        <AdsCard />
-        {radarDetail !== "" && <Details closeModal={this.toggleRadarDetail} withRival={false} data={radar} title={radarDetail} />}
+        )}
+        {radarDetail !== "" && (
+          <Details
+            closeModal={this.toggleRadarDetail}
+            withRival={false}
+            data={radar}
+            title={radarDetail}
+          />
+        )}
       </Container>
     );
   }

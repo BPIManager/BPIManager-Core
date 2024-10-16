@@ -3,10 +3,13 @@ import SongsList from "@/view/components/songs/played/songsList";
 import { scoresDB } from "@/components/indexedDB";
 import { scoreData } from "@/types/data";
 import Loader from "@/view/components/common/loader";
-import AdsCard from "@/components/ad";
 import Container from "@mui/material/Container";
 import Link from "@mui/material/Link";
-import { Link as RLink, RouteComponentProps, withRouter } from "react-router-dom";
+import {
+  Link as RLink,
+  RouteComponentProps,
+  withRouter,
+} from "react-router-dom";
 import { _showLatestSongs } from "@/components/settings";
 import HowToVoteIcon from "@mui/icons-material/HowToVote";
 import Typography from "@mui/material/Typography";
@@ -39,7 +42,13 @@ const Songs: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
   if (full.length === 0) {
     return (
       <Container fixed className="commonLayout">
-        <div style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
           <HowToVoteIcon style={{ fontSize: 80, marginBottom: "10px" }} />
           <Typography variant="h4">スコアを追加</Typography>
         </div>
@@ -56,7 +65,11 @@ const Songs: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
         </p>
         <p>
           スコアの取り込みに関するヘルプは
-          <Link href="https://docs2.poyashi.me/docs/imports/" color="secondary" target="_blank">
+          <Link
+            href="https://docs2.poyashi.me/docs/imports/"
+            color="secondary"
+            target="_blank"
+          >
             こちら
           </Link>
           を参照してください。
@@ -66,8 +79,13 @@ const Songs: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
   }
   return (
     <div>
-      <SongsList isFav={false} title="Songs.title" full={full} updateScoreData={updateData} defToday={defToday} />
-      <AdsCard />
+      <SongsList
+        isFav={false}
+        title="Songs.title"
+        full={full}
+        updateScoreData={updateData}
+        defToday={defToday}
+      />
     </div>
   );
 };

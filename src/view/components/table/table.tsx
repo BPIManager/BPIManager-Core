@@ -5,7 +5,6 @@ import { CLBody, named, getTable } from "@/components/aaaDiff/data";
 import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
 import Loader from "@/view/components/common/loader";
-import AdsCard from "@/components/ad";
 import SpeedDialIcon from "@mui/lab/SpeedDialIcon";
 import SpeedDial from "@mui/material/SpeedDial";
 import SpeedDialAction from "@mui/lab/SpeedDialAction";
@@ -59,7 +58,8 @@ const AAATable: React.FC<P> = ({ data }) => {
     }
   };
 
-  const isChecked = (input: number, target: number): boolean => (target === 0 ? checks : pm).indexOf(input) > -1;
+  const isChecked = (input: number, target: number): boolean =>
+    (target === 0 ? checks : pm).indexOf(input) > -1;
 
   const handleChange = (input: number, target: number): void => {
     let newValue = new Array().concat(target === 0 ? checks : pm);
@@ -75,7 +75,8 @@ const AAATable: React.FC<P> = ({ data }) => {
     }
   };
 
-  const toggle = (): void => setChecks(defaultChecks.filter((item) => checks.indexOf(item) === -1));
+  const toggle = (): void =>
+    setChecks(defaultChecks.filter((item) => checks.indexOf(item) === -1));
   const handleFilterModal = () => setOpenFitlerModal(!openFilterModal);
   const handleExampleModal = () => setOpenExampleModal(!openExampleModal);
   const handleDial = () => setDialOpen(!dialOpen);
@@ -98,7 +99,6 @@ const AAATable: React.FC<P> = ({ data }) => {
   return (
     <React.Fragment>
       {loading && <Loader />}
-      <AdsCard />
 
       {!loading &&
         checks
@@ -109,24 +109,54 @@ const AAATable: React.FC<P> = ({ data }) => {
             }
             return (
               <div key={key}>
-                <div style={{ width: "100%", textAlign: "center", background: "#eaeaea", color: "#000", padding: "5px 0", margin: "15px 0 5px 0", fontWeight: "bold" }}>
-                  BPI{key}~{key === 50 ? "" : key + 10}&nbsp; ({new bpiCalcuator().rank(key)}位以上)
+                <div
+                  style={{
+                    width: "100%",
+                    textAlign: "center",
+                    background: "#eaeaea",
+                    color: "#000",
+                    padding: "5px 0",
+                    margin: "15px 0 5px 0",
+                    fontWeight: "bold",
+                  }}
+                >
+                  BPI{key}~{key === 50 ? "" : key + 10}&nbsp; (
+                  {new bpiCalcuator().rank(key)}位以上)
                 </div>
                 <Grid container>
                   {result[key].map((item: CLBody) => (
-                    <GridItem key={item.title + item.difficulty} data={item} pm={pm} />
+                    <GridItem
+                      key={item.title + item.difficulty}
+                      data={item}
+                      pm={pm}
+                    />
                   ))}
                 </Grid>
               </div>
             );
           })}
       <Divider style={{ margin: "15px 0" }} />
-      <SpeedDial ariaLabel="menu" style={{ position: "fixed", bottom: "12%", right: "8%" }} icon={<SpeedDialIcon icon={<MenuIcon />} openIcon={<CloseIcon />} />} onClose={handleDial} onOpen={handleDial} open={dialOpen} direction={"up"}>
+      <SpeedDial
+        ariaLabel="menu"
+        style={{ position: "fixed", bottom: "12%", right: "8%" }}
+        icon={<SpeedDialIcon icon={<MenuIcon />} openIcon={<CloseIcon />} />}
+        onClose={handleDial}
+        onOpen={handleDial}
+        open={dialOpen}
+        direction={"up"}
+      >
         {actions.map((action) => (
-          <SpeedDialAction key={action.name} icon={action.icon} title={action.name} onClick={action.onClick} />
+          <SpeedDialAction
+            key={action.name}
+            icon={action.icon}
+            title={action.name}
+            onClick={action.onClick}
+          />
         ))}
       </SpeedDial>
-      {openExampleModal && <AAATableExampleModal closeModal={handleExampleModal} />}
+      {openExampleModal && (
+        <AAATableExampleModal closeModal={handleExampleModal} />
+      )}
       {openFilterModal && (
         <AAATableFilterModal
           target={targetGoal}
@@ -154,7 +184,10 @@ const GridItem: React.FC<{ data: CLBody; pm: number[] }> = ({ data, pm }) => {
   if (pm.indexOf(2) === -1 && Number.isNaN(data.currentBPI)) {
     return null;
   }
-  if ((pm.indexOf(0) === -1 && gap >= 0) || (pm.indexOf(1) === -1 && gap < 0 && !Number.isNaN(data.currentBPI))) {
+  if (
+    (pm.indexOf(0) === -1 && gap >= 0) ||
+    (pm.indexOf(1) === -1 && gap < 0 && !Number.isNaN(data.currentBPI))
+  ) {
     return null;
   }
   return (
@@ -168,7 +201,9 @@ const GridItem: React.FC<{ data: CLBody; pm: number[] }> = ({ data, pm }) => {
       style={{
         textAlign: "center",
         padding: "15px 0",
-        background: !Number.isNaN(data.currentBPI) ? AAATableBgColor(gap) : "#fff",
+        background: !Number.isNaN(data.currentBPI)
+          ? AAATableBgColor(gap)
+          : "#fff",
         textShadow: current >= 100 ? "0px 0px 4px #fff" : "0px 0px 0px",
         color: current >= 100 ? "#fff" : "#000",
         border: "1px solid " + (_currentTheme() === "light" ? "#fff" : "#222"),

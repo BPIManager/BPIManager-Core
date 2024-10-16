@@ -28,7 +28,6 @@ import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import SearchIcon from "@mui/icons-material/Search";
-import AdsCard from "@/components/ad";
 import Link from "@mui/material/Link";
 import AlertTitle from "@mui/material/AlertTitle";
 import { UserIcon } from "../common/icon";
@@ -86,7 +85,8 @@ class RivalLists extends React.Component<P & RouteComponentProps, S> {
     this.toggleMenu(false);
     const { rivals } = this.state;
     let updated = 0;
-    let lastUpdateTime = localStorage.getItem("lastBatchRivalUpdate") || "1970-01-01 00:00";
+    let lastUpdateTime =
+      localStorage.getItem("lastBatchRivalUpdate") || "1970-01-01 00:00";
     const timeDiff = timeCompare(new Date(), lastUpdateTime);
     if (timeDiff < 60) {
       return this.toggleSnack(updateMinuteError);
@@ -100,10 +100,12 @@ class RivalLists extends React.Component<P & RouteComponentProps, S> {
     localStorage.setItem("lastBatchRivalUpdate", timeFormatter(3));
     return this.toggleSnack(`${updated}件更新しました`);
   };
-  toggleSnack = (message: string = "ライバルを追加しました") => this.setState({ message: message, showSnackBar: !this.state.showSnackBar });
+  toggleSnack = (message: string = "ライバルを追加しました") =>
+    this.setState({ message: message, showSnackBar: !this.state.showSnackBar });
 
   render() {
-    const { showSnackBar, rivals, isLoading, message, bulkUpdate, openMenu } = this.state;
+    const { showSnackBar, rivals, isLoading, message, bulkUpdate, openMenu } =
+      this.state;
     if (isLoading) {
       return <Loader />;
     }
@@ -111,25 +113,59 @@ class RivalLists extends React.Component<P & RouteComponentProps, S> {
       <React.Fragment>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <div style={{ margin: "10px 6px 0" }}>
-            <SwipeableDrawer anchor="bottom" open={openMenu} onClose={() => this.toggleMenu(false)} onOpen={() => this.toggleMenu(true)}>
-              <List subheader={<ListSubheader component="div">ライバル管理</ListSubheader>}>
-                <ListItem button onClick={() => this.props.history.push("/sync/settings?init=1")}>
+            <SwipeableDrawer
+              anchor="bottom"
+              open={openMenu}
+              onClose={() => this.toggleMenu(false)}
+              onOpen={() => this.toggleMenu(true)}
+            >
+              <List
+                subheader={
+                  <ListSubheader component="div">ライバル管理</ListSubheader>
+                }
+              >
+                <ListItem
+                  button
+                  onClick={() =>
+                    this.props.history.push("/sync/settings?init=1")
+                  }
+                >
                   <ListItemIcon>
                     <CloudUploadIcon />
                   </ListItemIcon>
-                  <ListItemText primary={"ライバルリストを同期"} secondary={"現在登録済みのライバルをアカウントに同期します。"} />
+                  <ListItemText
+                    primary={"ライバルリストを同期"}
+                    secondary={
+                      "現在登録済みのライバルをアカウントに同期します。"
+                    }
+                  />
                 </ListItem>
                 <ListItem button onClick={this.update}>
                   <ListItemIcon>
                     <SyncIcon />
                   </ListItemIcon>
-                  <ListItemText primary={"ライバルスコアの一括更新"} secondary={"現在登録済みのライバルの登録スコアを一括で最新状態にアップデートします。"} />
+                  <ListItemText
+                    primary={"ライバルスコアの一括更新"}
+                    secondary={
+                      "現在登録済みのライバルの登録スコアを一括で最新状態にアップデートします。"
+                    }
+                  />
                 </ListItem>
-                <ListItem button onClick={() => this.props.history.push("/sync/settings?init=2")}>
+                <ListItem
+                  button
+                  onClick={() =>
+                    this.props.history.push("/sync/settings?init=2")
+                  }
+                >
                   <ListItemIcon>
                     <NotificationsActiveIcon />
                   </ListItemIcon>
-                  <ListItemText primary={"プッシュ通知管理"} secondary={"指定したライバルのスコア更新を自動でお知らせします"} />
+                  <ListItemText
+                    primary={"プッシュ通知管理"}
+                    secondary={
+                      "指定したライバルのスコア更新を自動でお知らせします"
+                    }
+                  />
                 </ListItem>
               </List>
             </SwipeableDrawer>
@@ -142,7 +178,13 @@ class RivalLists extends React.Component<P & RouteComponentProps, S> {
           subheader={
             <ListSubheader component="div" disableSticky>
               ライバル一覧
-              <IconButton edge="end" style={{ float: "right" }} aria-haspopup="true" onClick={() => this.toggleMenu(true)} size="large">
+              <IconButton
+                edge="end"
+                style={{ float: "right" }}
+                aria-haspopup="true"
+                onClick={() => this.toggleMenu(true)}
+                size="large"
+              >
                 <SettingsIcon />
               </IconButton>
             </ListSubheader>
@@ -151,9 +193,14 @@ class RivalLists extends React.Component<P & RouteComponentProps, S> {
           {rivals
             .sort((a, b) => timeCompare(b.updatedAt, a.updatedAt))
             .map((item, i) => (
-              <div key={item.uid} onClick={() => this.props.showEachRival(item)}>
+              <div
+                key={item.uid}
+                onClick={() => this.props.showEachRival(item)}
+              >
                 <RivalComponent data={item} />
-                {i !== rivals.length - 1 && <Divider variant="middle" component="li" />}
+                {i !== rivals.length - 1 && (
+                  <Divider variant="middle" component="li" />
+                )}
               </div>
             ))}
         </List>
@@ -165,7 +212,10 @@ class RivalLists extends React.Component<P & RouteComponentProps, S> {
             まずは
             <b>
               「
-              <Link color="secondary" onClick={() => this.props.changeTab(null, 1)}>
+              <Link
+                color="secondary"
+                onClick={() => this.props.changeTab(null, 1)}
+              >
                 おすすめユーザー
               </Link>
               」から実力の近いユーザーを登録
@@ -216,8 +266,13 @@ class RivalLists extends React.Component<P & RouteComponentProps, S> {
             );
           })}
         </List>
-        <AdsCard />
-        <ShowSnackBar message={message} variant={message === updateMinuteError ? "warning" : "success"} handleClose={this.toggleSnack} open={showSnackBar} autoHideDuration={3000} />
+        <ShowSnackBar
+          message={message}
+          variant={message === updateMinuteError ? "warning" : "success"}
+          handleClose={this.toggleSnack}
+          open={showSnackBar}
+          autoHideDuration={3000}
+        />
       </React.Fragment>
     );
   }
@@ -240,7 +295,13 @@ class RivalComponent extends React.Component<CP, {}> {
     return (
       <ListItem button>
         <ListItemAvatar>
-          <UserIcon _legacy disableZoom defaultURL={data.photoURL} text={data.rivalName} altURL={getAltTwitterIcon(data, true)} />
+          <UserIcon
+            _legacy
+            disableZoom
+            defaultURL={data.photoURL}
+            text={data.rivalName}
+            altURL={getAltTwitterIcon(data, true)}
+          />
         </ListItemAvatar>
         <ListItemText primary={data.rivalName} secondary={text} />
       </ListItem>

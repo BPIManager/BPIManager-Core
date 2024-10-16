@@ -17,7 +17,6 @@ import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
-import AdsCard from "@/components/ad";
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
@@ -134,7 +133,6 @@ class FavLists extends React.Component<{} & RouteComponentProps, S> {
         >
           新しいリストを作成
         </Button>
-        <AdsCard />
         {addList && (
           <ListAdd
             isCreating={currentTarget === -1}

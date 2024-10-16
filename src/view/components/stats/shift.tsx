@@ -1,8 +1,27 @@
 import React from "react";
 import Container from "@mui/material/Container";
 import { _chartColor, _chartBarColor } from "@/components/settings";
-import { XAxis, CartesianGrid, YAxis, Tooltip, Bar, ResponsiveContainer, Line, ComposedChart, Legend, LineChart } from "recharts";
-import { FormControlLabel, FormControl, FormLabel, Checkbox, FormGroup, Divider, Typography } from "@mui/material/";
+import {
+  XAxis,
+  CartesianGrid,
+  YAxis,
+  Tooltip,
+  Bar,
+  ResponsiveContainer,
+  Line,
+  ComposedChart,
+  Legend,
+  LineChart,
+} from "recharts";
+import {
+  FormControlLabel,
+  FormControl,
+  FormLabel,
+  Checkbox,
+  FormGroup,
+  Divider,
+  Typography,
+} from "@mui/material/";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import Loader from "../common/loader";
 import { ShiftType } from "@/types/stats";
@@ -10,7 +29,6 @@ import statMain from "@/components/stats/main";
 import Alert from "@mui/material/Alert";
 import { ChangeLevel } from "./main";
 import { injectIntl } from "react-intl";
-import AdsCard from "@/components/ad";
 
 const config = [
   { value: 0, label: "更新楽曲数" },
@@ -30,7 +48,10 @@ const range = [
   { value: 99999, label: "すべて" },
 ];
 
-class Shift extends React.Component<{ intl: any; propdata?: any } & RouteComponentProps, ShiftType> {
+class Shift extends React.Component<
+  { intl: any; propdata?: any } & RouteComponentProps,
+  ShiftType
+> {
   constructor(props: { intl: any } & RouteComponentProps) {
     super(props);
     this.state = {
@@ -52,8 +73,14 @@ class Shift extends React.Component<{ intl: any; propdata?: any } & RouteCompone
 
   async updateScoreData(newState?: ShiftType) {
     const { currentPeriod, targetLevel, range } = newState || this.state;
-    const derived = this.props.propdata ? this.props.propdata.filter((item: any) => item.difficultyLevel === String(targetLevel)) : null;
-    const exec = derived ? new statMain(targetLevel).setPropData(derived) : await new statMain(targetLevel).load();
+    const derived = this.props.propdata
+      ? this.props.propdata.filter(
+          (item: any) => item.difficultyLevel === String(targetLevel)
+        )
+      : null;
+    const exec = derived
+      ? new statMain(targetLevel).setPropData(derived)
+      : await new statMain(targetLevel).load();
     //BPI別集計
     this.setState({
       isLoading: false,
@@ -119,7 +146,11 @@ class Shift extends React.Component<{ intl: any; propdata?: any } & RouteCompone
     if (isLoading) {
       return (
         <Container>
-          <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel} />
+          <ChangeLevel
+            isLoading={isLoading}
+            targetLevel={targetLevel}
+            changeLevel={this.changeLevel}
+          />
           <Loader />
         </Container>
       );
@@ -127,10 +158,29 @@ class Shift extends React.Component<{ intl: any; propdata?: any } & RouteCompone
 
     return (
       <Container className={"commonLayout"}>
-        <ChangeLevel isLoading={isLoading} targetLevel={targetLevel} changeLevel={this.changeLevel} />
-        <CheckBoxes title="プライマリグラフの表示項目" hasData={this.hasItems} handleNewData={this.handleItems} config={config} />
-        <CheckBoxes title="表示期間" hasData={this.currentPeriod} handleNewData={this.handlePeriod} config={period} />
-        <CheckBoxes title="表示日数" hasData={this.currentRange} handleNewData={this.handleRange} config={range} />
+        <ChangeLevel
+          isLoading={isLoading}
+          targetLevel={targetLevel}
+          changeLevel={this.changeLevel}
+        />
+        <CheckBoxes
+          title="プライマリグラフの表示項目"
+          hasData={this.hasItems}
+          handleNewData={this.handleItems}
+          config={config}
+        />
+        <CheckBoxes
+          title="表示期間"
+          hasData={this.currentPeriod}
+          handleNewData={this.handlePeriod}
+          config={period}
+        />
+        <CheckBoxes
+          title="表示日数"
+          hasData={this.currentRange}
+          handleNewData={this.handleRange}
+          config={range}
+        />
         <Divider style={{ margin: "10px 0" }} />
         {perDate.length > 0 && (
           <div style={{ width: "95%", height: "450px", margin: "5px auto" }}>
@@ -147,9 +197,20 @@ class Shift extends React.Component<{ intl: any; propdata?: any } & RouteCompone
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" stroke={chartColor} />
-                <YAxis orientation="left" tickLine={false} axisLine={false} stroke={chartColor} />
+                <YAxis
+                  orientation="left"
+                  tickLine={false}
+                  axisLine={false}
+                  stroke={chartColor}
+                />
                 <Tooltip contentStyle={{ color: "#333" }} />
-                {this.hasItems(0) && <Bar dataKey="sum" name={formatMessage({ id: "Stats.UpdatedSum" })} fill={barColor} />}
+                {this.hasItems(0) && (
+                  <Bar
+                    dataKey="sum"
+                    name={formatMessage({ id: "Stats.UpdatedSum" })}
+                    fill={barColor}
+                  />
+                )}
                 {[
                   {
                     key: "avg",
@@ -177,7 +238,15 @@ class Shift extends React.Component<{ intl: any; propdata?: any } & RouteCompone
                   },
                 ].map((item: any) => {
                   if (this.hasItems(item.value)) {
-                    return <Line dataKey={item.key} key={item.name} dot={false} name={formatMessage({ id: item.name })} stroke={item.fillColor} />;
+                    return (
+                      <Line
+                        dataKey={item.key}
+                        key={item.name}
+                        dot={false}
+                        name={formatMessage({ id: item.name })}
+                        stroke={item.fillColor}
+                      />
+                    );
                   }
                   return null;
                 })}
@@ -195,7 +264,12 @@ class Shift extends React.Component<{ intl: any; propdata?: any } & RouteCompone
             }}
           >
             <Divider style={{ margin: "15px 0" }} />
-            <Typography component="h6" variant="h6" color="textPrimary" gutterBottom>
+            <Typography
+              component="h6"
+              variant="h6"
+              color="textPrimary"
+              gutterBottom
+            >
               総合BPI推移
             </Typography>
             <ResponsiveContainer width="100%">
@@ -211,9 +285,22 @@ class Shift extends React.Component<{ intl: any; propdata?: any } & RouteCompone
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" stroke={chartColor} />
-                <YAxis orientation="left" domain={[(dataMin: number) => Math.floor(dataMin) - 0.1, (dataMax: number) => Math.ceil(dataMax) + 0.1]} tickLine={false} axisLine={false} stroke={chartColor} />
+                <YAxis
+                  orientation="left"
+                  domain={[
+                    (dataMin: number) => Math.floor(dataMin) - 0.1,
+                    (dataMax: number) => Math.ceil(dataMax) + 0.1,
+                  ]}
+                  tickLine={false}
+                  axisLine={false}
+                  stroke={chartColor}
+                />
                 <Tooltip contentStyle={{ color: "#333" }} />
-                <Line dataKey="shiftedBPI" name={formatMessage({ id: "Stats.TotalBPI" })} stroke={lineColor} />
+                <Line
+                  dataKey="shiftedBPI"
+                  name={formatMessage({ id: "Stats.TotalBPI" })}
+                  stroke={lineColor}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -227,7 +314,6 @@ class Shift extends React.Component<{ intl: any; propdata?: any } & RouteCompone
             </p>
           </Alert>
         )}
-        <AdsCard />
       </Container>
     );
   }
@@ -246,7 +332,18 @@ const CheckBoxes: React.FC<{
       <FormLabel component="legend">{title}</FormLabel>
       <FormGroup row>
         {config.map((item: { value: number; label: string }) => (
-          <FormControlLabel key={item.value} control={<Checkbox checked={hasData(item.value)} onChange={() => handleNewData(item.value)} value={item.value} color="primary" />} label={item.label} />
+          <FormControlLabel
+            key={item.value}
+            control={
+              <Checkbox
+                checked={hasData(item.value)}
+                onChange={() => handleNewData(item.value)}
+                value={item.value}
+                color="primary"
+              />
+            }
+            label={item.label}
+          />
         ))}
       </FormGroup>
     </FormControl>
