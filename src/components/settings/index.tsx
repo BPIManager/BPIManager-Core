@@ -1,4 +1,5 @@
 import { config } from "@/config";
+import { versionConverter } from "@/components/common/versions";
 
 export const _isSingle = () => {
   return !localStorage.getItem("isSingle") ||
@@ -123,19 +124,7 @@ export const _setTraditionalMode = (newState: number = 0) => {
 
 export const _currentStoreWithFullName = () => {
   const t: string = localStorage.getItem("currentStore") || config.latestStore;
-  return t === "26"
-    ? "26 Rootage"
-    : t === "27"
-    ? "27 HEROIC VERSE"
-    : t === "INF"
-    ? "INFINITAS"
-    : t === "28"
-    ? "28 BISTROVER"
-    : t === "29"
-    ? "29 CastHour"
-    : t === "30"
-    ? "30 RESIDENT"
-    : "31 EPOLIS";
+  return versionConverter[t]
 };
 
 export const _weeklyRanking = () => {
